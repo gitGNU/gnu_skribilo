@@ -1,0 +1,6 @@
+(define (skribe-release) "@SKRIBE_RELEASE@")
+(define (skribe-url) "@SKRIBE_URL@")
+(define (skribe-doc-dir) "@SKRIBE_DOC_DIR@")
+(define (skribe-ext-dir) "@SKRIBE_EXT_DIR@")
+(define (skribe-default-path) @SKRIBE_SKR_PATH@)
+(define (skribe-scheme) "@SKRIBE_SCHEME@")

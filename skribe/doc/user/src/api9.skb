@@ -1,0 +1,5 @@
+(itemize
+ (item (font :size -2 [A smaller font.]))
+ (item (font :size 6 [An absolute font size.]))
+ (item (font :size 4. [A larger font.]))
+ (item (font :face "Helvetica" [An helvetica example.])))

@@ -1,0 +1,5 @@
+(center
+ (frame :border 1 :margin 2 :width 90.
+	(the-bibliography :pred (lambda (m n) 
+				   (and (eq? (markup-option m 'kind) 'book)
+					(pair? (markup-option m 'used)))))))

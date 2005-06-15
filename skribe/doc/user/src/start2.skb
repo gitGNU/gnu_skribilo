@@ -1,0 +1,2 @@
+(document :title [Hello World!] [
+This is a ,(bold [very]) ,(it [simple]) ,(color :fg [red] [text]).])

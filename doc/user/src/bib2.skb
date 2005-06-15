@@ -1,0 +1,7 @@
+[Scheme ,(ref :bib 'scheme:r5rs) is functional programming language. It exists
+several books about this language ,(ref :bib '(as:sicp queinnec:lisp)).
+
+,(linebreak 2)
+,(center (bold [-- Bibliography --]))
+
+,(center (frame :border 1 :margin 2 :width 90. (the-bibliography)))]

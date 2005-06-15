@@ -1,0 +1,110 @@
+Here is the procedure for compiling and installing SKRIBE on a Unix system.
+
+ 
+Requirements
+************
+
+   - GNU-MAKE is required.
+   - BIGLOO 2.6b (or later) *or* SKTLOS 0.56 is required.
+
+Summary of a SKRIBE compilation, test and installation
+******************************************************
+
+   $ ./configure --with-bigloo|--with-stklos
+   $ make
+   $ make install
+
+   This procedure will self test SKRIBE because it will compile the various
+   Skribe documents that implement the Skribe documentation.
+
+
+Configuring SKRIBE
+******************
+
+   Configuring SKRIBE/BIGLOO
+   *************************
+
+   1.a Edit the `./etc/bigloo/configure' file and set the variables defined in the Use
+       section (e.g. `bindir', `libdir', `mandir' and `docdir'). Note that
+       if you leave these variable definitions blank the installation procedure
+       will install Skribe at the same location as Bigloo.
+
+   1.b Configure Skribe for your machine by invoking:
+        `./configure --with-bigloo'
+       or
+        `./configure --with-bigloo --prefix <your-prefix>'
+       or
+        `./configure --with-bigloo --bigloo=<your-bigloo-compiler>'
+       When the system is ready to be compiled, `configure' prints 
+       the message `configuration done.'.
+
+       The following command:
+        `./configure --with-bigloo --help'
+       displays the available options.
+    
+       The default configuration uses the C back-end. To produce a JVM version of
+       SKRIBE, uses:
+
+        `./configure --with-bigloo --jvm'
+
+   Configuring SKRIBE/STKLOS
+   *************************
+
+   1.  Configure Skribe for your machine by invoking:
+        `./configure --with-stklos' 
+       or
+        `./configure --with-stklos --prefix <your-prefix>'
+
+Compiling SKRIBE
+****************
+
+   2.  Type:
+          `make'
+
+       This will compile:
+         - the Skribe compiler: skribe
+         - the Texinfo to Skribe translator: skribeinfo (*)
+         - the BibTex to Skribe translator: skribebibtex (*)
+         - the Skribe documentation (in manuals/man, manuals/user and
+           manuals/expert).
+
+       (*) this tools is compiled only when SKRIBE is compiled with BIGLOO.
+
+
+Installing SKRIBE
+*****************
+
+   3.  Type:
+          `make install'
+
+       This install, the Skribe compiler, the Skribeinfo compiler, the
+       various Skribe back-ends, the variable Skribe style files and
+       the Skribe documentation. 
+
+       This does not install the skribe.el emacs package.
+
+
+Cleaning SKRIBE
+***************
+
+   4.  Once, installed, you can type:
+          `make clean'
+       to remove all the useless files.
+
+
+Uninstalling SKRIBE
+*******************
+
+   5.  To uninstall Skribe:
+          `make uninstall'
+
+
+Unconfiguring SKRIBE
+********************
+
+   6.  If you plan to re-install Skribe on a new platform. Before performing
+       the all installation process (step 1 to 5) you must first remove the
+       current configuration. For this type:
+          `make distclean'
+
+      

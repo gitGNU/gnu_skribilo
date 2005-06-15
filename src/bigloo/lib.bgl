@@ -1,0 +1,340 @@
+;*=====================================================================*/
+;*    serrano/prgm/project/skribe/src/bigloo/lib.bgl                   */
+;*    -------------------------------------------------------------    */
+;*    Author      :  Manuel Serrano                                    */
+;*    Creation    :  Wed Jul 23 12:48:11 2003                          */
+;*    Last change :  Wed Dec  1 14:27:57 2004 (serrano)                */
+;*    Copyright   :  2003-04 Manuel Serrano                            */
+;*    -------------------------------------------------------------    */
+;*    The Skribe runtime (i.e., the style user functions).             */
+;*    -------------------------------------------------------------    */
+;*    Implementation: @label lib@                                      */
+;*    bigloo: @path ../common/lib.scm@                                 */
+;*=====================================================================*/
+
+;*---------------------------------------------------------------------*/
+;*    The module                                                       */
+;*---------------------------------------------------------------------*/
+(module skribe_lib
+   
+   (include "debug.sch")
+   
+   (import  skribe_types
+	    skribe_eval
+	    skribe_param
+	    skribe_output
+	    skribe_engine)
+   
+   (export  (markup-option ::%markup ::obj)
+	    (markup-option-add! ::%markup ::obj ::obj)
+	    (markup-class ::%markup)
+				
+	    (container-env-get ::%container ::symbol)
+	    (container-search-down::pair-nil ::procedure ::%container)
+	    (search-down::pair-nil ::procedure ::obj)
+
+	    (find-markup-ident::pair-nil ::bstring)
+	    
+	    (find-down::pair-nil ::procedure ::obj)
+	    (find1-down::obj ::procedure ::obj)
+	    (find-up::pair-nil ::procedure ::obj)
+	    (find1-up::obj ::procedure ::obj)
+
+	    (ast-document ::%ast)
+	    (ast-chapter ::%ast)
+	    (ast-section ::%ast)
+	    
+	    (the-body ::pair-nil)
+	    (the-options ::pair-nil . rest)
+
+	    (list-split::pair-nil ::pair-nil ::int . ::obj)
+	    
+	    (generic ast->string::bstring ::obj)
+	    
+	    (strip-ref-base ::bstring)
+	    (ast->file-location ::%ast)
+
+	    (convert-image ::bstring ::pair-nil)
+	    
+	    (make-string-replace ::pair-nil)
+	    (string-canonicalize::bstring ::bstring)
+	    (inline unspecified?::bool ::obj)))
+
+;*---------------------------------------------------------------------*/
+;*    markup-option ...                                                */
+;*---------------------------------------------------------------------*/
+(define (markup-option m opt)
+   (if (%markup? m)
+       (with-access::%markup m (options)
+	  (let ((c (assq opt options)))
+	     (and (pair? c) (pair? (cdr c)) (cadr c))))
+       (skribe-type-error 'markup-option "Illegal markup:" m "markup")))
+
+;*---------------------------------------------------------------------*/
+;*    markup-option-add! ...                                           */
+;*---------------------------------------------------------------------*/
+(define (markup-option-add! m opt val)
+   (if (%markup? m)
+       (with-access::%markup m (options)
+	  (set! options (cons (list opt val) options)))
+       (skribe-type-error 'markup-option "Illegal markup:" m "markup")))
+
+;*---------------------------------------------------------------------*/
+;*    markup-class ...                                                 */
+;*---------------------------------------------------------------------*/
+(define (markup-class m)
+   (%markup-class m))
+
+;*---------------------------------------------------------------------*/
+;*    container-env-get ...                                            */
+;*---------------------------------------------------------------------*/
+(define (container-env-get m key)
+   (with-access::%container m (env)
+      (let ((c (assq key env)))
+	 (and (pair? c) (cadr c)))))
+
+;*---------------------------------------------------------------------*/
+;*    strip-ref-base ...                                               */
+;*---------------------------------------------------------------------*/
+(define (strip-ref-base file)
+   (if (not (string? *skribe-ref-base*))
+       file
+       (let ((l (string-length *skribe-ref-base*)))
+	  (cond
+	     ((not (>fx (string-length file) (+fx l 2)))
+	      file)
+	     ((not (substring=? file *skribe-ref-base* l))
+	      file)
+	     ((not (char=? (string-ref file l) (file-separator)))
+	      file)
+	     (else
+	      (substring file (+fx l 1) (string-length file)))))))
+
+;*---------------------------------------------------------------------*/
+;*    ast->file-location ...                                           */
+;*---------------------------------------------------------------------*/
+(define (ast->file-location ast)
+   (let ((l (ast-loc ast)))
+      (if (location? l)
+	  (format "~a:~a" (location-file l) (location-pos l))
+	  "")))
+
+;*---------------------------------------------------------------------*/
+;*    builtin-convert-image ...                                        */
+;*---------------------------------------------------------------------*/
+(define (builtin-convert-image from fmt dir)
+   (let* ((s (suffix from))
+	  (f (string-append (prefix (basename from)) "." fmt))
+	  (to (make-file-name dir f)))
+      (cond
+	 ((string=? s fmt)
+	  to)
+	 ((file-exists? to)
+	  to)
+	 (else
+	  (let ((c (if (string=? s "fig")
+		       (string-append "fig2dev -L " fmt " " from " > " to)
+		       (string-append "convert " from " " to))))
+	     (cond
+		((>fx *skribe-verbose* 1)
+		 (fprint (current-error-port)
+			 "  [converting image: " from " (" c ")]"))
+		((>fx *skribe-verbose* 0)
+		 (fprint (current-error-port)
+			 "  [converting image: " from "]")))
+	     (if (=fx (system c) 0) to #f))))))
+
+;*---------------------------------------------------------------------*/
+;*    convert-image ...                                                */
+;*---------------------------------------------------------------------*/
+(define (convert-image file formats)
+   (let ((path (find-file/path file (skribe-image-path))))
+      (if (not (string? path))
+	  (skribe-error 'image
+			(format "Can't find `~a' image file in path: " file)
+			(skribe-image-path))
+	  (let ((suf (suffix file)))
+	     (if (member suf formats)
+		 (let* ((dir (if (string? *skribe-dest*)
+				 (dirname *skribe-dest*)
+				 #f)))
+		    (if dir
+			(let ((dest (basename path)))
+			   (copy-file path (make-file-name dir dest))
+			   dest)
+			path))
+		 (let loop ((fmts formats))
+		    (if (null? fmts)
+			#f
+			(let* ((dir (if (string? *skribe-dest*)
+					(dirname *skribe-dest*)
+					"."))
+			       (p (builtin-convert-image path (car fmts) dir)))
+			   (if (string? p)
+	 		       p
+			       (loop (cdr fmts)))))))))))
+
+;*---------------------------------------------------------------------*/
+;*    html-string ...                                                  */
+;*---------------------------------------------------------------------*/
+(define (html-string str)
+   (let ((len (string-length str)))
+      (let loop ((r 0)
+		 (nlen len))
+	 (if (=fx r len)
+	     (if (=fx nlen len)
+		 str
+		 (let ((res (make-string nlen)))
+		    (let loop ((r 0)
+			       (w 0))
+		       (if (=fx w nlen)
+			   res
+			   (let ((c (string-ref-ur str r)))
+			      (case c
+				 ((#\<)
+				  (blit-string! "&lt;" 0 res w 4)
+				  (loop (+fx r 1) (+fx w 4)))
+				 ((#\>)
+				  (blit-string! "&gt;" 0 res w 4)
+				  (loop (+fx r 1) (+fx w 4)))
+				 ((#\&)
+				  (blit-string! "&amp;" 0 res w 5)
+				  (loop (+fx r 1) (+fx w 5)))
+				 ((#\")
+				  (blit-string! "&quot;" 0 res w 6)
+				  (loop (+fx r 1) (+fx w 6)))
+				 (else
+				  (string-set! res w c)
+				  (loop (+fx r 1) (+fx w 1)))))))))
+	     (case (string-ref-ur str r)
+		((#\< #\>)
+		 (loop (+fx r 1) (+fx nlen 3)))
+		((#\&)
+		 (loop (+fx r 1) (+fx nlen 4)))
+		((#\")
+		 (loop (+fx r 1) (+fx nlen 5)))
+		(else
+		 (loop (+fx r 1) nlen)))))))
+
+;*---------------------------------------------------------------------*/
+;*    make-generic-string-replace ...                                  */
+;*---------------------------------------------------------------------*/
+(define (make-generic-string-replace lst)
+   (lambda (str)
+      (let ((len (string-length str)))
+	 (let loop ((r 0)
+		    (nlen len))
+	    (if (=fx r len)
+		(let ((res (make-string nlen)))
+		   (let loop ((r 0)
+			      (w 0))
+		      (if (=fx w nlen)
+			  res
+			  (let* ((c (string-ref-ur str r))
+				 (p (assq c lst)))
+			     (if (pair? p)
+				 (let ((pl (string-length (cadr p))))
+				    (blit-string! (cadr p) 0 res w pl)
+				    (loop (+fx r 1) (+fx w pl)))
+				 (begin
+				    (string-set! res w c)
+				    (loop (+fx r 1) (+fx w 1))))))))
+		(let* ((c (string-ref-ur str r))
+		       (p (assq c lst)))
+		   (if (pair? p)
+		       (loop (+fx r 1)
+			     (+fx nlen (-fx (string-length (cadr p)) 1)))
+		       (loop (+fx r 1)
+			     nlen))))))))
+
+;*---------------------------------------------------------------------*/
+;*    make-string-replace ...                                          */
+;*---------------------------------------------------------------------*/
+(define (make-string-replace lst)
+   (let ((l (sort lst (lambda (r1 r2) (char<? (car r1) (car r2))))))
+      (cond
+	 ((equal? l '((#\" "&quot;") (#\& "&amp;") (#\< "&lt;") (#\> "&gt;")))
+	  html-string)
+	 (else
+	  (make-generic-string-replace lst)))))
+
+;*---------------------------------------------------------------------*/
+;*    ast->string ...                                                  */
+;*---------------------------------------------------------------------*/
+(define-generic (ast->string ast)
+   (cond
+      ((string? ast)
+       ast)
+      ((number? ast)
+       (number->string ast))
+      ((pair? ast)
+       (let* ((t (map ast->string ast))
+	      (res (make-string
+		    (apply + -1 (length t) (map string-length t))
+		    #\space)))
+	  (let loop ((t t)
+		     (w 0))
+	     (if (null? t)
+		 res
+		 (let ((l (string-length (car t))))
+		    (blit-string! (car t) 0 res w l)
+		    (loop (cdr t) (+ w l 1)))))))
+      (else
+       "")))
+
+;*---------------------------------------------------------------------*/
+;*    ast->string ::%node ...                                          */
+;*---------------------------------------------------------------------*/
+(define-method (ast->string ast::%node)
+   (ast->string (%node-body ast)))
+
+;*---------------------------------------------------------------------*/
+;*    string-canonicalize ...                                          */
+;*---------------------------------------------------------------------*/
+(define (string-canonicalize old)
+   (let* ((l (string-length old))
+	  (new (make-string l)))
+      (let loop ((r 0)
+		 (w 0)
+		 (s #f))
+	 (cond
+	    ((=fx r l)
+	     (cond
+		((=fx w 0)
+		 "")
+		((char-whitespace? (string-ref new (-fx w 1)))
+		 (substring new 0 (-fx w 1)))
+		((=fx w r)
+		 new)
+		(else
+		 (substring new 0 w))))
+	    ((char-whitespace? (string-ref old r))
+	     (if s
+		 (loop (+fx r 1) w #t)
+		 (begin
+		    (string-set! new w #\-)
+		    (loop (+fx r 1) (+fx w 1) #t))))
+	    ((or (char=? (string-ref old r) #\#)
+		 (char=? (string-ref old r) #\,)
+		 (>= (char->integer (string-ref old r)) #x7f))
+	     (string-set! new w #\-)
+	     (loop (+fx r 1) (+fx w 1) #t))
+	    (else
+	     (string-set! new w (string-ref old r))
+	     (loop (+fx r 1) (+fx w 1) #f))))))
+
+;*---------------------------------------------------------------------*/
+;*    unspecified? ...                                                 */
+;*---------------------------------------------------------------------*/
+(define-inline (unspecified? obj)
+   (eq? obj #unspecified))
+
+;*---------------------------------------------------------------------*/
+;*    base                                                             */
+;*    -------------------------------------------------------------    */
+;*    A base engine must pre-exist before anything is loaded. In       */
+;*    particular, this dummy base engine is used to load the           */
+;*    actual definition of base.                                       */
+;*---------------------------------------------------------------------*/
+(make-engine 'base :version 'bootstrap)
+

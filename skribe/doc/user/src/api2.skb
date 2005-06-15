@@ -1,0 +1,5 @@
+(document :title "This is a Scribe document"
+          :author (list (author :name "Foo" :email (mailto "foo@nowhere.org"))
+			(author :name "Bar" :email (mailto "bar@anywhere.org"))
+			(author :name "Gee" :email (mailto "gee@nowhere.org")))
+  "A body...")

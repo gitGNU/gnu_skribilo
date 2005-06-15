@@ -1,0 +1,2 @@
+(chapter :title "This is a simple chapter" :number #f :toc #f [
+Its body is just one sentence.])

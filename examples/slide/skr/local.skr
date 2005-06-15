@@ -1,0 +1,73 @@
+;*=====================================================================*/
+;*    serrano/prgm/project/skribe/examples/slide/skr/local.skr         */
+;*    -------------------------------------------------------------    */
+;*    Author      :  Manuel Serrano                                    */
+;*    Creation    :  Mon Jun  3 15:32:25 2002                          */
+;*    Last change :  Wed Oct  8 16:22:42 2003 (serrano)                */
+;*    Copyright   :  2002-03 Manuel Serrano                            */
+;*    -------------------------------------------------------------    */
+;*    The local style of the presentation                              */
+;*=====================================================================*/
+
+;* {*---------------------------------------------------------------------*} */
+;* {*    fg ...                                                           *} */
+;* {*---------------------------------------------------------------------*} */
+;* (define (fg c . body)                                               */
+;*    (apply color :fg c body))                                        */
+;*                                                                     */
+;* {*---------------------------------------------------------------------*} */
+;* {*    bg ...                                                           *} */
+;* {*---------------------------------------------------------------------*} */
+;* (define (bg c . body)                                               */
+;*    (apply color :bg c body))                                        */
+;*                                                                     */
+;*---------------------------------------------------------------------*/
+;*    colors ...                                                       */
+;*---------------------------------------------------------------------*/
+(define (green body)
+   (fg "darkgreen" body))
+(define (red body)
+   (fg "red" body))
+(define (blue body)
+   (bold (fg "darkblue" body)))
+(define (magenta body)
+   (fg "darkmagenta" body))
+(define (orange body)
+   (fg "darkorange" body))
+
+;*---------------------------------------------------------------------*/
+;*    em ...                                                           */
+;*---------------------------------------------------------------------*/
+(define (em body)
+   (bold (magenta body)))
+
+;*---------------------------------------------------------------------*/
+;*    st ...                                                           */
+;*---------------------------------------------------------------------*/
+(define (st body)
+   (sf (red body)))
+
+;*---------------------------------------------------------------------*/
+;*    citem ...                                                        */
+;*---------------------------------------------------------------------*/
+(define-markup (citem #!rest opt #!key (color "black") (shape (math 'bullet)))
+   (item (list (fg color shape) " " (the-body opt))))
+
+;*---------------------------------------------------------------------*/
+;*    skribe-prgm ...                                                  */
+;*---------------------------------------------------------------------*/
+(define-markup (skribe-prgm #!rest opt #!key file definition)
+   (cond
+      ((and definition file)
+       (font :size -4
+	     (color :bg "#ccffcc" (prog (source :language skribe
+						:file file
+						:definition definition)))))
+      (file
+       (font :size -4
+	     (color :bg "#ccffcc" (prog (source :language skribe
+						:file file)))))
+      (else
+       (font :size -4
+	     (color :bg "#ccffcc" (prog (source :language skribe
+						(the-body opt))))))))

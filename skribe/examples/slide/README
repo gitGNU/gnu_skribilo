@@ -1,0 +1,11 @@
+This example shows how to program slides with Skribe. Three slide
+formats can be produced:
+
+1. Advi
+   type `make MODE=advi'
+
+2. Plain PDF
+   type `make pdf MODE=pdf'
+
+3. LaTeX prosper
+   type `make pdf MODE=prosper'

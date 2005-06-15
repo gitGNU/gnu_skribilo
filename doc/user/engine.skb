@@ -1,0 +1,135 @@
+;*=====================================================================*/
+;*    serrano/prgm/project/skribe/doc/user/engine.skb                  */
+;*    -------------------------------------------------------------    */
+;*    Author      :  Manuel Serrano                                    */
+;*    Creation    :  Wed Sep  3 11:19:21 2003                          */
+;*    Last change :  Mon Nov  8 15:07:35 2004 (serrano)                */
+;*    Copyright   :  2003-04 Manuel Serrano                            */
+;*    -------------------------------------------------------------    */
+;*    The description of the Skribe engines                            */
+;*=====================================================================*/
+;; @indent: (put 'doc-markup 'skribe-indent 'skribe-indent-function)@
+
+(cond-expand 
+   (bigloo 
+    (define *engine-src*  "../src/bigloo/engine.scm")
+    (define *types-src*   "../src/bigloo/types.scm"))
+   (stklos
+    (define *engine-src*  "../src/stklos/engine.stk")
+    (define *types-src*   "../src/stklos/types.stk")))
+
+;*---------------------------------------------------------------------*/
+;*    Engine                                                           */
+;*---------------------------------------------------------------------*/
+(chapter :title "Engines" 
+
+   (p [When Skribe produces a document in a given format, it uses a
+specialize engine. For instance, when a Web page is made from a Skribe
+document, the HTML engine is used. The engines provided by Skribe are
+given below:])
+
+   (resolve (lambda (n e env)
+	       (let* ((current-chapter (ast-chapter n))
+		      (body  (map (lambda (x) (if (pair? x) (car x) x))
+				  (markup-body current-chapter)))
+		      (sects (filter (lambda (x) (is-markup? x 'section))
+				     body)))
+		  (itemize 
+		     (map (lambda (x)
+			     (let ((title (markup-option x :title)))
+				(item (ref :text title :section title))))
+			  sects)))))
+   
+   (section :title "Functions dealing with engines"
+      
+      (subsection :title "Creating engines"
+	 (p [The function ,(code "make-engine") creates a brand new engine.])
+	 
+	 (doc-markup 'make-engine
+	    '((ident [The name (a symbol) of the new engine.])
+	      (:version [The version number.])
+	      (:format [The output format (a string) of this engine.])
+	      (:filter [A string filter (a function).])
+	      (:delegate [A delegate engine.])
+	      (:symbol-table [The engine symbol table.])
+	      (:custom [The engine custom list.])
+	      (:info [Miscellaneous.]))
+	    :common-args '()
+	    :source *engine-src*
+	    :idx *function-index*)
+	 
+	 (p [The function ,(code "copy-engine") duplicates an existing engine.])
+	 (doc-markup 'copy-engine
+	    '((ident [The name (a symbol) of the new engine.])
+	      (e [The old engine to be duplicated.])
+	      (:version [The version number.])
+	      (:filter [A string filter (a function).])
+	      (:delegate [A delegate engine.])
+	      (:symbol-table [The engine symbol table.])
+	      (:custom [The engine custom list.]))
+	    :common-args '()
+	    :source *engine-src*
+	    :idx *function-index*))
+	      
+      (subsection :title "Retrieving engines"
+	 
+	 (p [The ,(code "find-engine") function searches in the list of defined
+engines. It returns an ,(code "engine") object on success and ,(code "#f")
+on failure.])
+	 (doc-markup 'find-engine
+	    '((id [The name (a symbol) of the engine to be searched.])
+	      (:version [An optional version number for the searched engine.]))
+	    :common-args '()
+	    :source *engine-src*
+	    :idx *function-index*))
+      
+      (subsection :title "Engine accessors"
+	 (p [The predicate ,(code "engine?") returns ,(code "#t") if its
+argument is an engine. Otherwise, it returns ,(code "#f"). In other words,
+,(code "engine?") returns ,(code "#t") for objects created by 
+,(code "make-engine"), ,(code "copy-engine"), and ,(code "find-engine").])
+	 (doc-markup 'engine?
+	    '((obj [The checked object.]))
+	    :common-args '()
+	    :source *types-src*
+	    :idx *function-index*)
+	 
+	 (p [The following functions return information about engines.])
+	 
+	 (doc-markup 'engine-ident
+	    '((obj [The engine.]))
+	    :common-args '()
+	    :others '(engine-format engine-customs engine-filter engine-symbol-table)
+	    :source *types-src*
+	    :idx *function-index*))
+      
+      (subsection :title "Engine customs"
+	 
+	 (p [Engine customs are locations where dynamic informations relative
+to engines can be stored. Engine custom can be seen a global variables that
+are specific to engines. The function ,(code "engine-custom") returns the
+value of a custom or ,(code "#f") if that custom is not defined. The
+function ,(code "engine-custom-set!") defines or sets a new value for
+a custom.])
+	 
+	 (doc-markup 'engine-custom
+	    `((e ,[The engine (as returned by 
+,(ref :mark "find-engine" :text (code "find-engine"))).])
+	      (id [The name of the custom.]))
+	    :common-args '()
+	    :source *engine-src*
+	    :idx *function-index*)
+	 
+	 (doc-markup 'engine-custom-set!
+	    `((e ,[The engine (as returned by 
+,(ref :mark "find-engine" :text (code "find-engine"))).])
+	      (id [The name of the custom.])
+	      (val [The new value of the custom.]))
+	    :common-args '()
+	    :source *engine-src*
+	    :idx *function-index*)))
+
+   ;; existing engines
+   (include "htmle.skb")
+   (include "latexe.skb")
+   (include "xmle.skb"))

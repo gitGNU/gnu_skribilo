@@ -1,0 +1,25 @@
+(resolve (lambda (n e env)
+	    (let* ((d (ast-document n))
+		   (ex (container-env-get d 'figure-env)))
+	       (table (map (lambda (e)
+			      (tr (td :align 'left
+				      (markup-option e ':number)
+				      " "
+				      (ref :handle (handle e)
+					   :text (markup-option e :legend))
+				      " (section "
+				      (let ((c (ast-section e)))
+					 (ref :handle (handle c)
+					      :text (markup-option c :title)))
+				      ")")))
+			   (sort ex
+				 (lambda (e1 e2)
+				    (let ((n1 (markup-option e1 :number))
+					  (n2 (markup-option e2 :number)))
+				       (cond
+					  ((not (number? n1))
+					   #t)
+					  ((not (number? n2))
+					   #f)
+					  (else
+					   (< n1 n2)))))))))))

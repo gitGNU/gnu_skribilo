@@ -1,0 +1,22 @@
+#*=====================================================================*/
+#*    serrano/prgm/project/skribe/doc/Makefile.dir                     */
+#*    -------------------------------------------------------------    */
+#*    Author      :  Manuel Serrano                                    */
+#*    Creation    :  Thu Jan  1 15:30:39 2004                          */
+#*    Last change :  Wed Feb  4 09:19:03 2004 (serrano)                */
+#*    Copyright   :  2004 Manuel Serrano                               */
+#*    -------------------------------------------------------------    */
+#*    The Makefile to build the Skribe directory.                      */
+#*=====================================================================*/
+
+SKRIBE	= skribe
+SFLAGS	= -I ../skr -I skr -P img -S .. -w0
+BASE	= .
+SPATH	= 
+
+.PHONY: re.dir
+
+re.dir: 
+	$(SKRIBE) $(SFLAGS) $(SPATH) dir.skb \
+                  --base $(BASE) -I dir -S dir \
+                  -o $(BASE)/dir.html

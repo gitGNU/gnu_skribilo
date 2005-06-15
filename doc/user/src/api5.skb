@@ -1,0 +1,2 @@
+(section :title "This is a simple section" :number #f :toc #f [
+Its body is just one sentence.])

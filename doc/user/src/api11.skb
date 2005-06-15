@@ -1,0 +1,22 @@
+(itemize (item [A first item.])
+	 (item [A ,(bold "second") one:
+             ,(itemize (item "One.")
+		       (item "Two.")
+		       (item "Three."))])
+	 (item [Lists can be nested. For instance that item contains a
+           ,(tt "description"):
+           ,(description (item :key (bold "foo")
+                               [is a usual Lisp dummy identifier.])
+                         (item :key (bold "bar")
+                               [is another one.])
+                         (item :key (list (bold "foo") (bold "bar"))
+                               [A description entry may contain more than
+                                one keyword.]))])
+	 (item [The last ,(tt "itemize") entry contains an ,(tt "enumerate"):
+           ,(enumerate (item "One.") (item "Two.") (item "Three."))]))
+
+(itemize :symbol "-"
+	 (item "One.")
+	 (item "Two.")
+	 (item "Three.")
+	 (item "Four."))

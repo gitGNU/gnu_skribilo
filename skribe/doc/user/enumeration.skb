@@ -1,0 +1,33 @@
+;*=====================================================================*/
+;*    serrano/prgm/project/skribe/doc/user/enumeration.skb             */
+;*    -------------------------------------------------------------    */
+;*    Author      :  Manuel Serrano                                    */
+;*    Creation    :  Thu Sep  4 11:53:32 2003                          */
+;*    Last change :  Fri Sep 12 15:31:37 2003 (serrano)                */
+;*    Copyright   :  2003 Manuel Serrano                               */
+;*    -------------------------------------------------------------    */
+;*    Skribe enumerations                                              */
+;*=====================================================================*/
+
+;*---------------------------------------------------------------------*/
+;*    Justification                                                    */
+;*---------------------------------------------------------------------*/
+(section :title "Enumeration" :file #t
+
+(p [These functions implements three various style of enumerations.])
+
+(doc-markup 'itemize
+	    '((:symbol [The symbol that prefixes the items.])
+              (#!rest item... "The items of the enumeration."))
+	    :others '(enumerate description))
+
+(p [Items are introduce by the means of the ,(code "item") markup:])
+
+(doc-markup 'item 
+	    '((:key [The item key.])))
+
+;; FIXME: Rien n'est fait en html sur le type de bullet. Mais peut on faire?
+(example-produce 
+ (example :legend "The enumeration markups" (prgm :file "src/api11.skb"))
+ (disp (include "src/api11.skb"))))
+

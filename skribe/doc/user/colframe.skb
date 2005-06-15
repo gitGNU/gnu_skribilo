@@ -1,0 +1,57 @@
+;*=====================================================================*/
+;*    serrano/prgm/project/skribe/doc/user/colframe.skb                */
+;*    -------------------------------------------------------------    */
+;*    Author      :  Manuel Serrano                                    */
+;*    Creation    :  Thu Sep  4 11:53:32 2003                          */
+;*    Last change :  Mon Apr  5 11:51:08 2004 (serrano)                */
+;*    Copyright   :  2003-04 Manuel Serrano                            */
+;*    -------------------------------------------------------------    */
+;*    Skribe color and frame                                           */
+;*=====================================================================*/
+
+;*---------------------------------------------------------------------*/
+;*    Frame and color                                                  */
+;*---------------------------------------------------------------------*/
+(section :title "Frame and color" :file #t
+
+(p [The function ,(code "frame") embeds a text inside a frame. 
+The function ,(code "color") may also use the same purpose when it is
+specified a ,(code "bg") option. This is why both functions are included
+in the same Skribe manual section.])
+
+;*--- Frame -----------------------------------------------------------*/
+(subsection :title "Frame"
+
+(doc-markup 'frame
+	    `((:width ,[The ,(ref :mark "width") of the frame.])
+	      (:margin [The margin pixel size of the frame.])
+	      (:border [The border pixel of the frame.])
+              (#!rest node... "The items of the enumeration."))
+	    :see-also '(color table))
+
+(example-produce
+ (example :legend "The frame markup" (prgm :file "src/api12.skb"))
+ (disp (include "src/api12.skb"))))
+
+;*--- color -----------------------------------------------------------*/
+(subsection :title "Color"
+
+(p [The ,(code "color") markup enables changing ,(emph "locally") the
+text of the document. If the ,(code "bg") color is used, then, ,(code "color")
+acts as a container. Otherwise, it acts as an ,(ref :section "Ornaments").])
+
+(doc-markup 'color
+	    `((:width ,[The ,(ref :mark "width") of the frame.])
+	      (:margin [The margin pixel size of the frame.])
+	      (:bg [The background color])
+	      (:fg [The foreground color])
+              (#!rest node... "The items of the enumeration."))
+	    :see-also '(frame table))
+(example-produce
+ (example :legend "The color markup" (prgm :file "src/api13.skb"))
+ (disp (include "src/api13.skb")))))
+
+
+
+	      
+

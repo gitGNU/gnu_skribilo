@@ -1,0 +1,117 @@
+;*=====================================================================*/
+;*    serrano/prgm/project/skribe/doc/user/sectioning.skb              */
+;*    -------------------------------------------------------------    */
+;*    Author      :  Manuel Serrano                                    */
+;*    Creation    :  Wed Sep  3 12:27:03 2003                          */
+;*    Last change :  Tue Apr  6 06:45:28 2004 (serrano)                */
+;*    Copyright   :  2003-04 Manuel Serrano                            */
+;*    -------------------------------------------------------------    */
+;*    Sectioning markups                                               */
+;*=====================================================================*/
+
+;*---------------------------------------------------------------------*/
+;*    dummy-section-output ...                                         */
+;*---------------------------------------------------------------------*/
+(define dummy-section-output
+   (lambda (n e)
+      (let* ((t (markup-option n :title))
+	     (b (markup-body n)))
+	 (skribe-eval (center (bold t)) e)
+	 (output b e))))
+
+;*---------------------------------------------------------------------*/
+;*    Sectioning                                                       */
+;*---------------------------------------------------------------------*/
+(section :title "Sectioning" :file #t
+
+;*--- chapter ---------------------------------------------------------*/
+(subsection :title "Chapter" 
+
+(p [The function ,(code "chapter") creates new chapters.])
+
+(doc-markup 'chapter
+	    `((:title [The title of the chapter.])
+	      (:html-title "The title of window of the HTML browser.")
+	      (:number [This argument controls the chapter number.
+A value of ,(tt "#t") means that the Skribe compiler computes the chapter
+number. A value of ,(tt "#f") means that the chapter has no number.])
+	      (:toc ,[This argument controls if the chapter must
+be referenced in the ,(ref :mark "toc" :text "table of contents").])
+	      (:file [The argument must be a boolean. A value of
+,(tt "#t") tells the Skribe compiler to compile that chapter in a separate
+file. A value of ,(tt "#f") tells the Skribe compiler to embed the chapter
+in the main target file.])
+	      (#!rest node... [The nodes of the chapter.]))
+	    :see-also '(document section toc))
+
+(example-produce
+ (example :legend "The chapter markup" (prgm :file "src/api4.skb"))
+ (disp 
+  (processor :combinator 
+	     (lambda (e1 e2)
+		(let ((e (copy-engine 'document-engine e2)))
+		   (markup-writer 'chapter e
+				  :options '(:title :file :number :toc)
+				  :action dummy-section-output)
+		   e))
+	     (include "src/api4.skb")))))
+
+;*--- section ---------------------------------------------------------*/
+(subsection :title "Sections" 
+
+(p [These functions create new sections.])
+
+(doc-markup 'section 
+	    `((:title [The title of the chapter.])
+	      (:number [This argument controls the chapter number.
+A value of ,(tt "#t") means that the Skribe compiler computes the chapter
+number. A value of ,(tt "#f") means that the chapter has no number.])
+	      (:toc ,[This argument controls if the chapter must
+be referenced in the ,(ref :mark "toc" :text "table of contents").])
+	      (:file [The argument must be a boolean. A value of
+,(tt "#t") tells the Skribe compiler to compile that section in a separate
+file. A value of ,(tt "#f") tells the Skribe compiler to embed the chapter
+in the main target file.])
+	      (#!rest node... [The nodes of the section.]))
+	    :others '(subsection subsubsection)
+	    :see-also '(document chapter paragraph toc))
+
+(example-produce
+ (example :legend "The chapter markup" (prgm :file "src/api5.skb"))
+ (disp 
+  (processor :combinator 
+	     (lambda (e1 e2)
+		(let ((e (copy-engine 'document-engine e2)))
+		   (markup-writer 'chapter e
+				  :options '(:title :file :number :toc)
+				  :action dummy-section-output)
+		   e))
+	     (include "src/api5.skb")))))
+
+;*--- paragraph -------------------------------------------------------*/
+(subsection :title "Paragraph"
+
+(p [The function ,(code "paragraph") (also aliased ,(code "p")) creates
+paragraphs.])
+
+(doc-markup 'paragraph
+	    '((#!rest node... "The nodes of the paragraph."))
+	    :see-also '(document chapter section p))
+
+(p [The function ,(code "p") is an alias for ,(code "paragraph").])
+(doc-markup 'p
+	    '((#!rest node... "The nodes of the paragraph."))
+	    :source "../skr/skribe.skr"
+	    :see-also '(document chapter section paragraph)))
+
+;*--- blockquote -----------------------------------------------------*/
+(subsection :title "Blockquote"
+
+(p [The function ,(code "blockquote") can be used for text
+quotations. A text quotation is generally renderd as an indented block
+of text.])
+(doc-markup 'blockquote
+	    '((#!rest node... "The nodes of the quoted text.")))))
+
+
+

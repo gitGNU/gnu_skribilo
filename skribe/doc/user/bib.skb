@@ -1,0 +1,252 @@
+;*=====================================================================*/
+;*    serrano/prgm/project/skribe/doc/user/bib.skb                     */
+;*    -------------------------------------------------------------    */
+;*    Author      :  Manuel Serrano                                    */
+;*    Creation    :  Sun Dec  2 10:02:56 2001                          */
+;*    Last change :  Tue Oct 26 21:41:19 2004 (eg)                     */
+;*    Copyright   :  2001-04 Manuel Serrano                            */
+;*    -------------------------------------------------------------    */
+;*    The Skribe index                                                 */
+;*=====================================================================*/
+
+(bibliography "user/src/bib1.sbib")
+
+;*---------------------------------------------------------------------*/
+;*    Index                                                            */
+;*---------------------------------------------------------------------*/
+(chapter :title "Bibliographies"
+
+   (p [
+Skribe supports bibliographies. In order to use bibliography
+,(markup-ref "ref") it is needed to:])
+   (itemize 
+      (item [
+Use the default pre-existing ,(emph "bibliography table") or create a 
+custom one.])
+      (item [
+Provide a ,(emph "bibliography database").])
+      (item [
+Load the database by the mean of the ,(markup-ref "bibliography") 
+Skribe function call.])
+      (item [
+Reference to a bibliography entry, with a ,(markup-ref "ref") Skribe 
+function call.]))
+
+;*---------------------------------------------------------------------*/
+;*    Bibliography tables                                              */
+;*---------------------------------------------------------------------*/
+(section :title "Bibliography tables"
+   
+   (p [
+This section describes the function of using and creating bibliography 
+tables.])
+   
+   (p [The predicate ,(code "bib-table?") returns ,(code "#t") if and only
+if its argument is a bibliography table as returned by 
+,(markup-ref "make-bib-table") or ,(markup-ref "default-bib-table"). Otherwise
+,(code "bib-table?") returns ,(code "#f").])
+   
+   (doc-markup 'bib-table?
+	       '((obj [The value to be tested]))
+	       :see-also '(make-bib-table default-bib-table bibliography the-bibliography)
+	       :force-engines *api-engines*
+	       :common-args '()
+	       :source "../src/bigloo/bib.bgl")
+   
+   (p [The function ,(code "default-bib-table") returns a global, pre-existing
+bibliography-table:])
+   (doc-markup 'default-bib-table
+	       '()
+	       :see-also '(bib-table? make-bib-table bibliography the-bibliography)
+	       :force-engines *api-engines*
+	       :common-args '()
+	       :source "../src/bigloo/bib.bgl")
+   
+   (p [The function ,(code "make-bib-table") constructs a new 
+bibliography-table:])
+   (doc-markup 'make-bib-table
+	       '((ident [The name of the bibliography table.]))
+	       :see-also '(bib-table? default-bib-table bibliography the-bibliography)
+	       :force-engines *api-engines*
+	       :common-args '()
+	       :source "../src/bigloo/bib.bgl"))
+   
+;*---------------------------------------------------------------------*/
+;*    bibliography ... @label bibliography@                            */
+;*---------------------------------------------------------------------*/
+(section :title "Bibliography"
+
+(p [The function ,(code "bibliography") loads bibliography ,(param 'entries) 
+into the Skribe memory. An ,(emph "entry") is either a list
+representing one entry (such as an article or book reference) or a
+string which denotes a file name that contains several
+entries. All the entries loaded in memory are available for the function
+,(ref :ident "ref" :node "references"). A bibliography database must be loaded
+,(emph "before") any reference is introduced. It is advised to place
+the ,(code "bibliography") Skribe function call before the call to the
+,(markup-ref "document") function call.])
+
+(doc-markup 'bibliography
+	    `((:command ,[An external command to be applied when loading
+              the bibliography entries. The sequence ,(code "~a") is replaced
+              with the name of the file when the command is invoked.])
+	      (:bib-table ,[The ,(ref :mark "make-bib-table" :text "table") 
+               where entry is searched.])
+	      (#!rest entry... ,[If ,(param 'entry) is a string, it denotes
+              a file containing the entry (see ,(ref :mark "skribe-bib-path" 
+              :text "bibliograph path")). Otherwise, it is a list described
+              by the ,(ref :subsection "Bibliography syntax" :text "syntax") 
+              below.]))
+	    :see-also '(bib-table? make-bib-table default-bib-table the-bibliography)
+	    :force-engines *api-engines*
+	    :common-args '())
+
+(p [The ,(param :command) option can be used to import foreign bibliography.
+The following example, shows how to directly use a Bibtex bibliography
+using the ,(ref :section "Skribebibtex") translator.])
+
+(example-produce 
+ (example :legend "Printing a bibliography" (prgm :file "src/bib6.skb")))
+
+
+;; bibliography syntax
+(subsection :title "Bibliography syntax"
+
+(p [The Skribe bibliography database uses a format very close to
+the Bibtex one. It is a parenthetic version of Bibtex. Here is the
+syntax of an entry:])
+
+(disp :verb #t :bg *prgm-skribe-color* [
+<entry>  -->  ,(bold "(")<kind> <key> <field>+,(bold ")")
+<kind>   -->  techreport | article | inproceedings | book
+<key>    -->  <symbol> | <string>
+<field>  -->  ,(bold "(")<symbol> <string>,(bold ")")])
+
+(p [Bibtex files cannot be directly loaded in Skribe but the tool
+,(ref :section "Skribebibtex" :text (tt "skribebibtex")) can be use to
+automatically convert Bibtex format to Skribe bibliography format.
+Here is an example of a simple Skribe database.])
+
+(prgm :file "src/bib1.sbib")))
+
+;*---------------------------------------------------------------------*/
+;*    the-bibliography ... @label the-bibliography@                    */
+;*---------------------------------------------------------------------*/
+(section :title "Printing a bibliography"
+
+(p [The function ,(code "the-bibliography") displays the bibliography. ])
+
+(doc-markup 'the-bibliography
+	    `((:bib-table [The bibliography 
+               ,(ref :mark "make-bib-table" :text "table") to be displayed.])
+              (:pred [A predicate filtering the bibliography entries. It takes
+                      two parameters: the bibliography entry and the 
+                      ,(code "the-bibliography") node.])
+	      (:sort [A function sorting a list of entries.])
+	      (:count ,[The symbol ,(code "partial") or ,(code "full")
+               specifies the numbering to be applied. The value 
+               ,(code "partial") tells Skribe to count only the entries
+               filtered in by ,(param :pred). The value ,(code "full")
+               tells Skribe to count all entries, event those filtered out
+               by ,(param :pred).]))
+	    :see-also '(bib-table? make-bib-table default-bib-table bibliography)
+	    :force-engines *api-engines*
+	    :common-args '())
+
+(example-produce 
+ (example :legend "Printing a bibliography" (prgm :file "src/bib2.skb"))
+ (disp (include "src/bib2.skb")))
+
+;; filtering bibliography
+(subsection :title "Filtering bibliography entries"
+(index "the-bibliography" :note "filtering")
+
+(p [The ,(param :pred) option is bound to a function of one argument
+that filters bibliography entries. It is used to control which entries
+must appears on a bibliography. The default behavior is to display
+only the entries referenced to in the text. For instance, in order to
+display ,(emph "all") the entries of a bibliography, is it needed to
+print the bibliography with a predicate returning always ,(code "#t").])
+
+(example-produce 
+ (example :legend "Unfiltering bibliography entries" (prgm :file "src/bib3.skb"))
+ (disp (include "src/bib3.skb")))
+
+(p [The second example, filters out the entries that are not ,(emph "book")
+or that are not referenced to from the document.])
+
+(example-produce 
+ (example :legend "Unfiltering bibliography entries" (prgm :file "src/bib4.skb"))
+ (disp (include "src/bib4.skb")))
+
+(p [The last example, illustrates how to change the rendering of a
+bibliography. It uses the ,(markup-ref "processor") construction 
+and it defines two ,(ref :ident "writer" :text "writers") for
+displaying ,(code "&bib-entry-ident") and ,(code "&bib-entry-title")
+markups. These two markups are introduced by Skribe when it loads a 
+bibliography. All fields of bibliography entries are represented by
+markups whose prefix are ,(code "&bib-entry-"). The parent of all these
+markups is the bibliography entry itself. The ,(code "&bib-entry-") markups
+are options of there parent.])
+
+(example-produce 
+ (example :legend "Unfiltering bibliography entries" (prgm :file "src/bib5.skb"))
+ (disp (include "src/bib5.skb"))))
+
+;; sorting bibliography
+(subsection :title "Sorting bibliography entries"
+(index "the-bibliography" :note "sorting")
+
+(p [The ,(param :sort) option of the ,(markup-ref "the-bibliography")
+markup is used for sorting the bibliography entries. There are three
+pre-existing functions for sorting entries:])
+
+(doc-markup 'bib-sort/authors
+	    '((l [The list of entries.]))
+	    :force-engines *api-engines*
+	    :source "../src/common/bib.scm"
+	    :others '(bib-sort/idents bib-sort/dates)
+	    :common-args '())
+
+(p [The first function sorts the entries according to an alphabetic ordering
+on authors. The second sorts according to an alphabetic ordering on 
+entries identifier. The last one sorts according to entries date.])
+
+(example-produce 
+ (example :legend "Sorting bibliography entries" 
+	  (prgm :file "src/common/bib.scm" :definition 'bib-sort/idents)))))
+
+;*---------------------------------------------------------------------*/
+;*    skribebibtex                                                     */
+;*---------------------------------------------------------------------*/
+(section :title "Skribebibtex"
+(index "skribebibtex" :note "manual page")
+(index "bibtex")
+(p [
+In this section we present the Skribebibtex translator that compiles Bibtex
+source files into a Skribe bibliography.])
+
+;; Synopsis
+(subsection :title "SYNOPSIS" :number #f
+   (compiler-command *skribebibtex-bin* "options" "input"))
+
+;; Description
+(subsection :title "DESCRIPTION" :number #f [
+This manual page is not meant to be exhaustive. It
+documents the ,(tt "skribebibtex"), a tool that translates
+,(bold "Bibtex") files into ,(it "Skribe"), bibliography format. These 
+files can be used by the ,(bold "skribe") compiler to produce  
+bibliography entries.])
+
+;; Suffixes
+(subsection :title "SUFFIXES" :number #f [
+The ,(ref :chapter "Skribe compiler" :text "skribe") compiler uses file 
+suffixes in order to select amongst its possible targets which to choose. 
+These suffixes are:
+
+,(description (item :key (it ".bib") [a ,(bold "Bibtex") source file.]))])
+
+;; Options
+(subsection :title "OPTIONS" :number #f 
+(compiler-options *skribebibtex-bin*))))
+

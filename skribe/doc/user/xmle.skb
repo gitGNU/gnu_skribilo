@@ -1,0 +1,25 @@
+;*=====================================================================*/
+;*    serrano/prgm/project/skribe/doc/user/xmle.skb                    */
+;*    -------------------------------------------------------------    */
+;*    Author      :  Manuel Serrano                                    */
+;*    Creation    :  Wed Sep  3 11:20:49 2003                          */
+;*    Last change :  Tue Apr  6 06:27:51 2004 (serrano)                */
+;*    Copyright   :  2003-04 Manuel Serrano                            */
+;*    -------------------------------------------------------------    */
+;*    The documentation of the XML engine                              */
+;*=====================================================================*/
+;; @indent: (put 'doc-engine 'skribe-indent 'skribe-indent-function)@
+
+;*---------------------------------------------------------------------*/
+;*    Document                                                         */
+;*---------------------------------------------------------------------*/
+(section :title "Xml engine" :file #t
+   (mark "xml-engine")
+   (index "Xml" :note "Engine")
+   (p [The Xml engine...])
+   
+   (subsection :title "The Xml customization"
+      
+      (doc-engine 'xml
+	 `()
+	 :source "skr/xml.skr")))

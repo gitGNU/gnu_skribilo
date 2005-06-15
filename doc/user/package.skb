@@ -1,0 +1,139 @@
+;*=====================================================================*/
+;*    serrano/prgm/project/skribe/doc/user/package.skb                 */
+;*    -------------------------------------------------------------    */
+;*    Author      :  Manuel Serrano                                    */
+;*    Creation    :  Sat Feb 21 08:26:44 2004                          */
+;*    Last change :  Fri Jun  3 16:51:30 2005 (serrano)                */
+;*    Copyright   :  2004-05 Manuel Serrano                            */
+;*    -------------------------------------------------------------    */
+;*    Packages                                                         */
+;*=====================================================================*/
+
+;*---------------------------------------------------------------------*/
+;*    Standard packages                                                */
+;*---------------------------------------------------------------------*/
+(chapter :title "Standard Packages"
+   
+   (p [
+This chapter describes the standard Skribe packages. Additional
+packages can be found from the 
+,(ref :url (skribe-url) :text "Skribe web page").
+This chapter only describes the packages that are contained in the standard
+Skribe distribution.])
+   
+   (p [
+In order to use the facilities described in the following sections, the 
+Skribe source file must contains expressions such as:])
+
+(prgm [(skribe-load ,(it "package.skr") ...)])
+
+[where ,(it (tt "package.skr")) is the described package.]
+
+;*---------------------------------------------------------------------*/
+;*    jfp                                                              */
+;*---------------------------------------------------------------------*/
+(section :title "Articles"
+
+   (subsection :title (tt "acmproc.skr") :ident "acmproc"
+      (index :index *package-index* "acmproc.skr" :note "package")
+      (p [
+This package enables producing LaTeX documents conforming to the
+,(emph "ACM proceeding") (ACMPROC) style. It introduces the
+markup ,(code "abstract"):])
+      (doc-markup 'abstract
+	 `((:class "The node class.")
+	   (:postscript [The URL of the PostScript version of the paper.]))
+	 :common-args '()
+	 :idx-note "acmproc"
+	 :idx-suffix " (acmproc)"
+	 :force-engines *api-engines*
+	 :source "../skr/acmproc.skr"))
+
+   (subsection :title (tt "jfp.skr") :ident "jfp"
+      (index :index *package-index* "jfp.skr" :note "package")
+      (p [
+This package enables producing LaTeX documents conforming to the
+,(emph "Journal of Functional Programming") (JFP) style. It introduces the
+markup ,(code "abstract"):])
+      (doc-markup 'abstract
+	 `((:postscript [The URL of the PostScript version of the paper.]))
+	 :common-args '()
+	 :idx-note "jfp"
+	 :idx-suffix " (jfp)"
+	 :force-engines *api-engines*
+	 :source "../skr/jfp.skr"))
+
+   (subsection :title (tt "lncs.skr") :ident "lncs"
+      (index :index *package-index* "lncs.skr" :note "package")
+      (p [
+This package enables producing LaTeX documents conforming to the
+,(emph "Lecture Notes on Computer Science") (LNCS) style. It introduces the
+markup ,(code "abstract"):])
+      (doc-markup 'abstract
+	 `((:postscript [The URL of the PostScript version of the paper.]))
+	 :common-args '()
+	 :idx-note "lncs"
+	 :idx-suffix " (lncs)"
+	 :force-engines *api-engines*
+	 :source "../skr/lncs.skr")))
+
+;*---------------------------------------------------------------------*/
+;*    french                                                           */
+;*---------------------------------------------------------------------*/
+(section :title "Languages"
+   (subsection :title (tt "french.skr")
+      (index :index *package-index* "french.skr" :note "package")
+      (p [
+Enables French typesetting and typographical rules.])))
+
+;*---------------------------------------------------------------------*/
+;*    letter                                                           */
+;*---------------------------------------------------------------------*/
+(section :title (tt "letter.skr")
+   (index :index *package-index* "letter.skr" :note "package")
+   (p [
+This package is to be used to authoring simple letters. It redefines the
+,(markup-ref "document") markup.])
+   
+   (doc-markup 'document
+      `((:where [The location where the letter is posted.])
+	(:date [The date of the letter.])
+	(:author [The author of the letter.]))
+      :idx-note "letter"
+      :idx-suffix " (letter)"
+      :force-engines *api-engines*
+      :source "../skr/letter.skr"))
+
+;*---------------------------------------------------------------------*/
+;*    Web                                                              */
+;*---------------------------------------------------------------------*/
+(section :title "Web"
+   
+   (subsection :title (tt "web-article.skr")
+      (index :index *package-index* "web-article.skr" :note "package")
+      (p [
+A convenient mode for rendering articles (i.e., documents made of
+sections) in HTML. The Slide package supports two ,(markup-ref "skribe-load")
+user options:
+,(param :style) and ,(param :css). The ,(param :style) option can either
+be ,(code "'traditional") which forces traditional HTML code
+emission or ,(code "'css") which forces HTML code emission using CSS
+annotations. The CSS style used is specified in the (code "css")
+HTML engine ,(ref :subsection "The HTML customization" :text "custom").
+The ,(param :css) is a shorthand for ,(param :style). For instance:])
+(prgm [(skribe-load "web-article.skr" :css "style.css")])
+[is equivalent to:]
+(prgm [(skribe-load "web-article.skr" :style 'css)
+(engine-custom-set! (find-engine 'html) :css "style.css")]))
+   
+   (subsection :title (tt "web-book.skr")
+      (index :index *package-index* "web-book.skr" :note "package")
+      (p [
+A convenient mode for rendering books (i.e., documents made of
+chapters and sections) in HTML.]))))
+
+;*---------------------------------------------------------------------*/
+;*    Emacs indentation                                                */
+;*---------------------------------------------------------------------*/
+;; @indent: (put 'doc-markup 'skribe-indent 'skribe-indent-function)@*
+

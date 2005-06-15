@@ -1,0 +1,841 @@
+;*=====================================================================*/
+;*    serrano/prgm/project/skribe/emacs/skribe.el.in                   */
+;*    -------------------------------------------------------------    */
+;*    Author      :  Manuel Serrano                                    */
+;*    Creation    :  Sun Nov 23 13:16:30 2003                          */
+;*    Last change :  Sun Jul 11 10:38:17 2004 (serrano)                */
+;*    Copyright   :  2003-04 Manuel Serrano                            */
+;*    -------------------------------------------------------------    */
+;*    Skribe minor mode (major mode is supposed to be a                */
+;*    Scheme-like mode).                                               */
+;*=====================================================================*/
+
+;*---------------------------------------------------------------------*/
+;*    module                                                           */
+;*---------------------------------------------------------------------*/
+(provide 'skribe)
+(require 'ude-custom)
+(require 'ude-config)
+(require 'ude-icon)
+(require 'ude-autoload)
+(require 'bmacs-config)
+(require (if (featurep 'xemacs) 'bmacs-xemacs 'bmacs-gnu-emacs))
+
+;*---------------------------------------------------------------------*/
+;*    custom                                                           */
+;*---------------------------------------------------------------------*/
+;; skribe version
+(defconst skribe-version "1.2d"
+  "*The Skribe version.")
+
+;; skribe group
+(defgroup skribe nil
+  "Skribe Emacs Environment."
+  :tag "Skribe"
+  :prefix "skribe-"
+  :group 'processes)
+
+;; emacs directory
+(defcustom skribe-emacs-dir '"/users/serrano/emacs/site-lisp/bigloo"
+  "*Directory for Skribe Emacs installation."
+  :group 'skribe
+  :type '(string))
+
+;; additional directories for online documentation
+(defcustom skribe-docdirs '("/usr/local/doc/skribe-1.2d")
+  "*Directories for online documentation."
+  :group 'skribe
+  :type '(repeat (string)))
+
+;; Host scheme documentation
+(defcustom skribe-host-scheme-docdirs '("/users/serrano/prgm/project/bigloo/manuals")
+  "*URL for hosting Scheme system."
+  :group 'skribe
+  :type '(string))
+
+;; html browser
+(defcustom skribe-html-browser "mozilla"
+  "*The binary file to run for browing HTML files or nil for Emacs mode."
+  :group 'skribe
+  :type '(choice string (const nil)))
+
+;; electric parenthesis
+(defcustom skribe-electric-parenthesis t
+  "*Set his to nil if you don't want electric closing parenthesis."
+  :type 'boolean)
+
+;;;###autoload
+(defcustom skribe-mode-line-string " Skr"
+  "*String displayed on the modeline when skribe is active.
+Set this to nil if you don't want a modeline indicator."
+  :group 'skribe
+  :type '(choice string (const :tag "None" nil)))
+
+;; fixed indentation
+(defcustom skribe-forced-indent-regexp ";;;\\|;[*]"
+  "*The regexp that marks a forced indentation"
+  :group 'skribe
+  :type 'string)
+
+;; normal indentation
+(defcustom skribe-body-indent 3
+  "*The Skribe indentation width"
+  :group 'skribe
+  :type 'integer)
+
+;; font lock
+(defcustom skribe-font-lock-keywords
+  (list
+   (list (concat "\(\\(let\\|let[*]\\|letrec\\|define"
+		 "\\|define-markup\\|set[!]"
+		 "\\|lambda\\|labels"
+		 "\\|let-syntax\\|letrec-syntax"
+		 "\\|regular-grammar\\|lalr-grammar"
+		 "\\|if\\|when\\|unless\\|begin\\|case\\|cond\\|else"
+		 "\\|multiple-value-bind\\|values\\)[ :\n\t]")
+	 1
+	 'font-lock-keyword-face)
+   
+   (list "(\\(document\\|chapter\\|section\\|subsection\\|subsubsection\\|paragraph\\|p\\|skribe-load\\|include\\|slide\\)[) \n]"
+	 1
+	 'font-lock-function-name-face)
+   (list "(\\(toc\\|itemize\\|enumerate\\|description\\|item\\|the-bibliography\\|the-index\\|default-index\\|frame\\|center\\|table\\|tr\\|th\\|td\\|linebreak\\|footnote\\|color\\|author\\|prog\\|source\\|figure\\|image\\)[) \n]"
+	 1
+	 'ude-font-lock-face-2)
+   (list "(\\(bold\\|code\\|emph\\|it\\|kbd\\|tt\\|roman\\|underline\\|var\\|samp\\|sc\\|sf\\|sup\\|sub\\)[ )]"
+	 1
+	 'ude-font-lock-face-8)
+   (list "(\\(ref\\|mailto\\|mark\\|new\\)[) \n]"
+	 1
+	 'ude-font-lock-face-3)
+   (cons "\\(:[^] \n)]+\\|#![a-zA-Z]+\\)"
+	 'ude-font-lock-face-7)
+   (cons "[[]\\|]"
+	 'ude-font-lock-face-3)
+   (list "(\\(markup-writer\\|make-engine\\|copy-engine\\|default-engine-set!\\|engine-custom\\|engine-custom-set!\\|engine-custom-add!\\|markup-option\\|markup-option-add!\\|markup-body\\)[ \n]"
+	 1
+	 'font-lock-function-name-face)
+   (list ",(\\([^ \n()]+\\)"
+	 1
+	 'ude-font-lock-face-6))
+  "*The Skribe font-lock specification."
+  :group 'skribe)
+
+;; tool-bar
+(defcustom skribe-toolbar
+  `(;; the spell button
+    ("spell.xpm" flyspell-buffer "Buffer spell check")
+    --
+    ;; the compile button
+    (,ude-compile-icon ude-mode-compile-from-menu "Compile")
+    ;; the root button
+    (,ude-root-icon ude-user-set-root-directory "Set new root directory")
+    --
+    ;; the repl button
+    (,ude-repl-icon ude-repl-other-frame "Start a read-eval-print loop")
+    --
+    -->
+    --
+    ;; online documentation
+    (,ude-help-icon skribe-doc-ident "Describe markup at point")
+    (,ude-info-icon skribe-manuals "Skribe online documentations"))
+  "*The Skribe toolbar"
+  :group 'skribe)
+
+;; paragraphs
+(defcustom skribe-paragraph-start
+  "^\\(?:[ \t\n\f]\\|;;\\|[(]\\(?:section\\|sub\\|p\\|slide\\|document\\)\\)"
+  "*The regexp that marks a paragraph start"
+  :group 'skribe
+  :type 'string)
+
+(defcustom skribe-paragraph-separate
+  "^[ \t\f%]*$"
+  "*The regexp that marks a paragraph separation"
+  :group 'skribe
+  :type 'string)
+
+;*---------------------------------------------------------------------*/
+;*    Which emacs are we currently running                             */
+;*---------------------------------------------------------------------*/
+(defvar skribe-emacs
+  (cond
+   ((string-match "XEmacs" emacs-version)
+    'xemacs)
+   (t
+    'emacs))
+  "The type of Emacs we are currently running.")
+
+;*---------------------------------------------------------------------*/
+;*    Autoloading                                                      */
+;*---------------------------------------------------------------------*/
+;;;###autoload
+(defvar skribe-mode-map (make-sparse-keymap))
+
+;;;###autoload
+(if (fboundp 'add-minor-mode)
+    (add-minor-mode 'skribe-mode
+		    'skribe-mode-line-string
+		    nil
+		    nil
+		    'skribe-mode)
+
+  (or (assoc 'skribe-mode minor-mode-alist)
+      (setq minor-mode-alist
+	    (cons '(skribe-mode skribe-mode-line-string)
+		  minor-mode-alist)))
+
+  (or (assoc 'skribe-mode minor-mode-map-alist)
+      (setq minor-mode-map-alist
+	    (cons (cons 'skribe-mode skribe-mode-map)
+		  minor-mode-map-alist))))
+
+;*---------------------------------------------------------------------*/
+;*    skribe-manuals-menu-entry ...                                    */
+;*---------------------------------------------------------------------*/
+(defun skribe-manuals-menu-entry (s)
+  (let ((sym (gensym)))
+    (fset sym `(lambda ()
+		 (interactive)
+		 (ude-system skribe-html-browser
+			     (format "file:%s" (expand-file-name ,s)))))
+    (vector (file-name-nondirectory s) sym t)))
+
+;*---------------------------------------------------------------------*/
+;*    skribe-directory-html-files                                      */
+;*---------------------------------------------------------------------*/
+(defun skribe-directory-html-files (dirs)
+  (let ((dirs dirs)
+	(res '()))
+    (while (consp dirs)
+      (let ((dir (car dirs)))
+	(when (file-directory-p dir)
+	  (setq res (append (directory-files dir t "^.+[^0-9][.]html$") res))
+	  (setq dirs (cdr dirs)))))
+    res))
+  
+;*---------------------------------------------------------------------*/
+;*    skribe-manuals ...                                               */
+;*---------------------------------------------------------------------*/
+(defun skribe-manuals ()
+  (interactive)
+  (when (stringp skribe-html-browser)
+    (let ((res (skribe-directory-html-files skribe-docdirs))
+	  (host (sort (skribe-directory-html-files skribe-host-scheme-docdirs)
+		      'string<)))
+      (if (= (length res) 1)
+	  (ude-system skribe-html-browser
+		      (format "file:%s" (expand-file-name (car res))))
+	(let (user dir)
+	  (let ((old res)
+		(new '()))
+	    (while (consp old)
+	      (let* ((f (car old))
+		     (b (file-name-nondirectory f)))
+		(setq old (cdr old))
+		(cond
+		 ((string-equal b "user.html")
+		  (setq user f))
+		 ((string-equal b "dir.html")
+		  (setq dir f))
+		 (t (setq new (cons f new))))))
+	    (let* ((rest (mapcar 'skribe-manuals-menu-entry
+				 (sort new
+				       '(lambda (s u)
+					  (string<
+					   (file-name-nondirectory s)
+					   (file-name-nondirectory u))))))
+		   (smenu (cond
+			   ((and user dir)
+			    (append (list (skribe-manuals-menu-entry user)
+					  (skribe-manuals-menu-entry dir)
+					  "--:shadowEtchedInDash")
+				    rest))
+			   ((dir)
+			    (cons (skribe-manuals-menu-entry dir) rest))
+			   ((user)
+			    (cons (skribe-manuals-menu-entry user) rest))
+			   (t
+			    rest)))
+		   (menu (if (consp host)
+			     (append smenu
+				     (cons "--:shadowEtchedInDash"
+					   (mapcar 'skribe-manuals-menu-entry
+						   host)))
+			   smenu)))
+	      (popup-menu
+	       (cons "Doc" menu)))))))))
+
+;*---------------------------------------------------------------------*/
+;*    skribe-scheme-indent-line ...                                    */
+;*---------------------------------------------------------------------*/
+(defvar skribe-scheme-indent-line nil)
+(make-variable-buffer-local 'skribe-scheme-indent-line)
+
+;*---------------------------------------------------------------------*/
+;*    skribe-insert-parenthesis ...                                    */
+;*---------------------------------------------------------------------*/
+(defun skribe-insert-parenthesis (char)
+  ;; find the open parenthesis
+  (if skribe-electric-parenthesis
+      (let ((clo nil)
+	    (tag nil))
+	(save-excursion
+	  (save-restriction
+	    ;; Scan across one sexp within that range.
+	    ;; Errors or nil mean there is a mismatch.
+	    (insert ?\))
+	    (condition-case ()
+		(let ((pos (scan-sexps (point) -1)))
+		  (if pos 
+		      (progn 
+			(save-excursion
+			  (goto-char pos)
+			  (forward-word 1)
+			  (setq tag (buffer-substring (1+ pos) (point))))
+			(setq clo (matching-paren (char-after pos)))) ))
+	      (error nil))))
+	(if clo
+	    (progn
+	      (delete-char 1)
+	      (insert clo))
+	  (forward-char 1)))
+    (insert char)))
+
+;*---------------------------------------------------------------------*/
+;*    skribe-parenthesis ...                                           */
+;*---------------------------------------------------------------------*/
+(defun skribe-parenthesis (&optional dummy)
+  "Automatic parenthesis closing of )."
+  (interactive)
+  ;; find the open parenthesis
+  (skribe-insert-parenthesis ?\)))
+
+;*---------------------------------------------------------------------*/
+;*    skribe-bracket ...                                               */
+;*---------------------------------------------------------------------*/
+(defun skribe-bracket (&optional dummy)
+  "Automatic parenthesis closing of ]."
+  (interactive)
+  (skribe-insert-parenthesis ?\]))
+
+;*---------------------------------------------------------------------*/
+;*    skribe-doc-ident ...                                             */
+;*    -------------------------------------------------------------    */
+;*    On-line document for identifier IDENT. This spawns an            */
+;*    HTML browser for serving the documentation.                      */
+;*---------------------------------------------------------------------*/
+(defun skribe-doc-ident (ident)
+  (interactive (ude-interactive-ident (point) "Identifier: "))
+  (and (stringp skribe-html-browser)
+       (let ((dirs skribe-docdirs))
+	 (while (consp dirs)
+	   (let* ((dir (car dirs))
+		  (html-ref (ude-sui-find-ref ident dir)))
+	     (if (stringp html-ref)
+		 (progn
+		   (ude-system skribe-html-browser
+			       (format "file:%s/%s"
+				       (expand-file-name dir)
+				       html-ref))
+		   (setq dirs '()))
+	       (setq dirs (cdr dirs))))))))
+
+;*---------------------------------------------------------------------*/
+;*    skribe-mode ...                                                  */
+;*---------------------------------------------------------------------*/
+;;;###autoload
+(defvar skribe-mode nil)
+(make-variable-buffer-local 'skribe-mode)
+
+;*---------------------------------------------------------------------*/
+;*    skribe-major-mode ...                                            */
+;*---------------------------------------------------------------------*/
+;;;###autoload
+(defun skribe-major-mode ()
+  "Major mode for editing Skribe code."
+  (interactive)
+  (bee-mode)
+  (skribe-mode t))
+
+;*---------------------------------------------------------------------*/
+;*    skribe-mode ...                                                  */
+;*---------------------------------------------------------------------*/
+;;;###autoload
+(defun skribe-mode (&optional arg)
+  "Minor mode for editing Skribe sources.
+
+Bindings:
+\\[skribe-doc-ident]: on-line document.
+
+Hooks:
+This runs `skribe-mode-hook' after skribe is enterend."
+  (interactive "P")
+  (let ((old-skribe-mode skribe-mode))
+    ;; Mark the mode as on or off.
+    (setq skribe-mode (not (or (and (null arg) skribe-mode)
+			       (<= (prefix-numeric-value arg) 0))))
+    ;; Do the real work.
+    (unless (eq skribe-mode old-skribe-mode)
+      (if skribe-mode (skribe-activate-mode) nil))
+    ;; Force modeline redisplay.
+    (set-buffer-modified-p (buffer-modified-p))))
+
+;*---------------------------------------------------------------------*/
+;*    skribe-return ...                                                */
+;*---------------------------------------------------------------------*/
+(defun skribe-return (&optional dummy)
+  "Automatic indentation on RET."
+  (interactive)
+  (newline)
+  (if (>= (point) (point-min))
+      (skribe-indent-line)))
+
+;*---------------------------------------------------------------------*/
+;*    skribe-indent-line-toggle ...                                    */
+;*---------------------------------------------------------------------*/
+(defvar skribe-indent-line-toggle nil)
+
+;*---------------------------------------------------------------------*/
+;*    skribe-indent-line ...                                           */
+;*---------------------------------------------------------------------*/
+(defun skribe-indent-line ()
+  (interactive)
+  (if (eq last-command 'skribe-indent-line)
+      (if skribe-indent-line-toggle
+	  (skribe-do-indent-line)
+	(progn
+	  (setq skribe-indent-line-toggle t)
+	  (if skribe-scheme-indent-line
+	      (funcall skribe-scheme-indent-line))))
+    (skribe-do-indent-line)))
+
+;*---------------------------------------------------------------------*/
+;*    skribe-do-indent-line ...                                        */
+;*---------------------------------------------------------------------*/
+(defun skribe-do-indent-line ()
+  (setq skribe-indent-line-toggle nil)
+  (let ((start (point)) beg)
+    (beginning-of-line)
+    (setq beg (point))
+    (skip-chars-forward " \t")
+    (let* ((pos (- (point-max) start))
+	   (indent (skribe-calculate-indent start)))
+      (when indent
+	(if (listp indent) (setq indent (car indent)))
+	(let ((shift-amt (- indent (current-column))))
+	  (if (zerop shift-amt)
+	      nil
+	    (delete-region beg (point))
+	    (indent-to indent))))
+      ;; If initial point was within line's indentation,
+      ;; position after the indentation.
+      ;; Else stay at same point in text.
+      (if (> (- (point-max) pos) (point))
+	  (goto-char (- (point-max) pos))))))
+
+;*---------------------------------------------------------------------*/
+;*    skribe-calculate-indent ...                                      */
+;*---------------------------------------------------------------------*/
+(defun skribe-calculate-indent (start &optional parse-start)
+  "Return appropriate indentation for current line as Skribe code.
+In usual case returns an integer: the column to indent to.
+Can instead return a list, whose car is the column to indent to.
+This means that following lines at the same level of indentation
+should not necessarily be indented the same way.
+The second element of the list is the buffer position
+of the start of the containing expression."
+  (or (skribe-calculate-forced-indent)
+      (skribe-calculate-free-indent start parse-start)))
+
+;*---------------------------------------------------------------------*/
+;*    skribe-calculate-forced-indent ...                               */
+;*    -------------------------------------------------------------    */
+;*    Returns a column number iff the line indentation is forced       */
+;*    (i.e. the previous line starts with a "[ \t]*;;;"). Otherwise    */
+;*    returns f.                                                       */
+;*---------------------------------------------------------------------*/
+(defun skribe-calculate-forced-indent ()
+  (save-excursion
+    (previous-line 1)
+    (beginning-of-line)
+    (skip-chars-forward " \t")
+    (let ((s (current-column)))
+      (and (looking-at skribe-forced-indent-regexp) s))))
+
+;*---------------------------------------------------------------------*/
+;*    skribe-calculate-free-indent ...                                 */
+;*---------------------------------------------------------------------*/
+(defun skribe-calculate-free-indent (start &optional parse-start)
+  (save-excursion
+    (beginning-of-line)
+    (let ((indent-point (point)) state paren-depth desired-indent (retry t)
+          last-sexp containing-sexp first-sexp-list-p skribe-indent)
+      (if parse-start
+          (goto-char parse-start)
+	;; TOBE IMPROVED
+        (goto-char (point-min)))
+;* 	(beginning-of-defun))                                          */
+      ;; Find outermost containing sexp
+      (while (< (point) indent-point)
+        (setq state (parse-partial-sexp (point) indent-point 0)))
+      ;; Find innermost containing sexp
+      (while (and retry (setq paren-depth (car state)) (> paren-depth 0))
+        (setq retry nil)
+        (setq last-sexp (nth 2 state))
+        (setq containing-sexp (car (cdr state)))
+        ;; Position following last unclosed open.
+        (goto-char (1+ containing-sexp))
+        ;; Is there a complete sexp since then?
+        (if (and last-sexp (> last-sexp (point)))
+            ;; Yes, but is there a containing sexp after that?
+            (let ((peek (parse-partial-sexp last-sexp indent-point 0)))
+              (if (setq retry (car (cdr peek))) (setq state peek))))
+        (if (not retry)
+            ;; Innermost containing sexp found
+            (progn
+              (goto-char (1+ containing-sexp))
+              (if (not last-sexp)
+                  ;; indent-point immediately follows open paren.
+                  ;; Don't call hook.
+                  (setq desired-indent (current-column))
+                ;; Move to first sexp after containing open paren
+                (parse-partial-sexp (point) last-sexp 0 t)
+                (setq first-sexp-list-p (looking-at "\\s("))
+                (cond
+                 ((> (save-excursion (forward-line 1) (point))
+                     last-sexp)
+                  ;; Last sexp is on same line as containing sexp.
+                  ;; It's almost certainly a function call.
+                  (parse-partial-sexp (point) last-sexp 0 t)
+                  (if (/= (point) last-sexp)
+                      ;; Indent beneath first argument or, if only one sexp
+                      ;; on line, indent beneath that.
+                      (progn (forward-sexp 1)
+                             (parse-partial-sexp (point) last-sexp 0 t)))
+                  (backward-prefix-chars))
+                 (t
+                  ;; Indent beneath first sexp on same line as last-sexp.
+                  ;; Again, it's almost certainly a function call.
+                  (goto-char last-sexp)
+                  (beginning-of-line)
+                  (parse-partial-sexp (point) last-sexp 0 t)
+                  (backward-prefix-chars)))))))
+      ;; If looking at a list, don't call hook.
+      (if first-sexp-list-p
+          (setq desired-indent (current-column)))
+      ;; Point is at the point to indent under unless we are inside a string.
+      ;; Call indentation hook except when overriden by skribe-indent-offset
+      ;; or if the desired indentation has already skriben computed.
+      '(message-box (format "start=%s\nfirst-sexp-lisp-p: %s\nstate: %s\ndesired-indent: %s\nintegerp=%s\nchar-after=%s\ncur-char=%s\npoint=%s\nskribe-indent-function-p=%s\n" start first-sexp-list-p state desired-indent
+			   (integerp (car (nthcdr 1 state)))
+			   (char-after (car (nthcdr 1 state)))
+			   (char-after (point))
+			   (point)
+			   (skribe-indent-method state)))
+      (cond ((car (nthcdr 3 state))
+             ;; Inside a string, don't change indentation.
+             (goto-char indent-point)
+             (skip-chars-forward " \t")
+             (setq desired-indent (current-column)))
+            ((skribe-indent-bracket-p state)
+             ;; indenting a bracket
+	     (save-excursion
+	       (goto-char start)
+	       (skip-chars-forward " \t")
+	       (let ((c (car (nthcdr 9 state))))
+		 (if (and (consp c) (looking-at ",(") nil)
+		     (let ((l (length c)))
+		       (if (< l 2)
+			   (setq desired-indent 0)
+			 (progn
+			   (goto-char (car (nthcdr (- l 2) c)))
+			   (setq desired-indent (current-column)))))
+		   (setq desired-indent 0)))))
+	    ((setq skribe-indent (skribe-indent-method state))
+	     ;; skribe special form
+	     (setq desired-indent skribe-indent))
+	    (skribe-scheme-indent-line
+	     ;; scheme form
+	     (goto-char start)
+	     (funcall skribe-scheme-indent-line)
+	     (setq desired-indent nil))
+	    (t
+             ;; use default indentation if not computed yet
+             (setq desired-indent (current-column))))
+      desired-indent)))
+
+;*---------------------------------------------------------------------*/
+;*    skribe-indent-bracket-p ...                                      */
+;*---------------------------------------------------------------------*/
+(defun skribe-indent-bracket-p (state)
+  (or (and (integerp (car (nthcdr 1 state)))
+	   (eq (char-after (car (nthcdr 1 state))) ?[))
+      (let ((op (car (nthcdr 9 state))))
+	(and (consp op)
+	     (let ((po (reverse op))
+		   (context 'unknown))
+	       (save-excursion
+		 (while (and (consp po) (eq context 'unknown))
+		   (cond
+		    ((eq (char-after (car po)) ?[)
+		     (setq context 'skribe))
+		    ((and (eq (char-after (car po)) ?\()
+			  (> (car po) (point-min))
+			  (eq (char-after (1- (car po))) ?,))
+		     (setq context 'scheme))
+		    (t
+		     (setq po (cdr po))))))
+	       (eq context 'skribe))))))
+
+;*---------------------------------------------------------------------*/
+;*    skribe-indent-method ...                                         */
+;*---------------------------------------------------------------------*/
+(defun skribe-indent-method (state)
+  (let ((is (car (nthcdr 1 state))))
+    (and (integerp is)
+	 (save-excursion
+	   (goto-char is)
+	   (let* ((function (intern-soft
+			     (buffer-substring
+			      (progn (forward-char 1) (point))
+			      (progn (forward-sexp 1) (point)))))
+		  (method (get function 'skribe-indent)))
+	     (if (functionp method)
+		 (funcall method state)
+	       nil))))))
+
+;*---------------------------------------------------------------------*/
+;*    skribe-indent-function ...                                       */
+;*---------------------------------------------------------------------*/
+(defun skribe-indent-function (state)
+  (save-excursion
+    (goto-char (car (nthcdr 1 state)))
+    (+ (current-column) skribe-body-indent)))
+
+;*---------------------------------------------------------------------*/
+;*    normal-indent ...                                                */
+;*---------------------------------------------------------------------*/
+(defvar normal-indent 0)
+
+;*---------------------------------------------------------------------*/
+;*    skribe-indent-sexp ...                                           */
+;*---------------------------------------------------------------------*/
+(defun skribe-indent-sexp ()
+  "Indent each line of the list starting just after point."
+  (interactive)
+  (let ((indent-stack (list nil)) (next-depth 0) last-depth bol
+        outer-loop-done inner-loop-done state this-indent)
+    (save-excursion (forward-sexp 1))
+    (save-excursion
+      (setq outer-loop-done nil)
+      (while (not outer-loop-done)
+        (setq last-depth next-depth
+              inner-loop-done nil)
+        (while (and (not inner-loop-done)
+                    (not (setq outer-loop-done (eobp))))
+          (setq state (parse-partial-sexp (point) (progn (end-of-line) (point))
+                                          nil nil state))
+          (setq next-depth (car state))
+          (if (car (nthcdr 4 state))
+              (progn (skribe-comment-indent)
+                     (end-of-line)
+                     (setcar (nthcdr 4 state) nil)))
+          (if (car (nthcdr 3 state))
+              (progn
+                (forward-line 1)
+                (setcar (nthcdr 5 state) nil))
+            (setq inner-loop-done t)))
+        (if (setq outer-loop-done (<= next-depth 0))
+            nil
+          (while (> last-depth next-depth)
+            (setq indent-stack (cdr indent-stack)
+                  last-depth (1- last-depth)))
+          (while (< last-depth next-depth)
+            (setq indent-stack (cons nil indent-stack)
+                  last-depth (1+ last-depth)))
+          (forward-line 1)
+          (setq bol (point))
+          (skip-chars-forward " \t")
+          (if (or (eobp) (looking-at ";\\(;;\\|[*]\\)"))
+              nil
+	    (let ((val (skribe-calculate-indent
+			(point)
+			(if (car indent-stack) (- (car indent-stack))))))
+	      (cond
+	       ((integerp val)
+		(setcar indent-stack (setq this-indent val)))
+	       ((consp val)
+		(setcar indent-stack (- (car (cdr val))))
+		(setq this-indent (car val)))
+	       (t
+		(setq this-indent nil))))
+	    (if (and (integerp this-indent) (/= (current-column) this-indent))
+		(progn (delete-region bol (point))
+		       (indent-to this-indent)))))))))
+
+;*---------------------------------------------------------------------*/
+;*    skribe-comment-indent ...                                        */
+;*---------------------------------------------------------------------*/
+(defun skribe-comment-indent (&optional pos)
+  (save-excursion
+    (if pos (goto-char pos))
+    (cond
+     ((looking-at ";;;")
+      (current-column))
+     ((looking-at ";*")
+      0)
+     ((looking-at "[ \t]*;;")
+      (let ((tem (skribe-calculate-indent (point))))
+	(if (listp tem) (car tem) tem)))
+     (t
+      (skip-chars-backward " \t")
+      (max (if (bolp) 0 (1+ (current-column)))
+	   comment-column)))))
+
+;*---------------------------------------------------------------------*/
+;*    skribe-custom-indent ...                                         */
+;*---------------------------------------------------------------------*/
+(defun skribe-custom-indent ()
+  (save-excursion
+    (goto-char (point-min))
+    ;; The concat is used to split the regexp so that it is nolonger
+    ;; to find itself! Without the split, the skribe mode cannot be
+    ;; used to edit this source file!
+    (let ((regexp (concat "@ind" "ent:\\([^@]+\\)@")))
+      (while (re-search-forward regexp (point-max) t)
+	(condition-case ()
+	    (eval-region (match-beginning 1) (match-end 1) nil)
+	  (error nil))))))
+
+;*---------------------------------------------------------------------*/
+;*    skribe-indent-load ...                                           */
+;*---------------------------------------------------------------------*/
+(defun skribe-indent-load (file)
+  (let ((lp (cons skribe-emacs-dir load-path)))
+    (while (consp lp)
+      (let ((f (concat (car lp) "/" file)))
+	(if (file-exists-p f)
+	    (progn
+	      (load f)
+	      (set! lp '()))
+	  (set! lp (cdr lp)))))))
+
+;*---------------------------------------------------------------------*/
+;*    skribe-activate-mode ...                                         */
+;*---------------------------------------------------------------------*/
+(defun skribe-activate-mode ()
+  ;; buffer local global variables
+  (make-variable-buffer-local 'ude-extra-identifier-chars)
+  (setq ude-extra-identifier-chars "-")
+  ;; the keymap
+  (skribe-activate-keymap skribe-mode-map)
+  ;; font lock
+  (make-local-variable 'font-lock-defaults)
+  (setq font-lock-defaults '(skribe-font-lock-keywords))
+  (font-lock-mode nil)
+  (font-lock-mode t)
+  ;; paragraph
+  (make-variable-buffer-local 'paragraph-start)
+  (setq paragraph-start skribe-paragraph-start)
+  (make-variable-buffer-local 'paragraph-separate)
+  (setq paragraph-separate skribe-paragraph-separate)
+  ;; try to retreive the globa'paragraph-startl indentation binding
+  (if (not skribe-scheme-indent-line)
+      (setq skribe-scheme-indent-line (global-key-binding "\t")))
+  ;; the toolbar
+  (use-local-map skribe-mode-map)
+  (ude-toolbar-set skribe-toolbar)
+  ;; the custom indentation
+  (skribe-custom-indent)
+  ;; we end with the skribe hooks
+  (run-hooks 'skribe-mode-hook)
+  t)
+
+;*---------------------------------------------------------------------*/
+;*    skribe-activate-keymap ...                                       */
+;*---------------------------------------------------------------------*/
+(defun skribe-activate-keymap (map)
+  (define-key map "\C-m" 'skribe-return)
+  (define-key map "\e\C-m" 'newline)
+  (define-key map "\t" 'skribe-indent-line)
+  (define-key map ")" 'skribe-parenthesis)
+  (define-key map "]" 'skribe-bracket)
+  (define-key map "\e\C-q" 'skribe-indent-sexp)
+  (cond
+   ((eq skribe-emacs 'xemacs)
+    (define-key map [(control \))] (lambda () (interactive) (insert ")")))
+    (define-key map [(control \])] (lambda () (interactive) (insert "]"))))
+   (t
+    (define-key map [?\C-\)] (lambda () (interactive) (insert ")")))
+    (define-key map [?\C-\]] (lambda () (interactive) (insert "]"))))))
+
+;*---------------------------------------------------------------------*/
+;*    Standard Skribe indent forms                                     */
+;*---------------------------------------------------------------------*/
+(put 'make-engine 'skribe-indent 'skribe-indent-function)
+(put 'copy-engine 'skribe-indent 'skribe-indent-function)
+(put 'markup-writer 'skribe-indent 'skribe-indent-function)
+(put 'engine-custom 'skribe-indent 'skribe-indent-function)
+(put 'engine-custom-set! 'skribe-indent 'skribe-indent-function)
+(put 'document 'skribe-indent 'skribe-indent-function)
+(put 'author 'skribe-indent 'skribe-indent-function)
+(put 'chapter 'skribe-indent 'skribe-indent-function)
+(put 'section 'skribe-indent 'skribe-indent-function)
+(put 'subsection 'skribe-indent 'skribe-indent-function)
+(put 'subsubsection 'skribe-indent 'skribe-indent-function)
+(put 'paragraph 'skribe-indent 'skribe-indent-function)
+(put 'footnote 'skribe-indent 'skribe-indent-function)
+(put 'linebreak 'skribe-indent 'skribe-indent-function)
+(put 'hrule 'skribe-indent 'skribe-indent-function)
+(put 'color 'skribe-indent 'skribe-indent-function)
+(put 'frame 'skribe-indent 'skribe-indent-function)
+(put 'font 'skribe-indent 'skribe-indent-function)
+(put 'flush 'skribe-indent 'skribe-indent-function)
+(put 'center 'skribe-indent 'skribe-indent-function)
+(put 'pre 'skribe-indent 'skribe-indent-function)
+(put 'prog 'skribe-indent 'skribe-indent-function)
+(put 'source 'skribe-indent 'skribe-indent-function)
+(put 'language 'skribe-indent 'skribe-indent-function)
+(put 'itemize 'skribe-indent 'skribe-indent-function)
+(put 'enumerate 'skribe-indent 'skribe-indent-function)
+(put 'description 'skribe-indent 'skribe-indent-function)
+(put 'item 'skribe-indent 'skribe-indent-function)
+(put 'figure 'skribe-indent 'skribe-indent-function)
+(put 'table 'skribe-indent 'skribe-indent-function)
+(put 'tr 'skribe-indent 'skribe-indent-function)
+(put 'td 'skribe-indent 'skribe-indent-function)
+(put 'th 'skribe-indent 'skribe-indent-function)
+(put 'image 'skribe-indent 'skribe-indent-function)
+(put 'blockquote 'skribe-indent 'skribe-indent-function)
+(put 'roman 'skribe-indent 'skribe-indent-function)
+(put 'bold 'skribe-indent 'skribe-indent-function)
+(put 'underline 'skribe-indent 'skribe-indent-function)
+(put 'strike 'skribe-indent 'skribe-indent-function)
+(put 'emph 'skribe-indent 'skribe-indent-function)
+(put 'kbdb 'skribe-indent 'skribe-indent-function)
+(put 'it 'skribe-indent 'skribe-indent-function)
+(put 'tt 'skribe-indent 'skribe-indent-function)
+(put 'code 'skribe-indent 'skribe-indent-function)
+(put 'var 'skribe-indent 'skribe-indent-function)
+(put 'smap 'skribe-indent 'skribe-indent-function)
+(put 'sf 'skribe-indent 'skribe-indent-function)
+(put 'sc 'skribe-indent 'skribe-indent-function)
+(put 'sub 'skribe-indent 'skribe-indent-function)
+(put 'sup 'skribe-indent 'skribe-indent-function)
+(put 'mailto 'skribe-indent 'skribe-indent-function)
+(put 'mark 'skribe-indent 'skribe-indent-function)
+(put 'handle 'skribe-indent 'skribe-indent-function)
+(put 'ref 'skribe-indent 'skribe-indent-function)
+(put 'resolve 'skribe-indent 'skribe-indent-function)
+(put 'bibliography 'skribe-indent 'skribe-indent-function)
+(put 'the-bibliography 'skribe-indent 'skribe-indent-function)
+(put 'make-index 'skribe-indent 'skribe-indent-function)
+(put 'index 'skribe-indent 'skribe-indent-function)
+(put 'the-index 'skribe-indent 'skribe-indent-function)
+(put 'char 'skribe-indent 'skribe-indent-function)
+(put 'symbol 'skribe-indent 'skribe-indent-function)
+(put '! 'skribe-indent 'skribe-indent-function)
+(put 'processor 'skribe-indent 'skribe-indent-function)
+(put 'slide 'skribe-indent 'skribe-indent-function)
+(put 'counter 'skribe-indent 'skribe-indent-function)

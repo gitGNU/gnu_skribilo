@@ -1,0 +1,9 @@
+(center 
+ (figure :legend "This is a unnumbered figure" 
+	 :ident "fig1"
+	 :number #f
+	 (frame [Skribe is a functional programming language.])))
+
+(center 
+ (figure :legend "The great Penguin" 
+	 (image :file "linux.gif")))

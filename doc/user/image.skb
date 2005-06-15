@@ -1,0 +1,79 @@
+;*=====================================================================*/
+;*    serrano/prgm/project/skribe/doc/user/image.skb                   */
+;*    -------------------------------------------------------------    */
+;*    Author      :  Manuel Serrano                                    */
+;*    Creation    :  Thu Sep  4 11:53:32 2003                          */
+;*    Last change :  Sat Jan 17 18:08:15 2004 (serrano)                */
+;*    Copyright   :  2003-04 Manuel Serrano                            */
+;*    -------------------------------------------------------------    */
+;*    Skribe images                                                    */
+;*=====================================================================*/
+
+;*---------------------------------------------------------------------*/
+;*    Image ...  @label image@                                         */
+;*---------------------------------------------------------------------*/
+(section :title "Image" :file #t
+
+(p [Images are defined by the means of the ,(code "image") function])
+
+(doc-markup 'image
+	    `((:file ,[The file where the image is stored on the disk
+                       (see ,(ref :mark "skribe-image-path" 
+				:text "image path")).
+                       The image is converted 
+                       (see ,(markup-ref "convert-image")) into a format 
+                       supported by the engine. This option is exclusive 
+                       with the ,(param :url) option.])
+	      (:url [The URL of the file. This option is exclusive with the
+                     ,(param :file) option.])
+	      (:width [The width of the image. It may be an integer for a pixel
+                       size or a floating point number for a percentage.])
+	      (:height [The height of the image. It may be an integer for a 
+                        pixel size or a floating point number for a 
+                        percentage.])
+	      (:zoom [A zoom factor.])
+	      (#!rest comment [A text describing the image.]))
+	    :see-also '(skribe-image-path convert-image))
+
+(example-produce
+ (example :legend "The image markup" (prgm :file "src/api16.skb"))
+ (disp (include "src/api16.skb")))
+
+;*--- Image format ----------------------------------------------------*/
+(subsection :title "Image formats"
+   (index "image" :note "conversion")
+
+   (p [
+Images are unfortunately ,(emph "unportable"). The various Skribe output 
+formats support different image formats. For instance, HTML supports 
+,(code "gif") and ,(code "jpeg") while the LaTeX back-end only supports 
+,(code "ps"). Skribe tries, only when needed, to automatically 
+,(emph "convert") images to a format supported by the target
+to be produced. For this, it uses external tools. The default Skribe
+translation scheme is:])
+(itemize (item [Do not translate an image that needs no conversion.])
+	 (item [Uses the ,(code "fig2dev") external tool to translate 
+                ,(code "Xfig") images.])
+	 (item [Uses the ,(code "convert") external tools to translate all 
+                other formats.]))
+   
+   (p [,(ref :chapter "Engines" :text "Engines") support different image
+formats. Each engine may specify a converter to be applied to an image.
+The engine custom ,(code "image-format") specifies the list of supported
+image formats. This list is composed of a suffix such as ,(code "jpeg") or 
+,(code "gif").])
+   
+   (p [The function ,(code "convert-image") tries to convert an
+image according to a list of formats. All the specified formats are 
+successively tried. On the first success, the function ,(code "convert-image")
+returns the name of the new converted image. On failure, it returns 
+,(code "#f").]) 
+   (doc-markup 'convert-image 
+	       `((file [The image file to be converted. The file is
+searched in the ,(ref :mark "skribe-image-path" :text "image path").])
+		 (formats [A list of formats into which images are converted to.]))
+	       :common-args '()
+	       :source "../src/bigloo/lib.bgl"
+	       :see-also '(skribe-image-path)
+	       :idx *function-index*)))
+   

@@ -1,0 +1,9 @@
+(resolve (lambda (n e env)
+	    (let* ((current-chapter (ast-chapter n))
+		   (body  (markup-body current-chapter))
+		   (sects (filter (lambda (x) (is-markup? x 'section))
+				  body)))
+	       (itemize 
+		(map (lambda (x)
+			(item (it (markup-option x :title))))
+		     sects)))))

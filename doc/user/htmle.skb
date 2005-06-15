@@ -1,0 +1,111 @@
+;*=====================================================================*/
+;*    serrano/prgm/project/skribe/doc/user/htmle.skb                   */
+;*    -------------------------------------------------------------    */
+;*    Author      :  Manuel Serrano                                    */
+;*    Creation    :  Wed Sep  3 11:20:49 2003                          */
+;*    Last change :  Wed Oct 27 12:05:53 2004 (eg)                     */
+;*    Copyright   :  2003-04 Manuel Serrano                            */
+;*    -------------------------------------------------------------    */
+;*    The documentation of the html engine                             */
+;*=====================================================================*/
+;; @indent: (put 'doc-engine 'skribe-indent 'skribe-indent-function)@
+
+;*---------------------------------------------------------------------*/
+;*    Document                                                         */
+;*---------------------------------------------------------------------*/
+(section :title "Html engine" :file #t
+   (mark "html-engine")
+   (index "Html" :note "Engine")
+   (p [The html engine...])
+   
+   (subsection :title "The HTML customization"
+      
+      (doc-engine 'html
+	 `((favicon ,[The name of an image file of the URL image. The 
+,(code "favicon") custom can be either bound to a string
+which is the name of the image, or to a procedure of 
+two arguments, a node and an engine that returns the file name 
+of the icon. This can be used to use different icons per
+chapter or section.])
+	   (charset [The character set used for the document.])
+	   (javascript [Enable/disable Javascript support.])
+	   (head [A string included in the HTML header.])
+	   (css ,[The URL or a list of URLs of 
+,(ref :url "http://www.w3.org/TR/REC-CSS2/" :text "CSS")
+used by the document.])
+	   (inline-css ,[The file or a list of files inlined
+inside the header's style section. The custom ,(code "inline-css") should be
+used in replacement of the ,(code "css") custom in order to produce
+stand alone HTML documents.])
+	   (js ,[A URL or a list of URLs of JavaScript programs used by 
+the document.])
+	   (emit-sui [Emit a SUI file for this document.])
+	   (background "The background color of the document.")
+	   (foreground "The foreground color of the document.")
+	   ;; the margins
+	   (margin-padding "Margins padding.") 
+	   (left-margin "A procedure of two arguments producing the left margin of the document.")
+	   (chapter-left-margin "A procedure of two arguments producing the left margin of the document.")
+	   (section-left-margin "A procedure of two arguments producing the left margin of the document.")
+	   (left-margin-font "The font of the left margin.")
+	   (left-margin-size ,[The ,(ref :mark "width" :text "width") of the left margin.])
+	   (left-margin-background "The background color of the left margin.")
+	   (left-margin-foreground "The foreground color of the left margin.")
+	   (right-margin "A procedure of two arguments producing the right margin of the document.")
+	   (chapter-right-margin "A procedure of two arguments producing the right margin of the document.")
+	   (section-right-margin "A procedure of two arguments producing the right margin of the document.")
+	   (right-margin-font "The font of the right margin.")
+	   (right-margin-size ,[The ,(ref :mark "width" :text "width") of the right margin.])
+	   (right-margin-background "The background color of the right margin.")
+	   (right-margin-foreground "The foreground color of the right margin.")
+	   ;; author configuration
+	   (author-font "The author font.")
+	   ;; title configuration
+	   (title-font "The title font.")
+	   (title-background "The title background color.")
+	   (title-foreground "The title foreground color.")
+	   (file-title-separator "A text to be inserted in between the document title and the chapter or section title when the chapter or section is rendered in a separate file.")
+	   ;; index configuration
+	   (index-header-font-size "The index header font size.")
+	   ;; chapter configuration
+	   (chapter-number->string "A procedure of one argument for rendering chapter numbers.")
+	   (chapter-file ,[A boolean specifying if chapters are rendered in speparate html file (see ,(markup-ref "chapter") markup).])
+	   ;; section configuration
+	   (section-title-start "The HTML sequence for starting section title.")
+	   (section-title-stop "The HTML sequence for stopping section title.")
+	   (section-title-background "The background color of section title.")
+	   (section-title-foreground "The foreground color of section title.")
+	   (section-title-number-separator "The section title number separator.")
+	   (section-number->string "A procedure of one argument for rendering section numbers.")
+	   (section-file ,[A boolean specifying if sections are rendered in speparate html file (see ,(markup-ref "section") markup).])
+	   ;; subsection configuration
+	   (subsection-title-start "The HTML sequence for starting subsection title.")
+	   (subsection-title-stop "The HTML sequence for stopping subsection title.")
+	   (subsection-title-background "The background color of subsection title.")
+	   (subsection-title-foreground "The foreground color of subsection title.")
+	   (subsection-title-number-separator "The subsection title number separator.")
+	   (subsection-number->string "A procedure of one argument for rendering subsection numbers.")
+	   (subsection-file ,[A boolean specifying if subsections are rendered in speparate html file (see ,(markup-ref "subsection") markup).])
+	   ;; subsubsection configuration
+	   (subsubsection-title-start "The HTML sequence for starting subsubsection title.")
+	   (subsubsection-title-stop "The HTML sequence for stopping subsubsection title.")
+	   (subsubsection-title-background "The background color of subsubsection title.")
+	   (subsubsection-title-foreground "The foreground color of subsubsection title.")
+	   (subsubsection-title-number-separator "The subsubsection title number separator.")
+	   (subsubsection-number->string "A procedure of one argument for rendering subsubsection numbers.")
+	   (subsubsection-file ,[A boolean specifying if subsubsections are rendered in speparate html file (see ,(markup-ref "subsubsection") markup).])
+	   ;; source fontification
+	   (source-color ,[A boolean enabling/disabling color of source code (see ,(markup-ref "source") markup).])
+	   (source-comment-color "The source comment color.")
+	   (source-error-color "The source error color.")
+	   (source-define-color "The source define color.")
+	   (source-module-color "The source module color.")
+	   (source-markup-color "The source markup color.")
+	   (source-thread-color "The source thread color.")
+	   (source-string-color "The source string color.")
+	   (source-bracket-color "The source bracket color.")
+	   (source-type-color "The source type color.")
+	   (image-format "The image formats for this engine."))
+	 :source "skr/html.skr")))
+	    
+

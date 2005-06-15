@@ -1,0 +1,39 @@
+;*=====================================================================*/
+;*    serrano/prgm/project/skribe/doc/user/line.skb                    */
+;*    -------------------------------------------------------------    */
+;*    Author      :  Manuel Serrano                                    */
+;*    Creation    :  Thu Sep  4 10:08:08 2003                          */
+;*    Last change :  Thu Sep  4 13:29:49 2003 (serrano)                */
+;*    Copyright   :  2003 Manuel Serrano                               */
+;*    -------------------------------------------------------------    */
+;*    Line breaks                                                      */
+;*=====================================================================*/
+
+;*---------------------------------------------------------------------*/
+;*    Line breaks                                                      */
+;*---------------------------------------------------------------------*/
+(section :title "Line breaks" :file #t
+
+(p [Line breaks and horizontal rules enable text cutting.])
+
+;*--- linebreak -------------------------------------------------------*/
+(subsection :title "Linebreak"
+
+(p [The Skribe function ,(code "linebreak") is unportable. Even if
+most engines handle it for their code production, using ,(code "linebreak")
+generally produces expected result. For instance, using ,(code "linebreak")
+with an engine producing LaTeX code is bound to fail. In consequence, 
+as much as possible, one should prefer other ways for splitting a text])
+
+(doc-markup 'linebreak
+	    '((#!rest num "The number of line breaks."))
+	    :see-also '(paragraph table)))
+
+;*--- Horizontal rule -------------------------------------------------*/
+(subsection :title "Horizontal rule"
+
+(doc-markup 'hrule
+	    `((:width ,[The ,(ref :mark "width") of the horizontal rule.])
+	      (:height [The thickness of the rule. A positive integer
+                        value stands for a number of pixels.])))))
+

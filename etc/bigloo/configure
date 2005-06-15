@@ -1,0 +1,552 @@
+#!/bin/sh
+#*=====================================================================*/
+#*    serrano/prgm/project/skribe/etc/bigloo/configure                 */
+#*    -------------------------------------------------------------    */
+#*    Author      :  Manuel Serrano                                    */
+#*    Creation    :  Tue Jan 25 16:05:10 1994                          */
+#*    Last change :  Tue Aug 24 10:31:53 2004 (serrano)                */
+#*    Copyright   :  1994-2004 Manuel Serrano, see LICENSE file        */
+#*    -------------------------------------------------------------    */
+#*    The skribe configuration file                                    */
+#*=====================================================================*/
+
+# the name of the current bigloo compiler
+bigloo=bigloo
+target=c
+
+# bigloo compilation flags
+bcommonflags="-no-hello -fno-reflection"
+blinkflags="-no-hello -ld-relative -O3"
+boptflags="$bcommonflags -O3"
+bsafeflags="$bcommonflags -g"
+bflags="$boptflags"
+bheapflags="-unsafe -q -mkaddheap -mkaddlib"
+bcflags="-copt \"$""(CPICFLAGS)\""
+bjvmflags="-jvm -jvm-purify -saw -jvm-env SKRIBEPATH"
+prcs=/usr/bin/prcs
+
+# the afile, jfile and btags binaries
+afile=afile
+jfile=
+btags=btags
+bdepend=bdepend
+
+# C compilation (left blank for automatic configuration (from Bigloo setup))
+cc=
+cflags=
+ldopt=
+
+# path (left blank for automatic configuration (from Bigloo setup))
+bgllibdir=
+bglbindir=
+bgllddir=
+bgldocdir=
+skribebindir=
+skribelibdir=
+skribefildir=
+skribeskrdir=
+skribeextdir=
+skribedocdir=
+skribemandir=
+
+# mask of Skribe intalled files
+smask=755
+
+#*---------------------------------------------------------------------*/
+#*               !!! DON'T EDIT AFTER THIS COMMENT !!!                 */
+#*---------------------------------------------------------------------*/
+if [ "x$DISTRIBDIR" = "x" ]; then
+  distribdir=$HOME/prgm/distrib
+else
+  distribdir=$DISTRIBDIR
+fi
+
+if [ "x$SKRIBERELEASE" = "x" ]; then
+  echo "*** ERROR:configure:release. Aborting"
+  echo "Variable \"SKRIBERELEASE\" is unset."
+  exit 1;
+else
+  release=$SKRIBERELEASE
+fi
+
+if [ "x$SKRIBEBETARELEASE" = "x" ]; then
+  if [ -f $prcs ]; then
+     beta=`$prcs info skribe 2>&1 /dev/null | tail --lines=1 | awk '{ print $2 }' | sed 's/[0-9]*[.][0-9]*[a-z]*/&-beta/'`
+  elif [ -f /usr/local/bin/prcs ]; then
+     beta=`/usr/local/bin/prcs info skribe 2>&1 /dev/null | tail --lines=1 | awk '{ print $2 }' | sed 's/[0-9]*[.][0-9]*[a-z]*/&-beta/'`
+  else
+     beta=no
+  fi
+else
+  beta=$SKRIBEBETARELEASE
+fi
+
+if [ "x$SKRIBEURL" = "x" ]; then
+  skribeurl="http://www.inria.fr/mimosa/fp/Skribe"
+else
+  skribeurl=$SKRIBEURL
+fi
+
+requiredbigloo=2.6c
+
+action=all
+makefile_config=Makefile.skb
+skribe_config=../../src/common/configure.scm
+summary=yes
+
+http="www-sop.inria.fr/mimosa/fp"
+autoconfdir=`dirname $0 2> /dev/null`/autoconf
+bootconfig=false;
+
+if [ $? != "0" ]; then
+   autoconfdir="autoconf"
+fi
+
+# Argument parsing
+while : ; do
+  case $1 in
+    "")
+      break;;
+
+    -c)
+      target=c;;
+
+    -j|--jvm)
+      target=jvm;;
+
+    -|--dotnet)
+      target=dotnet;;
+
+    --skribe_config=*)
+      action="skribe_config";
+      skribe_config="`echo $1 | sed 's/^[-a-z_.]*=//'`";;
+
+    --makefile.skb=*)
+      action="makefile.skb";
+      makefile_config="`echo $1 | sed 's/^[-Da-z.]*=//'`";;
+
+    --bglbindir=*)
+      bglbindir="`echo $1 | sed 's/^[-a-z]*=//'`";;
+
+    --bgllibdir=*)
+      bgllibdir="`echo $1 | sed 's/^[-a-z]*=//'`";;
+
+    --bgllddir=*)
+      bgllddir="`echo $1 | sed 's/^[-a-z]*=//'`";;
+
+    --bgldocdir=*)
+      bgldocdir="`echo $1 | sed 's/^[-a-z]*=//'`";;
+
+    --bindir=*)
+      skribebindir="`echo $1 | sed 's/^[-a-z]*=//'`";;
+
+    --libdir=*)
+      skribelibdir="`echo $1 | sed 's/^[-a-z]*=//'`";;
+
+    --fildir=*)
+      skribefildir="`echo $1 | sed 's/^[-a-z]*=//'`";;
+
+    --skrdir=*)
+      skribeskrdir="`echo $1 | sed 's/^[-a-z]*=//'`";;
+
+    --extdir=*)
+      skribeextdir="`echo $1 | sed 's/^[-a-z]*=//'`";;
+
+    --docdir=*)
+      skribedocdir="`echo $1 | sed 's/^[-a-z]*=//'`";;
+
+    --mandir=*)
+      skribemandir="`echo $1 | sed 's/^[-a-z]*=//'`";;
+
+    --bigloo=*)
+      bigloo="`echo $1 | sed 's/^[-a-z]*=//'`";;
+
+    --afile=*)
+      afile="`echo $1 | sed 's/^[-a-z]*=//'`";;
+
+    --jfile=*)
+      jfile="`echo $1 | sed 's/^[-a-z]*=//'`";;
+
+    --btags=*)
+      btags="`echo $1 | sed 's/^[-a-z]*=//'`";;
+
+    --mask=*)
+      smask="`echo $1 | sed 's/^[-a-z]*=//'`";;
+
+    --cc=*)
+      cc="`echo $1 | sed 's/^[-a-z]*=//'`";;
+
+    --cflags=*)
+      cflags="`echo $1 | sed 's/^[-a-z]*=//'`";;
+
+    --ldopt=*)
+      ldopt="`echo $1 | sed 's/^[-a-z]*=//'`";;
+
+    --backends=*)
+      backends="`echo $1 | sed 's/^[-a-z]*=//'`";;
+
+    --no-summary)
+      summary=no;;
+
+    --debug)
+      bflags="-g -cg $bsafeflags";;
+
+    --debug2)
+      bflags="-g2 -cg $bsafeflags";;
+
+    --debug3)
+      bflags="-g3 -cg $bsafeflags";;
+
+    --optimize)
+      bflags=$boptflags;;
+
+    --bjvmflags=*)
+      bjvmflags="`echo $1 | sed 's/^[-a-z]*=//'`";;
+
+    --bcflags=*)
+      bcflags="`echo $1 | sed 's/^[-a-z]*=//'`";;
+
+    --prefix=*)
+      prefix="`echo $1 | sed 's/^[^=]*=//'`";
+      skribebindir=$prefix/bin;
+      skribeskrdir=$prefix/share/skribe/$release/skr;
+      skribeextdir=$prefix/share/skribe/extensions;
+      skribelibdir=$prefix/lib
+      skribefildir=$skribelibdir/skribe/$release;
+      skribemandir=$prefix/man/man1;
+      skribedocdir=$prefix/doc/skribe-$release;;
+
+    --bootconfig)
+      bootconfig=true;;
+
+    -*)
+      echo "*** Configure error, unknown option $1" >&2;
+      echo >&2;
+      echo "Usage: configure --with-bigloo [options]" >&2;
+      echo "   -c.................... uses the Bigloo C back-end" >&2;
+      echo "   -j|--jvm.............. uses the Bigloo JVM back-end" >&2;
+      echo "   -d|--dotnet........... uses the Bigloo .NET back-end" >&2;
+      echo "   --skribe_config=file.. sets the name of the skribe-config file" >&2;
+      echo "   --makefile.skb=file... sets the name of the Makefile.skb file" >&2;
+      echo "   --prefix=dir.......... prefix to Skribe install" >&2;
+      echo "   --bindir=file......... alternative Skribe bin directory" >&2;
+      echo "   --libdir=file......... alternative Skribe lib directory" >&2;
+      echo "   --fildir=file......... alternative Skribe file directory" >&2;
+      echo "   --skrdir=file......... Skribe skr directory" >&2;
+      echo "   --bglbindir=file...... Bigloo bin directory" >&2;
+      echo "   --bgllibdir=file...... Bigloo lib directory" >&2;
+      echo "   --bglfildir=file...... Bigloo file directory" >&2;
+      echo "   --bgldocdir=file...... Bigloo doc directory" >&2;
+      echo "   --docdir=file......... Documentation directory" >&2;
+      echo "   --mandir=file......... Manual pages directory" >&2;
+      echo "   --bigloo=comp......... The Bigloo compiler" >&2;
+      echo "   --afile=afile......... The Bigloo afile tool" >&2;
+      echo "   --jfile=jfile......... The Bigloo jfile tool" >&2;
+      echo "   --btags=btags......... The Bigloo btags tool" >&2;
+      echo "   --cc=comp............. The C compiler (for C back-end)" >&2;
+      echo "   --cflags=args......... The C compilation options" >&2;
+      echo "   --ldopt=args.......... The C link options" >&2;
+      echo "   --smask=mask.......... The installation mask" >&2;
+      echo "   --no-summary.......... Private option" >&2;
+      echo "   --debug............... Enables Bigloo debug mode" >&2;
+      echo "   --optimize............ Enables Bigloo optimization mode (default)" >&2;
+      echo "   --bootconfig.......... Private option" >&2;
+      exit -1;
+  esac
+  shift
+done
+
+#*---------------------------------------------------------------------*/
+#*    First check if bigloo exists and if it is recent enough          */
+#*---------------------------------------------------------------------*/
+if [ ! -f $bigloo ]; then
+   which $bigloo > /dev/null 2> /dev/null
+   if [ "$?" != "0" ]; then
+      echo "*** ERROR:configure:bigloo. Aborting"
+      echo "Can't find bigloo."
+      exit 1;
+   fi
+fi
+
+installedbigloo=`$autoconfdir/bversion --bigloo=$bigloo --version=$requiredbigloo`
+
+if [ $? != "0" ]; then
+  echo "*** ERROR:configure:bigloo. Aborting"
+  echo "Your version ($installedbigloo) of Bigloo is too old."
+  echo "Release $requiredbigloo or more recent is required."
+  echo "Bigloo may be downloaded from $http"
+  exit 1;
+fi
+
+#*---------------------------------------------------------------------*/
+#*    The binary directory                                             */
+#*---------------------------------------------------------------------*/
+if [ "$bglbindir " = " " ]; then
+   if [ "$bigloo " = " " ]; then
+      bgl=`which bigloo`;
+   else
+      bgl=`which $bigloo`;
+   fi
+   bglbindir=`dirname $bgl`
+fi
+if [ "$skribebindir " = " " ]; then
+   skribebindir=$prefix/bin;
+fi
+
+#*---------------------------------------------------------------------*/
+#*    The Bigloo library directory                                     */
+#*---------------------------------------------------------------------*/
+if [ "$bgllibdir " = " " ]; then
+   bgllibdir=`$autoconfdir/blibdir --bigloo="$bigloo"`
+fi
+if [ "$bglfildir " = " " ]; then
+   bglfildir=`$autoconfdir/bfildir --bigloo="$bigloo"`
+fi
+
+#*---------------------------------------------------------------------*/
+#*    We check the installed Bigloo Makefile.config file               */
+#*---------------------------------------------------------------------*/
+if [ ! -f $bglfildir/Makefile.config ]; then
+   echo "*** ERROR:configure:Can't find Makefile.config file"
+   echo "Should be $bglfildir/Makefile.config."
+   exit 1;
+fi
+
+#*---------------------------------------------------------------------*/
+#*    jfile                                                            */
+#*---------------------------------------------------------------------*/
+if [ "$jfile " = " " ]; then
+   if [ ! -f $bigloo ]; then
+      which jfile > /dev/null 2> /dev/null
+      if [ "$?" != "0" ]; then
+         jfile=true;
+      else
+         jfile=jfile;
+      fi
+   fi
+fi
+
+#*---------------------------------------------------------------------*/
+#*    We are now able to set the correct value for cc since we know    */
+#*    what Bigloo is.                                                  */
+#*---------------------------------------------------------------------*/
+if [ "$cc " = " " ]; then
+  cc=`$bigloo -eval '(begin (print *cc*) (exit 0))'`
+fi
+
+if [ "$cflags " = " " ]; then
+  cflags=`grep '^CFLAGS=' $bglfildir/Makefile.config | sed 's/^[A-Z]*=//'`
+fi
+
+ldflags=`grep '^EXTRALIBS=' $bglfildir/Makefile.config | sed 's/^[A-Z]*=//'`
+cpicflags=`grep '^CPICFLAGS=' $bglfildir/Makefile.config | sed 's/^[A-Z]*=//'`
+
+#*---------------------------------------------------------------------*/
+#*    Completing dirs                                                  */
+#*---------------------------------------------------------------------*/
+if [ "$skribelibdir " = " " ]; then
+   skribelibdir=$prefix/lib;
+fi
+if [ "$skribefildir " = " " ]; then
+   skribefildir=$skribelibdir/skribe/$release;
+fi
+if [ "$skribeskrdir " = " " ]; then
+   skribeskrdir=$prefix/share/skribe/$release/skr;
+fi
+if [ "$skribeextdir " = " " ]; then
+   skribeextdir=$prefix/share/skribe/extensions;
+fi
+if [ "$bgldocdir " = " " ]; then
+   bgldocdir=`grep '^DOCDIR=' $bglfildir/Makefile.config | sed 's/^[A-Z]*=//' | sed 's/[$][(][^)]*[)]//'`
+fi
+if [ "$skribedocdir " = " " ]; then
+   skribedocdir=`dirname $bgldocdir`/skribe-$release
+fi
+if [ "$skribemandir " = " " ]; then
+   skribemandir=`grep '^MANDIR=' $bglfildir/Makefile.config | sed 's/^[A-Z]*=//'`
+fi
+if [ "$skribeemacsdir " = " " ]; then
+   skribeemacsdir=`grep '^EMACSDIR=' $bglfildir/Makefile.config | sed 's/^[A-Z]*=//'`
+fi
+
+#*---------------------------------------------------------------------*/
+#*    emacs/skribe.el                                                  */
+#*---------------------------------------------------------------------*/
+cat ../../emacs/skribe.el \
+    | sed "s|@SKRIBE_EMACSDIR@|$skribeemacsdir|" \
+    | sed "s|@SKRIBE_HOSTSCHEMEDOCDIR@|$bgldocdir|" \
+    > ../../emacs/skribe.el.aux \
+    && mv ../../emacs/skribe.el.aux ../../emacs/skribe.el
+
+#*---------------------------------------------------------------------*/
+#*    etc/skribe-config                                                */
+#*---------------------------------------------------------------------*/
+cat ../skribe-config \
+    | sed "s|@SKRIBE_EMACS_DIR@|$skribeemacsdir|" \
+    > ../skribe-config.aux \
+    && mv ../skribe-config.aux ../skribe-config
+
+#*---------------------------------------------------------------------*/
+#*    makefile.skb                                                     */
+#*    -------------------------------------------------------------    */
+#*    This part of the configure script produces the file              */
+#*    makefile.skb. This file contains machine dependant               */
+#*    informations and location where Bigloo is to be installed.       */
+#*---------------------------------------------------------------------*/
+if [ $action = "all" -o $action = "makefile.skb" ]; then
+
+  # We create an unexisting temporary file name
+  name=foo
+  while( test -f "$name.c" -o -f "$name.o" ); do 
+    name="$name"x;
+  done
+
+  # We check the C compiler
+  cat > $name.c <<EOF
+     int foobar( int x ) {
+        return x;
+  }
+EOF
+
+  if $cc $cflags -c $name.c >/dev/null 2>&1
+  then
+     true 
+  else
+     echo "***ERROR:configure:$cc:Can't compile c file -- $cc $cflags -c $name.c";
+     /bin/rm -f $name.c $name.o $name.a; 
+     exit 1
+  fi
+  /bin/rm -f $name.c $name.o $name.a; 
+
+  # We first cleanup the general Makefile config
+  rm -f ../Makefile.config 2> /dev/null
+  echo "## Skribe ($release) configure" > ../Makefile.config
+  echo "## Don't edit, file generated by etc/bigloo/configure" >> ../Makefile.config
+  echo "SKRIBERELEASE=$release" >> ../Makefile.config
+  echo "SKRIBEBETARELEASE=$beta" >> ../Makefile.config
+  echo >> ../Makefile.config
+  echo "SYSTEM=bigloo" >> ../Makefile.config
+  case $target in
+     jvm)
+       echo 'SKRIBE=java -classpath $(BINDIR)/skribe.zip:$(ZIPDIR)/bigloo_s.zip:$(LIBDIR)/bigloo_s.zip bigloo.skribe.main' >> ../Makefile.config;
+       echo 'SKRIBEINFO=java -classpath $(BINDIR)/skribeinfo.zip:$(ZIPDIR)/bigloo_s.zip:$(LIBDIR)/bigloo_s.zip bigloo.skribe.skribeinfo.main' >> ../Makefile.config;
+       echo 'SKRIBEBIBTEX=java -classpath $(BINDIR)/skribebibtex.zip:$(ZIPDIR)/bigloo_s.zip:$(LIBDIR)/bigloo_s.zip bigloo.skribe.skribebibtex.main' >> ../Makefile.config;;
+     *)
+       echo 'SKRIBE=$'"(BINDIR)/skribe.bigloo" >> ../Makefile.config;
+       echo 'SKRIBEINFO=$'"(BINDIR)/skribeinfo.bigloo" >> ../Makefile.config;
+       echo 'SKRIBEBIBTEX=$'"(BINDIR)/skribebibtex.bigloo" >> ../Makefile.config;;
+  esac
+
+  # We first cleanup the file
+  rm -f $makefile_config 2> /dev/null
+  touch $makefile_config
+  echo "## Skribe ($release) configure" >> $makefile_config
+  echo "## Don't edit, file generated by etc/bigloo/configure" >> $makefile_config
+  echo >> $makefile_config
+
+  # The Bigloo target (c, jvm, dotnet)
+  echo "TARGET=$target" >> $makefile_config
+  echo >> $makefile_config
+
+  # The boot directories
+  echo "SKRIBEDIR=`pwd`/../.." >> $makefile_config
+  echo 'SKRIBEBINDIR=$'"(SKRIBEDIR)/bin" >> $makefile_config;
+  echo 'SKRIBELIBDIR=$'"(SKRIBEDIR)/lib" >> $makefile_config;
+  echo 'SKRIBEFILDIR=$'"(SKRIBEDIR)/lib" >> $makefile_config;
+  echo >> $makefile_config
+
+  # The distribution directory
+  echo "DISTRIBDIR=$distribdir" >> $makefile_config
+  echo >> $makefile_config
+
+  # The installation directories
+  echo "INSTALL_BINDIR=$skribebindir" >> $makefile_config
+  echo "INSTALL_LIBDIR=$skribelibdir" >> $makefile_config
+  echo "INSTALL_FILDIR=$skribefildir" >> $makefile_config
+  echo "INSTALL_SKRDIR=$skribeskrdir" >> $makefile_config
+  echo "INSTALL_EXTDIR=$skribeextdir" >> $makefile_config
+  if [ ! "$skribedocdir " = " " ]; then
+    echo "INSTALL_DOCDIR=$skribedocdir" >> $makefile_config;
+  fi
+  if [ ! "$skribemandir " = " " ]; then
+    echo "INSTALL_MANDIR=$skribemandir" >> $makefile_config;
+  fi
+  echo "INSTALL_HOSTHTTP=$skribehttphost" >> $makefile_config
+  echo "INSTALL_MASK=$smask" >> $makefile_config
+  echo >> $makefile_config
+ 
+  # The bigloo configuration
+  cat $bglfildir/Makefile.config >> $makefile_config
+  echo >> $makefile_config
+
+  # The bigloo compiler
+  echo "BIGLOO=$bigloo" >> $makefile_config
+  echo "BIGLOO_FILDIR=$bglfildir" >> $makefile_config
+  echo "BIGLOO_LIBDIR=$bgllibdir" >> $makefile_config
+  echo >> $makefile_config
+
+  # The bigloo compiler options
+  echo "BLINKFLAGS=$blinkflags -ldopt '$ldopt'" >> $makefile_config
+  echo "BSAFEFLAGS=$bsafeflags" >> $makefile_config
+  echo "BHEAPFLAGS=$bheapflags" >> $makefile_config
+  echo "BCOMMONFLAGS=$bflags" >> $makefile_config
+  echo "BCFLAGS=$bcflags" >> $makefile_config
+  echo "BJVMFLAGS=$bjvmflags" >> $makefile_config
+  echo >> $makefile_config
+
+  # Bigloo bde
+  echo "AFILE=$afile" >> $makefile_config
+  echo "JFILE=$jfile" >> $makefile_config
+  echo "BTAGS=$btags" >> $makefile_config
+  echo "BDEPEND=$bdepend" >> $makefile_config
+  echo "SKRIBEINDENT=bpp" >> $makefile_config
+  echo >> $makefile_config
+
+  # Misc
+  echo "RM=/bin/rm" >> $makefile_config
+  echo >> $makefile_config
+fi
+
+#*---------------------------------------------------------------------*/
+#*    Ok, we are done now                                              */
+#*---------------------------------------------------------------------*/
+if [ "$summary" = "yes" ]; then
+  echo 
+  echo 
+  echo "** Configuration summary **"
+  echo 
+  echo "Release number:"
+  echo "  Skribe release number................. $release"
+  echo "  Skribe beta number.................... $beta"
+  echo "  Minimum Bigloo version required....... $requiredbigloo"
+  echo "  Installed Bigloo version.............. $installedbigloo"
+  echo
+  echo "Compilers:"
+  echo "  Bigloo................................ $bigloo"
+  echo "  Bigloo link flags..................... $blinkflags"
+  echo "  Bigloo compilation flags.............. $bflags"
+  echo "  Bigloo heap flags..................... $bheapflags"
+  echo "  afile................................. $afile"
+  echo "  jfile................................. $jfile"
+  echo "  btags................................. $btags"
+  echo "  cc.................................... $cc"
+  echo "  cc compilation flags.................. $cflags"
+  echo "  link options.......................... $ldopt"
+  echo 
+  echo "Path:"
+  echo "  Binary directory...................... $skribebindir"
+  echo "  Skr directory......................... $skribeskrdir"
+  echo "  Extensions directory.................. $skribeextdir"
+  echo "  File directory........................ $skribefildir"
+  echo "  Library directory..................... $skribelibdir"
+  echo "  Documentation directory............... $skribedocdir"
+  echo "  Man pages directory................... $skribemandir"
+  echo "  Home page............................. $skribeurl"
+  echo 
+  echo "Misc configuration:"
+  echo "  mask for installed files.............. $smask"
+  echo 
+  echo "Emacs:"
+  echo "  Emacs Lisp files directory............ $skribeemacsdir"
+  echo
+fi

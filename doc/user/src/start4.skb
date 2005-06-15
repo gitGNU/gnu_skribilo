@@ -1,0 +1,13 @@
+(document :title [Various links] [
+
+(section :title "A Section" [
+The first link points to an external web page. Here we point to a
+,(ref :url [http://slashdot.org/] [Slashdot])
+web page. The second one points to the second
+,(ref :section [A second Section] [Section])
+of that document.])
+
+(section :title [A second Section] [
+The last links points to the first
+,(ref :scribe [user.scr] :figure [A simple web page] [Figure])
+of the Scribe User Manual.])])

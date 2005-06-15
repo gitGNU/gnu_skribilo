@@ -1,0 +1,105 @@
+;*=====================================================================*/
+;*    serrano/prgm/project/skribe/doc/user/syntax.skb                  */
+;*    -------------------------------------------------------------    */
+;*    Author      :  Manuel Serrano                                    */
+;*    Creation    :  Fri Nov 30 11:55:24 2001                          */
+;*    Last change :  Sun Feb 29 16:14:53 2004 (eg)                     */
+;*    Copyright   :  2001-04 Manuel Serrano                            */
+;*    -------------------------------------------------------------    */
+;*    The syntax of Skribe                                             */
+;*=====================================================================*/
+
+;*---------------------------------------------------------------------*/
+;*    The Skribe syntax                                                */
+;*---------------------------------------------------------------------*/
+(chapter :title "Syntax & Values" [
+A Skribe document is composed of Skribe expressions. A Skribe expression
+can be:
+
+,(itemize (item [An atomic expression, such as a string of characters, a number.])
+	  (item [A list.])
+	  (item [A text.]))
+
+Here are several examples of correct Skribe expressions:
+
+,(center (frame :margin 5 :border 0 :width *prgm-width*
+		(color :margin 5 :bg *disp-color* :width 100.
+(itemize (item [,(color :fg "#009900" (tt "\"foo\"")), a string of characters composed of the
+characters `,(color :fg "#009900" "f")', `,(color :fg "#009900" "o")'
+and `,(color :fg "#009900" "o")'.])
+	 (item [,(color :fg "#009900" (tt "123") " " (tt "3.14")), two numbers.])
+	 (item [,(color :fg "#009900" (tt "#t") " " (tt "#f")), the ,(emph "true") and ,(emph "false")
+Skribe value.])
+	 (item [,(color :fg "#009900" (tt "(bold \"foo bar\")")), a list.])
+	 (item [,(color :fg "#009900" (tt (char 91)"A text sample"(char 93))), a simple text containing
+three words and no escape sequence.])
+	 (item [,(color :fg "#009900" (tt (char 91)"Another text sample (that is still) simple"(char 93))),
+another simple text.])
+	 (item [,(color :fg "#009900" (tt (char 91)"Another ,(bold \"text\") sample"(char 93))),
+a more complex text that contains two words (,(color :fg "#009900" (tt "Another")) and ,(color :fg "#009900" (tt "sample")))
+and an expression ,(color :fg "#009900" (tt "(bold \"text\")")). The escape sequence is introduced
+with the `,(color :fg "#009900" (tt ",("))' characters.])))))
+
+,(p [
+Expressions are evaluated, thus ,(color :fg "#009900" (tt "(bold \"foo\")"))
+has the effect of typesetting the word ,(color :fg "#009900" (tt "foo")) in
+bold face to produce ,(color :fg "#009999" (bold "foo")). Escape sequences
+enable evaluation of expressions inside the text. Thus the text
+,(color :fg "#009900" (tt (char 91)"Another ,(bold \"text\") sample"(char 93)))
+produces `,(color :fg "#009999" (tt [Another ,(bold "text") sample]))'.
+On the other hand
+,(color :fg "#009900" (tt (char 91)"Another (bold \"text\") sample"(char 93)))
+produces
+`,(color :fg "#009999" (tt [Another (bold "text") sample]))' because it does not contain
+the escape sequence `,(color :fg "#009900" (char #\,)(char #\())'.])
+]
+
+;*---------------------------------------------------------------------*/
+;*    Formal syntax                                                    */
+;*---------------------------------------------------------------------*/
+(section :title "Skribe syntax" 
+
+(disp :verb #t :bg *prgm-skribe-color* [
+<expr>    --> <atom>
+            | <text>
+            | <list>
+<list>    --> (<expr>+)
+<text>    --> ,(bold (color :fg "red" (char 91))),(it "any sequence but `,(' or a `,")<list>,(it "'"),(bold (color :fg "red" (char 93)))
+<atom>    --> <boolean>
+            | <integer>
+            | <float>
+            | <string>
+            | <color>
+<integer> --> ,(tt (char 91))0-9,(tt (char 93))+
+<float>   --> ,(tt (char 91))0-9,(tt (char 93))+.,(tt (char 91))0-9,(tt (char 93))*
+            | ,(tt (char 91))0-9,(tt (char 93))*.,(tt (char 91))0-9,(tt (char 93))+
+<string>  --> ,(tt #\")...,(tt #\")
+<color>   --> <string>
+            | ,(tt #\")#,(tt (char 91))0-9a-f,(tt (char 93)),(tt (char 91))0-9a-f,(tt (char 93)),(tt (char 91))0-9a-f,(tt (char 93)),(tt (char 91))0-9a-f,(tt (char 93)),(tt (char 91))0-9a-f,(tt (char 93)),(tt (char 91))0-9a-f,(tt (char 93)),(tt #\")]))
+
+;*---------------------------------------------------------------------*/
+;*    Values                                                           */
+;*---------------------------------------------------------------------*/
+(section :title "Values" :file #f :toc #t 
+
+;*--- width -----------------------------------------------------------*/
+(subsection :title "Width" (p [
+,(mark "width")
+A Skribe ,(emph "width") refers to the horizontal size a construction
+occupies on an output document. There are three different ways for
+specifying a width:])
+
+(description (item :key "An absolute pixel size" 
+		  [This is represented by an ,(emph "exact") integer value
+                  (such as ,(code "350")).])
+	    (item :key "A relative size" 
+		  [This is represented by an ,(emph "inexact") integer value
+                  (such as ,(code "50.0")) which ranges in the interval 
+                  ,(char 91)-100.0 .. 100.0,(char 93)])
+	    (item :key "An engine dependent representation" 
+		  [This is represented by a string that is directly emitted
+                  in the output document (such as HTML column ,(code "\"0*\"")
+                  specification). Note that this way of specifying width
+                  is strictly unportable.])))))
+
+

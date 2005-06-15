@@ -1,0 +1,117 @@
+;*=====================================================================*/
+;*    serrano/prgm/project/skribe/src/bigloo/api.bgl                   */
+;*    -------------------------------------------------------------    */
+;*    Author      :  Manuel Serrano                                    */
+;*    Creation    :  Mon Jul 21 18:21:34 2003                          */
+;*    Last change :  Wed Dec 31 13:07:10 2003 (serrano)                */
+;*    Copyright   :  2003 Manuel Serrano                               */
+;*    -------------------------------------------------------------    */
+;*    The Bigloo header for the API.                                   */
+;*    -------------------------------------------------------------    */
+;*    Implementation: @label api@                                      */
+;*    bigloo: @path ../common/api.scm@                                 */
+;*=====================================================================*/
+
+;*---------------------------------------------------------------------*/
+;*    The module                                                       */
+;*---------------------------------------------------------------------*/
+(module skribe_api
+   
+   (include "new.sch"
+	    "api.sch")
+   
+   (import  skribe_param
+	    skribe_types
+	    skribe_lib
+	    skribe_resolve
+	    skribe_eval
+	    skribe_bib
+	    skribe_index
+	    skribe_prog
+	    skribe_source
+	    skribe_engine
+	    skribe_color
+	    skribe_sui)
+   
+   (export  (include string)
+	    
+	    (document::%markup . opts)
+	    (author::%markup . opts)
+	    (toc::%markup . opts)
+	    
+	    (chapter::%markup . opts)
+	    (section::%markup . opts)
+	    (subsection::%markup . opts)
+	    (subsubsection::%markup . opts)
+	    (paragraph::%markup . opts)
+	    
+	    (footnote::%markup . opts)
+	    
+	    (linebreak . opts)
+	    (hrule::%markup . opts)
+	    
+	    (color::%markup . opts)
+	    (frame::%markup . opts)
+	    (font::%markup . opts)
+	    
+	    (flush::%markup . opts)
+	    (center::%markup . opts)
+	    (pre::%markup . opts)
+	    (prog::%markup . opts)
+	    (source::obj . opts)
+	    (language::obj . opts)
+	    
+	    (itemize::%markup . opts)
+	    (enumerate::%markup . opts)
+	    (description::%markup . opts)
+	    (item::%markup . opts)
+	    
+	    (figure::%markup . opts)
+	    
+	    (table::%markup . opts)
+	    (tr::%markup . opts)
+	    (td::%markup . opts)
+	    (th::%markup . opts)
+	    
+	    (image::%markup . opts)
+	    
+	    (blockquote::%markup . opts)
+	    
+	    (roman::%markup . opts)
+	    (bold::%markup . opts)
+	    (underline::%markup . opts)
+	    (strike::%markup . opts)
+	    (emph::%markup . opts)
+	    (kbd::%markup . opts)
+	    (it::%markup . opts)
+	    (tt::%markup . opts)
+	    (code::%markup . opts)
+	    (var::%markup . opts)
+	    (samp::%markup . opts)
+	    (sf::%markup . opts)
+	    (sc::%markup . opts)
+	    (sub::%markup . opts)
+	    (sup::%markup . opts)
+	    
+	    (mailto::%markup . opts)
+	    (mark::%markup . opts)
+	    
+	    (handle . obj)
+	    (ref::%ast . obj)
+	    (resolve::%ast ::procedure)
+	    
+	    (bibliography . files)
+	    (the-bibliography . opts)
+	    
+	    (make-index ::bstring)
+	    (index . args)
+	    (the-index . args)
+	    
+	    (char::bstring char)
+	    (symbol::%markup symbol)
+	    (!::%command string . args)
+	    
+	    (processor::%processor . opts)
+	    
+	    (html-processor::%processor . opts)
+	    (tex-processor::%processor . opts)))

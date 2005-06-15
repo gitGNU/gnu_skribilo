@@ -1,0 +1,57 @@
+dnl 
+dnl Configure.in for Skribe
+dnl
+dnl           Author: Erick Gallesio [eg@essi.fr]
+dnl    Creation date: 23-Jul-2003 12:04 (eg)
+dnl Last file update: 26-Oct-2004 20:24 (eg)
+
+AC_INIT(../../src/common/api.scm)
+### AM_INIT_AUTOMAKE(skribe,0.0)
+PACKAGE=skribe
+
+SYSTEM=stklos
+SKRIBE='$(BINDIR)/skribe.stklos'
+SKRIBEBIBTEX='$(BINDIR)/skribebibtex.stklos'
+
+##
+## Initialize prefix
+##
+if test "${prefix}" = "NONE" -o "$prefix" = "" ;then
+   prefix="/usr/local"
+fi
+
+##
+## Get information from ../config
+##
+if test -f ../config ;then
+  . ../config
+else
+  echo "You must configure Skribe from  the ../.. directory"
+  exit 1
+fi
+
+
+PREFIX=$prefix
+SKRIBE_RELEASE=${release}
+SKRIBE_URL=${skribeurl}
+
+##
+## Substitutions
+##
+AC_SUBST(PACKAGE)
+AC_SUBST(PREFIX)
+AC_SUBST(SKRIBE_RELEASE)
+AC_SUBST(SKRIBE_URL)
+AC_SUBST(SYSTEM)
+AC_SUBST(SKRIBE)
+AC_SUBST(SKRIBEINFO)
+AC_SUBST(SKRIBEBIBTEX)
+
+#
+# Outputs
+#
+AC_OUTPUT(Makefile ../../src/stklos/Makefile Makefile.config Makefile.skb)
+
+# Makefile.config must be in the parent directory
+mv Makefile.config ..
+

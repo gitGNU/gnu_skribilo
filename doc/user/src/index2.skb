@@ -1,0 +1,11 @@
+[The identifier ,(code "Foo"),(index :index *index1* "Foo") is a usually
+used as an example. When two identifiers have to used, frequently the
+second choice is ,(code "Bar"),(index :index *index1* "Bar" :shape (it "Bar")).
+When three are needed, some use ,(code "Baz")
+,(index :index *index1* "Baz" :shape (it "Baz")).
+
+This illustrates how to use identifier
+,(index :index *index1* "Foo" :note "How to use Foo")
+,(index :index *index1* "Foo" :note "How not to use Foo")
+,(index :index *index1* "Fooz")
+...]

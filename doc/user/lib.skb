@@ -1,0 +1,156 @@
+;;;;
+;;;; Standard Library
+;;;;
+;;;;
+;;;;           Author: Erick Gallesio [eg@essi.fr]
+;;;;    Creation date: 21-Nov-2003 07:20 (eg)
+;;;; Last file update: 21-Nov-2003 10:17 (eg)
+
+
+(chapter :title "Standard Library" 
+
+   (p [This section describes the Skribe standard library])
+
+;;;
+(section :title "File functions"
+   
+   (p [The function ,(code "include") is particularily useful to spread a
+long document amongst several files.])
+   
+   (doc-markup 'include
+	       '((file [The file containing the nodes to be included. 
+These nodes are included in the document in place of the ,(code "include") 
+call.]))
+	       :common-args '()
+	       :see-also '(skribe-load skribe-path skribe-path-set!)
+	       :idx *function-index*)
+   
+   (p [The given file is searched in the current 
+,(ref :mark "skribe-path" :text "Skribe path")])
+   
+   (p [The function ,(code "skribe-load") is generally used to load in the
+Skribe memory, a package or an extension. In general the prelude of a 
+Skribe document (the expressions placed before the ,(markup-ref "document")
+call) contains several ,(code "skribe-load"). The file is search
+in the ,(ref :mark "skribe-path" :text "Skribe path").])
+   
+   (doc-markup 'skribe-load
+	       `((file [The file containing the expressions to be loaded.])
+		 (:engine [The engine used to evaluate the expressions.])
+		 (:path ,[The optional path where to find the file. The default
+                          path is ,(markup-ref "skribe-path").])
+		 (#!rest opt... [Additional user options.]))
+	       :source "../src/bigloo/eval.scm"
+	       :common-args '()
+	       :see-also '(skribe-load-options skribe-path skribe-path-set!)
+	       :idx *function-index*)
+   
+   (p [Returns the user of options of the last call to 
+,(markup-ref "skribe-load")])
+   (doc-markup 'skribe-load-options
+	       '()
+	       :source "../src/bigloo/eval.scm"
+	       :common-args '()
+	       :see-also '(skribe-load)
+	       :idx *function-index*)
+   
+   (p [Skribe provides functions for dealing with paths. These functions
+are related to the path that can be specified on the command line,
+when the Skribe compiler is invoked (see Chapter 
+,(ref :chapter "Skribe compiler").)])
+   
+   (doc-markup 'skribe-path
+	       '()
+	       :source "../src/bigloo/eval.scm"
+	       :common-args '()
+	       :others '(skribe-image-path skribe-bib-path skribe-source-path)
+	       :see-also '(include skribe-load image source bibliography skribe-path-set! skribe-image-path-set! skribe-bib-path-set! skribe-source-path-set!)
+	       :idx *function-index*)
+   
+   (p [The function ,(code "skribe-path-set!") sets a new path.])
+   (doc-markup 'skribe-path-set!
+	       '((path [A list of strings which is the new Skribe search path.]))
+	       :source "../src/bigloo/eval.scm"
+	       :common-args '()
+	       :others '(skribe-image-path-set! skribe-bib-path-set! skribe-source-path-set!)
+	       :see-also '(skribe-path skribe-image-path skribe-bib-path skribe-source-path)
+	       :idx *function-index*))
+   
+;;; Misc   
+(section :title "Misc. Functions"
+   
+   (p [The function ,(code "skribe-release") returns the Skribe version 
+as a string])
+   (doc-markup 'skribe-release
+	       '()
+	       :common-args '()
+	       :source #f
+	       :def '(define (skribe-release) ...)
+	       :idx *function-index*)
+   
+   (p [For instance, the following piece of code:])
+   (prgm :language skribe 
+	 "[This manual documents the ,(bold (skribe-release)) Skribe release]")
+   (p [produces the following output])
+   (disp [This manual documents the ,(bold (skribe-release)) Skribe release]))
+   
+   (p [The function ,(code "skribe-configure") accesses the whole
+Skribe configuration. It can be used to ,(emph "get") or ,(emph "check")
+the configuration.])
+   
+   (doc-markup 'skribe-configure
+	       '((opt... [Optional arguments.]))
+	       :common-args '()
+	       :source #f
+	       :def '(define (skribe-configure . opt...) ...)
+	       :idx *function-index*)
+   
+   (p [The function ,(code "skribe-configure") can be used in three distinct 
+ways depending on the number of provided arguments:])
+   
+   (enumerate
+      (item [If no argument is provided, ,(code "skribe-configure") returns 
+a fresh list of Skribe configuration.])
+      (item [If one keyword argument is provided, ,(code "skribe-configure") 
+returns the value associated with this keyword in the configuration list. 
+If this value does not exist, it returns the symbol ,(code "void").])
+      (item [(code "skribe-configure") is invoked with a list composed 
+of ,(emph "keyword") ,(emph "value"). The actual configuration is checked 
+against the provided values. Values are compared with ,(code "equal") except 
+if the value to check has to be compared with a procedure. In that particular 
+case the value of the check is the value produces by ,(emph "applying") the 
+function to the actual value. The result of ,(code "skribe-configure") is a 
+boolean.]))
+   
+   (p [Here are some examples.])
+   (prgm :language skribe [
+;; fetch the whole configuration list
+(skribe-configure) 
+
+;; fetch the release number
+(skribe-configure :release) 
+
+;; test if the release number is 1.0b
+(skribe-configure :release "1.0b") 
+
+;; test if the release number is greater or equal than "1.0b"
+(skribe-configure :release (lambda (v) (string>=? v "1.0b")))
+
+;; test if the release number is greater or equal than "1.0b"
+;; and the implementation is bigloo
+(skribe-configure :release (lambda (v) (string>=? v "1.0b")) :scheme "bigloo")])
+   
+   (p [The function ,(code "skribe-enforce-configure") checks for the Skribe
+configuration. In case of mismatch, it raises an error. The syntax of the
+arguments if the same as that of ,(code "skribe-configure") when invoked
+with several arguments.])
+   
+   (doc-markup 'skribe-enforce-configure
+	       '((opt... [Optional arguments.]))
+	       :common-args '()
+	       :source #f
+	       :def '(define (skribe-enforce-configure . opt...) ...)
+	       :idx *function-index*))
+   
+
+
