@@ -657,9 +657,9 @@
 	     ((string-ci=? name "none")
 	      (values 0 0 0))
 	     ((string-ci=? name "black")
-	      (values #xff #xff #xff))
-	     ((string-ci=? name "white")
 	      (values 0 0 0))
+	     ((string-ci=? name "white")
+	      (values #xff #xff #xff))
 	     (else
 	      (rgb-grep name)))))
       

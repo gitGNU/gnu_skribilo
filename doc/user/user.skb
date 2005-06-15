@@ -59,7 +59,7 @@ This is the documentation for Skribe version
    (linebreak 1)
 
 ;;; Introduction
-(section :title "Introduction" :number #f :toc #f [
+(chapter :title "Introduction" :number #f :toc #f [
 Skribe is a programming language designed for implementing electronic
 documents. It is mainly designed for the writing of technical documents
 such as the documentation of computer programs. With Skribe these
@@ -68,13 +68,13 @@ instance, a Skribe document can be ,(emph "compiled") to an HTML file
 that suits Web browser, it can be compiled to a TeX file in order to
 produce a high-quality printed document, and so on.]
    
-   (subsection :title "Who may use Skribe?" :number #f [
+   (section :title "Who may use Skribe?" :number #f [
 Everyone needing to design web pages, info documents, man pages or
 Postscript files can use Skribe. In particular, there is ,(bold "no need")
 for programming skills in order to use Skribe. Skribe can be used as
 any text description languages such as TeX, LaTeX or HTML.])
    
-   (subsection :title "Why using Skribe?" :number #f [
+   (section :title "Why using Skribe?" :number #f [
 There are three main reasons for using Skribe:]
       
       (itemize

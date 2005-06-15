@@ -17,6 +17,62 @@
 ;*=====================================================================*/
 
 ;*---------------------------------------------------------------------*/
+;*    html-file-default ...                                            */
+;*---------------------------------------------------------------------*/
+(define html-file-default
+   ;; Default implementation of the `file-name-proc' custom.
+   (let ((table '())
+        (filename (gensym)))
+      (define (get-file-name base suf)
+        (let* ((c (assoc base table))
+               (n (if (pair? c)
+                      (let ((n (+ 1 (cdr c))))
+                         (set-cdr! c n)
+                         n)
+                      (begin
+                         (set! table (cons (cons base 1) table))
+                         1))))
+           (format "~a-~a.~a" base n suf)))
+      (lambda (node e)
+        (let ((f (markup-option node filename))
+              (file (markup-option node :file)))
+           (cond
+              ((string? f)
+               f)
+              ((string? file)
+               file)
+              ((or file 
+                   (and (is-markup? node 'chapter)
+                        (engine-custom e 'chapter-file))
+                   (and (is-markup? node 'section)
+                        (engine-custom e 'section-file))
+                   (and (is-markup? node 'subsection)
+                        (engine-custom e 'subsection-file))
+                   (and (is-markup? node 'subsubsection)
+                        (engine-custom e 'subsubsection-file)))
+               (let* ((b (or (and (string? *skribe-dest*)
+                                  (prefix *skribe-dest*))
+                             ""))
+                      (s (or (and (string? *skribe-dest*)
+                                  (suffix *skribe-dest*))
+                             "html"))
+                      (nm (get-file-name b s)))
+                  (markup-option-add! node filename nm)
+                  nm))
+              ((document? node)
+               *skribe-dest*)
+              (else
+               (let ((p (ast-parent node)))
+                  (if (container? p)
+                      (let ((file (html-file p e)))
+                         (if (string? file)
+                             (begin
+                                (markup-option-add! node filename file)
+                                file)
+                             #f))
+                      #f))))))))
+
+;*---------------------------------------------------------------------*/
 ;*    html-engine ...                                                  */
 ;*---------------------------------------------------------------------*/
 (define html-engine
@@ -73,6 +129,8 @@
 		   (title-background "#8381de")
 		   (title-foreground #f)
 		   (file-title-separator " -- ")
+		   ;; html file naming
+		   (file-name-proc ,html-file-default)
 		   ;; index configuration
 		   (index-header-font-size +2.)
 		   ;; chapter configuration
@@ -346,6 +404,13 @@
 			 ("parallel" "||")))))
 
 ;*---------------------------------------------------------------------*/
+;*    html-file ...                                                    */
+;*---------------------------------------------------------------------*/
+(define (html-file n e)
+  (let ((proc (or (engine-custom e 'file-name-proc) html-file-default)))
+    (proc n e)))
+
+;*---------------------------------------------------------------------*/
 ;*    html-title-engine ...                                            */
 ;*---------------------------------------------------------------------*/
 (define html-title-engine
@@ -365,60 +430,6 @@
 		(markup-option n :title)
 		(html-browser-title (ast-parent n))))))
 
-;*---------------------------------------------------------------------*/
-;*    html-file ...                                                    */
-;*---------------------------------------------------------------------*/
-(define html-file
-   (let ((table '())
-	 (filename (gensym)))
-      (define (get-file-name base suf)
-	 (let* ((c (assoc base table))
-		(n (if (pair? c)
-		       (let ((n (+ 1 (cdr c))))
-			  (set-cdr! c n)
-			  n)
-		       (begin
-			  (set! table (cons (cons base 1) table))
-			  1))))
-	    (format "~a-~a.~a" base n suf)))
-      (lambda (node e)
-	 (let ((f (markup-option node filename))
-	       (file (markup-option node :file)))
-	    (cond
-	       ((string? f)
-		f)
-	       ((string? file)
-		file)
-	       ((or file 
-		    (and (is-markup? node 'chapter)
-			 (engine-custom e 'chapter-file))
-		    (and (is-markup? node 'section)
-			 (engine-custom e 'section-file))
-		    (and (is-markup? node 'subsection)
-			 (engine-custom e 'subsection-file))
-		    (and (is-markup? node 'subsubsection)
-			 (engine-custom e 'subsubsection-file)))
-		(let* ((b (or (and (string? *skribe-dest*)
-				   (prefix *skribe-dest*))
-			      ""))
-		       (s (or (and (string? *skribe-dest*)
-				   (suffix *skribe-dest*))
-			      "html"))
-		       (nm (get-file-name b s)))
-		   (markup-option-add! node filename nm)
-		   nm))
-	       ((document? node)
-		*skribe-dest*)
-	       (else
-		(let ((p (ast-parent node)))
-		   (if (container? p)
-		       (let ((file (html-file p e)))
-			  (if (string? file)
-			      (begin
-				 (markup-option-add! node filename file)
-				 file)
-			      #f))
-		       #f))))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    html-container-number ...                                        */
@@ -1556,11 +1567,16 @@ Last update ,(it (date)).]))] e))))
    :before (html-markup-class "ul")
    :action (lambda (n e)
 	      (for-each (lambda (item)
+			  (let ((ident (and (markup? item)
+					    (markup-ident item))))
 			   (display "<li")
 			   (html-class item)
 			   (display ">")
+			    (if ident  ;; produce an anchor
+				(printf "\n<a name=\"~a\"></a>\n"
+					(string-canonicalize ident)))
 			   (output item e)
-			   (display "</li>\n"))
+			    (display "</li>\n")))
 			(markup-body n)))
    :after "</ul>")
 
@@ -1572,11 +1588,15 @@ Last update ,(it (date)).]))] e))))
    :before (html-markup-class "ol")
    :action (lambda (n e)
 	      (for-each (lambda (item)
+			  (let ((ident (and (markup? item)
+					    (markup-ident item))))
 			   (display "<li")
 			   (html-class item)
 			   (display ">")
+			    (if ident  ;; produce an anchor
+				(printf "\n<a name=\"~a\"></a>\n" ident))
 			   (output item e)
-			   (display "</li>\n"))
+			    (display "</li>\n")))
 			(markup-body n)))
    :after "</ol>")
 

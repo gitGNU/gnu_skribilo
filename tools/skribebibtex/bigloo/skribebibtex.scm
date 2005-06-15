@@ -33,7 +33,7 @@
 		      ((?kind ?ident . ?fields)
 		       (display* "("
 				 (string-downcase (symbol->string kind))
-				 " \"" ident "\"")
+				 ident)
 		       (for-each (lambda (f)
 				    (display* "\n   (" (car f) " ")
 				    (write (cdr f))
