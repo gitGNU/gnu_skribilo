@@ -1,0 +1,110 @@
+#
+# Makefile.in			-- Skribe Src Makefile
+# 
+# Copyright © 2003-2004 Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
+# 
+# 
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, 
+# USA.
+# 
+#           Author: Erick Gallesio [eg@essi.fr]
+#    Creation date: 10-Aug-2003 20:26 (eg)
+# Last file update:  6-Mar-2004 16:00 (eg)
+#
+include ../../etc/stklos/Makefile.skb
+
+prefix=@PREFIX@
+
+SKR = $(wildcard ../../skr/*.skr)
+
+DEPS= ../common/configure.scm ../common/param.scm ../common/api.scm \
+      ../common/index.scm ../common/bib.scm ../common/lib.scm
+
+SRCS= biblio.stk c.stk color.stk configure.stk debug.stk engine.stk 	\
+      eval.stk lib.stk lisp.stk main.stk output.stk prog.stk reader.stk \
+      resolve.stk runtime.stk source.stk types.stk vars.stk 		\
+      verify.stk writer.stk xml.stk
+
+LEXFILES = c-lex.l lisp-lex.l xml-lex.l 
+
+LEXSRCS  = c-lex.stk lisp-lex.stk xml-lex.stk
+
+BINDIR=../../bin
+
+EXE= $(BINDIR)/skribe.stklos
+
+PRCS_FILES = Makefile.in $(SRCS) $(LEXFILES)
+
+SFLAGS=
+
+all: $(EXE) 
+
+Makefile: Makefile.in
+	(cd ../../etc/stklos; autoconf; configure)
+
+$(EXE): $(DEPS) $(BINDIR) $(LEXSRCS) $(SRCS)
+	stklos-compile $(SFLAGS) -o $(EXE) main.stk && \
+	   chmod $(BMASK) $(EXE)
+
+#
+# Lex files 
+#
+lisp-lex.stk: lisp-lex.l
+	stklos-genlex lisp-lex.l lisp-lex.stk lisp-lex
+
+xml-lex.stk: xml-lex.l
+	stklos-genlex xml-lex.l xml-lex.stk xml-lex
+
+c-lex.stk: c-lex.l
+	stklos-genlex c-lex.l c-lex.stk c-lex
+
+
+install: $(INSTALL_BINDIR)
+	cp $(EXE) $(INSTALL_BINDIR)/skribe.stklos \
+           && chmod $(BMASK) $(INSTALL_BINDIR)/skribe.stklos
+	rm -f $(INSTALL_BINDIR)/skribe
+	ln -s skribe.stklos $(INSTALL_BINDIR)/skribe
+
+uninstall: 
+	rm $(INSTALL_BINDIR)/skribe
+	rm $(INSTALL_BINDIR)/skribe.stklos
+
+$(BINDIR):
+	mkdir -p $(BINDIR) && chmod a+rx $(BINDIR)
+
+$(INSTALL_BINDIR):
+	mkdir -p $(INSTALL_BINDIR) && chmod a+rx $(INSTALL_BINDIR)
+
+##
+## Services
+##
+tags: TAGS
+
+TAGS: $(SRCS)
+	etags -l scheme $(SRCS)
+
+pop:
+	@echo $(PRCS_FILES:%=src/stklos/%)
+
+links: 
+	ln -s $(DEPS) .
+	ln -s $(SKR) .
+
+clean:
+	/bin/rm -f skribe $(EXE) *~ TAGS *.scm *.skr
+
+distclean: clean
+	/bin/rm -f Makefile
+	/bin/rm -f ../common/configure.scm
