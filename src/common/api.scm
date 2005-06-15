@@ -139,7 +139,7 @@
 			title (html-title #f) (file #f) (toc #t) (number #t))
    (new container
       (markup 'chapter)
-      (ident (or ident (ast->string title)))
+      (ident (or ident (symbol->string (gensym 'chapter))))
       (class class)
       (required-options '(:title :file :toc :number))
       (options `((:toc ,toc)
@@ -179,7 +179,7 @@
 			title (file #f) (toc #t) (number #t))
    (new container
       (markup 'section)
-      (ident (or ident (ast->string title)))
+      (ident (or ident (symbol->string (gensym 'section))))
       (class class)
       (required-options '(:title :toc :file :toc :number))
       (options `((:number ,(section-number number 'section))
@@ -206,7 +206,7 @@
 			   title (file #f) (toc #t) (number #t))
    (new container
       (markup 'subsection)
-      (ident (or ident (ast->string title)))
+      (ident (or ident (symbol->string (gensym 'subsection))))
       (class class)
       (required-options '(:title :toc :file :number))
       (options `((:number ,(section-number number 'subsection))
@@ -230,7 +230,7 @@
 			      title (file #f) (toc #f) (number #t))
    (new container
       (markup 'subsubsection)
-      (ident (or ident (ast->string title)))
+      (ident (or ident (symbol->string (gensym 'subsubsection))))
       (class class)
       (required-options '(:title :toc :number :file))
       (options `((:number ,(section-number number 'subsubsection))
@@ -247,17 +247,23 @@
 ;*    footnote ...                                                     */
 ;*---------------------------------------------------------------------*/
 (define-markup (footnote #!rest opts
-			 #!key (ident #f) (class "footnote") (number #f))
+			 #!key (ident #f) (class "footnote") (label #t))
+   ;; The `:label' option used to be called `:number'.
    (new container
       (markup 'footnote)
       (ident (symbol->string (gensym 'footnote)))
       (class class)
       (required-options '())
-      (options `((:number
-		  ,(new unresolved
-		      (proc (lambda (n e env)
-			       (resolve-counter n env 'footnote #t)))))
-		 ,@(the-options opts :ident :class)))
+      (options `((:label
+		  ,(cond ((string? label) label)
+			 ((number? label) label)
+			 ((not label)     label)
+			 (else
+			  (new unresolved
+			       (proc (lambda (n e env)
+					(resolve-counter n env
+							 'footnote #t)))))
+			 ,@(the-options opts :ident :class)))))
       (body (the-body opts))))
 
 ;*---------------------------------------------------------------------*/
