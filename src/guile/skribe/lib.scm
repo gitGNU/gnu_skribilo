@@ -29,23 +29,34 @@
 ;;;
 ;;; NEW
 ;;;
-(define (maybe-copy obj)
-  (if (pair-mutable? obj)
-      obj
-      (copy-tree obj)))
-
 (define-macro (new class . parameters)
-  `(make ,(string->symbol (format "<~a>" class))
+  `(make ,(string->symbol (format #f "<~a>" class))
      ,@(apply append (map (lambda (x)
-			    `(,(make-keyword (car x)) (maybe-copy ,(cadr x))))
+			    `(,(symbol->keyword (car x)) ,(cadr x)))
 			  parameters))))
 
 ;;;
 ;;; DEFINE-MARKUP
 ;;;
 (define-macro (define-markup bindings . body)
-  ;; This is just a STklos extended lambda. Nothing to do
-  `(define ,bindings ,@body))
+  ;; This is just an `(ice-9 optargs)' kind of `lambda*', with DSSSL
+  ;; keyword-style conversion enabled.  However, using `(ice-9 optargs)', the
+  ;; `#:rest' argument can only appear last which not what Skribe/DSSSL
+  ;; expect, hence `fix-rest-arg'.
+  (define (fix-rest-arg args)
+    (let loop ((args args)
+	       (result '())
+	       (rest-arg #f))
+      (if (null? args)
+	  (if rest-arg (append (reverse result) rest-arg) (reverse result))
+	  (let ((is-rest-arg? (eq? (car args) #:rest)))
+	    (loop (if is-rest-arg? (cddr args) (cdr args))
+		  (if is-rest-arg? result (cons (car args) result))
+		  (if is-rest-arg? (list (car args) (cadr args)) rest-arg))))))
+
+  (let ((name (car bindings))
+	(opts (cdr bindings)))
+    `(define* ,(cons name (fix-rest-arg opts)) ,@body)))
 
 
 ;;;

@@ -25,7 +25,8 @@
 
 
 (define-module (skribe debug)
-   :export (debug-item skribe-debug set-skribe-debug! add-skribe-debug-symbol
+   :export (with-debug %with-debug
+	    debug-item skribe-debug set-skribe-debug! add-skribe-debug-symbol
 	    no-debug-color))
 
 (define *skribe-debug* 			0)
@@ -138,7 +139,7 @@
       r)))
 
 (define-macro (with-debug  level label . body)
-  `((in-module SKRIBE-DEBUG-MODULE %with-debug) ,level ,label (lambda () ,@body)))
+  `(%with-debug ,level ,label (lambda () ,@body)))
 
 ;;(define-macro (with-debug  level label . body)
 ;;  `(begin ,@body))
