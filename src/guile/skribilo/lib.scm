@@ -1,31 +1,69 @@
-;;;;
-;;;; lib.stk	-- Utilities
-;;;; 
-;;;; Copyright © 2003-2004 Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
-;;;; 
-;;;; 
-;;;; This program is free software; you can redistribute it and/or modify
-;;;; it under the terms of the GNU General Public License as published by
-;;;; the Free Software Foundation; either version 2 of the License, or
-;;;; (at your option) any later version.
-;;;; 
-;;;; This program is distributed in the hope that it will be useful,
-;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;;;; GNU General Public License for more details.
-;;;; 
-;;;; You should have received a copy of the GNU General Public License
-;;;; along with this program; if not, write to the Free Software
-;;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, 
-;;;; USA.
-;;;; 
-;;;;           Author: Erick Gallesio [eg@essi.fr]
-;;;;    Creation date: 11-Aug-2003 20:29 (eg)
-;;;; Last file update: 27-Oct-2004 12:41 (eg)
-;;;;
+;;;
+;;; lib.stk	-- Utilities
+;;;
+;;; Copyright © 2003-2004 Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
+;;;
+;;;
+;;; This program is free software; you can redistribute it and/or modify
+;;; it under the terms of the GNU General Public License as published by
+;;; the Free Software Foundation; either version 2 of the License, or
+;;; (at your option) any later version.
+;;;
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;;
+;;; You should have received a copy of the GNU General Public License
+;;; along with this program; if not, write to the Free Software
+;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+;;; USA.
+;;;
+;;;           Author: Erick Gallesio [eg@essi.fr]
+;;;    Creation date: 11-Aug-2003 20:29 (eg)
+;;; Last file update: 27-Oct-2004 12:41 (eg)
+;;;
 
-(use-modules (srfi srfi-1))
+(read-set! keywords 'prefix)
 
+(define-module (skribilo lib)
+  :export (skribe-eval-location skribe-ast-error skribe-error
+           skribe-type-error skribe-line-error
+           skribe-warning skribe-warning/ast
+           skribe-message
+
+           skribe-path skribe-path-set!
+           skribe-image-path skribe-image-path-set!
+           skribe-bib-path skribe-bib-path-set!
+           skribe-source-path skribe-source-path-set!
+
+           ;; various utilities for compatiblity
+
+           substring=?
+           file-suffix file-prefix prefix suffix
+           directory->list find-file/path
+           printf fprintf
+           any? every?
+           process-input-port process-output-port process-error-port
+
+           make-hashtable hashtable?
+           hashtable-get hashtable-put! hashtable-update!
+           hashtable->list
+
+           find-runtime-type)
+
+  :export-syntax (new define-markup define-simple-markup
+                  define-simple-container define-processor-markup
+
+                  ;; for compatibility
+                  unwind-protect unless when)
+
+  :use-module (srfi srfi-1)
+  :use-module (ice-9 optargs))
+
+
+
+
 ;;;
 ;;; NEW
 ;;;
@@ -169,7 +207,7 @@
 
 ;;;
 ;;; FILE-PREFIX / FILE-SUFFIX
-;;; 
+;;;
 (define (file-prefix fn)
   (if fn
       (let ((match (regexp-match "(.*)\\.([^/]*$)" fn)))
@@ -218,19 +256,14 @@
 	(Loop (cdr l))))))
 
 
-;;;
-;;; UNSPECIFIED?
-;;;
-(define (unspecified? obj)
-  (eq? obj 'unspecified))
 
-;;;; ======================================================================
-;;;;
-;;;;   				A C C E S S O R S
-;;;;
-;;;; ======================================================================
+;;; ======================================================================
+;;;
+;;;				A C C E S S O R S
+;;;
+;;; ======================================================================
 
-;; 							  SKRIBE-PATH
+;;							  SKRIBE-PATH
 (define (skribe-path) *skribe-path*)
 
 (define (skribe-path-set! path)
@@ -238,7 +271,7 @@
       (skribe-error 'skribe-path-set! "Illegal path" path)
       (set! *skribe-path* path)))
 
-;; 							  SKRIBE-IMAGE-PATH
+;;							  SKRIBE-IMAGE-PATH
 (define (skribe-image-path) *skribe-image-path*)
 
 (define (skribe-image-path-set! path)
@@ -246,7 +279,7 @@
       (skribe-error 'skribe-image-path-set! "Illegal path" path)
       (set! *skribe-image-path* path)))
 
-;; 							  SKRIBE-BIB-PATH
+;;							  SKRIBE-BIB-PATH
 (define (skribe-bib-path) *skribe-bib-path*)
 
 (define (skribe-bib-path-set! path)
@@ -254,7 +287,7 @@
       (skribe-error 'skribe-bib-path-set! "Illegal path" path)
       (set! *skribe-bib-path* path)))
 
-;; 							  SKRBE-SOURCE-PATH
+;;							  SKRBE-SOURCE-PATH
 (define (skribe-source-path) *skribe-source-path*)
 
 (define (skribe-source-path-set! path)
@@ -262,11 +295,12 @@
       (skribe-error 'skribe-source-path-set! "Illegal path" path)
       (set! *skribe-source-path* path)))
 
-;;;; ======================================================================
-;;;;
-;;;; 				Compatibility with Bigloo
-;;;;
-;;;; ======================================================================
+
+;;; ======================================================================
+;;;
+;;;				Compatibility with Bigloo
+;;;
+;;; ======================================================================
 
 (define (substring=? s1 s2 len)
   (let ((l1 (string-length s1))
@@ -285,25 +319,12 @@
 (define-macro (printf . args)   `(format #t ,@args))
 (define fprintf			format)
 
-(define (symbol-append . l)
-  (string->symbol (apply string-append (map symbol->string l))))
 
-
-(define (make-list n . fill)
-  (let ((fill (if (null? fill) (void) (car fill))))
-    (let Loop ((i n) (res '()))
-      (if (zero? i)
-	  res
-	  (Loop (- i 1) (cons fill res))))))
-
-
-(define string-capitalize 	string-titlecase)
-(define prefix 			file-prefix)
-(define suffix 			file-suffix)
-(define system->string		system)
+(define prefix			file-prefix)
+(define suffix			file-suffix)
+(define system->string		system)  ;; FIXME
 (define any?			any)
 (define every?			every)
-(define cons* 			list*)
 (define find-file/path		(lambda (. args)
 				  (format #t "find-file/path: ~a~%" args)
 				  #f))
@@ -311,22 +332,29 @@
 (define process-output-port	#f) ;process-output)
 (define process-error-port	#f) ;process-error)
 
+
 ;;;
 ;;; h a s h   t a b l e s
 ;;;
-(define make-hashtable		(lambda () (make-hash-table)))
-(define hashtable? 		hash-table?)
+(define make-hashtable		make-hash-table)
+(define hashtable?		hash-table?)
 (define hashtable-get		(lambda (h k) (hash-ref h k #f)))
 (define hashtable-put!		hash-set!)
 (define hashtable-update!	hash-set!)
-(define hashtable->list 	(lambda (h)
-				  (map cdr (hash-table->list h))))
+(define hashtable->list	(lambda (h)
+                          (map cdr (hash-table->list h))))
 
-(define find-runtime-type 	(lambda (obj) obj))
+(define find-runtime-type	(lambda (obj) obj))
 
 (define-macro (unwind-protect expr1 expr2)
-  ;; This is no completely correct. 
+  ;; This is no completely correct.
   `(dynamic-wind
        (lambda () #f)
        (lambda () ,expr1)
        (lambda () ,expr2)))
+
+(define-macro (unless expr body)
+  `(if (not ,expr) ,body))
+
+(define-macro (when expr . exprs)
+  `(if ,expr (begin ,@exprs)))

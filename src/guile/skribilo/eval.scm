@@ -1,54 +1,87 @@
-;;;;
-;;;; eval.stk		-- Skribe Evaluator
-;;;; 
-;;;; Copyright © 2003-2004 Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
-;;;; 
-;;;; 
-;;;; This program is free software; you can redistribute it and/or modify
-;;;; it under the terms of the GNU General Public License as published by
-;;;; the Free Software Foundation; either version 2 of the License, or
-;;;; (at your option) any later version.
-;;;; 
-;;;; This program is distributed in the hope that it will be useful,
-;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;;;; GNU General Public License for more details.
-;;;; 
-;;;; You should have received a copy of the GNU General Public License
-;;;; along with this program; if not, write to the Free Software
-;;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, 
-;;;; USA.
-;;;; 
-;;;;           Author: Erick Gallesio [eg@essi.fr]
-;;;;    Creation date: 27-Jul-2003 09:15 (eg)
-;;;; Last file update: 28-Oct-2004 15:05 (eg)
-;;;;
+;;;
+;;; eval.stk		-- Skribe Evaluator
+;;;
+;;; Copyright © 2003-2004 Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
+;;; Copyright 2005  Ludovic Courtès  <ludovic.courtes@laas.fr>
+;;;
+;;;
+;;; This program is free software; you can redistribute it and/or modify
+;;; it under the terms of the GNU General Public License as published by
+;;; the Free Software Foundation; either version 2 of the License, or
+;;; (at your option) any later version.
+;;;
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;;
+;;; You should have received a copy of the GNU General Public License
+;;; along with this program; if not, write to the Free Software
+;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+;;; USA.
+;;;
+
 
 
 ;; FIXME; On peut implémenter maintenant skribe-warning/node
 
 
-(define-module (skribe eval)
+(define-module (skribilo eval)
   :export (skribe-eval skribe-eval-port skribe-load skribe-load-options
-	   skribe-include))
+	   skribe-include
 
-(use-modules (skribe debug)
-	     (skribe engine)
-	     (skribe verify)
-	     (skribe resolve)
-	     (skribe output)
+           run-time-module make-run-time-module))
+
+(use-modules (skribilo debug)
+	     (skribilo engine)
+	     (skribilo verify)
+	     (skribilo resolve)
+	     (skribilo output)
 	     (ice-9 optargs))
 
 
-(define *skribe-loaded* '())  		;; List of already loaded files
+(define *skribe-loaded* '())		;; List of already loaded files
 (define *skribe-load-options* '())
 
 (define (%evaluate expr)
-  (with-handler
-      (lambda (c)
-	(flush-output-port (current-error-port))
-	(raise c))
-      (eval expr (find-module 'STklos))))
+  (eval expr (current-module)))
+
+
+(define *skribilo-user-module* #f)
+
+(define *skribilo-user-imports*
+  '((srfi srfi-1)
+    (oop goops)
+    (skribilo module)
+    (skribilo config)
+    (skribilo vars)
+    (skribilo runtime)
+    (skribilo biblio)
+    (skribilo lib)
+    (skribilo resolve)))
+
+
+;;;
+;;; MAKE-RUN-TIME-MODULE
+;;;
+(define (make-run-time-module)
+  "Return a new module that imports all the necessary bindings required for
+execution of Skribilo/Skribe code."
+  (let ((the-module (make-module)))
+        (for-each (lambda (iface)
+                    (module-use! the-module (resolve-module iface)))
+                  *skribilo-user-imports*)
+        (set-module-name! the-module '(skribilo-user))
+        the-module))
+
+;;;
+;;; RUN-TIME-MODULE
+;;;
+(define (run-time-module)
+  "Return the default instance of a Skribilo/Skribe run-time module."
+  (if (not *skribilo-user-module*)
+      (set! *skribilo-user-module* (make-run-time-module)))
+  *skribilo-user-module*)
 
 ;;;
 ;;; SKRIBE-EVAL
@@ -103,7 +136,7 @@
 		    ((not path) (skribe-path))
 		    ((string? path) (list path))
 		    ((not (and (list? path) (every? string? path)))
-		        (skribe-error 'skribe-load "Illegal path" path))
+			(skribe-error 'skribe-load "Illegal path" path))
 		    (else path)))
 	     (filep (find-path file path)))
 
@@ -113,7 +146,7 @@
 	 (skribe-error 'skribe-load
 		       (format "Cannot find ~S in path" file)
 		       *skribe-path*))
-       
+
        ;; Load this file if not already done
        (unless (member filep *skribe-loaded*)
 	 (cond

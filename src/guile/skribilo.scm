@@ -6,26 +6,26 @@ exec ${GUILE-guile} -l $0 -c "(apply $main (cdr (command-line)))" "$@"
 
 ;;;;
 ;;;; skribilo.scm
-;;;; 
+;;;;
 ;;;; Copyright © 2003-2004 Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
 ;;;; Copyright 2005  Ludovic Courtès <ludovic.courtes@laas.fr>
-;;;; 
-;;;; 
+;;;;
+;;;;
 ;;;; This program is free software; you can redistribute it and/or modify
 ;;;; it under the terms of the GNU General Public License as published by
 ;;;; the Free Software Foundation; either version 2 of the License, or
 ;;;; (at your option) any later version.
-;;;; 
+;;;;
 ;;;; This program is distributed in the hope that it will be useful,
 ;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
 ;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ;;;; GNU General Public License for more details.
-;;;; 
+;;;;
 ;;;; You should have received a copy of the GNU General Public License
 ;;;; along with this program; if not, write to the Free Software
-;;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, 
+;;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ;;;; USA.
-;;;; 
+;;;;
 ;;;;           Author: Erick Gallesio [eg@essi.fr]
 ;;;;    Creation date: 24-Jul-2003 20:33 (eg)
 ;;;; Last file update:  6-Mar-2004 16:13 (eg)
@@ -65,21 +65,21 @@ exec ${GUILE-guile} -l $0 -c "(apply $main (cdr (command-line)))" "$@"
 				     the-arg))))))))
 
 ; (use-modules (skribe eval)
-; 	     (skribe configure)
-; 	     (skribe runtime)
-; 	     (skribe engine)
-; 	     (skribe writer)
-; 	     (skribe verify)
-; 	     (skribe output)
-; 	     (skribe biblio)
-; 	     (skribe prog)
-; 	     (skribe resolve)
-; 	     (skribe source)
-; 	     (skribe lisp)
-; 	     (skribe xml)
-; 	     (skribe c)
-; 	     (skribe debug)
-; 	     (skribe color))
+;	     (skribe configure)
+;	     (skribe runtime)
+;	     (skribe engine)
+;	     (skribe writer)
+;	     (skribe verify)
+;	     (skribe output)
+;	     (skribe biblio)
+;	     (skribe prog)
+;	     (skribe resolve)
+;	     (skribe source)
+;	     (skribe lisp)
+;	     (skribe xml)
+;	     (skribe c)
+;	     (skribe debug)
+;	     (skribe color))
 
 (use-modules (skribe runtime)
 	     (skribe configure)
@@ -192,7 +192,7 @@ specifications."
 	 (set-skribe-debug! val)
 	 (begin
 	   ;; Use the symbol for debug
-	   (set-skribe-debug! 	    1)
+	   (set-skribe-debug!	    1)
 	   (add-skribe-debug-symbol (string->symbol level))))))
   (("no-color" :help "disable coloring for output")
    (no-debug-color))
@@ -265,7 +265,7 @@ Processes a Skribilo/Skribe source file and produces its output.
 		(let ((s (keyword->string (car x))))
 		  (printf "  ~a: ~a\n" s (cadr x))))
 	      (skribe-configure)))
-  
+
   ;;
   ;; parse-args starts here
   ;;
@@ -286,21 +286,21 @@ Processes a Skribilo/Skribe source file and produces its output.
 	(("P" :arg path :help "adds <path> to image path")
 	   (skribe-image-path-set! (cons path (skribe-image-path))))
 	(("split-chapters" :alternate "C" :arg chapter
-	  		   :help "emit chapter's sections in separate files")
+			   :help "emit chapter's sections in separate files")
 	   (set! *skribe-chapter-split* (cons chapter *skribe-chapter-split*)))
 	(("preload" :arg file :help "preload <file>")
 	 (set! *skribe-preload* (cons file *skribe-preload*)))
 	(("use-variant" :alternate "u" :arg variant
-	  		:help "use <variant> output format")
+			:help "use <variant> output format")
 	  (set! *skribe-variants* (cons variant *skribe-variants*)))
 	(("base" :alternate "b" :arg base
-	         :help "base prefix to remove from hyperlinks")
+		 :help "base prefix to remove from hyperlinks")
 	   (set! *skribe-ref-base* base))
 	(("rc-dir" :arg dir :alternate "d" :help "set the RC directory to <dir>")
 	   (set! *skribe-rc-directory* dir))
-	
+
       "File options:"
-        (("no-init-file" :help "Dont load rc Skribe file")
+	(("no-init-file" :help "Dont load rc Skribe file")
 	   (set! *load-rc* #f))
 	(("output" :alternate "o" :arg file :help "set the output to <file>")
 	   (set! *skribe-dest* file)
@@ -310,7 +310,7 @@ Processes a Skribilo/Skribe source file and produces its output.
 	       (set! *skribe-engine* (cdr c)))))
 
       "Misc:"
-        (("help" :alternate "h" :help "provides help for the command")
+	(("help" :alternate "h" :help "provides help for the command")
 	   (arg-usage (current-error-port))
 	   (exit 0))
 	(("options" :help "display the skribe options and exit")
@@ -320,7 +320,7 @@ Processes a Skribilo/Skribe source file and produces its output.
 	   (version)
 	   (exit 0))
 	(("query" :alternate "q"
-	  	  :help "displays informations about Skribe conf.")
+		  :help "displays informations about Skribe conf.")
 	   (query)
 	   (exit 0))
 	(("verbose" :alternate "v" :arg level
@@ -339,7 +339,7 @@ Processes a Skribilo/Skribe source file and produces its output.
 		 (set-skribe-debug! val)
 		 (begin
 		   ;; Use the symbol for debug
-		   (set-skribe-debug! 	    1)
+		   (set-skribe-debug!	    1)
 		   (add-skribe-debug-symbol (string->symbol level))))))
 	(("no-color" :help "disable coloring for output")
 	 (no-debug-color))
@@ -356,10 +356,10 @@ Processes a Skribilo/Skribe source file and produces its output.
 	     (lambda () (eval (read)))))
 	(else
 	 (set! *skribe-src* other-arguments)))
-    
+
     ;; we have to configure Skribe path according to the environment variable
     (skribe-path-set! (append (let ((path (getenv "SKRIBEPATH")))
-				(if path 
+				(if path
 				    (string-split path ":")
 				    '()))
 			      (reverse! paths)

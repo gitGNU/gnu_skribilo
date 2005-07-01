@@ -26,7 +26,7 @@
 
 (require "lex-rt")	;; to avoid module problems
 
-(define-module (skribe lisp)
+(define-module (skribilo lisp)
   :export (skribe scheme stklos bigloo lisp)
   :import (skribe source))
 

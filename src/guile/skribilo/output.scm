@@ -24,11 +24,11 @@
 ;;;; Last file update:  5-Mar-2004 10:32 (eg)
 ;;;;
 
-(define-module (skribe output)
+(define-module (skribilo output)
    :export (output))
 
-(use-modules (skribe debug)
-	     (skribe types)
+(use-modules (skribilo debug)
+	     (skribilo types)
 ;	     (skribe engine)
 ;	     (skribe writer)
 	     (oop goops))

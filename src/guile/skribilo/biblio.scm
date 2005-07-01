@@ -1,51 +1,50 @@
-;;;;
-;;;; biblio.scm				-- Bibliography functions
-;;;; 
-;;;; Copyright © 2003-2004 Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
-;;;; Copyright 2005  Ludovic Courtès <ludovic.courtes@laas.fr>
-;;;; 
-;;;; 
-;;;; This program is free software; you can redistribute it and/or modify
-;;;; it under the terms of the GNU General Public License as published by
-;;;; the Free Software Foundation; either version 2 of the License, or
-;;;; (at your option) any later version.
-;;;; 
-;;;; This program is distributed in the hope that it will be useful,
-;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;;;; GNU General Public License for more details.
-;;;; 
-;;;; You should have received a copy of the GNU General Public License
-;;;; along with this program; if not, write to the Free Software
-;;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, 
-;;;; USA.main.st
-;;;; 
-;;;;           Author: Erick Gallesio [eg@essi.fr]
-;;;;    Creation date: 31-Aug-2003 22:07 (eg)
-;;;; Last file update: 28-Oct-2004 21:19 (eg)
-;;;;
+;;;
+;;; biblio.scm				-- Bibliography functions
+;;;
+;;; Copyright © 2003-2004 Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
+;;; Copyright 2005  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;;
+;;; This program is free software; you can redistribute it and/or modify
+;;; it under the terms of the GNU General Public License as published by
+;;; the Free Software Foundation; either version 2 of the License, or
+;;; (at your option) any later version.
+;;;
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;;
+;;; You should have received a copy of the GNU General Public License
+;;; along with this program; if not, write to the Free Software
+;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+;;; USA.main.st
+;;;
+;;;           Author: Erick Gallesio [eg@essi.fr]
+;;;    Creation date: 31-Aug-2003 22:07 (eg)
+;;; Last file update: 28-Oct-2004 21:19 (eg)
+;;;
 
 
 
-(define-module (skribe biblio)
-   :use-module (skribe runtime)
+(define-module (skribilo biblio)
+   :use-module (skribilo runtime)
    :export (bib-tables? make-bib-table default-bib-table
 	    bib-load! resolve-bib resolve-the-bib
 	    bib-sort/authors bib-sort/idents bib-sort/dates))
 
-(define *bib-table* 	     #f)
-  
+(define *bib-table*	     #f)
+
 ;; Forward declarations
 (define skribe-open-bib-file #f)
-(define parse-bib 	     #f) 
+(define parse-bib	     #f)
 
-(include "../common/bib.scm")
 
-;;;; ======================================================================
-;;;;
-;;;; 				Utilities
-;;;;
-;;;; ======================================================================
+
+;;; ======================================================================
+;;;
+;;;				Utilities
+;;;
+;;; ======================================================================
 
 (define (make-bib-table ident)
    (make-hash-table))
@@ -67,11 +66,11 @@
 	(skribe-line-error (%epair-file entry) (%epair-line entry) who msg entry)
 	(skribe-error who msg entry))))
 
-;;;; ======================================================================
-;;;;
-;;;; 				BIB-DUPLICATE
-;;;;
-;;;; ======================================================================
+;;; ======================================================================
+;;;
+;;;				BIB-DUPLICATE
+;;;
+;;; ======================================================================
 (define (bib-duplicate ident from old)
   (let ((ofrom (markup-option old 'from)))
     (skribe-warning 2
@@ -85,11 +84,11 @@
 			" Ignoring redefinition."))))
 
 
-;;;; ======================================================================
-;;;;
-;;;; 				PARSE-BIB
-;;;;
-;;;; ======================================================================
+;;; ======================================================================
+;;;
+;;;				PARSE-BIB
+;;;
+;;; ======================================================================
 (define (parse-bib table port)
   (if (not (bib-table? table))
       (skribe-error 'parse-bib "Illegal bibliography table" table)
@@ -112,11 +111,11 @@
 	       (%bib-error 'bib-parse entry))))))))
 
 
-;;;; ======================================================================
-;;;;
-;;;; 				   BIB-ADD!
-;;;;
-;;;; ======================================================================
+;;; ======================================================================
+;;;
+;;;				   BIB-ADD!
+;;;
+;;; ======================================================================
 (define (bib-add! table . entries)
   (if (not (bib-table? table))
       (skribe-error 'bib-add! "Illegal bibliography table" table)
@@ -137,11 +136,11 @@
 		entries)))
 
 
-;;;; ======================================================================
-;;;;
-;;;;				SKRIBE-OPEN-BIB-FILE
-;;;;
-;;;; ======================================================================
+;;; ======================================================================
+;;;
+;;;				SKRIBE-OPEN-BIB-FILE
+;;;
+;;; ======================================================================
 ;; FIXME: Factoriser
 (define (skribe-open-bib-file file command)
  (let ((path (find-path file *skribe-bib-path*)))
@@ -158,4 +157,3 @@
 			 'bibliography
 			 "Can't find bibliography -- " file)
 	 #f))))
-

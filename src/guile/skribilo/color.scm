@@ -24,7 +24,7 @@
 ;;;; Last file update: 12-Feb-2004 18:24 (eg)
 ;;;;
 
-(define-module (skribe color)
+(define-module (skribilo color)
    :export (skribe-color->rgb skribe-get-used-colors skribe-use-color!))
 
 (define *used-colors* '())

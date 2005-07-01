@@ -1,40 +1,41 @@
-;;;;
-;;;; engines.stk	-- Skribe Engines Stuff
-;;;; 
-;;;; Copyright © 2003-2004 Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
-;;;; 
-;;;; 
-;;;; This program is free software; you can redistribute it and/or modify
-;;;; it under the terms of the GNU General Public License as published by
-;;;; the Free Software Foundation; either version 2 of the License, or
-;;;; (at your option) any later version.
-;;;; 
-;;;; This program is distributed in the hope that it will be useful,
-;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;;;; GNU General Public License for more details.
-;;;; 
-;;;; You should have received a copy of the GNU General Public License
-;;;; along with this program; if not, write to the Free Software
-;;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, 
-;;;; USA.
-;;;; 
-;;;;           Author: Erick Gallesio [eg@essi.fr]
-;;;;    Creation date: 24-Jul-2003 20:33 (eg)
-;;;; Last file update: 28-Oct-2004 21:21 (eg)
-;;;;
+;;;
+;;; engine.scm	-- Skribe Engines Stuff
+;;;
+;;; Copyright © 2003-2004 Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
+;;; Copyright 2005  Ludovic Courtès  <ludovic.courtes@laas.fr>
+;;;
+;;;
+;;; This program is free software; you can redistribute it and/or modify
+;;; it under the terms of the GNU General Public License as published by
+;;; the Free Software Foundation; either version 2 of the License, or
+;;; (at your option) any later version.
+;;;
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;;
+;;; You should have received a copy of the GNU General Public License
+;;; along with this program; if not, write to the Free Software
+;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+;;; USA.
+;;;
+;;;           Author: Erick Gallesio [eg@essi.fr]
+;;;    Creation date: 24-Jul-2003 20:33 (eg)
+;;; Last file update: 28-Oct-2004 21:21 (eg)
+;;;
 
-(define-module (skribe engine)
-  :use-module (skribe debug)
-;  :use-module (skribe eval)
-  :use-module (skribe writer)
-  :use-module (skribe types)
+(define-module (skribilo engine)
+  :use-module (skribilo debug)
+;  :use-module (skribilo eval)
+  :use-module (skribilo writer)
+  :use-module (skribilo types)
 
   :use-module (oop goops)
   :use-module (ice-9 optargs)
- 
+
   :export (default-engine default-engine-set!
-	   make-engine copy-engine find-engine
+	   make-engine copy-engine find-engine lookup-engine
 	   engine-custom engine-custom-set!
 	   engine-format? engine-add-writer!
 	   processor-get-engine
@@ -43,13 +44,13 @@
 
 
 
-;;; Module definition is split here because this file is read by the documentation
-;;; Should be changed.
+;;; Module definition is split here because this file is read by the
+;;; documentation Should be changed.
 ;(select-module SKRIBE-ENGINE-MODULE)
 
 (define *engines*		'())
-(define *default-engine* 	#f)
-(define *default-engines* 	'())
+(define *default-engine*	#f)
+(define *default-engines*	'())
 
 
 (define (default-engine)
@@ -57,8 +58,8 @@
 
 
 (define (default-engine-set! e)
-  (unless (engine? e)
-    (skribe-error 'default-engine-set! "bad engine ~S" e))
+  (if (not (engine? e))
+      (skribe-error 'default-engine-set! "bad engine ~S" e))
   (set! *default-engine* e)
   (set! *default-engines* (cons e *default-engines*))
   e)
@@ -99,16 +100,16 @@
 
 ;;;
 ;;; MAKE-ENGINE
-;;; 
+;;;
 (define* (make-engine ident #:key (version 'unspecified)
-		     		(format "raw")
+				(format "raw")
 				(filter #f)
 				(delegate #f)
 				(symbol-table '())
 				(custom '())
 				(info '()))
   (let ((e (make <engine> :ident ident :version version :format format
-		 	  :filter filter :delegate delegate
+			  :filter filter :delegate delegate
 			  :symbol-table symbol-table
 			  :custom custom :info info)))
     ;; store the engine in the global table
@@ -126,8 +127,8 @@
 				  (symbol-table #f)
 				  (custom #f))
   (let ((new (shallow-clone e)))
-    (slot-set! new 'ident 	 ident)
-    (slot-set! new 'version 	 version)
+    (slot-set! new 'ident	 ident)
+    (slot-set! new 'version	 version)
     (slot-set! new 'filter	 (or filter (slot-ref e 'filter)))
     (slot-set! new 'delegate	 (or delegate (slot-ref e 'delegate)))
     (slot-set! new 'symbol-table (or symbol-table (slot-ref e 'symbol-table)))
@@ -138,17 +139,17 @@
 
 
 ;;;
-;;; 	FIND-ENGINE
+;;;	FIND-ENGINE
 ;;;
 (define (%find-loaded-engine id version)
-  (let Loop ((es *engines*))
+  (let loop ((es *engines*))
     (cond
       ((null? es) #f)
       ((eq? (slot-ref (car es) 'ident) id)
        (cond
-	   ((eq? version 'unspecified) 		       (car es))
+	   ((eq? version 'unspecified)		       (car es))
 	   ((eq? version (slot-ref (car es) 'version)) (car es))
-	   (else			 	       (Loop (cdr es)))))
+	   (else				       (Loop (cdr es)))))
       (else (loop (cdr es))))))
 
 
@@ -164,6 +165,9 @@
 		 (skribe-load (cdr c) :engine 'base)
 		 (%find-loaded-engine id version))
 	       #f)))))
+
+(define lookup-engine find-engine)
+
 
 ;;;
 ;;; ENGINE-CUSTOM
@@ -194,9 +198,9 @@
   (define (check-procedure name proc arity)
     (cond
       ((not (procedure? proc))
-         (skribe-error ident "Illegal procedure" proc))
+	 (skribe-error ident "Illegal procedure" proc))
       ((not (equal? (%procedure-arity proc) arity))
-         (skribe-error ident
+	 (skribe-error ident
 		       (format #f "Illegal ~S procedure" name)
 		       proc))))
 
@@ -206,20 +210,20 @@
   ;;
   ;; Engine-add-writer! starts here
   ;;
-  (unless (is-a? e <engine>)
-    (skribe-error ident "Illegal engine" e))
-  
+  (if (not (is-a? e <engine>))
+      (skribe-error ident "Illegal engine" e))
+
   ;; check the options
-  (unless (or (eq? opt 'all) (list? opt))
-    (skribe-error ident "Illegal options" opt))
-  
+  (if (not (or (eq? opt 'all) (list? opt)))
+      (skribe-error ident "Illegal options" opt))
+
   ;; check the correctness of the predicate
   (check-procedure "predicate" pred 2)
 
   ;; check the correctness of the validation proc
-  (when valid
+  (if valid
     (check-procedure "validate" valid 2))
-  
+
   ;; check the correctness of the three actions
   (check-output "before" before)
   (check-output "action" action)
@@ -234,16 +238,14 @@
     (slot-set! e 'writers (cons n (slot-ref e 'writers)))
     n))
 
-;;;; ======================================================================
-;;;;
-;;;;   				    I N I T S
-;;;;
-;;;; ======================================================================
+;;; ======================================================================
+;;;
+;;;				    I N I T S
+;;;
+;;; ======================================================================
 
 ;; A base engine must pre-exist before anything is loaded. In
 ;; particular, this dummy base engine is used to load the actual
-;; definition of base. 
+;; definition of base.
 
 (make-engine 'base :version 'bootstrap)
-
-
