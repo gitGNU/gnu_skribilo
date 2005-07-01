@@ -21,7 +21,8 @@
 (define-module (skribilo reader)
   :use-module (srfi srfi-9)  ;; records
   :use-module (srfi srfi-17) ;; generalized `set!'
-  :export (%make-reader lookup-reader make-reader)
+  :export (%make-reader lookup-reader make-reader
+	   %default-reader)
   :export-syntax (define-reader define-public-reader))
 
 ;;; Author:  Ludovic Courtès
@@ -65,7 +66,7 @@
 
 (define (lookup-reader name)
   "Look for a reader named @var{name} (a symbol) in the @code{(skribilo
-readers)} module hierarchy.  If no such reader was found, an error is
+reader)} module hierarchy.  If no such reader was found, an error is
 raised."
   (let ((m (resolve-module `(skribilo reader ,name))))
     (if (module-bound? m 'reader-specification)
@@ -78,5 +79,6 @@ raised."
          (make (reader:make spec)))
     (make)))
 
+(define %default-reader (make-reader 'skribe))
 
 ;;; reader.scm ends here

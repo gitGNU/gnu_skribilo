@@ -1,7 +1,7 @@
 #!/bin/sh
 # aside from this initial boilerplate, this is actually -*- scheme -*- code
 main='(module-ref (resolve-module '\''(skribilo)) '\'main')'
-exec ${GUILE-guile} -l $0 -c "(apply $main (cdr (command-line)))" "$@"
+exec ${GUILE-guile} --debug -l $0 -c "(apply $main (cdr (command-line)))" "$@"
 !#
 
 ;;;;
@@ -42,17 +42,11 @@ exec ${GUILE-guile} -l $0 -c "(apply $main (cdr (command-line)))" "$@"
 ;; Allow for this `:style' of keywords.
 (read-set! keywords 'prefix)
 
-;; Allow for DSSSL-style keywords (i.e. `#!key', etc.).
-;; See http://lists.gnu.org/archive/html/guile-devel/2005-06/msg00060.html
-;; for details.
-(read-hash-extend #\! (lambda (chr port)
-			(symbol->keyword (read port))))
-
 (let ((gensym-orig gensym))
   ;; In Skribe, `gensym' expects a symbol as its (optional) argument, while
   ;; Guile's `gensym' expect a string.  XXX
   (set! gensym
-	(lambda (. args)
+	(lambda args
 	  (if (null? args)
 	      (gensym-orig)
 	      (let ((the-arg (car args)))
@@ -64,45 +58,29 @@ exec ${GUILE-guile} -l $0 -c "(apply $main (cdr (command-line)))" "$@"
 		       (skribe-error 'gensym "Invalid argument type"
 				     the-arg))))))))
 
-; (use-modules (skribe eval)
-;	     (skribe configure)
-;	     (skribe runtime)
-;	     (skribe engine)
-;	     (skribe writer)
-;	     (skribe verify)
-;	     (skribe output)
-;	     (skribe biblio)
-;	     (skribe prog)
-;	     (skribe resolve)
-;	     (skribe source)
-;	     (skribe lisp)
-;	     (skribe xml)
-;	     (skribe c)
-;	     (skribe debug)
-;	     (skribe color))
 
-(use-modules (skribe runtime)
-	     (skribe configure)
-	     (skribe eval)
-	     (skribe engine)
-	     (skribe types) ;; because `new' is a macro and refers to classes
+(set! %load-hook
+      (lambda (file)
+	(format #t "~~ loading `~a'...~%" file)))
 
-	     (oop goops)  ;; because `new' is a macro
+
+(define-module (skribilo))
+
+(use-modules (skribilo module)
+	     (skribilo runtime)
+	     (skribilo evaluator)
+	     (skribilo types)
+	     (skribilo engine)
+	     (skribilo debug)
+	     (skribilo vars)
+	     (skribilo lib)
+
 	     (ice-9 optargs)
-
 	     (ice-9 getopt-long))
 
 
-(load "skribe/lib.scm")
 
-(load "../common/configure.scm")
-(load "../common/param.scm")
-(load "../common/lib.scm")
-(load "../common/sui.scm")
-(load "../common/index.scm")
-
-;; Markup definitions...
-(load "../common/api.scm")
+;;; FIXME:  With my `#:reader' thing added to `define-module',
 
 
 
@@ -115,7 +93,7 @@ specifications."
     ,@(if alternate
 	  `((single-char ,(string-ref alternate 0)))
 	  '())
-    (value #f)))
+    (value ,(if arg #t #f))))
 
 (define (raw-options->getopt-long options)
   "Converts @var{options} to a getopt-long-compatible representation."
@@ -130,9 +108,9 @@ specifications."
   (("target" :alternate "t" :arg target
     :help "sets the output format to <target>")
    (set! engine (string->symbol target)))
-  (("I" :arg path :help "adds <path> to Skribe path")
+  (("load-path" :alternate "I" :arg path :help "adds <path> to Skribe path")
    (set! paths (cons path paths)))
-  (("B" :arg path :help "adds <path> to bibliography path")
+  (("bib-path" :alternate "B" :arg path :help "adds <path> to bibliography path")
    (skribe-bib-path-set! (cons path (skribe-bib-path))))
   (("S" :arg path :help "adds <path> to source path")
    (skribe-source-path-set! (cons path (skribe-source-path))))
@@ -247,7 +225,7 @@ Processes a Skribilo/Skribe source file and produces its output.
 "))
 
 (define (skribilo-show-version)
-  (format #t "skribilo ~a~%" (skribe-release)))
+  (format #t "skribilo ~a~%" (skribilo-release)))
 
 ;;;; ======================================================================
 ;;;;
@@ -387,16 +365,20 @@ Processes a Skribilo/Skribe source file and produces its output.
 ;;;;				      S K R I B E
 ;;;;
 ;;;; ======================================================================
+; (define (doskribe)
+;    (let ((e (find-engine *skribe-engine*)))
+;      (if (and (engine? e) (pair? *skribe-precustom*))
+; 	 (for-each (lambda (cv)
+; 		     (engine-custom-set! e (car cv) (cdr cv)))
+; 		   *skribe-precustom*))
+;      (if (pair? *skribe-src*)
+; 	 (for-each (lambda (f) (skribe-load f :engine *skribe-engine*))
+; 		   *skribe-src*)
+; 	 (skribe-eval-port (current-input-port) *skribe-engine*))))
+
 (define (doskribe)
-   (let ((e (find-engine *skribe-engine*)))
-     (if (and (engine? e) (pair? *skribe-precustom*))
-	 (for-each (lambda (cv)
-		     (engine-custom-set! e (car cv) (cdr cv)))
-		   *skribe-precustom*))
-     (if (pair? *skribe-src*)
-	 (for-each (lambda (f) (skribe-load f :engine *skribe-engine*))
-		   *skribe-src*)
-	 (skribe-eval-port (current-input-port) *skribe-engine*))))
+  (set-current-module (make-run-time-module))
+  (skribe-eval-port (current-input-port) *skribe-engine*))
 
 
 ;;;; ======================================================================
@@ -404,42 +386,81 @@ Processes a Skribilo/Skribe source file and produces its output.
 ;;;;				      M A I N
 ;;;;
 ;;;; ======================================================================
-(define (skribilo . args)
-  (let* ((options           (getopt-long (cons "skribilo" args) skribilo-options))
-	 (target            (option-ref options 'target #f))
+(define-public (skribilo . args)
+  (let* ((options           (getopt-long (cons "skribilo" args)
+					 skribilo-options))
+	 (engine            (string->symbol
+			     (option-ref options 'target "html")))
+	 (debugging-level   (option-ref options 'debug 0))
+	 (load-path         (option-ref options 'load-path "."))
+	 (bib-path          (option-ref options 'bib-path "."))
+	 (preload           '())
+	 (variants          '())
+
 	 (help-wanted       (option-ref options 'help #f))
 	 (version-wanted    (option-ref options 'version #f)))
 
+    ;; Set up the debugging infrastructure.
+    (debug-enable 'debug)
+    (debug-enable 'backtrace)
+    (debug-enable 'procnames)
+    (read-enable  'positions)
+
     (cond (help-wanted    (begin (skribilo-show-help) (exit 1)))
-	  (version-wanted (begin (skribilo-show-version) (exit 1)))
-	  (target         (format #t "target set to `~a'~%" target)))
+	  (version-wanted (begin (skribilo-show-version) (exit 1))))
+
+    ;; Parse the most important options.
+
+    (set! *skribe-engine* engine)
+
+    (set-skribe-debug! (string->number debugging-level))
+
+    (set! %skribilo-load-path
+	  (cons load-path %skribilo-load-path))
+    (set! %skribilo-bib-path
+	  (cons bib-path %skribilo-bib-path))
+
+    (if (option-ref options 'verbose #f)
+	(set! *skribe-verbose* #t))
 
     ;; Load the user rc file
-    (load-rc)
+    ;(load-rc)
+
+    ;; load the basic Skribe modules
+    (load-skribe-modules)
 
     ;; Load the base file to bootstrap the system as well as the files
-    ;; that are in the *skribe-preload* variable
-    (skribe-load "base.skr" :engine 'base)
+    ;; that are in the PRELOAD variable.
+    (find-engine 'base)
     (for-each (lambda (f)
 		(skribe-load f :engine *skribe-engine*))
-	      *skribe-preload*)
+	      preload)
 
-    ;; Load the specified variants
+    ;; Load the specified variants.
     (for-each (lambda (x)
 		(skribe-load (format #f "~a.skr" x) :engine *skribe-engine*))
-	      (reverse! *skribe-variants*))
+	      (reverse! variants))
 
-    ;;  (if (string? *skribe-dest*)
-    ;;      (with-handler (lambda (kind loc msg)
-    ;;		      (remove-file *skribe-dest*)
-    ;;		      (error loc msg))
-    ;;	 (with-output-to-file *skribe-dest* doskribe))
-    ;;      (doskribe))
-    (if (string? *skribe-dest*)
-	(with-output-to-file *skribe-dest* doskribe)
-	(doskribe))))
+    (let ((files (option-ref options '() '())))
+      (if (null? files)
+	  (error "you must specify at least the input file" files))
+      (if (> (length files) 2)
+	  (error "you can specify at most one input file and one output file"
+		 files))
 
-(display "skribilo loaded\n")
+      (let* ((source-file (car files))
+	     (dest-file (if (null? (cdr files)) #f (cadr files)))
+	     (source-port (open-input-file source-file)))
+
+	(if (and dest-file (file-exists? dest-file))
+	    (delete-file dest-file))
+
+	(with-input-from-file source-file
+	  (lambda ()
+	    (if (string? dest-file)
+		(with-output-to-file dest-file doskribe)
+		(doskribe))))))))
+
 
 (define main skribilo)
 

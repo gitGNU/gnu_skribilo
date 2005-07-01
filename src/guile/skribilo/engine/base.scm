@@ -9,6 +9,8 @@
 ;*    BASE Skribe engine                                               */
 ;*=====================================================================*/
 
+(define-skribe-module (skribilo engine base))
+
 ;*---------------------------------------------------------------------*/
 ;*    base-engine ...                                                  */
 ;*---------------------------------------------------------------------*/
@@ -110,7 +112,7 @@
 				   ("Downarrow" "v")
 				   ("<=>" "<=>")
 				   ("<==>" "<==>")
-				   ;; Mathematical operators 
+				   ;; Mathematical operators
 				   ("asterisk" "*")
 				   ("angle" "<")
 				   ("and" "^;")
@@ -122,13 +124,13 @@
 				   ("mid" "|")
 				   ("langle" "<")
 				   ("rangle" ">")
-				   ;; LaTeX 
+				   ;; LaTeX
 				   ("circ" "o")
 				   ("top" "T")
 				   ("lhd" "<")
 				   ("rhd" ">")
 				   ("parallel" "||")))))
-   
+
 ;*---------------------------------------------------------------------*/
 ;*    mark ...                                                         */
 ;*---------------------------------------------------------------------*/
@@ -203,7 +205,7 @@
    :before "["
    :action (lambda (n e) (output (markup-option n :title) e))
    :after "]")
-	     
+
 ;*---------------------------------------------------------------------*/
 ;*    &bib-entry-body ...                                              */
 ;*---------------------------------------------------------------------*/
@@ -220,11 +222,11 @@
 			(if (eq? (caar descr) 'or)
 			    (let ((o1 (cadr (car descr))))
 			       (if (markup-option n o1)
-				   (loop (cons o1 (cdr descr)) 
-					 pending 
+				   (loop (cons o1 (cdr descr))
+					 pending
 					 #t)
 				   (let ((o2 (caddr (car descr))))
-				      (loop (cons o2 (cdr descr)) 
+				      (loop (cons o2 (cdr descr))
 					    pending
 					    armed))))
 			    (let ((o (markup-option n (cadr (car descr)))))
@@ -240,7 +242,7 @@
 				   (loop (cdr descr) pending armed)))))
 		       ((symbol? (car descr))
 			(let ((o (markup-option n (car descr))))
-			   (if o 
+			   (if o
 			       (begin
 				  (if (and armed pending)
 				      (output pending e))
@@ -250,7 +252,7 @@
 		       ((null? (cdr descr))
 			(output (car descr) e))
 		       ((string? (car descr))
-			(loop (cdr descr) 
+			(loop (cdr descr)
 			      (if pending pending (car descr))
 			      armed))
 		       (else
@@ -260,26 +262,26 @@
 	      (output-fields
 	       (case (markup-option n 'kind)
 		  ((techreport)
-		   `(author " -- " (or title url documenturl) " -- " 
+		   `(author " -- " (or title url documenturl) " -- "
 			    number ", " institution ", "
-			    address ", " month ", " year ", " 
+			    address ", " month ", " year ", "
 			    ("pp. " pages) "."))
 		  ((article)
-		   `(author " -- " (or title url documenturl) " -- " 
+		   `(author " -- " (or title url documenturl) " -- "
 			    journal ", " volume "" ("(" number ")") ", "
 			    address ", " month ", " year ", "
 			    ("pp. " pages) "."))
 		  ((inproceedings)
-		   `(author " -- " (or title url documenturl) " -- " 
+		   `(author " -- " (or title url documenturl) " -- "
 			    booktitle ", " series ", " ("(" number ")") ", "
 			    address ", " month ", " year ", "
 			    ("pp. " pages) "."))
 		  ((book)
-		   '(author " -- " (or title url documenturl) " -- " 
+		   '(author " -- " (or title url documenturl) " -- "
 			    publisher ", " address
 			    ", " month ", " year ", " ("pp. " pages) "."))
 		  ((phdthesis)
-		   '(author " -- " (or title url documenturl) " -- " type ", " 
+		   '(author " -- " (or title url documenturl) " -- " type ", "
 			    school ", " address
 			    ", " month ", " year"."))
 		  ((misc)
@@ -322,7 +324,7 @@
    :action (lambda (n e)
 	      (define (make-mark-entry n fst)
 		 (let ((l (tr :class 'index-mark-entry
-			     (td :colspan 2 :align 'left 
+			     (td :colspan 2 :align 'left
 				(bold (it (sf n)))))))
 		    (if fst
 			(list l)
@@ -330,13 +332,13 @@
 	      (define (make-primary-entry n p)
 		 (let* ((note (markup-option n :note))
 			(b (markup-body n))
-			(c (if note 
+			(c (if note
 			       (list b
 				     (it (list " (" note ")")))
 			       b)))
-		    (when p 
-		       (markup-option-add! b :text 
-					   (list (markup-option b :text) 
+		    (when p
+		       (markup-option-add! b :text
+					   (list (markup-option b :text)
 						 ", p."))
 		       (markup-option-add! b :page #t))
 		    (tr :class 'index-primary-entry
@@ -347,7 +349,7 @@
 			(bb (markup-body b)))
 		    (cond
 		       ((not (or bb (is-markup? b 'url-ref)))
-			(skribe-error 'the-index 
+			(skribe-error 'the-index
 				      "Illegal entry"
 				      b))
 		       (note
@@ -355,13 +357,13 @@
 				     (it (ref :class "the-index-secondary"
 					    :handle bb
 					    :page p
-					    :text (if p 
+					    :text (if p
 						      (list note ", p.")
 						      note)))
 				     (it (ref :class "the-index-secondary"
 					    :url (markup-option b :url)
 					    :page p
-					    :text (if p 
+					    :text (if p
 						      (list note ", p.")
 						      note))))))
 			   (tr :class 'index-secondary-entry
@@ -370,12 +372,12 @@
 		       (else
 			(let ((r (if bb
 				     (ref :class "the-index-secondary"
-					:handle bb 
-					:page p 
+					:handle bb
+					:page p
 					:text (if p " ..., p." " ..."))
 				     (ref :class "the-index-secondary"
 					:url (markup-option b :url)
-					:page p 
+					:page p
 					:text (if p " ..., p." " ...")))))
 			   (tr :class 'index-secondary-entry
 			      (td :valign 'top :align 'right :width 1.)
@@ -387,11 +389,11 @@
 		       ((null? ie)
 			'())
 		       ((not (pair? (car ie)))
-			(append (make-mark-entry (car ie) f) 
+			(append (make-mark-entry (car ie) f)
 				(loop (cdr ie) #f)))
 		       (else
 			(cons (make-primary-entry (caar ie) p)
-			      (append (map (lambda (x) 
+			      (append (map (lambda (x)
 					      (make-secondary-entry x p))
 					   (cdar ie))
 				      (loop (cdr ie) #f)))))))
@@ -399,7 +401,7 @@
 		 (let* ((l (length ie))
 			(w (/ 100. nc))
 			(iepc (let ((d (/ l nc)))
-				 (if (integer? d) 
+				 (if (integer? d)
 				     (inexact->exact d)
 				     (+ 1 (inexact->exact (truncate d))))))
 			(split (list-split ie iepc)))
@@ -417,13 +419,13 @@
 			   ((null? ie)
 			    "")
 			   ((or (not (integer? nc)) (= nc 1))
-			    (table :width 100. 
-			       :&skribe-eval-location loc 
+			    (table :width 100.
+			       :&skribe-eval-location loc
 			       :class "index-table"
 			       (make-column ie pref)))
 			   (else
 			    (table :width 100.
-			       :&skribe-eval-location loc 
+			       :&skribe-eval-location loc
 			       :class "index-table"
 			       (make-sub-tables ie nc pref))))))
 		 (output (skribe-eval t e) e))))
@@ -434,7 +436,7 @@
 ;*    The index header is only useful for targets that support         */
 ;*    hyperlinks such as HTML.                                         */
 ;*---------------------------------------------------------------------*/
-(markup-writer '&the-index-header 
+(markup-writer '&the-index-header
    :action (lambda (n e) #f))
 
 ;*---------------------------------------------------------------------*/

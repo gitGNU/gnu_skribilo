@@ -42,7 +42,7 @@
 ;*    source-read-lines ...                                            */
 ;*---------------------------------------------------------------------*/
 (define (source-read-lines file start stop tab)
-   (let ((p (find-path file (skribe-source-path))))
+   (let ((p (search-path (skribe-source-path) file)))
      (if (or (not (string? p)) (not (file-exists? p)))
 	  (skribe-error 'source
 			(format "Can't find `~a' source file in path" file)
@@ -119,7 +119,7 @@
 ;*    source-read-definition ...                                       */
 ;*---------------------------------------------------------------------*/
 (define (source-read-definition file definition tab lang)
-   (let ((p (find-path file (skribe-source-path))))
+   (let ((p (search-path (skribe-source-path) file)))
       (cond
 	 ((not (language-extractor lang))
 	  (skribe-error 'source

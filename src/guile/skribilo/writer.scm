@@ -1,24 +1,24 @@
 ;;;;
 ;;;; writer.stk	-- Skribe Writer Stuff
-;;;; 
+;;;;
 ;;;; Copyright © 2003-2004 Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
-;;;; 
-;;;; 
+;;;;
+;;;;
 ;;;; This program is free software; you can redistribute it and/or modify
 ;;;; it under the terms of the GNU General Public License as published by
 ;;;; the Free Software Foundation; either version 2 of the License, or
 ;;;; (at your option) any later version.
-;;;; 
+;;;;
 ;;;; This program is distributed in the hope that it will be useful,
 ;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
 ;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ;;;; GNU General Public License for more details.
-;;;; 
+;;;;
 ;;;; You should have received a copy of the GNU General Public License
 ;;;; along with this program; if not, write to the Free Software
-;;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, 
+;;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ;;;; USA.
-;;;; 
+;;;;
 ;;;;           Author: Erick Gallesio [eg@essi.fr]
 ;;;;    Creation date: 15-Sep-2003 22:21 (eg)
 ;;;; Last file update:  4-Mar-2004 10:48 (eg)
@@ -31,8 +31,10 @@
 
 
 (use-modules (skribilo debug)
-;	     (skribilo engine)
+	     (skribilo engine)
 	     (skribilo output)
+	     (skribilo types)
+	     (skribilo lib)
 
 	     (oop goops)
 	     (ice-9 optargs))
@@ -40,7 +42,7 @@
 
 ;;;; ======================================================================
 ;;;;
-;;;; 				INVOKE
+;;;;				INVOKE
 ;;;;
 ;;;; ======================================================================
 (define (invoke proc node e)
@@ -56,7 +58,7 @@
 
 ;;;; ======================================================================
 ;;;;
-;;;; 				LOOKUP-MARKUP-WRITER
+;;;;				LOOKUP-MARKUP-WRITER
 ;;;;
 ;;;; ======================================================================
 (define (lookup-markup-writer node e)
@@ -76,7 +78,7 @@
 
 ;;;; ======================================================================
 ;;;;
-;;;; 				MAKE-WRITER-PREDICATE
+;;;;				MAKE-WRITER-PREDICATE
 ;;;;
 ;;;; ======================================================================
 (define (make-writer-predicate markup predicate class)
@@ -104,26 +106,55 @@
 
 ;;;; ======================================================================
 ;;;;
-;;;; 				MARKUP-WRITER
+;;;;				MARKUP-WRITER
 ;;;;
 ;;;; ======================================================================
-(define* (markup-writer markup #:optional engine
+; (define-macro (lambda** arglist . body)
+;   (let ((parse-arglist (module-ref (resolve-module '(ice-9 optargs))
+; 				   'parse-arglist)))
+;     (parse-arglist
+;      arglist
+;      (lambda (mandatory-args optionals keys aok? rest-arg)
+;        (let ((l**-rest-arg (gensym "L**-rest"))
+; 	     (l**-loop (gensym "L**-loop")))
+; 	 `(lambda (,@mandatory-args . ,l**-rest-arg)
+; 	    `(let ,l**-loop ((,l**-rest-arg ,l**-rest-arg)
+; 			     (,rest-arg '())
+; 			     ,@optionals
+; 			     ,@keys)
+; 		  (if (null? ,l**-rest-arg)
+; 		      (begin
+; 			,@body)
+
+(define* (markup-writer markup ;; #:optional (engine #f)
 			#:key (predicate #f) (class #f) (options '())
-		              (validate #f)
-		              (before #f) (action 'unspecified) (after #f))
-  (let ((e (or engine (default-engine))))
+			      (validate #f)
+			      (before #f)
+			      (action 'unspecified)
+			      (after #f)
+			#:rest engine)
+  ;;; FIXME:  `lambda*' sucks and fails when both optional arguments and
+  ;;; keyword arguments are used together.  In particular, if ENGINE is not
+  ;;; specified by the caller but other keyword arguments are specified, it
+  ;;; will consider the value of ENGINE to be the first keyword found.
+
+;  (let ((e (or engine (default-engine))))
+  (let ((e (or (and (list? engine)
+		    (not (keyword? (car engine))))
+	       (default-engine))))
+
     (cond
       ((and (not (symbol? markup)) (not (eq? markup #t)))
-       (skribe-error 'markup-writer "Illegal markup" markup))
+       (skribe-error 'markup-writer "illegal markup" markup))
       ((not (engine? e))
-          (skribe-error 'markup-writer "Illegal engine" e))
+	  (skribe-error 'markup-writer "illegal engine" e))
       ((and (not predicate)
 	    (not class)
 	    (null? options)
 	    (not before)
 	    (eq? action 'unspecified)
 	    (not after))
-         (skribe-error 'markup-writer "Illegal writer" markup))
+       (skribe-error 'markup-writer "illegal writer" markup))
       (else
        (let ((m  (make-writer-predicate markup predicate class))
 	     (ac (if (eq? action 'unspecified)
@@ -135,35 +166,35 @@
 
 ;;;; ======================================================================
 ;;;;
-;;;; 				MARKUP-WRITER-GET
+;;;;				MARKUP-WRITER-GET
 ;;;;
 ;;;; ======================================================================
 (define* (markup-writer-get markup :optional engine :key (class #f) (pred #f))
   (let ((e (or engine (default-engine))))
     (cond
       ((not (symbol? markup))
-         (skribe-error 'markup-writer-get "Illegal symbol" markup))
+	 (skribe-error 'markup-writer-get "Illegal symbol" markup))
       ((not (engine? e))
-         (skribe-error 'markup-writer-get "Illegal engine" e))
+	 (skribe-error 'markup-writer-get "Illegal engine" e))
       (else
        (let liip ((e e))
 	 (let loop ((w* (slot-ref e 'writers)))
 	   (cond
 	     ((pair? w*)
-	        (if (and (eq? (writer-ident (car w*)) markup)
+		(if (and (eq? (writer-ident (car w*)) markup)
 			 (equal? (writer-class (car w*)) class)
 			 (or (unspecified? pred)
 			     (eq? (slot-ref (car w*) 'upred) pred)))
 		    (car w*)
 		    (loop (cdr w*))))
 	     ((engine? (slot-ref e 'delegate))
-	        (liip (slot-ref e 'delegate)))
+		(liip (slot-ref e 'delegate)))
 	     (else
-	        #f))))))))
+		#f))))))))
 
 ;;;; ======================================================================
 ;;;;
-;;;; 				MARKUP-WRITER-GET*
+;;;;				MARKUP-WRITER-GET*
 ;;;;
 ;;;; ======================================================================
 
@@ -194,16 +225,16 @@
 
 ;;; ======================================================================
 ;;;;
-;;;; 				COPY-MARKUP-WRITER
+;;;;				COPY-MARKUP-WRITER
 ;;;;
 ;;;; ======================================================================
 (define* (copy-markup-writer markup old-engine :optional new-engine
-			      :key (predicate 'unspecified) 
-			           (class 'unspecified) 
+			      :key (predicate 'unspecified)
+				   (class 'unspecified)
 				   (options 'unspecified)
-			           (validate 'unspecified) 
-				   (before 'unspecified) 
-				   (action 'unspecified) 
+				   (validate 'unspecified)
+				   (before 'unspecified)
+				   (action 'unspecified)
 				   (after 'unspecified))
     (let ((old        (markup-writer-get markup old-engine))
 	  (new-engine (or new-engine old-engine)))

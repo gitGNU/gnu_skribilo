@@ -1,0 +1,42 @@
+Skribilo
+========
+
+Skribilo is a port of Skribe to GNU Guile.
+
+Here are a few goals.
+
+* Usability
+
+** Integration with Guile's module system
+
+** Better error handling, automatic back-traces, etc.
+
+* Font-ends (readers)
+
+** Implement a new front-end mechanism (see `(skribilo reader)')
+
+** Skribe front-end (read Skribe syntax)
+
+** Texinfo front-end
+
+** Simple markup front-end (à la `txt2tags', Emacs' outline mode, or Wiki)
+
+* Back-ends (engines)
+
+** Easier to plug-in new back-ends (no need to modify the source)
+
+** Better HTML (or XHTML?) back-end
+
+** Lout back-end (including automatic `lout' invocation?)
+
+** Info back-end
+
+* Packages
+
+** Pie charts
+
+** Equations
+
+
+
+;;; arch-tag: 2d0a6235-5c09-4930-998c-56a4de2c0aca

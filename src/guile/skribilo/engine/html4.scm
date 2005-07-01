@@ -1,38 +1,40 @@
 ;;;;
 ;;;; html4.skr				-- HTML 4.01 Engine
-;;;; 
+;;;;
 ;;;; Copyright © 2004 Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
-;;;; 
-;;;; 
+;;;;
+;;;;
 ;;;; This program is free software; you can redistribute it and/or modify
 ;;;; it under the terms of the GNU General Public License as published by
 ;;;; the Free Software Foundation; either version 2 of the License, or
 ;;;; (at your option) any later version.
-;;;; 
+;;;;
 ;;;; This program is distributed in the hope that it will be useful,
 ;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
 ;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ;;;; GNU General Public License for more details.
-;;;; 
+;;;;
 ;;;; You should have received a copy of the GNU General Public License
 ;;;; along with this program; if not, write to the Free Software
-;;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, 
+;;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ;;;; USA.
-;;;; 
+;;;;
 ;;;;           Author: Erick Gallesio [eg@essi.fr]
 ;;;;    Creation date: 18-Feb-2004 11:58 (eg)
 ;;;; Last file update: 26-Feb-2004 21:09 (eg)
 ;;;;
 
+(define-skribe-module (skribilo engine html4))
+
 (define (find-children node)
   (define (flat l)
-    (cond 
+    (cond
       ((null? l) l)
       ((pair? l) (append (flat (car l))
 			 (flat (cdr l))))
       (else      (list l))))
-  
-  (if (markup? node) 
+
+  (if (markup? node)
       (flat (markup-body node))
       node))
 
@@ -45,9 +47,9 @@
   (engine-custom-set! le 'html-variant    "html4")
   (engine-custom-set! le 'html4-logo      "http://www.w3.org/Icons/valid-html401")
   (engine-custom-set! le 'html4-validator "http://validator.w3.org/check/referer")
-  
+
   ;;----------------------------------------------------------------------
-  ;; 	&html-html ...
+  ;;	&html-html ...
   ;;----------------------------------------------------------------------
   (markup-writer '&html-html le
      :before "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">
@@ -55,21 +57,21 @@
      :after "</html>")
 
   ;;----------------------------------------------------------------------
-  ;; 	&html-ending
+  ;;	&html-ending
   ;;----------------------------------------------------------------------
   (let* ((img (engine-custom le 'html4-logo))
 	 (url (engine-custom le 'html4-validator))
-	 (bottom (list (hrule) 
+	 (bottom (list (hrule)
 		      (table :width 100.
 			 (tr
 			    (td :align 'left
 			       (font :size -1 [
-				 This ,(sc "Html") page has been produced by 
+				 This ,(sc "Html") page has been produced by
 				      ,(ref :url (skribe-url) :text "Skribe").
 				      ,(linebreak)
 				      Last update ,(it (date)).]))
 			    (td :align 'right :valign 'top
-			       (ref :url url 
+			       (ref :url url
 				  :text (image :url img :width 88 :height 31))))))))
     (markup-writer '&html-ending le
        :before "<div class=\"skribe-ending\">"
@@ -79,13 +81,13 @@
 		       (output body #t)
 		       (skribe-eval bottom e))))
        :after "</div>\n"))
-  
+
   ;;----------------------------------------------------------------------
   ;;	color ...
   ;;----------------------------------------------------------------------
   (markup-writer 'color le
      :options '(:bg :fg :width :margin)
-     :before (lambda (n e) 
+     :before (lambda (n e)
 	       (let ((m    (markup-option n :margin))
 		     (w    (markup-option n :width))
 		     (bg   (markup-option n :bg))
@@ -106,27 +108,27 @@
      :after (lambda (n e)
 	      (when (markup-option n :fg)
 		(display "</span>"))
-	      (when (markup-option n :bg) 
+	      (when (markup-option n :bg)
 		(display "</td></tr>\n</tbody></table>"))))
-  
+
   ;;----------------------------------------------------------------------
   ;;	font ...
   ;;----------------------------------------------------------------------
   (markup-writer 'font le
      :options '(:size :face)
-     :before (lambda (n e) 
+     :before (lambda (n e)
 	       (let ((face (markup-option n :face))
 		     (size (let ((sz (markup-option n :size)))
 			     (cond
 			       ((or (unspecified? sz) (not sz))
 				#f)
 			       ((and (number? sz) (or (inexact? sz) (negative? sz)))
-				(format "~a%" 
-					(+ 100 
+				(format "~a%"
+					(+ 100
 					   (* 20 (inexact->exact (truncate sz))))))
 			       ((number? sz)
 				sz)
-			       (else 
+			       (else
 				(skribe-error 'font
 					      (format "Illegal font size ~s" sz)
 					      n))))))
@@ -153,8 +155,8 @@
   ;;----------------------------------------------------------------------
   (markup-writer 'roman le
      :before "<span style=\"font-family: serif\">"
-     :after "</span>") 
-  
+     :after "</span>")
+
   ;;----------------------------------------------------------------------
   ;;	table ...
   ;;----------------------------------------------------------------------

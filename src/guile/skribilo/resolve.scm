@@ -50,11 +50,13 @@
 (define (resolve! ast engine env)
   (with-debug 3 'resolve
      (debug-item "ast=" ast)
-     (fluid-let ((*unresolved* #f))
+     (let ((*unresolved* (make-fluid)))
+       (fluid-set! *unresolved* #f)
+
        (let Loop ((ast ast))
-	 (set! *unresolved* #f)
+	 (fluid-set! *unresolved* #f)
 	 (let ((ast (do-resolve! ast engine env)))
-	   (if *unresolved*
+	   (if (fluid-ref *unresolved*)
 	       (Loop ast)
 	       ast))))))
 

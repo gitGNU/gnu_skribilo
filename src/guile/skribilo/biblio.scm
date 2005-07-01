@@ -143,7 +143,7 @@
 ;;; ======================================================================
 ;; FIXME: Factoriser
 (define (skribe-open-bib-file file command)
- (let ((path (find-path file *skribe-bib-path*)))
+ (let ((path (search-path *skribe-bib-path* file)))
    (if (string? path)
        (begin
 	 (when (> *skribe-verbose* 0)

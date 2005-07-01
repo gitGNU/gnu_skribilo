@@ -32,6 +32,13 @@
            skribe-warning skribe-warning/ast
            skribe-message
 
+           ;; paths as lists of directories
+
+           %skribilo-load-path
+           %skribilo-image-path %skribilo-bib-path %skribilo-source-path
+
+           ;; compatibility
+
            skribe-path skribe-path-set!
            skribe-image-path skribe-image-path-set!
            skribe-bib-path skribe-bib-path-set!
@@ -45,6 +52,7 @@
            printf fprintf
            any? every?
            process-input-port process-output-port process-error-port
+	   %procedure-arity
 
            make-hashtable hashtable?
            hashtable-get hashtable-put! hashtable-update!
@@ -57,6 +65,9 @@
 
                   ;; for compatibility
                   unwind-protect unless when)
+
+  :use-module (skribilo config)
+  :use-module (skribilo types)
 
   :use-module (srfi srfi-1)
   :use-module (ice-9 optargs))
@@ -79,7 +90,7 @@
 (define-macro (define-markup bindings . body)
   ;; This is just an `(ice-9 optargs)' kind of `lambda*', with DSSSL
   ;; keyword-style conversion enabled.  However, using `(ice-9 optargs)', the
-  ;; `#:rest' argument can only appear last which not what Skribe/DSSSL
+  ;; `#:rest' argument can only appear last, which is not what Skribe/DSSSL
   ;; expect, hence `fix-rest-arg'.
   (define (fix-rest-arg args)
     (let loop ((args args)
@@ -256,44 +267,34 @@
 	(Loop (cdr l))))))
 
 
-
+
 ;;; ======================================================================
 ;;;
 ;;;				A C C E S S O R S
 ;;;
 ;;; ======================================================================
 
-;;							  SKRIBE-PATH
-(define (skribe-path) *skribe-path*)
 
-(define (skribe-path-set! path)
-  (if (not (and (list? path) (every string? path)))
-      (skribe-error 'skribe-path-set! "Illegal path" path)
-      (set! *skribe-path* path)))
+(define %skribilo-load-path (list (skribilo-default-path) "."))
+(define %skribilo-image-path '("."))
+(define %skribilo-bib-path '("."))
+(define %skribilo-source-path '("."))
 
-;;							  SKRIBE-IMAGE-PATH
-(define (skribe-image-path) *skribe-image-path*)
+(define-macro (define-compatibility-accessors var oldname)
+  (let ((newname (symbol-append '%skribilo- var))
+        (setter  (symbol-append oldname '-set!)))
+    `(begin
+       (define (,oldname) ,newname)
+       (define (,setter path)
+         (if (not (and (list? path) (every string? path)))
+             (skribe-error ',setter "illegal path" path)
+             (set! ,newname path))))))
 
-(define (skribe-image-path-set! path)
-  (if (not (and (list? path) (every string? path)))
-      (skribe-error 'skribe-image-path-set! "Illegal path" path)
-      (set! *skribe-image-path* path)))
+(define-compatibility-accessors load-path   skribe-path)
+(define-compatibility-accessors image-path  skribe-image-path)
+(define-compatibility-accessors bib-path    skribe-bib-path)
+(define-compatibility-accessors source-path skribe-source-path)
 
-;;							  SKRIBE-BIB-PATH
-(define (skribe-bib-path) *skribe-bib-path*)
-
-(define (skribe-bib-path-set! path)
-  (if (not (and (list? path) (every string? path)))
-      (skribe-error 'skribe-bib-path-set! "Illegal path" path)
-      (set! *skribe-bib-path* path)))
-
-;;							  SKRBE-SOURCE-PATH
-(define (skribe-source-path) *skribe-source-path*)
-
-(define (skribe-source-path-set! path)
-  (if (not (and (list? path) (every string? path)))
-      (skribe-error 'skribe-source-path-set! "Illegal path" path)
-      (set! *skribe-source-path* path)))
 
 
 ;;; ======================================================================
@@ -346,6 +347,14 @@
 
 (define find-runtime-type	(lambda (obj) obj))
 
+
+;;;
+;;; Various things.
+;;;
+
+(define (%procedure-arity proc)
+    (car (procedure-property proc 'arity)))
+
 (define-macro (unwind-protect expr1 expr2)
   ;; This is no completely correct.
   `(dynamic-wind
@@ -353,8 +362,8 @@
        (lambda () ,expr1)
        (lambda () ,expr2)))
 
-(define-macro (unless expr body)
-  `(if (not ,expr) ,body))
+(define-macro (unless condition . exprs)
+  `(if (not ,condition) (begin ,@exprs)))
 
-(define-macro (when expr . exprs)
-  `(if ,expr (begin ,@exprs)))
+(define-macro (when condition . exprs)
+  `(if ,condition (begin ,@exprs)))

@@ -48,7 +48,7 @@
 	     (skribilo verify)
 	     (skribilo resolve)
 	     (skribilo output)
-	     (skribilo eval)
+	     (skribilo evaluator)
 	     (oop goops))
 
 
@@ -195,7 +195,7 @@
 	      to))))))
 
 (define (convert-image file formats)
-  (let ((path (find-path file (skribe-image-path))))
+  (let ((path (search-path (skribe-image-path) file)))
     (if (not path)
 	(skribe-error 'convert-image
 		      (format "Can't find `~a' image file in path: " file)
@@ -259,14 +259,17 @@
 	  (display (if res (cadr res) ch) out)))
       (get-output-string out))))
 
+(define string->html
+  (%make-general-string-replace '((#\" "&quot;") (#\& "&amp;") (#\< "&lt;")
+				  (#\> "&gt;"))))
 
 (define (make-string-replace lst)
   (let ((l (sort lst (lambda (r1 r2) (char<? (car r1) (car r2))))))
     (cond
       ((equal? l '((#\" "&quot;") (#\& "&amp;") (#\< "&lt;") (#\> "&gt;")))
-	 string->html)
+       string->html)
       (else
-	 (%make-general-string-replace lst)))))
+       (%make-general-string-replace lst)))))
 
 
 
