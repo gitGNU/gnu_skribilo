@@ -19,7 +19,8 @@
 ;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ;;; USA.
 
-(define-skribe-module (skribilo skribe utils))
+(define-skribe-module (skribilo skribe utils)
+  #:export (ast-document))
 
 ;;; Author:  Manuel Serrano
 ;;; Commentary:

@@ -59,10 +59,6 @@ exec ${GUILE-guile} --debug -l $0 -c "(apply $main (cdr (command-line)))" "$@"
 				     the-arg))))))))
 
 
-(set! %load-hook
-      (lambda (file)
-	(format #t "~~ loading `~a'...~%" file)))
-
 
 (define-module (skribilo))
 
@@ -415,6 +411,11 @@ Processes a Skribilo/Skribe source file and produces its output.
 
     (set-skribe-debug! (string->number debugging-level))
 
+    (if (> (skribe-debug) 4)
+	(set! %load-hook
+	      (lambda (file)
+		(format #t "~~ loading `~a'...~%" file))))
+
     (set! %skribilo-load-path
 	  (cons load-path %skribilo-load-path))
     (set! %skribilo-bib-path
@@ -425,9 +426,6 @@ Processes a Skribilo/Skribe source file and produces its output.
 
     ;; Load the user rc file
     ;(load-rc)
-
-    ;; load the basic Skribe modules
-    (load-skribe-modules)
 
     ;; Load the base file to bootstrap the system as well as the files
     ;; that are in the PRELOAD variable.
@@ -442,24 +440,28 @@ Processes a Skribilo/Skribe source file and produces its output.
 	      (reverse! variants))
 
     (let ((files (option-ref options '() '())))
-      (if (null? files)
-	  (error "you must specify at least the input file" files))
+
       (if (> (length files) 2)
 	  (error "you can specify at most one input file and one output file"
 		 files))
 
-      (let* ((source-file (car files))
-	     (dest-file (if (null? (cdr files)) #f (cadr files)))
-	     (source-port (open-input-file source-file)))
+      (let* ((source-file (if (null? files) #f (car files)))
+	     (dest-file (if (or (not source-file)
+				(null? (cdr files)))
+			    #f
+			    (cadr files)))
+	     (do-it! (lambda ()
+		       (if (string? dest-file)
+			   (with-output-to-file dest-file doskribe)
+			   (doskribe)))))
 
 	(if (and dest-file (file-exists? dest-file))
 	    (delete-file dest-file))
 
-	(with-input-from-file source-file
-	  (lambda ()
-	    (if (string? dest-file)
-		(with-output-to-file dest-file doskribe)
-		(doskribe))))))))
+	(if source-file
+	    (with-input-from-file source-file
+	      do-it!)
+	    (do-it!))))))
 
 
 (define main skribilo)

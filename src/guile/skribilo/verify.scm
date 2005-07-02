@@ -1,24 +1,24 @@
 ;;;;
 ;;;; verify.stk				-- Skribe Verification Stage
-;;;; 
+;;;;
 ;;;; Copyright © 2003-2004 Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
-;;;; 
-;;;; 
+;;;;
+;;;;
 ;;;; This program is free software; you can redistribute it and/or modify
 ;;;; it under the terms of the GNU General Public License as published by
 ;;;; the Free Software Foundation; either version 2 of the License, or
 ;;;; (at your option) any later version.
-;;;; 
+;;;;
 ;;;; This program is distributed in the hope that it will be useful,
 ;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
 ;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ;;;; GNU General Public License for more details.
-;;;; 
+;;;;
 ;;;; You should have received a copy of the GNU General Public License
 ;;;; along with this program; if not, write to the Free Software
-;;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, 
+;;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ;;;; USA.
-;;;; 
+;;;;
 ;;;;           Author: Erick Gallesio [eg@essi.fr]
 ;;;;    Creation date: 13-Aug-2003 11:57 (eg)
 ;;;; Last file update: 27-Oct-2004 16:35 (eg)
@@ -29,9 +29,10 @@
 
 (use-modules (skribilo debug)
 ;	     (skribilo engine)
-;	     (skribilo writer)
+	     (skribilo writer)
 ;	     (skribilo runtime)
 	     (skribilo types)
+	     (skribilo lib)     ;; `when', `unless'
 	     (oop goops))
 
 
@@ -61,16 +62,16 @@
 ;;; CHECK-OPTIONS
 ;;;
 (define (check-options lopts markup engine)
-  
+
   ;;  Only keywords are checked, symbols are voluntary left unchecked. */
   (with-debug 6 'check-options
       (debug-item "markup="  (markup-markup markup))
       (debug-item "options=" (slot-ref markup 'options))
       (debug-item "lopts="   lopts)
       (for-each
-          (lambda (o2)
+	  (lambda (o2)
 	    (for-each
-	        (lambda (o)
+		(lambda (o)
 		  (if (and (keyword? o)
 			   (not (eq? o :&skribe-eval-location))
 			   (not (memq o lopts)))
@@ -85,11 +86,11 @@
 			       (markup-option markup o)))))
 		o2))
 	  (slot-ref markup 'options))))
-  
+
 
 ;;; ======================================================================
 ;;;
-;;; 				V E R I F Y
+;;;				V E R I F Y
 ;;;
 ;;; ======================================================================
 
@@ -124,7 +125,7 @@
   (with-debug 5 'verify::<markup>
      (debug-item "node="    (markup-markup node))
      (debug-item "options=" (slot-ref node 'options))
-     (debug-item "e=" 	    (engine-ident e))
+     (debug-item "e="	    (engine-ident e))
 
      (next-method)
 
@@ -157,5 +158,3 @@
 	    (slot-ref e 'customs))
 
    node)
-  
-

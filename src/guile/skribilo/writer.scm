@@ -64,7 +64,7 @@
 (define (lookup-markup-writer node e)
   (let ((writers (slot-ref e 'writers))
 	(delegate (slot-ref e 'delegate)))
-    (let Loop ((w* writers))
+    (let loop ((w* writers))
       (cond
 	((pair? w*)
 	   (let ((pred (slot-ref (car w*) 'pred)))

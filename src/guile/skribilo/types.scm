@@ -33,10 +33,12 @@
 	    <node> node? node-options node-loc
 	    <engine> engine? engine-ident engine-format engine-customs
 		     engine-filter engine-symbol-table
-	    <writer> writer? write-object
+	    <writer> writer? write-object writer-options writer-ident
+	             writer-before writer-action writer-after
 	    <processor> processor? processor-combinator processor-engine
 	    <markup> markup? bind-markup! markup-options is-markup?
-		     markup-body find-markups write-object
+		     markup-markup markup-body markup-ident markup-class
+		     find-markups write-object
 	    <container> container? container-options
 			container-ident container-body
 	    <document> document? document-ident document-body

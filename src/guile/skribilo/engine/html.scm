@@ -16,7 +16,8 @@
 ;*       @ref ../../doc/user/htmle.skb:ref@                            */
 ;*=====================================================================*/
 
-(define-skribe-module (skribilo engine html))
+(define-skribe-module (skribilo engine html)
+  #:use-module ((srfi srfi-19) :renamer (symbol-prefix-proc 's19:)))
 
 
 ;; Keep a reference to the base engine.
@@ -843,7 +844,9 @@
 						:url (skribilo-url))
 					   "."
 					   (linebreak)
-					   "Last update: " (date)))))
+					   "Last update: "
+					   (s19:date->string
+					    (s19:current-date))))))
 		      e))))
    :after "</div>\n")
 

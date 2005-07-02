@@ -31,6 +31,7 @@
 	     (skribilo types)
 ;	     (skribilo engine)
 	     (skribilo writer)
+	     (skribilo lib)    ;; `when', `unless'
 	     (oop goops))
 
 
@@ -60,10 +61,10 @@
 	   (%out/writer node e (car writer)))
 	  ((not (car writer))
 	   (skribe-error 'output
-			 (format "Illegal ~A user writer" (engine-ident e))
+			 (format #f "illegal ~A user writer" (engine-ident e))
 			 (if (markup? node) (markup-markup node) node)))
 	  (else
-	   (skribe-error 'output "Illegal user writer" (car writer)))))))
+	   (skribe-error 'output "illegal user writer" (car writer)))))))
 
 
 ;;;
@@ -74,7 +75,7 @@
 
 
 (define-method (out (node <pair>) e)
-  (let Loop ((n* node))
+  (let loop ((n* node))
     (cond
       ((pair? n*)
        (out (car n*) e)

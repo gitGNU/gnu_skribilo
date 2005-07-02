@@ -27,6 +27,7 @@
 (define-module (skribilo runtime)
   :export (;; Utilities
 	   strip-ref-base ast->file-location string-canonicalize
+	   the-options the-body
 
 	   ;; Markup functions
 	   markup-option markup-option-add! markup-output
@@ -49,6 +50,8 @@
 	     (skribilo resolve)
 	     (skribilo output)
 	     (skribilo evaluator)
+	     (skribilo vars)
+	     (srfi srfi-13)
 	     (oop goops))
 
 
@@ -253,10 +256,10 @@
   ;; The general version
   (lambda (str)
     (let ((out (open-output-string)))
-      (dotimes (i (string-length str))
-	(let* ((ch  (string-ref str i))
-	       (res (assq ch lst)))
-	  (display (if res (cadr res) ch) out)))
+      (string-for-each (lambda (ch)
+			 (let ((res (assq ch lst)))
+			   (display (if res (cadr res) ch) out)))
+		       str)
       (get-output-string out))))
 
 (define string->html
@@ -414,48 +417,49 @@
 ;;NEW	     '()))))))
 ;;NEW
 
-;;NEW ;;;; ======================================================================
-;;NEW ;;;;
-;;NEW ;;;;		M A R K U P   A R G U M E N T   P A R S I N G
-;;NEW ;;;
-;;NEW ;;;; ======================================================================
-;;NEW (define (the-body opt)
-;;NEW   ;; Filter out the options
-;;NEW   (let loop ((opt* opt)
-;;NEW	     (res '()))
-;;NEW     (cond
-;;NEW       ((null? opt*)
-;;NEW        (reverse! res))
-;;NEW       ((not (pair? opt*))
-;;NEW        (skribe-error 'the-body "Illegal body" opt))
-;;NEW       ((keyword? (car opt*))
-;;NEW        (if (null? (cdr opt*))
-;;NEW	   (skribe-error 'the-body "Illegal option" (car opt*))
-;;NEW	   (loop (cddr opt*) res)))
-;;NEW       (else
-;;NEW        (loop (cdr opt*) (cons (car opt*) res))))))
-;;NEW
-;;NEW
-;;NEW
-;;NEW (define (the-options opt+ . out)
-;;NEW   ;; Returns an list made of options.The OUT argument contains
-;;NEW   ;; keywords that are filtered out.
-;;NEW   (let loop ((opt* opt+)
-;;NEW	     (res '()))
-;;NEW     (cond
-;;NEW       ((null? opt*)
-;;NEW        (reverse! res))
-;;NEW       ((not (pair? opt*))
-;;NEW        (skribe-error 'the-options "Illegal options" opt*))
-;;NEW       ((keyword? (car opt*))
-;;NEW        (cond
-;;NEW	 ((null? (cdr opt*))
-;;NEW	  (skribe-error 'the-options "Illegal option" (car opt*)))
-;;NEW	 ((memq (car opt*) out)
-;;NEW	  (loop (cdr opt*) res))
-;;NEW	 (else
-;;NEW	  (loop (cdr opt*)
-;;NEW		(cons (list (car opt*) (cadr opt*)) res)))))
-;;NEW       (else
-;;NEW        (loop (cdr opt*) res)))))
-;;NEW
+
+;;;; ======================================================================
+;;;;
+;;;;		M A R K U P   A R G U M E N T   P A R S I N G
+;;;;
+;;;; ======================================================================
+(define (the-body opt)
+  ;; Filter out the options
+  (let loop ((opt* opt)
+	     (res '()))
+    (cond
+     ((null? opt*)
+      (reverse! res))
+     ((not (pair? opt*))
+      (skribe-error 'the-body "Illegal body" opt))
+     ((keyword? (car opt*))
+      (if (null? (cdr opt*))
+	  (skribe-error 'the-body "Illegal option" (car opt*))
+	  (loop (cddr opt*) res)))
+     (else
+      (loop (cdr opt*) (cons (car opt*) res))))))
+
+
+
+(define (the-options opt+ . out)
+  ;; Returns an list made of options.The OUT argument contains
+  ;; keywords that are filtered out.
+  (let loop ((opt* opt+)
+	     (res '()))
+    (cond
+     ((null? opt*)
+      (reverse! res))
+     ((not (pair? opt*))
+      (skribe-error 'the-options "Illegal options" opt*))
+     ((keyword? (car opt*))
+      (cond
+       ((null? (cdr opt*))
+	(skribe-error 'the-options "Illegal option" (car opt*)))
+       ((memq (car opt*) out)
+	(loop (cdr opt*) res))
+       (else
+	(loop (cdr opt*)
+	      (cons (list (car opt*) (cadr opt*)) res)))))
+     (else
+      (loop (cdr opt*) res)))))
+

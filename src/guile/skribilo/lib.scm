@@ -58,6 +58,7 @@
            hashtable-get hashtable-put! hashtable-update!
            hashtable->list
 
+	   skribe-read
            find-runtime-type)
 
   :export-syntax (new define-markup define-simple-markup
@@ -68,6 +69,8 @@
 
   :use-module (skribilo config)
   :use-module (skribilo types)
+  :use-module (skribilo reader)
+  :use-module (skribilo vars)
 
   :use-module (srfi srfi-1)
   :use-module (ice-9 optargs))
@@ -105,7 +108,7 @@
 
   (let ((name (car bindings))
 	(opts (cdr bindings)))
-    `(define* ,(cons name (fix-rest-arg opts)) ,@body)))
+    `(define*-public ,(cons name (fix-rest-arg opts)) ,@body)))
 
 
 ;;;
@@ -351,6 +354,11 @@
 ;;;
 ;;; Various things.
 ;;;
+
+(define %skribe-reader (make-reader 'skribe))
+
+(define* (skribe-read #:optional (port (current-input-port)))
+  (%skribe-reader port))
 
 (define (%procedure-arity proc)
     (car (procedure-property proc 'arity)))

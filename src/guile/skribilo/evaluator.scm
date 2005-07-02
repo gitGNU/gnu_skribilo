@@ -43,53 +43,6 @@
 	     (oop goops))
 
 
-
-;;; FIXME:  The following page must eventually go to `module.scm'.
-
-(define *skribilo-user-module* #f)
-
-(define *skribilo-user-imports*
-  '((srfi srfi-1)
-    (srfi srfi-13)
-    (oop goops)
-    (skribilo module)
-    (skribilo config)
-    (skribilo vars)
-    (skribilo runtime)
-    (skribilo biblio)
-    (skribilo lib)
-    (skribilo resolve)
-    (skribilo engine)
-    (skribilo writer)))
-
-(define *skribe-core-modules* ;;; FIXME:  From `module.scm'.
-  '("utils" "api" "bib" "index" "param" "sui"))
-
-;;;
-;;; MAKE-RUN-TIME-MODULE
-;;;
-(define-public (make-run-time-module)
-  "Return a new module that imports all the necessary bindings required for
-execution of Skribilo/Skribe code."
-  (let ((the-module (make-module)))
-        (for-each (lambda (iface)
-                    (module-use! the-module (resolve-module iface)))
-                  (append *skribilo-user-imports*
-			  (map (lambda (mod)
-				 `(skribilo skribe
-					    ,(string->symbol mod)))
-			       *skribe-core-modules*)))
-        (set-module-name! the-module '(skribilo-user))
-        the-module))
-
-;;;
-;;; RUN-TIME-MODULE
-;;;
-(define-public (run-time-module)
-  "Return the default instance of a Skribilo/Skribe run-time module."
-  (if (not *skribilo-user-module*)
-      (set! *skribilo-user-module* (make-run-time-module)))
-  *skribilo-user-module*)
 
 
 
