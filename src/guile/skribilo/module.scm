@@ -44,6 +44,8 @@
     ;(srfi srfi-19)        ;; date and time
     (oop goops)           ;; `make'
     (ice-9 optargs)       ;; `define*'
+    (ice-9 and-let-star)  ;; `and-let*'
+    (ice-9 receive)       ;; `receive'
 
     (skribilo module)
     (skribilo types)      ;; `<document>', `document?', etc.
@@ -56,7 +58,9 @@
     (skribilo engine)
     (skribilo writer)
     (skribilo output)
-    (skribilo evaluator)))
+    (skribilo evaluator)
+    (skribilo color)
+    (skribilo debug)))
 
 (define *skribe-core-modules*
   '("utils" "api" "bib" "index" "param" "sui"))

@@ -386,7 +386,7 @@
 	 :format "context"
 	 :delegate (find-engine 'base)
 	 :filter (make-string-replace context-encoding)
-	 :symbol-table (context-symbol-table (lambda (m) (format "$~a$" m)))
+	 :symbol-table (context-symbol-table (lambda (m) (format #f "$~a$" m)))
 	 :custom context-customs)))
 
 ;;;; ======================================================================
@@ -647,7 +647,7 @@
 			       (if (not (number? nb))
 				   (skribe-error
 				    'font
-				    (format "Illegal font size ~s" size)
+				    (format #f "Illegal font size ~s" size)
 				    nb)
 				   (+ cs nb))))))
 		     (ne (make-engine (gensym 'context)
@@ -980,7 +980,7 @@
 	     (let ((text (markup-option n :text))
 		   (url  (markup-body n)))
 	       (when (pair? url)
-		 (context-url (format "mailto:~A" (car url))
+		 (context-url (format #f "mailto:~A" (car url))
 			      (or text
 				  (car url))
 			      e)))))

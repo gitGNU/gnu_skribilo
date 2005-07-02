@@ -26,11 +26,12 @@
 ;;;
 
 (define-module (skribilo engine)
+  :use-module (skribilo module)
   :use-module (skribilo debug)
-;  :use-module (skribilo evaluator)
   :use-module (skribilo writer)
   :use-module (skribilo types)
   :use-module (skribilo lib)
+  :use-module (skribilo vars)
 
   :use-module (oop goops)
   :use-module (ice-9 optargs)
@@ -99,7 +100,7 @@
 	     ((engine? *skribe-engine*) *skribe-engine*)
 	     (else (find-engine *skribe-engine*)))))
     (if (not (engine? e))
-	(skribe-error 'engine-format? "No engine" e)
+	(skribe-error 'engine-format? "no engine" e)
 	(string=? fmt (engine-format e)))))
 
 ;;;

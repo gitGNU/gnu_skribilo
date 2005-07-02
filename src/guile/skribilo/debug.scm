@@ -27,7 +27,8 @@
 (define-module (skribilo debug)
    :export (with-debug %with-debug
 	    debug-item skribe-debug set-skribe-debug! add-skribe-debug-symbol
-	    no-debug-color))
+	    no-debug-color)
+   :use-module (srfi srfi-17))
 
 
 (define *skribe-debug*			0)
@@ -50,8 +51,9 @@
 (define (no-debug-color)
   (set! *skribe-debug-color* #f))
 
-(define (skribe-debug)
-  *skribe-debug*)
+(define-public skribe-debug
+  (getter-with-setter (lambda () *skribe-debug*)
+		      (lambda (val) (set! *skribe-debug* val))))
 
 ;;
 ;;   debug-port

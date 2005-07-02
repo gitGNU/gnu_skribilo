@@ -25,9 +25,10 @@
 ;;;
 
 (define-module (skribilo runtime)
+  ;; FIXME:  Useful procedures are scattered between here and
+  ;;         `(skribilo skribe utils)'.
   :export (;; Utilities
 	   strip-ref-base ast->file-location string-canonicalize
-	   the-options the-body
 
 	   ;; Markup functions
 	   markup-option markup-option-add! markup-output
@@ -42,7 +43,10 @@
 	   make-string-replace
 
 	   ;; AST
-	   ast->string))
+	   ast-parent ast->string
+	   markup-parent markup-document markup-chapter
+
+	   handle-body))
 
 (use-modules (skribilo debug)
 	     (skribilo types)
@@ -51,6 +55,7 @@
 	     (skribilo output)
 	     (skribilo evaluator)
 	     (skribilo vars)
+	     (skribilo lib)
 	     (srfi srfi-13)
 	     (oop goops))
 
@@ -201,7 +206,7 @@
   (let ((path (search-path (skribe-image-path) file)))
     (if (not path)
 	(skribe-error 'convert-image
-		      (format "Can't find `~a' image file in path: " file)
+		      (format #f "can't find `~a' image file in path: " file)
 		      (skribe-image-path))
 	(let ((suf (suffix file)))
 	  (if (member suf formats)
@@ -223,6 +228,7 @@
 		       (if (string? p)
 			   p
 			   (loop (cdr fmts)))))))))))
+
 
 ;;; ======================================================================
 ;;;
@@ -316,7 +322,7 @@
 
 
 
-
+
 ;;; ======================================================================
 ;;;
 ;;;				    A S T
@@ -346,120 +352,53 @@
   (ast->string (slot-ref ast 'body)))
 
 
-;;NEW ;;
-;;NEW ;; AST-PARENT
-;;NEW ;;
-;;NEW (define (ast-parent n)
-;;NEW   (slot-ref n 'parent))
-;;NEW
-;;NEW ;;
-;;NEW ;; MARKUP-PARENT
-;;NEW ;;
-;;NEW (define (markup-parent m)
-;;NEW   (let ((p (slot-ref m 'parent)))
-;;NEW     (if (eq? p 'unspecified)
-;;NEW	(skribe-error 'markup-parent "Unresolved parent reference" m)
-;;NEW	p)))
-;;NEW
-;;NEW
-;;NEW ;;
-;;NEW ;; MARKUP-DOCUMENT
-;;NEW ;;
-;;NEW (define (markup-document m)
-;;NEW   (let Loop ((p m)
-;;NEW	     (l #f))
-;;NEW     (cond
-;;NEW       ((is-markup? p 'document)           p)
-;;NEW       ((or (eq? p 'unspecified) (not p))  l)
-;;NEW       (else			          (Loop (slot-ref p 'parent) p)))))
-;;NEW
-;;NEW ;;
-;;NEW ;; MARKUP-CHAPTER
-;;NEW ;;
-;;NEW (define (markup-chapter m)
-;;NEW   (let loop ((p m)
-;;NEW	     (l #f))
-;;NEW     (cond
-;;NEW       ((is-markup? p 'chapter)           p)
-;;NEW       ((or (eq? p 'unspecified) (not p)) l)
-;;NEW       (else				 (loop (slot-ref p 'parent) p)))))
-;;NEW
-;;NEW
-;;NEW ;;;; ======================================================================
-;;NEW ;;;;
-;;NEW ;;;;				H A N D L E S
-;;NEW ;;;;
-;;NEW ;;;; ======================================================================
-;;NEW (define (handle-body h)
-;;NEW   (slot-ref h 'body))
-;;NEW
-;;NEW
-;;NEW ;;;; ======================================================================
-;;NEW ;;;;
-;;NEW ;;;;				F I N D
-;;NEW ;;;;
-;;NEW ;;;; ======================================================================
-;;NEW (define (find pred obj)
-;;NEW   (with-debug 4 'find
-;;NEW     (debug-item "obj=" obj)
-;;NEW     (let loop ((obj (if (is-a? obj <container>) (container-body obj) obj)))
-;;NEW       (cond
-;;NEW	((pair? obj)
-;;NEW	 (apply append (map (lambda (o) (loop o)) obj)))
-;;NEW	((is-a? obj <container>)
-;;NEW	 (debug-item "loop=" obj " " (slot-ref obj 'ident))
-;;NEW	 (if (pred obj)
-;;NEW	     (list (cons obj (loop (container-body obj))))
-;;NEW	     '()))
-;;NEW	(else
-;;NEW	 (if (pred obj)
-;;NEW	     (list obj)
-;;NEW	     '()))))))
-;;NEW
+
+;;
+;; AST-PARENT
+;;
+(define (ast-parent n)
+  (slot-ref n 'parent))
+
+;;
+;; MARKUP-PARENT
+;;
+(define (markup-parent m)
+  (let ((p (slot-ref m 'parent)))
+    (if (eq? p 'unspecified)
+	(skribe-error 'markup-parent "Unresolved parent reference" m)
+	p)))
+
+
+;;
+;; MARKUP-DOCUMENT
+;;
+(define (markup-document m)
+  (let Loop ((p m)
+	     (l #f))
+    (cond
+      ((is-markup? p 'document)           p)
+      ((or (eq? p 'unspecified) (not p))  l)
+      (else			          (Loop (slot-ref p 'parent) p)))))
+
+;;
+;;
+;; MARKUP-CHAPTER
+;;
+(define (markup-chapter m)
+  (let loop ((p m)
+	     (l #f))
+    (cond
+      ((is-markup? p 'chapter)           p)
+      ((or (eq? p 'unspecified) (not p)) l)
+      (else				 (loop (slot-ref p 'parent) p)))))
+
 
 
 ;;;; ======================================================================
 ;;;;
-;;;;		M A R K U P   A R G U M E N T   P A R S I N G
+;;;;				H A N D L E S
 ;;;;
 ;;;; ======================================================================
-(define (the-body opt)
-  ;; Filter out the options
-  (let loop ((opt* opt)
-	     (res '()))
-    (cond
-     ((null? opt*)
-      (reverse! res))
-     ((not (pair? opt*))
-      (skribe-error 'the-body "Illegal body" opt))
-     ((keyword? (car opt*))
-      (if (null? (cdr opt*))
-	  (skribe-error 'the-body "Illegal option" (car opt*))
-	  (loop (cddr opt*) res)))
-     (else
-      (loop (cdr opt*) (cons (car opt*) res))))))
-
-
-
-(define (the-options opt+ . out)
-  ;; Returns an list made of options.The OUT argument contains
-  ;; keywords that are filtered out.
-  (let loop ((opt* opt+)
-	     (res '()))
-    (cond
-     ((null? opt*)
-      (reverse! res))
-     ((not (pair? opt*))
-      (skribe-error 'the-options "Illegal options" opt*))
-     ((keyword? (car opt*))
-      (cond
-       ((null? (cdr opt*))
-	(skribe-error 'the-options "Illegal option" (car opt*)))
-       ((memq (car opt*) out)
-	(loop (cdr opt*) res))
-       (else
-	(loop (cdr opt*)
-	      (cons (list (car opt*) (cadr opt*)) res)))))
-     (else
-      (loop (cdr opt*) res)))))
+(define (handle-body h)
+  (slot-ref h 'body))
 

@@ -21,8 +21,7 @@
 ;;; USA.
 
 
-(define-module (skribilo vars)
-  #:use-module (srfi srfi-17))
+(define-module (skribilo vars))
 
 ;;;
 ;;; Switches
@@ -31,10 +30,6 @@
 (define-public *skribe-warning*	5)
 (define-public *load-rc*		#t)
 
-(define-public skribe-debug
-  (let ((level 0))
-    (getter-with-setter (lambda () level)
-			(lambda (val) (set! level val)))))
 
 ;;;
 ;;; PATH variables

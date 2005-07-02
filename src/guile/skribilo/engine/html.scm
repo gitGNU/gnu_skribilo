@@ -39,7 +39,7 @@
 		      (begin
 			 (set! table (cons (cons base 1) table))
 			 1))))
-	   (format "~a-~a.~a" base n suf)))
+	   (format #f "~a-~a.~a" base n suf)))
       (lambda (node e)
 	(let ((f (markup-option node filename))
 	      (file (markup-option node :file)))
@@ -517,12 +517,12 @@
       ((not (pair? cnts))
        cnts)
       ((null? (cdr cnts))
-       (format "~a." (car cnts)))
+       (format #f "~a." (car cnts)))
       (else
        (let loop ((cnts cnts))
 	  (if (null? (cdr cnts))
-	      (format "~a" (car cnts))
-	      (format "~a.~a" (car cnts) (loop (cdr cnts))))))))
+	      (format #f "~a" (car cnts))
+	      (format #f "~a.~a" (car cnts) (loop (cdr cnts))))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    html-width ...                                                   */
@@ -530,9 +530,9 @@
 (define (html-width width)
    (cond
       ((and (integer? width) (exact? width))
-       (format "~A" width))
+       (format #f "~A" width))
       ((real? width)
-       (format "~A%" (inexact->exact (round width))))
+       (format #f "~A%" (inexact->exact (round width))))
       ((string? width)
        width)
       (else
@@ -688,7 +688,7 @@
 	  (id (markup-ident n)))
       (unless (string? id)
 	 (skribe-error '&html-generic-header
-		       (format "Illegal identifier `~a'" id)
+		       (format #f "Illegal identifier `~a'" id)
 		       n))
       ;; title
       (output (new markup
@@ -769,7 +769,7 @@
 		 (display "  span.sc { font-variant: small-caps }\n")
 		 (display "  span.sf { font-family: sans-serif }\n")
 		 (display "  span.skribetitle { font-family: sans-serif; font-weight: bolder; font-size: x-large; }\n")
-		 (when hd (display (format "  ~a\n" hd)))
+		 (when hd (display (format #f "  ~a\n" hd)))
 		 (when (pair? icss)
 		    (for-each (lambda (css)
 				 (let ((p (open-input-file css)))
@@ -984,7 +984,7 @@
       (sui-blocks 'subsubsection n e)
       (display "  )\n"))
    (if (string? *skribe-dest*)
-       (let ((f (format "~a.sui" (prefix *skribe-dest*))))
+       (let ((f (format #f "~a.sui" (prefix *skribe-dest*))))
 	  (with-output-to-file f sui))
        (sui)))
 
@@ -1117,7 +1117,7 @@
 			(f (html-file c e)))
 		    (unless (string? id)
 		       (skribe-error 'toc
-				     (format "Illegal identifier `~a'" id)
+				     (format #f "illegal identifier `~a'" id)
 				     c))
 		    (display " <tr>")
 		    ;; blank columns
@@ -1129,7 +1129,8 @@
 		    (printf "<td colspan=\"~a\" width=\"100%\">"
 			    (- 4 level))
 		    (printf "<a href=\"~a#~a\">"
-			    (if (string=? f *skribe-dest*)
+			    (if (and *skribe-dest*
+				     (string=? f *skribe-dest*))
 				""
 				(strip-ref-base (or f *skribe-dest* "")))
 			    (string-canonicalize id))
@@ -1913,7 +1914,7 @@
 				(markup-class n)
 				"inbound")))
 		 (printf "<a href=\"~a#~a\" class=\"~a\""
-			 (if (string=? f *skribe-dest*)
+			 (if (and *skribe-dest* (string=? f *skribe-dest*))
 			     ""
 			     (strip-ref-base (or f *skribe-dest* "")))
 			 (string-canonicalize id)

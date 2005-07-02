@@ -19,8 +19,7 @@
 ;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ;;; USA.
 
-(define-skribe-module (skribilo skribe utils)
-  #:export (ast-document))
+(define-skribe-module (skribilo skribe utils))
 
 ;;; Author:  Manuel Serrano
 ;;; Commentary:
@@ -36,7 +35,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    engine-custom-add! ...                                           */
 ;*---------------------------------------------------------------------*/
-(define (engine-custom-add! e id val)
+(define-public (engine-custom-add! e id val)
    (let ((old (engine-custom e id)))
       (if (unspecified? old)
 	  (engine-custom-set! e id (list val))
@@ -45,7 +44,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    find-markup-ident ...                                            */
 ;*---------------------------------------------------------------------*/
-(define (find-markup-ident ident)
+(define-public (find-markup-ident ident)
    (let ((r (find-markups ident)))
       (if (or (pair? r) (null? r))
 	  r
@@ -54,7 +53,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    container-search-down ...                                        */
 ;*---------------------------------------------------------------------*/
-(define (container-search-down pred obj)
+(define-public (container-search-down pred obj)
    (with-debug 4 'container-search-down
       (debug-item "obj=" (find-runtime-type obj))
       (let loop ((obj (markup-body obj)))
@@ -74,7 +73,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    search-down ...                                                  */
 ;*---------------------------------------------------------------------*/
-(define (search-down pred obj)
+(define-public (search-down pred obj)
    (with-debug 4 'search-down
       (debug-item "obj=" (find-runtime-type obj))
       (let loop ((obj (markup-body obj)))
@@ -94,7 +93,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    find-down ...                                                    */
 ;*---------------------------------------------------------------------*/
-(define (find-down pred obj)
+(define-public (find-down pred obj)
    (with-debug 4 'find-down
       (debug-item "obj=" (find-runtime-type obj))
       (let loop ((obj obj))
@@ -115,7 +114,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    find1-down ...                                                   */
 ;*---------------------------------------------------------------------*/
-(define (find1-down pred obj)
+(define-public (find1-down pred obj)
    (with-debug 4 'find1-down
       (let loop ((obj obj)
 		 (stack '()))
@@ -143,7 +142,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    find-up ...                                                      */
 ;*---------------------------------------------------------------------*/
-(define (find-up pred obj)
+(define-public (find-up pred obj)
    (let loop ((obj obj)
 	      (res '()))
       (cond
@@ -157,7 +156,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    find1-up ...                                                     */
 ;*---------------------------------------------------------------------*/
-(define (find1-up pred obj)
+(define-public (find1-up pred obj)
    (let loop ((obj obj))
       (cond
 	 ((not (ast? obj))
@@ -170,19 +169,19 @@
 ;*---------------------------------------------------------------------*/
 ;*    ast-document ...                                                 */
 ;*---------------------------------------------------------------------*/
-(define (ast-document m)
+(define-public (ast-document m)
    (find1-up document? m))
 
 ;*---------------------------------------------------------------------*/
 ;*    ast-chapter ...                                                  */
 ;*---------------------------------------------------------------------*/
-(define (ast-chapter m)
+(define-public (ast-chapter m)
    (find1-up (lambda (n) (is-markup? n 'chapter)) m))
 
 ;*---------------------------------------------------------------------*/
 ;*    ast-section ...                                                  */
 ;*---------------------------------------------------------------------*/
-(define (ast-section m)
+(define-public (ast-section m)
    (find1-up (lambda (n) (is-markup? n 'section)) m))
 
 ;*---------------------------------------------------------------------*/
@@ -190,7 +189,7 @@
 ;*    -------------------------------------------------------------    */
 ;*    Filter out the options                                           */
 ;*---------------------------------------------------------------------*/
-(define (the-body opt+)
+(define-public (the-body opt+)
    (let loop ((opt* opt+)
 	      (res '()))
       (cond
@@ -211,7 +210,7 @@
 ;*    Returns an list made of options. The OUT argument contains       */
 ;*    keywords that are filtered out.                                  */
 ;*---------------------------------------------------------------------*/
-(define (the-options opt+ . out)
+(define-public (the-options opt+ . out)
    (let loop ((opt* opt+)
 	      (res '()))
       (cond
@@ -234,7 +233,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    list-split ...                                                   */
 ;*---------------------------------------------------------------------*/
-(define (list-split l num . fill)
+(define-public (list-split l num . fill)
    (let loop ((l l)
 	      (i 0)
 	      (acc '())

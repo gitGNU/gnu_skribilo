@@ -123,14 +123,15 @@
 			       ((or (unspecified? sz) (not sz))
 				#f)
 			       ((and (number? sz) (or (inexact? sz) (negative? sz)))
-				(format "~a%"
+				(format #f "~a%"
 					(+ 100
 					   (* 20 (inexact->exact (truncate sz))))))
 			       ((number? sz)
 				sz)
 			       (else
 				(skribe-error 'font
-					      (format "Illegal font size ~s" sz)
+					      (format #f
+						      "illegal font size ~s" sz)
 					      n))))))
 		 (display "<span ")
 		 (html-class n)

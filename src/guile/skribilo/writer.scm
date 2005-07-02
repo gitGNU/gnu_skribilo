@@ -139,8 +139,9 @@
   ;;; will consider the value of ENGINE to be the first keyword found.
 
 ;  (let ((e (or engine (default-engine))))
-  (let ((e (or (and (list? engine)
-		    (not (keyword? (car engine))))
+  (let ((e (or (if (and (list? engine) (not (keyword? (car engine))))
+		   (car engine)
+		   #f)
 	       (default-engine))))
 
     (cond
