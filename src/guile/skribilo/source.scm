@@ -26,7 +26,7 @@
 
 
 
-(define-module (skribe source)
+(define-module (skribilo source)
    :export (source-read-lines source-read-definition source-fontify))
 
 

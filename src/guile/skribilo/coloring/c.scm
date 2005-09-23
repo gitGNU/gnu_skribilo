@@ -26,7 +26,7 @@
 
 (require "lex-rt")		;; to avoid module problems
 
-(define-module (skribe c)
+(define-module (skribilo c)
    :export (c java)
    :import (skribe runtime))
 

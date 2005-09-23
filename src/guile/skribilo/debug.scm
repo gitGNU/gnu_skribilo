@@ -1,41 +1,42 @@
-;;;;
-;;;; debug.stk	-- Debug Facilities (stolen to Manuel Serrano) 
-;;;; 
-;;;; 
-;;;; Copyright © 2003-2004 Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
-;;;; This program is free software; you can redistribute it and/or modify
-;;;; it under the terms of the GNU General Public License as published by
-;;;; the Free Software Foundation; either version 2 of the License, or
-;;;; (at your option) any later version.
-;;;; 
-;;;; This program is distributed in the hope that it will be useful,
-;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;;;; GNU General Public License for more details.
-;;;; 
-;;;; You should have received a copy of the GNU General Public License
-;;;; along with this program; if not, write to the Free Software
-;;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, 
-;;;; USA.
-;;;; 
-;;;;           Author: Erick Gallesio [eg@essi.fr]
-;;;;    Creation date: 10-Aug-2003 20:45 (eg)
-;;;; Last file update: 28-Oct-2004 13:16 (eg)
-;;;;
+;;;
+;;; debug.scm	-- Debug Facilities (stolen to Manuel Serrano)
+;;;
+;;;
+;;; Copyright © 2003-2004 Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
+;;; This program is free software; you can redistribute it and/or modify
+;;; it under the terms of the GNU General Public License as published by
+;;; the Free Software Foundation; either version 2 of the License, or
+;;; (at your option) any later version.
+;;;
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;;
+;;; You should have received a copy of the GNU General Public License
+;;; along with this program; if not, write to the Free Software
+;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+;;; USA.
+;;;
+;;;           Author: Erick Gallesio [eg@essi.fr]
+;;;    Creation date: 10-Aug-2003 20:45 (eg)
+;;; Last file update: 28-Oct-2004 13:16 (eg)
+;;;
 
 
-(define-module (skribe debug)
+(define-module (skribilo debug)
    :export (with-debug %with-debug
 	    debug-item skribe-debug set-skribe-debug! add-skribe-debug-symbol
 	    no-debug-color))
 
-(define *skribe-debug* 			0)
+
+(define *skribe-debug*			0)
 (define *skribe-debug-symbols*		'())
-(define *skribe-debug-color* 		#t)
-(define *skribe-debug-item* 		#f)
-(define *debug-port* 			(current-error-port))
-(define *debug-depth* 			0)
-(define *debug-margin* 			"")
+(define *skribe-debug-color*		#t)
+(define *skribe-debug-item*		#f)
+(define *debug-port*			(current-error-port))
+(define *debug-depth*			0)
+(define *debug-margin*			"")
 (define *skribe-margin-debug-level*	0)
 
 
@@ -73,7 +74,7 @@
   (with-output-to-string
     (if (and *skribe-debug-color*
 	     (equal? (getenv "TERM") "xterm")
-	     (interactive-port? *debug-port*))	
+	     (interactive-port? *debug-port*))
 	(lambda ()
 	  (format #t "[0m[1;~Am" (+ 31 col))
 	  (for-each display o)
@@ -91,12 +92,13 @@
 ;;; debug-item
 ;;;
 (define (debug-item . args)
-  (when (or (>= *skribe-debug* *skribe-margin-debug-level*)
-	    *skribe-debug-item*)
-    (display *debug-margin* *debug-port*)
-    (display (debug-color (- *debug-depth* 1) "- ") *debug-port*)
-    (for-each (lambda (a) (display a *debug-port*)) args)
-    (newline *debug-port*)))
+  (if (or (>= *skribe-debug* *skribe-margin-debug-level*)
+          *skribe-debug-item*)
+      (begin
+        (display *debug-margin* *debug-port*)
+        (display (debug-color (- *debug-depth* 1) "- ") *debug-port*)
+        (for-each (lambda (a) (display a *debug-port*)) args)
+        (newline *debug-port*))))
 
 ;;(define-macro (debug-item  . args)
 ;;  `())
@@ -112,7 +114,7 @@
       (set! *debug-depth* (- *debug-depth* 1))
       (set! *debug-margin* om)
       res)))
-      
+
 ;;;
 ;;; %with-debug
 ;;
@@ -153,8 +155,7 @@
 ;   (with-debug 0 'foo2.3
 ;      (debug-item 'foo3.1)
 ;      (with-debug 0 'foo3.2
-; 	(debug-item 'foo4.1)
-; 	(debug-item 'foo4.2))
+;	(debug-item 'foo4.1)
+;	(debug-item 'foo4.2))
 ;      (debug-item 'foo3.3))
 ;   (debug-item 'foo2.4))
-

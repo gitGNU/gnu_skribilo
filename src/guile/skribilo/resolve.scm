@@ -24,10 +24,10 @@
 ;;;; Last file update: 17-Feb-2004 14:43 (eg)
 ;;;;
 
-(define-module (skribe resolve)
-  :use-module (skribe debug)
-  :use-module (skribe runtime)
-  :use-module (skribe types)
+(define-module (skribilo resolve)
+  :use-module (skribilo debug)
+  :use-module (skribilo runtime)
+  :use-module (skribilo types)
 
   :use-module (oop goops)
 

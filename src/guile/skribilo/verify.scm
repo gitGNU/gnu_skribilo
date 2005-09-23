@@ -24,14 +24,14 @@
 ;;;; Last file update: 27-Oct-2004 16:35 (eg)
 ;;;;
 
-(define-module (skribe verify)
+(define-module (skribilo verify)
    :export (verify))
 
-(use-modules (skribe debug)
-;	     (skribe engine)
-;	     (skribe writer)
-;	     (skribe runtime)
-	     (skribe types)
+(use-modules (skribilo debug)
+;	     (skribilo engine)
+;	     (skribilo writer)
+;	     (skribilo runtime)
+	     (skribilo types)
 	     (oop goops))
 
 

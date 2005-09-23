@@ -28,10 +28,10 @@
 ;(require "lex-rt")		;; to avoid module problems
 
 
-(define-module (skribe xml)
+(define-module (skribilo xml)
    :export (xml))
 
-(use-modules (skribe source))
+(use-modules (skribilo source))
 
 (include "xml-lex.stk")		;; SILex generated
 

@@ -25,14 +25,14 @@
 ;;;;
 
 
-(define-module (skribe writer)
+(define-module (skribilo writer)
   :export (invoke markup-writer markup-writer-get markup-writer-get*
 	   lookup-markup-writer copy-markup-writer))
 
 
-(use-modules (skribe debug)
-;	     (skribe engine)
-	     (skribe output)
+(use-modules (skribilo debug)
+;	     (skribilo engine)
+	     (skribilo output)
 
 	     (oop goops)
 	     (ice-9 optargs))

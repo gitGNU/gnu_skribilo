@@ -1,30 +1,30 @@
-;;;;
-;;;; runtime.stk	-- Skribe runtime system
-;;;; 
-;;;; Copyright © 2003-2004 Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
-;;;; 
-;;;; 
-;;;; This program is free software; you can redistribute it and/or modify
-;;;; it under the terms of the GNU General Public License as published by
-;;;; the Free Software Foundation; either version 2 of the License, or
-;;;; (at your option) any later version.
-;;;; 
-;;;; This program is distributed in the hope that it will be useful,
-;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;;;; GNU General Public License for more details.
-;;;; 
-;;;; You should have received a copy of the GNU General Public License
-;;;; along with this program; if not, write to the Free Software
-;;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, 
-;;;; USA.
-;;;; 
-;;;;           Author: Erick Gallesio [eg@essi.fr]
-;;;;    Creation date: 13-Aug-2003 18:47 (eg)
-;;;; Last file update: 15-Nov-2004 14:03 (eg)
-;;;;
+;;;
+;;; runtime.stk	-- Skribe runtime system
+;;;
+;;; Copyright © 2003-2004 Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
+;;;
+;;;
+;;; This program is free software; you can redistribute it and/or modify
+;;; it under the terms of the GNU General Public License as published by
+;;; the Free Software Foundation; either version 2 of the License, or
+;;; (at your option) any later version.
+;;;
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;;
+;;; You should have received a copy of the GNU General Public License
+;;; along with this program; if not, write to the Free Software
+;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+;;; USA.
+;;;
+;;;           Author: Erick Gallesio [eg@essi.fr]
+;;;    Creation date: 13-Aug-2003 18:47 (eg)
+;;; Last file update: 15-Nov-2004 14:03 (eg)
+;;;
 
-(define-module  (skribe runtime)
+(define-module (skribilo runtime)
   :export (;; Utilities
 	   strip-ref-base ast->file-location string-canonicalize
 
@@ -43,24 +43,24 @@
 	   ;; AST
 	   ast->string))
 
-(use-modules (skribe debug)
-	     (skribe types)
-	     (skribe verify)
-	     (skribe resolve)
-	     (skribe output)
-	     (skribe eval)
+(use-modules (skribilo debug)
+	     (skribilo types)
+	     (skribilo verify)
+	     (skribilo resolve)
+	     (skribilo output)
+	     (skribilo eval)
 	     (oop goops))
 
 
-;;;; ======================================================================
-;;;;
-;;;;				U T I L I T I E S   		     
-;;;;
-;;;; ======================================================================
-(define skribe-load 'function-defined-below)
+
+;;; ======================================================================
+;;;
+;;;				U T I L I T I E S
+;;;
+;;; ======================================================================
 
 
-;;FIXME:  Remonter cette fonction 
+;;FIXME:  Remonter cette fonction
 (define (strip-ref-base file)
   (if (not (string? *skribe-ref-base*))
       file
@@ -74,7 +74,7 @@
 	   file)
 	  (else
 	   (substring file (+ l 1) (string-length file)))))))
- 
+
 
 (define (ast->file-location ast)
    (let ((l (ast-loc ast)))
@@ -82,7 +82,7 @@
 	 (format "~a:~a:" (location-file l) (location-line l))
 	 "")))
 
-;; FIXME: Remonter cette fonction 
+;; FIXME: Remonter cette fonction
 (define (string-canonicalize old)
    (let* ((l (string-length old))
 	  (new (make-string l)))
@@ -115,34 +115,34 @@
 	     (loop (+ r 1) (+ w 1) #f))))))
 
 
-;;;; ======================================================================
-;;;;
-;;;;   			M A R K U P S   F U N C T I O N S
-;;;;
-;;;; ======================================================================
-;;; (define (markup-output markup
-;; 		       :optional (engine    #f)
-;; 		       :key 	 (predicate #f)
-;; 		       		 (options  '())
-;; 				 (before    #f)
-;; 				 (action    #f)
-;; 				 (after     #f))
+;;; ======================================================================
+;;;
+;;;			M A R K U P S   F U N C T I O N S
+;;;
+;;; ======================================================================
+;; (define (markup-output markup
+;;		       :optional (engine    #f)
+;;		       :key	 (predicate #f)
+;;				 (options  '())
+;;				 (before    #f)
+;;				 (action    #f)
+;;				 (after     #f))
 ;;   (let ((e (or engine (use-engine))))
 ;;     (cond
 ;;       ((not (is-a? e <engine>))
 ;;           (skribe-error 'markup-writer "illegal engine" e))
 ;;       ((and (not before)
-;; 	    (not action)
-;; 	    (not after))
+;;	    (not action)
+;;	    (not after))
 ;;           (%find-markup-output e markup))
 ;;       (else
-;; 	  (let ((mp (if (procedure? predicate)
-;; 			(lambda (n e) (and (is-markup? n markup) (predicate n e)))
-;; 			(lambda (n e) (is-markup? n markup)))))
-;; 	    (engine-output e markup mp options
-;; 			   (or before (slot-ref e 'default-before))
-;; 			   (or action (slot-ref e 'default-action))
-;; 			   (or after  (slot-ref e 'default-after))))))))
+;;	  (let ((mp (if (procedure? predicate)
+;;			(lambda (n e) (and (is-markup? n markup) (predicate n e)))
+;;			(lambda (n e) (is-markup? n markup)))))
+;;	    (engine-output e markup mp options
+;;			   (or before (slot-ref e 'default-before))
+;;			   (or action (slot-ref e 'default-action))
+;;			   (or after  (slot-ref e 'default-after))))))))
 
 (define (markup-option m opt)
   (if (markup? m)
@@ -158,21 +158,21 @@
 				  (slot-ref m 'options)))
       (skribe-type-error 'markup-option "Illegal markup: " m "markup")))
 
-;;;; ======================================================================
-;;;;
-;;;;   				C O N T A I N E R S
-;;;;
-;;;; ======================================================================
+;;; ======================================================================
+;;;
+;;;				C O N T A I N E R S
+;;;
+;;; ======================================================================
 (define (container-env-get m key)
   (let ((c (assq key (slot-ref m 'env))))
     (and (pair? c) (cadr c))))
 
 
-;;;; ======================================================================
-;;;;
-;;;;				I M A G E S
-;;;;
-;;;; ======================================================================
+;;; ======================================================================
+;;;
+;;;				I M A G E S
+;;;
+;;; ======================================================================
 (define (builtin-convert-image from fmt dir)
   (let* ((s  (suffix from))
 	 (f  (string-append (prefix (basename from)) "." fmt))
@@ -182,7 +182,7 @@
        to)
       ((file-exists? to)
        to)
-      (else 
+      (else
        (let ((c (if (string=? s "fig")
 		    (string-append "fig2dev -L " fmt " " from " > " to)
 		    (string-append "convert " from " " to))))
@@ -221,13 +221,13 @@
 			   p
 			   (loop (cdr fmts)))))))))))
 
-;;;; ======================================================================
-;;;;
-;;;;	      		S T R I N G - W R I T I N G
-;;;;
-;;;; ======================================================================
+;;; ======================================================================
+;;;
+;;;			S T R I N G - W R I T I N G
+;;;
+;;; ======================================================================
 
-;; 
+;;
 ;; (define (%make-html-replace)
 ;;   ;; Ad-hoc version for HTML, a little bit faster than the
 ;;   ;; make-general-string-replace define later (particularily if there
@@ -235,18 +235,18 @@
 ;;   (let ((specials (string->regexp "&|\"|<|>")))
 ;;     (lambda (str)
 ;;       (if (regexp-match specials str)
-;; 	  (begin
-;; 	    (let ((out (open-output-string)))
-;; 	      (dotimes (i (string-length str))
-;; 		(let ((ch (string-ref str i)))
-;; 		  (case ch
-;; 		    ((#\") (display "&quot;" out))
-;; 		    ((#\&) (display "&amp;" out))
-;; 		    ((#\<) (display "&lt;" out))
-;; 		    ((#\>) (display "&gt;" out))
-;; 		    (else  (write-char ch out)))))
-;; 	      (get-output-string out)))
-;; 	  str))))
+;;	  (begin
+;;	    (let ((out (open-output-string)))
+;;	      (dotimes (i (string-length str))
+;;		(let ((ch (string-ref str i)))
+;;		  (case ch
+;;		    ((#\") (display "&quot;" out))
+;;		    ((#\&) (display "&amp;" out))
+;;		    ((#\<) (display "&lt;" out))
+;;		    ((#\>) (display "&gt;" out))
+;;		    (else  (write-char ch out)))))
+;;	      (get-output-string out)))
+;;	  str))))
 
 
 (define (%make-general-string-replace lst)
@@ -264,58 +264,58 @@
   (let ((l (sort lst (lambda (r1 r2) (char<? (car r1) (car r2))))))
     (cond
       ((equal? l '((#\" "&quot;") (#\& "&amp;") (#\< "&lt;") (#\> "&gt;")))
-         string->html)
+	 string->html)
       (else
-         (%make-general-string-replace lst)))))
+	 (%make-general-string-replace lst)))))
 
 
 
 
-;;;; ======================================================================
-;;;;
-;;;;   				O P T I O N S
-;;;;
-;;;; ======================================================================
+;;; ======================================================================
+;;;
+;;;				O P T I O N S
+;;;
+;;; ======================================================================
 
 ;;NEW ;;
 ;;NEW ;; GET-OPTION
-;;NEW ;; 
+;;NEW ;;
 ;;NEW (define (get-option obj key)
 ;;NEW   ;; This function either searches inside an a-list or a markup.
 ;;NEW   (cond
 ;;NEW     ((pair? obj)   (let ((c (assq key obj)))
-;;NEW 		     (and (pair? c) (pair? (cdr c)) (cadr c))))
+;;NEW		     (and (pair? c) (pair? (cdr c)) (cadr c))))
 ;;NEW     ((markup? obj) (get-option (slot-ref obj 'option*) key))
 ;;NEW     (else          #f)))
-;;NEW 
+;;NEW
 ;;NEW ;;
 ;;NEW ;; BIND-OPTION!
 ;;NEW ;;
 ;;NEW (define (bind-option! obj key value)
 ;;NEW   (slot-set! obj 'option* (cons (list key value)
-;;NEW 				(slot-ref obj 'option*))))
-;;NEW 
-;;NEW 
+;;NEW				(slot-ref obj 'option*))))
+;;NEW
+;;NEW
 ;;NEW ;;
 ;;NEW ;; GET-ENV
 ;;NEW ;;
 ;;NEW (define (get-env obj key)
 ;;NEW   ;;  This function either searches inside an a-list or a container
 ;;NEW   (cond
-;;NEW     ((pair? obj) 	(let ((c (assq key obj)))
-;;NEW 			  (and (pair? c) (cadr c))))
+;;NEW     ((pair? obj)	(let ((c (assq key obj)))
+;;NEW			  (and (pair? c) (cadr c))))
 ;;NEW     ((container? obj)   (get-env (slot-ref obj 'env) key))
 ;;NEW     (else		#f)))
-;;NEW 
+;;NEW
 
 
 
 
-;;;; ======================================================================
-;;;;
-;;;;   				    A S T 
-;;;;
-;;;; ======================================================================
+;;; ======================================================================
+;;;
+;;;				    A S T
+;;;
+;;; ======================================================================
 
 (define-generic ast->string)
 
@@ -345,52 +345,52 @@
 ;;NEW ;;
 ;;NEW (define (ast-parent n)
 ;;NEW   (slot-ref n 'parent))
-;;NEW 
+;;NEW
 ;;NEW ;;
 ;;NEW ;; MARKUP-PARENT
 ;;NEW ;;
 ;;NEW (define (markup-parent m)
 ;;NEW   (let ((p (slot-ref m 'parent)))
 ;;NEW     (if (eq? p 'unspecified)
-;;NEW 	(skribe-error 'markup-parent "Unresolved parent reference" m)
-;;NEW 	p)))
-;;NEW 
-;;NEW 
+;;NEW	(skribe-error 'markup-parent "Unresolved parent reference" m)
+;;NEW	p)))
+;;NEW
+;;NEW
 ;;NEW ;;
 ;;NEW ;; MARKUP-DOCUMENT
 ;;NEW ;;
 ;;NEW (define (markup-document m)
 ;;NEW   (let Loop ((p m)
-;;NEW 	     (l #f))
+;;NEW	     (l #f))
 ;;NEW     (cond
 ;;NEW       ((is-markup? p 'document)           p)
 ;;NEW       ((or (eq? p 'unspecified) (not p))  l)
 ;;NEW       (else			          (Loop (slot-ref p 'parent) p)))))
-;;NEW 
+;;NEW
 ;;NEW ;;
 ;;NEW ;; MARKUP-CHAPTER
 ;;NEW ;;
 ;;NEW (define (markup-chapter m)
 ;;NEW   (let loop ((p m)
-;;NEW 	     (l #f))
+;;NEW	     (l #f))
 ;;NEW     (cond
 ;;NEW       ((is-markup? p 'chapter)           p)
 ;;NEW       ((or (eq? p 'unspecified) (not p)) l)
 ;;NEW       (else				 (loop (slot-ref p 'parent) p)))))
-;;NEW 
-;;NEW 
+;;NEW
+;;NEW
 ;;NEW ;;;; ======================================================================
 ;;NEW ;;;;
-;;NEW ;;;;   				H A N D L E S
+;;NEW ;;;;				H A N D L E S
 ;;NEW ;;;;
 ;;NEW ;;;; ======================================================================
 ;;NEW (define (handle-body h)
 ;;NEW   (slot-ref h 'body))
-;;NEW 
-;;NEW 
+;;NEW
+;;NEW
 ;;NEW ;;;; ======================================================================
 ;;NEW ;;;;
-;;NEW ;;;; 				F I N D
+;;NEW ;;;;				F I N D
 ;;NEW ;;;;
 ;;NEW ;;;; ======================================================================
 ;;NEW (define (find pred obj)
@@ -398,28 +398,28 @@
 ;;NEW     (debug-item "obj=" obj)
 ;;NEW     (let loop ((obj (if (is-a? obj <container>) (container-body obj) obj)))
 ;;NEW       (cond
-;;NEW 	((pair? obj)
-;;NEW 	 (apply append (map (lambda (o) (loop o)) obj)))
-;;NEW 	((is-a? obj <container>)
-;;NEW 	 (debug-item "loop=" obj " " (slot-ref obj 'ident))
-;;NEW 	 (if (pred obj)
-;;NEW 	     (list (cons obj (loop (container-body obj))))
-;;NEW 	     '()))
-;;NEW 	(else
-;;NEW 	 (if (pred obj)
-;;NEW 	     (list obj)
-;;NEW 	     '()))))))
-;;NEW        
+;;NEW	((pair? obj)
+;;NEW	 (apply append (map (lambda (o) (loop o)) obj)))
+;;NEW	((is-a? obj <container>)
+;;NEW	 (debug-item "loop=" obj " " (slot-ref obj 'ident))
+;;NEW	 (if (pred obj)
+;;NEW	     (list (cons obj (loop (container-body obj))))
+;;NEW	     '()))
+;;NEW	(else
+;;NEW	 (if (pred obj)
+;;NEW	     (list obj)
+;;NEW	     '()))))))
+;;NEW
 
 ;;NEW ;;;; ======================================================================
 ;;NEW ;;;;
-;;NEW ;;;; 		M A R K U P   A R G U M E N T   P A R S I N G
+;;NEW ;;;;		M A R K U P   A R G U M E N T   P A R S I N G
 ;;NEW ;;;
 ;;NEW ;;;; ======================================================================
 ;;NEW (define (the-body opt)
 ;;NEW   ;; Filter out the options
 ;;NEW   (let loop ((opt* opt)
-;;NEW 	     (res '()))
+;;NEW	     (res '()))
 ;;NEW     (cond
 ;;NEW       ((null? opt*)
 ;;NEW        (reverse! res))
@@ -427,18 +427,18 @@
 ;;NEW        (skribe-error 'the-body "Illegal body" opt))
 ;;NEW       ((keyword? (car opt*))
 ;;NEW        (if (null? (cdr opt*))
-;;NEW 	   (skribe-error 'the-body "Illegal option" (car opt*))
-;;NEW 	   (loop (cddr opt*) res)))
+;;NEW	   (skribe-error 'the-body "Illegal option" (car opt*))
+;;NEW	   (loop (cddr opt*) res)))
 ;;NEW       (else
 ;;NEW        (loop (cdr opt*) (cons (car opt*) res))))))
-;;NEW 
-;;NEW 
-;;NEW 
+;;NEW
+;;NEW
+;;NEW
 ;;NEW (define (the-options opt+ . out)
-;;NEW   ;; Returns an list made of options.The OUT argument contains 
-;;NEW   ;; keywords that are filtered out.                                  
+;;NEW   ;; Returns an list made of options.The OUT argument contains
+;;NEW   ;; keywords that are filtered out.
 ;;NEW   (let loop ((opt* opt+)
-;;NEW 	     (res '()))
+;;NEW	     (res '()))
 ;;NEW     (cond
 ;;NEW       ((null? opt*)
 ;;NEW        (reverse! res))
@@ -446,15 +446,13 @@
 ;;NEW        (skribe-error 'the-options "Illegal options" opt*))
 ;;NEW       ((keyword? (car opt*))
 ;;NEW        (cond
-;;NEW 	 ((null? (cdr opt*))
-;;NEW 	  (skribe-error 'the-options "Illegal option" (car opt*)))
-;;NEW 	 ((memq (car opt*) out)
-;;NEW 	  (loop (cdr opt*) res))
-;;NEW 	 (else
-;;NEW 	  (loop (cdr opt*)
-;;NEW 		(cons (list (car opt*) (cadr opt*)) res)))))
+;;NEW	 ((null? (cdr opt*))
+;;NEW	  (skribe-error 'the-options "Illegal option" (car opt*)))
+;;NEW	 ((memq (car opt*) out)
+;;NEW	  (loop (cdr opt*) res))
+;;NEW	 (else
+;;NEW	  (loop (cdr opt*)
+;;NEW		(cons (list (car opt*) (cadr opt*)) res)))))
 ;;NEW       (else
 ;;NEW        (loop (cdr opt*) res)))))
-;;NEW 
-
-
+;;NEW
