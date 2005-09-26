@@ -1,5 +1,7 @@
+(define-skribe-module (skribilo engine latex-simple))
+
 ;;;
-;;; LES CUSTOMS SONT TROP SPECIFIQUES POUR LA DISTRIBS. NE DOIT PAS VIRER 
+;;; LES CUSTOMS SONT TROP SPECIFIQUES POUR LA DISTRIBS. NE DOIT PAS VIRER
 ;;; CE FICHIER (sion simplifie il ne rest plus grand chose)
 ;;;		Erick 27-10-04
 ;;;
@@ -24,7 +26,7 @@
    "\\usepackage{epsfig}
 \\usepackage{workshop}
 \\conferenceinfo{Fifth Workshop on Scheme and Functional Programming.}
-               {September 22, 2004, Snowbird, Utah, USA.}
+	       {September 22, 2004, Snowbird, Utah, USA.}
 \\CopyrightYear{2004}
 \\CopyrightHolder{Damien Ciabrini}
 \\renewcommand{\\ttdefault}{cmtt}
@@ -46,28 +48,28 @@
       :options '(:text :bib)
       :before "\\cite{"
       :action (lambda (n e) (display (markup-option n :bib)))
-      :after "}")  
+      :after "}")
    (markup-writer 'bib-ref+ le
       :options '(:text :bib)
       :before "\\cite{"
-      :action (lambda (n e) 
+      :action (lambda (n e)
 		 (let loop ((bibs (markup-option n :bib)))
 		    (if (pair? bibs)
-			(begin 
+			(begin
 			   (display (car bibs))
 			   (if (pair? (cdr bibs)) (display ", "))
 			   (loop (cdr bibs))))))
       :after "}")
    (markup-writer '&the-bibliography le
-      :action (lambda (n e) 
+      :action (lambda (n e)
 		 (print "\\bibliographystyle{abbrv}")
 		 (display "\\bibliography{biblio}")))
-   
+
    ; ACM-style for authors
    (markup-writer '&latex-author le
       :before (lambda (n e)
 		 (let ((body (markup-body n)))
-		    (if (pair? body) 
+		    (if (pair? body)
 			(print "\\numberofauthors{" (length body) "}"))
 		    (print "\\author{")))
       :after "}\n")
@@ -80,9 +82,9 @@
 		       (address (markup-option n :address))
 		       (email (markup-option n :email)))
 		    (define (row pre n post)
-		       (display pre) 
+		       (display pre)
 		       (output n e)
-		       (display post) 
+		       (display post)
 		       (display "\\\\\n"))
 		    ;; name
 		    (if name (row "\\alignauthor " name ""))
@@ -97,5 +99,5 @@
       :after "")
 )
 
-(define (include-biblio) 
+(define (include-biblio)
    (the-bibliography))

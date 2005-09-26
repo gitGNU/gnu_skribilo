@@ -1,24 +1,24 @@
 ;;;;
 ;;;; resolve.stk	-- Skribe Resolve Stage
-;;;; 
+;;;;
 ;;;; Copyright © 2003-2004 Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
-;;;; 
-;;;; 
+;;;;
+;;;;
 ;;;; This program is free software; you can redistribute it and/or modify
 ;;;; it under the terms of the GNU General Public License as published by
 ;;;; the Free Software Foundation; either version 2 of the License, or
 ;;;; (at your option) any later version.
-;;;; 
+;;;;
 ;;;; This program is distributed in the hope that it will be useful,
 ;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
 ;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ;;;; GNU General Public License for more details.
-;;;; 
+;;;;
 ;;;; You should have received a copy of the GNU General Public License
 ;;;; along with this program; if not, write to the Free Software
-;;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, 
+;;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ;;;; USA.
-;;;; 
+;;;;
 ;;;;           Author: Erick Gallesio [eg@essi.fr]
 ;;;;    Creation date: 13-Aug-2003 18:39 (eg)
 ;;;; Last file update: 17-Feb-2004 14:43 (eg)
@@ -28,6 +28,7 @@
   :use-module (skribilo debug)
   :use-module (skribilo runtime)
   :use-module (skribilo types)
+  :use-module (skribilo lib)  ;; `unless' and `when'
 
   :use-module (oop goops)
 
@@ -50,17 +51,19 @@
 (define (resolve! ast engine env)
   (with-debug 3 'resolve
      (debug-item "ast=" ast)
-     (fluid-let ((*unresolved* #f))
+     (let ((*unresolved* (make-fluid)))
+       (fluid-set! *unresolved* #f)
+
        (let Loop ((ast ast))
-	 (set! *unresolved* #f)
+	 (fluid-set! *unresolved* #f)
 	 (let ((ast (do-resolve! ast engine env)))
-	   (if *unresolved*
+	   (if (fluid-ref *unresolved*)
 	       (Loop ast)
 	       ast))))))
 
 ;;;; ======================================================================
 ;;;;
-;;;; 				D O - R E S O L V E !
+;;;;				D O - R E S O L V E !
 ;;;;
 ;;;; ======================================================================
 
@@ -193,10 +196,10 @@
        (debug-item "parent=" p " "
 		   (if (is-a? p 'markup) (slot-ref p 'markup) "???"))
        (cond
-	 ((pred p)	 	 p)				
+	 ((pred p)		 p)
 	 ((is-a? p <unresolved>) p)
 	 ((not p)		 #f)
-	 (else 			 (resolve-search-parent p e pred))))))
+	 (else			 (resolve-search-parent p e pred))))))
 
 ;;;; ======================================================================
 ;;;;
@@ -229,7 +232,7 @@
 	    (else
 	     (set-car! (cdr c) (+ 1 num))
 	     (+ 1 num)))))))
-  
+
 ;;;; ======================================================================
 ;;;;
 ;;;; RESOLVE-IDENT
@@ -257,4 +260,3 @@
 			 (car mks))
 			(else
 			 (loop (cdr mks)))))))))))
-

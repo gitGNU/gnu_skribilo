@@ -27,9 +27,10 @@
 
 (define-module (skribilo engine)
   :use-module (skribilo debug)
-;  :use-module (skribilo eval)
+;  :use-module (skribilo evaluator)
   :use-module (skribilo writer)
   :use-module (skribilo types)
+  :use-module (skribilo lib)
 
   :use-module (oop goops)
   :use-module (ice-9 optargs)
@@ -58,11 +59,14 @@
 
 
 (define (default-engine-set! e)
-  (if (not (engine? e))
-      (skribe-error 'default-engine-set! "bad engine ~S" e))
-  (set! *default-engine* e)
-  (set! *default-engines* (cons e *default-engines*))
-  e)
+  (with-debug 5 'default-engine-set!
+     (debug-item "engine=" e)
+
+     (if (not (engine? e))
+	 (skribe-error 'default-engine-set! "bad engine ~S" e))
+     (set! *default-engine* e)
+     (set! *default-engines* (cons e *default-engines*))
+     e))
 
 
 (define (push-default-engine e)
@@ -141,32 +145,22 @@
 ;;;
 ;;;	FIND-ENGINE
 ;;;
-(define (%find-loaded-engine id version)
-  (let loop ((es *engines*))
-    (cond
-      ((null? es) #f)
-      ((eq? (slot-ref (car es) 'ident) id)
-       (cond
-	   ((eq? version 'unspecified)		       (car es))
-	   ((eq? version (slot-ref (car es) 'version)) (car es))
-	   (else				       (Loop (cdr es)))))
-      (else (loop (cdr es))))))
 
-
-(define* (find-engine id #:key (version 'unspecified))
-  (with-debug 5 'find-engine
+(define* (lookup-engine id #:key (version 'unspecified))
+  "Look for an engine named @var{name} (a symbol) in the @code{(skribilo
+engine)} module hierarchy.  If no such engine was found, an error is raised,
+otherwise the requested engine is returned."
+  (with-debug 5 'lookup-engine
      (debug-item "id=" id " version=" version)
 
-     (or (%find-loaded-engine id version)
-	 (let ((c (assq id *skribe-auto-load-alist*)))
-	   (debug-item "c=" c)
-	   (if (and c (string? (cdr c)))
-	       (begin
-		 (skribe-load (cdr c) :engine 'base)
-		 (%find-loaded-engine id version))
-	       #f)))))
+     (let* ((engine (symbol-append id '-engine))
+	    (m (resolve-module `(skribilo engine ,id))))
+       (if (module-bound? m engine)
+	   (module-ref m engine)
+	   (error "no such engine" id)))))
 
-(define lookup-engine find-engine)
+(define (find-engine . args)
+  (false-if-exception (apply lookup-engine args)))
 
 
 ;;;

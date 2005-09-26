@@ -26,20 +26,26 @@
 ;; FIXME; On peut implémenter maintenant skribe-warning/node
 
 
-(define-module (skribilo eval)
+(define-module (skribilo evaluator)
   :export (skribe-eval skribe-eval-port skribe-load skribe-load-options
-	   skribe-include
-
-           run-time-module make-run-time-module))
+	   skribe-include))
 
 (use-modules (skribilo debug)
+	     (skribilo reader)
 	     (skribilo engine)
 	     (skribilo verify)
 	     (skribilo resolve)
 	     (skribilo output)
-	     (ice-9 optargs))
+             (skribilo types)
+             (skribilo lib)
+	     (skribilo vars)
+	     (ice-9 optargs)
+	     (oop goops))
 
 
+
+
+
 (define *skribe-loaded* '())		;; List of already loaded files
 (define *skribe-load-options* '())
 
@@ -47,41 +53,7 @@
   (eval expr (current-module)))
 
 
-(define *skribilo-user-module* #f)
 
-(define *skribilo-user-imports*
-  '((srfi srfi-1)
-    (oop goops)
-    (skribilo module)
-    (skribilo config)
-    (skribilo vars)
-    (skribilo runtime)
-    (skribilo biblio)
-    (skribilo lib)
-    (skribilo resolve)))
-
-
-;;;
-;;; MAKE-RUN-TIME-MODULE
-;;;
-(define (make-run-time-module)
-  "Return a new module that imports all the necessary bindings required for
-execution of Skribilo/Skribe code."
-  (let ((the-module (make-module)))
-        (for-each (lambda (iface)
-                    (module-use! the-module (resolve-module iface)))
-                  *skribilo-user-imports*)
-        (set-module-name! the-module '(skribilo-user))
-        the-module))
-
-;;;
-;;; RUN-TIME-MODULE
-;;;
-(define (run-time-module)
-  "Return the default instance of a Skribilo/Skribe run-time module."
-  (if (not *skribilo-user-module*)
-      (set! *skribilo-user-module* (make-run-time-module)))
-  *skribilo-user-module*)
 
 ;;;
 ;;; SKRIBE-EVAL
@@ -98,19 +70,20 @@ execution of Skribilo/Skribe code."
 ;;;
 ;;; SKRIBE-EVAL-PORT
 ;;;
-(define* (skribe-eval-port port engine #:key (env '()))
+(define* (skribe-eval-port port engine #:key (env '())
+			                     (reader %default-reader))
   (with-debug 2 'skribe-eval-port
      (debug-item "engine=" engine)
      (let ((e (if (symbol? engine) (find-engine engine) engine)))
        (debug-item "e=" e)
        (if (not (is-a? e <engine>))
-	   (skribe-error 'skribe-eval-port "Cannot find engine" engine)
-	   (let loop ((exp (read port)))
+	   (skribe-error 'skribe-eval-port "cannot find engine" engine)
+	   (let loop ((exp (reader port)))
 	     (with-debug 10 'skribe-eval-port
 		(debug-item "exp=" exp))
 	     (unless (eof-object? exp)
 	       (skribe-eval (%evaluate exp) e :env env)
-	       (loop (read port))))))))
+	       (loop (reader port))))))))
 
 ;;;
 ;;; SKRIBE-LOAD
@@ -124,13 +97,14 @@ execution of Skribilo/Skribe code."
   (with-debug 4 'skribe-load
      (debug-item "  engine=" engine)
      (debug-item "  path=" path)
-     (debug-item "  opt" opt)
+     (debug-item "  opt=" opt)
 
      (let* ((ei  (cond
 		  ((not engine) *skribe-engine*)
 		  ((engine? engine) engine)
-		  ((not (symbol? engine)) (skribe-error 'skribe-load
-							"Illegal engine" engine))
+		  ((not (symbol? engine))
+                   (skribe-error 'skribe-load
+                                 "Illegal engine" engine))
 		  (else engine)))
 	    (path (cond
 		    ((not path) (skribe-path))
@@ -138,14 +112,14 @@ execution of Skribilo/Skribe code."
 		    ((not (and (list? path) (every? string? path)))
 			(skribe-error 'skribe-load "Illegal path" path))
 		    (else path)))
-	     (filep (find-path file path)))
+            (filep (search-path path file)))
 
        (set! *skribe-load-options* opt)
 
        (unless (and (string? filep) (file-exists? filep))
 	 (skribe-error 'skribe-load
-		       (format "Cannot find ~S in path" file)
-		       *skribe-path*))
+		       (string-append "cannot find `" file "' in path")
+		       (skribe-path)))
 
        ;; Load this file if not already done
        (unless (member filep *skribe-loaded*)
@@ -167,7 +141,7 @@ execution of Skribilo/Skribe code."
   (unless (every string? path)
     (skribe-error 'skribe-include "Illegal path" path))
 
-  (let ((path (find-path file path)))
+  (let ((path (search-path path file)))
     (unless (and (string? path) (file-exists? path))
       (skribe-error 'skribe-load
 		    (format "Cannot find ~S in path" file)

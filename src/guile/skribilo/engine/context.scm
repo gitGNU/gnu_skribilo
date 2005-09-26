@@ -1,31 +1,33 @@
 ;;;;
 ;;;; context.skr	-- ConTeXt mode for Skribe
-;;;; 
+;;;;
 ;;;; Copyright © 2004 Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
-;;;; 
-;;;; 
+;;;;
+;;;;
 ;;;; This program is free software; you can redistribute it and/or modify
 ;;;; it under the terms of the GNU General Public License as published by
 ;;;; the Free Software Foundation; either version 2 of the License, or
 ;;;; (at your option) any later version.
-;;;; 
+;;;;
 ;;;; This program is distributed in the hope that it will be useful,
 ;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
 ;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ;;;; GNU General Public License for more details.
-;;;; 
+;;;;
 ;;;; You should have received a copy of the GNU General Public License
 ;;;; along with this program; if not, write to the Free Software
-;;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, 
+;;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ;;;; USA.
-;;;; 
+;;;;
 ;;;;           Author: Erick Gallesio [eg@essi.fr]
 ;;;;    Creation date: 23-Sep-2004 17:21 (eg)
 ;;;; Last file update:  3-Nov-2004 12:54 (eg)
 ;;;;
 
+(define-skribe-module (skribilo engine context))
+
 ;;;; ======================================================================
-;;;; 	context-customs ...
+;;;;	context-customs ...
 ;;;; ======================================================================
 (define context-customs
   '((source-comment-color "#ffa600")
@@ -45,9 +47,9 @@
     (document-style "book")))
 
 ;;;; ======================================================================
-;;;; 	context-encoding ...
+;;;;	context-encoding ...
 ;;;; ======================================================================
-(define context-encoding 
+(define context-encoding
   '((#\# "\\type{#}")
     (#\| "\\type{|}")
     (#\{ "$\\{$")
@@ -65,16 +67,16 @@
     (#\\ "$\\backslash$")))
 
 ;;;; ======================================================================
-;;;; 	context-pre-encoding ...
+;;;;	context-pre-encoding ...
 ;;;; ======================================================================
-(define context-pre-encoding 
+(define context-pre-encoding
   (append '((#\space "~")
 	    (#\~ "\\type{~}"))
 	  context-encoding))
 
 
 ;;;; ======================================================================
-;;;; 	context-symbol-table ...
+;;;;	context-symbol-table ...
 ;;;; ======================================================================
 (define (context-symbol-table math)
    `(("iexcl" "!`")
@@ -302,23 +304,23 @@
 ;;;;	context-width
 ;;;; ======================================================================
 (define (context-width width)
-  (cond 
-    ((string? width) 
+  (cond
+    ((string? width)
      width)
     ((and (number? width) (inexact? width))
      (string-append (number->string (/ width 100.)) "\\textwidth"))
-    (else 
+    (else
      (string-append (number->string width) "pt"))))
 
 ;;;; ======================================================================
 ;;;;	context-dim
 ;;;; ======================================================================
 (define (context-dim dimension)
-  (cond 
-    ((string? dimension) 
+  (cond
+    ((string? dimension)
      dimension)
     ((number? dimension)
-     (string-append (number->string (inexact->exact (round dimension))) 
+     (string-append (number->string (inexact->exact (round dimension)))
 		    "pt"))))
 
 ;;;; ======================================================================
@@ -354,16 +356,16 @@
 		  ;; Color was never used before
 		  (let ((name (symbol->string (gensym 'col))))
 		    (hashtable-put! *skribe-context-color-table* spec name)
-		    (printf "\\definecolor[~A][~A]\n" 
-			    name 
+		    (printf "\\definecolor[~A][~A]\n"
+			    name
 			    (skribe-color->context-color spec))))))
 	    (skribe-get-used-colors))
   (newline))
 
 (define (skribe-declare-standard-colors engine)
-  (for-each (lambda (x) 
+  (for-each (lambda (x)
 	      (skribe-use-color! (engine-custom engine x)))
-	    '(source-comment-color source-define-color source-module-color  
+	    '(source-comment-color source-define-color source-module-color
 	      source-markup-color  source-thread-color source-string-color
 	      source-bracket-color source-type-color)))
 
@@ -375,7 +377,7 @@
 	c)))
 
 ;;;; ======================================================================
-;;;; 	context-engine ...
+;;;;	context-engine ...
 ;;;; ======================================================================
 (define context-engine
    (default-engine-set!
@@ -388,7 +390,7 @@
 	 :custom context-customs)))
 
 ;;;; ======================================================================
-;;;; 	document ...
+;;;;	document ...
 ;;;; ======================================================================
 (markup-writer 'document
    :options '(:title :subtitle :author :ending :env)
@@ -400,13 +402,13 @@
 		     (skribe-release) (date))
 	     ;; Make URLs active
 	     (printf "\\setupinteraction[state=start]\n")
-	     ;; Choose the document font 
-	     (printf "\\setupbodyfont[~a,~apt]\n" (engine-custom e 'font-type) 
+	     ;; Choose the document font
+	     (printf "\\setupbodyfont[~a,~apt]\n" (engine-custom e 'font-type)
 		     (engine-custom e 'font-size))
-	     ;; Color 
+	     ;; Color
 	     (display "\\setupcolors[state=start]\n")
 	     ;; Load Style
-	     (printf "\\input skribe-context-~a.tex\n" 
+	     (printf "\\input skribe-context-~a.tex\n"
 		     (engine-custom e 'document-style))
 	     ;; Insert User customization
 	     (let ((s (engine-custom e 'user-style)))
@@ -414,15 +416,15 @@
 	     ;; Output used colors
 	     (skribe-declare-standard-colors e)
 	     (skribe-declare-used-colors)
-	     
+
 	     (display "\\starttext\n\\StartTitlePage\n")
 	     ;; title
 	     (let ((t (markup-option n :title)))
 	       (when t
-		 (skribe-eval (new markup 
-				   (markup '&context-title) 
+		 (skribe-eval (new markup
+				   (markup '&context-title)
 				   (body t)
-				   (options 
+				   (options
 				      `((subtitle ,(markup-option n :subtitle)))))
 			      e
 			      :env `((parent ,n)))))
@@ -431,7 +433,7 @@
 	       (when a
 		 (if (list? a)
 		     ;; List of authors. Use multi-columns
-		     (begin 
+		     (begin
 		       (printf "\\defineparagraphs[Authors][n=~A]\n" (length a))
 		       (display "\\startAuthors\n")
 		       (let Loop ((l a))
@@ -477,17 +479,17 @@
 		   (url         (markup-option n :url))
 		   (address     (markup-option n :address))
 		   (phone       (markup-option n :phone))
-		   (out         (lambda (n) 
-				  (output n e) 
+		   (out         (lambda (n)
+				  (output n e)
 				  (display "\\\\\n"))))
 	       (display "{\\midaligned{")
-	       (when name         	(out name))
-	       (when title        	(out title))
-	       (when affiliation  	(out affiliation))
+	       (when name	(out name))
+	       (when title	(out title))
+	       (when affiliation	(out affiliation))
 	       (when (pair? address)	(for-each out address))
-	       (when phone 		(out phone))
-	       (when email 		(out email))
-	       (when url 		(out url))
+	       (when phone		(out phone))
+	       (when email		(out email))
+	       (when url		(out url))
 	       (display "}}\n"))))
 
 
@@ -556,15 +558,15 @@
 ;;;; ======================================================================
 ;;;;	hrule ...
 ;;;; ======================================================================
-(markup-writer 'hrule 
+(markup-writer 'hrule
    :options '(:width :height)
    :before (lambda (n e)
-	     (printf "\\blackrule[width=~A,height=~A]\n" 
+	     (printf "\\blackrule[width=~A,height=~A]\n"
 		     (context-width  (markup-option n :width))
 		     (context-dim    (markup-option n :height)))))
-		     
+
 ;;;; ======================================================================
-;;;; 	color ...
+;;;;	color ...
 ;;;; ======================================================================
 (markup-writer 'color
    :options '(:bg :fg :width :margin :border)
@@ -584,12 +586,12 @@
 		     (when m
 		       (printf ",offset=~A" (context-width m)))
 		     (when bg
-		       (printf ",background=color,backgroundcolor=~A" 
+		       (printf ",background=color,backgroundcolor=~A"
 			       (skribe-get-color bg)))
 		     (when fg
-		       (printf ",foregroundcolor=~A" 
+		       (printf ",foregroundcolor=~A"
 			       (skribe-get-color fg)))
-		     (when c 
+		     (when c
 		       (display ",framecorner=round"))
 		     (printf "]\n"))
 		   ;; Probably just a foreground was specified
@@ -620,7 +622,7 @@
 							"fit"))
 	       (printf ",rulethickness=~A" (context-dim b))
 	       (printf ",offset=~A" (context-width m))
-	       (when c 
+	       (when c
 		 (display ",framecorner=round"))
 	       (printf "]\n")))
    :after "\\stopframedtext ")
@@ -630,7 +632,7 @@
 ;;;; ======================================================================
 (markup-writer 'font
    :options '(:size)
-   :action (lambda (n e) 
+   :action (lambda (n e)
 	     (let* ((size (markup-option n :size))
 		    (cs   (engine-custom e 'font-size))
 		    (ns   (cond
@@ -643,7 +645,7 @@
 			    ((string? size)
 			     (let ((nb (string->number size)))
 			       (if (not (number? nb))
-				   (skribe-error 
+				   (skribe-error
 				    'font
 				    (format "Illegal font size ~s" size)
 				    nb)
@@ -657,10 +659,10 @@
 	       (printf "{\\switchtobodyfont[~apt]" ns)
 	       (output (markup-body n) ne)
 	       (display "}"))))
-   
+
 
 ;;;; ======================================================================
-;;;;    flush ...                                                        
+;;;;    flush ...
 ;;;; ======================================================================
 (markup-writer 'flush
    :options '(:side)
@@ -711,7 +713,7 @@
 			  :custom (engine-customs e))))
 	       (output (markup-body n) ne)))
    :after  "\n\\stoplines\n}")
-   
+
 
 ;;;; ======================================================================
 ;;;;    itemize, enumerate ...
@@ -719,8 +721,8 @@
 (define (context-itemization-action n e descr?)
   (let ((symbol (markup-option n :symbol)))
     (for-each (lambda (item)
-		(if symbol 
-		    (begin 
+		(if symbol
+		    (begin
 		      (display "\\sym{")
 		      (output symbol e)
 		      (display "}"))
@@ -732,14 +734,14 @@
 	      (markup-body n))))
 
 (markup-writer 'itemize
-   :options '(:symbol)	       
+   :options '(:symbol)
    :before "\\startnarrower[left]\n\\startitemize[serried]\n"
    :action (lambda (n e) (context-itemization-action n e #f))
    :after "\\stopitemize\n\\stopnarrower\n")
 
 
 (markup-writer 'enumerate
-   :options '(:symbol)	       
+   :options '(:symbol)
    :before "\\startnarrower[left]\n\\startitemize[n][standard]\n"
    :action (lambda (n e) (context-itemization-action n e #f))
    :after "\\stopitemize\n\\stopnarrower\n")
@@ -748,7 +750,7 @@
 ;;;;    description ...
 ;;;; ======================================================================
 (markup-writer 'description
-   :options '(:symbol)	       
+   :options '(:symbol)
    :before "\\startnarrower[left]\n\\startitemize[serried]\n"
    :action (lambda (n e) (context-itemization-action n e #t))
    :after "\\stopitemize\n\\stopnarrower\n")
@@ -757,7 +759,7 @@
 ;;;;    item ...
 ;;;; ======================================================================
 (markup-writer 'item
-   :options '(:key)	       
+   :options '(:key)
    :action (lambda (n e)
 	     (let ((k (markup-option n :key)))
 	       (when k
@@ -772,7 +774,7 @@
 	       ;; Output body
 	       (output (markup-body n) e)
 	       ;; Terminate
-	       (when k 
+	       (when k
 		 (display "\n\\stopnarrower\n")))))
 
 ;;;; ======================================================================
@@ -792,13 +794,13 @@
 	     (let ((ident (markup-ident n))
 		   (number (markup-option n :number))
 		   (legend (markup-option n :legend)))
-	       (unless number 
+	       (unless number
 		 (display "{\\setupcaptions[number=off]\n"))
 	       (display "\\placefigure\n")
 	       (printf "  [~a]\n" (string-canonicalize ident))
 	       (display "  {") (output legend e) (display "}\n")
 	       (display "  {") (output (markup-body n) e) (display "}")
-	       (unless number 
+	       (unless number
 		 (display "}\n")))))
 
 ;;;; ======================================================================
@@ -818,7 +820,7 @@
 	       (printf "\n{\\bTABLE\n")
 	       (printf "\\setupTABLE[")
 	       (printf "width=~A" (if width (context-width width) "fit"))
-	       (when border 
+	       (when border
 		 (printf ",rulethickness=~A" (context-dim border)))
 	       (when cp
 		 (printf ",offset=~A" (context-width cp)))
@@ -832,7 +834,7 @@
 		     ((cols) (display vert))
 		     ((all)  (display hor) (display vert)))))
 
-	       (when frame 
+	       (when frame
 		 ;;  hsides, vsides, lhs, rhs, box, border
 		 (let ((top   "\\setupTABLE[row][first][frame=off,topframe=on]\n")
 		       (bot   "\\setupTABLE[row][last][frame=off,bottomframe=on]\n")
@@ -845,8 +847,8 @@
 		   ((lhs)        (display left))
 		   ((rhs)        (display right))
 		   ((vsides)     (display left) (diplay right))
-		   ((box border) (display top)  (display bot) 
-		    		 (display left) (display right)))))))
+		   ((box border) (display top)  (display bot)
+				 (display left) (display right)))))))
 
    :after  (lambda (n e)
 	     (printf "\\eTABLE}\n")))
@@ -862,7 +864,7 @@
 	     (let ((bg (markup-option n :bg)))
 	       (when bg
 		 (printf "[background=color,backgroundcolor=~A]"
-			 (skribe-get-color bg)))))		 
+			 (skribe-get-color bg)))))
    :after  "\\eTR\n")
 
 
@@ -871,7 +873,7 @@
 ;;;; ======================================================================
 (markup-writer 'tc
    :options '(:width :align :valign :colspan)
-   :before (lambda (n e) 
+   :before (lambda (n e)
 	     (let ((th?     (eq? 'th (markup-option n 'markup)))
 		   (width   (markup-option n :width))
 		   (align   (markup-option n :align))
@@ -882,13 +884,13 @@
 	       (printf "\\bTD[")
 	       (printf "width=~a" (if width (context-width width) "fit"))
 	       (when valign
-		 ;; This is buggy. In fact valign an align can't be both 
+		 ;; This is buggy. In fact valign an align can't be both
 		 ;; specified in ConTeXt
 		 (printf ",align=~a" (case valign
 				       ((center) 'lohi)
 				       ((bottom) 'low)
 				       ((top)    'high))))
-	       (when align 
+	       (when align
 		 (printf ",align=~a" (case align
 				       ((left) 'right) ; !!!!
 				       ((right) 'left) ; !!!!
@@ -896,10 +898,10 @@
 	       (unless (equal? colspan 1)
 		 (printf ",nx=~a" colspan))
 	       (display "]")
-	       (when th? 
+	       (when th?
 		 ;; This is a TH, output is bolded
 		 (display "{\\bf{"))))
-	     
+
    :after (lambda (n e)
 	     (when (equal? (markup-option n 'markup) 'th)
 	       ;; This is a TH, output is bolded
@@ -919,8 +921,8 @@
 		    (zoom   (markup-option n :zoom))
 		    (body   (markup-body n))
 		    (efmt   (engine-custom e 'image-format))
-		    (img    (or url (convert-image file 
-						   (if (list? efmt) 
+		    (img    (or url (convert-image file
+						   (if (list? efmt)
 						       efmt
 						       '("jpg"))))))
 	       (if (not (string? img))
@@ -977,7 +979,7 @@
    :action (lambda (n e)
 	     (let ((text (markup-option n :text))
 		   (url  (markup-body n)))
-	       (when (pair? url) 
+	       (when (pair? url)
 		 (context-url (format "mailto:~A" (car url))
 			      (or text
 				  (car url))
@@ -987,24 +989,24 @@
 ;;;; ======================================================================
 (markup-writer 'mark
    :before (lambda (n e)
-	      (printf "\\reference[~a]{}\n" 
+	      (printf "\\reference[~a]{}\n"
 		      (string-canonicalize (markup-ident n)))))
 
 ;;;; ======================================================================
 ;;;;   ref ...
 ;;;; ======================================================================
 (markup-writer 'ref
-   :options '(:text :chapter :section :subsection :subsubsection 
+   :options '(:text :chapter :section :subsection :subsubsection
 	      :figure :mark :handle :page)
    :action (lambda (n e)
 	      (let* ((text (markup-option n :text))
 		     (page (markup-option n :page))
 		     (c    (handle-ast (markup-body n)))
 		     (id   (markup-ident c)))
-		(cond 
+		(cond
 		  (page ;; Output the page only (this is a hack)
 		     (when text (output text e))
-		     (printf "\\at[~a]" 
+		     (printf "\\at[~a]"
 			     (string-canonicalize id)))
 		  ((or (markup-option n :chapter)
 		       (markup-option n :section)
@@ -1041,7 +1043,7 @@
 (markup-writer 'bib-ref+
    :options '(:text :bib)
    :before (lambda (n e) (output "[" e))
-   :action (lambda (n e) 
+   :action (lambda (n e)
 	      (let loop ((rs (markup-body n)))
 		 (cond
 		    ((null? rs)
@@ -1063,7 +1065,7 @@
 ;;;; ======================================================================
 (markup-writer 'url-ref
    :options '(:url :text)
-   :action (lambda (n e) 
+   :action (lambda (n e)
 	     (context-url (markup-option n :url) (markup-option n :text) e)))
 
 ;;//;*---------------------------------------------------------------------*/
@@ -1138,13 +1140,13 @@
 ;;;; ======================================================================
 (markup-writer '&the-index
    :options '(:column)
-   :action 
+   :action
    (lambda (n e)
      (define (make-mark-entry n)
        (display "\\blank[medium]\n{\\bf\\it\\tfc{")
        (skribe-eval (bold n) e)
        (display "}}\\crlf\n"))
-     
+
      (define (make-primary-entry n)
        (let ((b (markup-body n)))
 	 (markup-option-add! b :text (list (markup-option b :text) ", "))
@@ -1192,7 +1194,7 @@
 			     (color :fg cc n1)
 			     n1)))
 		 (skribe-eval n2 e))))
-	      
+
 ;;;; ======================================================================
 ;;;;    &source-line-comment ...
 ;;;; ======================================================================
@@ -1204,7 +1206,7 @@
 			     (color :fg cc n1)
 			     n1)))
 		 (skribe-eval n2 e))))
-	      
+
 ;;;; ======================================================================
 ;;;;    &source-keyword ...
 ;;;; ======================================================================
@@ -1335,7 +1337,7 @@
 
 
 ;;;; ======================================================================
-;;;; 	Context Only Markups
+;;;;	Context Only Markups
 ;;;; ======================================================================
 
 ;;;
@@ -1363,7 +1365,7 @@
 
 ;;;
 ;;; ConTeXt and TeX
-;;; 
+;;;
 (define-markup (ConTeXt #!key (space #t))
   (if (engine-format? "context")
       (! (if space "\\CONTEXT\\ " "\\CONTEXT"))

@@ -16,61 +16,68 @@
 ;*       @ref ../../doc/user/htmle.skb:ref@                            */
 ;*=====================================================================*/
 
+(define-skribe-module (skribilo engine html)
+  #:use-module ((srfi srfi-19) :renamer (symbol-prefix-proc 's19:)))
+
+
+;; Keep a reference to the base engine.
+(define base-engine (find-engine 'base))
+
 ;*---------------------------------------------------------------------*/
 ;*    html-file-default ...                                            */
 ;*---------------------------------------------------------------------*/
 (define html-file-default
    ;; Default implementation of the `file-name-proc' custom.
    (let ((table '())
-        (filename (gensym)))
+	 (filename (tmpnam)))
       (define (get-file-name base suf)
-        (let* ((c (assoc base table))
-               (n (if (pair? c)
-                      (let ((n (+ 1 (cdr c))))
-                         (set-cdr! c n)
-                         n)
-                      (begin
-                         (set! table (cons (cons base 1) table))
-                         1))))
-           (format "~a-~a.~a" base n suf)))
+	(let* ((c (assoc base table))
+	       (n (if (pair? c)
+		      (let ((n (+ 1 (cdr c))))
+			 (set-cdr! c n)
+			 n)
+		      (begin
+			 (set! table (cons (cons base 1) table))
+			 1))))
+	   (format "~a-~a.~a" base n suf)))
       (lambda (node e)
-        (let ((f (markup-option node filename))
-              (file (markup-option node :file)))
-           (cond
-              ((string? f)
-               f)
-              ((string? file)
-               file)
-              ((or file 
-                   (and (is-markup? node 'chapter)
-                        (engine-custom e 'chapter-file))
-                   (and (is-markup? node 'section)
-                        (engine-custom e 'section-file))
-                   (and (is-markup? node 'subsection)
-                        (engine-custom e 'subsection-file))
-                   (and (is-markup? node 'subsubsection)
-                        (engine-custom e 'subsubsection-file)))
-               (let* ((b (or (and (string? *skribe-dest*)
-                                  (prefix *skribe-dest*))
-                             ""))
-                      (s (or (and (string? *skribe-dest*)
-                                  (suffix *skribe-dest*))
-                             "html"))
-                      (nm (get-file-name b s)))
-                  (markup-option-add! node filename nm)
-                  nm))
-              ((document? node)
-               *skribe-dest*)
-              (else
-               (let ((p (ast-parent node)))
-                  (if (container? p)
-                      (let ((file (html-file p e)))
-                         (if (string? file)
-                             (begin
-                                (markup-option-add! node filename file)
-                                file)
-                             #f))
-                      #f))))))))
+	(let ((f (markup-option node filename))
+	      (file (markup-option node :file)))
+	   (cond
+	      ((string? f)
+	       f)
+	      ((string? file)
+	       file)
+	      ((or file
+		   (and (is-markup? node 'chapter)
+			(engine-custom e 'chapter-file))
+		   (and (is-markup? node 'section)
+			(engine-custom e 'section-file))
+		   (and (is-markup? node 'subsection)
+			(engine-custom e 'subsection-file))
+		   (and (is-markup? node 'subsubsection)
+			(engine-custom e 'subsubsection-file)))
+	       (let* ((b (or (and (string? *skribe-dest*)
+				  (prefix *skribe-dest*))
+			     ""))
+		      (s (or (and (string? *skribe-dest*)
+				  (suffix *skribe-dest*))
+			     "html"))
+		      (nm (get-file-name b s)))
+		  (markup-option-add! node filename nm)
+		  nm))
+	      ((document? node)
+	       *skribe-dest*)
+	      (else
+	       (let ((p (ast-parent node)))
+		  (if (container? p)
+		      (let ((file (html-file p e)))
+			 (if (string? file)
+			     (begin
+				(markup-option-add! node filename file)
+				file)
+			     #f))
+		      #f))))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    html-engine ...                                                  */
@@ -262,8 +269,8 @@
 			 ("yacute" "&#253;")
 			 ("thorn" "&#254;")
 			 ("ymul" "&#255;")
-			 ;; Greek 
-			 ("Alpha" "&#913;") 
+			 ;; Greek
+			 ("Alpha" "&#913;")
 			 ("Beta" "&#914;")
 			 ("Gamma" "&#915;")
 			 ("Delta" "&#916;")
@@ -339,7 +346,7 @@
 			 ("Downarrow" "&#8659;")
 			 ("<=>" "&#8660;")
 			 ("<==>" "&#8660;")
-			 ;; Mathematical operators 
+			 ;; Mathematical operators
 			 ("forall" "&#8704;")
 			 ("partial" "&#8706;")
 			 ("exists" "&#8707;")
@@ -387,13 +394,13 @@
 			 ("langle" "&#9001;")
 			 ("rangle" "&#9002;")
 			 ;; Misc
-			 ("loz" "&#9674;") 
+			 ("loz" "&#9674;")
 			 ("spades" "&#9824;")
 			 ("clubs" "&#9827;")
 			 ("hearts" "&#9829;")
 			 ("diams" "&#9830;")
 			 ("euro" "&#8464;")
-			 ;; LaTeX 
+			 ;; LaTeX
 			 ("dag" "dag")
 			 ("ddag" "ddag")
 			 ("circ" "o")
@@ -442,17 +449,17 @@
 	 ((string? n)
 	  n)
 	 ((number? n)
-	  (if (procedure? proc) 
+	  (if (procedure? proc)
 	      (proc n)
 	      (number->string n)))
 	 (else
 	  "")))
    (define (html-chapter-number c)
-      (html-number (markup-option c :number) 
+      (html-number (markup-option c :number)
 		   (engine-custom e 'chapter-number->string)))
    (define (html-section-number c)
       (let ((p (ast-parent c))
-	    (s (html-number (markup-option c :number) 
+	    (s (html-number (markup-option c :number)
 			    (engine-custom e 'section-number->string))))
 	 (cond
 	    ((is-markup? p 'chapter)
@@ -461,7 +468,7 @@
 	     (string-append s)))))
    (define (html-subsection-number c)
       (let ((p (ast-parent c))
-	    (s (html-number (markup-option c :number) 
+	    (s (html-number (markup-option c :number)
 			    (engine-custom e 'subsection-number->string))))
 	 (cond
 	    ((is-markup? p 'section)
@@ -470,7 +477,7 @@
 	     (string-append "." s)))))
    (define (html-subsubsection-number c)
       (let ((p (ast-parent c))
-	    (s (html-number (markup-option c :number) 
+	    (s (html-number (markup-option c :number)
 			    (engine-custom e 'subsubsection-number->string))))
 	 (cond
 	    ((is-markup? p 'subsection)
@@ -497,7 +504,7 @@
 		  (skribe-error 'html-container-number
 				"Not a container"
 				(markup-markup c))))))))
-   
+
 ;*---------------------------------------------------------------------*/
 ;*    html-counter ...                                                 */
 ;*---------------------------------------------------------------------*/
@@ -553,10 +560,10 @@
 ;*    html-color-spec? ...                                             */
 ;*---------------------------------------------------------------------*/
 (define (html-color-spec? v)
-   (and v 
+   (and v
 	(not (unspecified? v))
 	(or (not (string? v)) (> (string-length v) 0))))
-			  
+
 ;*---------------------------------------------------------------------*/
 ;*    document ...                                                     */
 ;*---------------------------------------------------------------------*/
@@ -599,7 +606,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    &html-body ...                                                   */
 ;*---------------------------------------------------------------------*/
-(markup-writer '&html-body 
+(markup-writer '&html-body
    :before (lambda (n e)
 	      (let ((bg (engine-custom e 'background)))
 		 (display "<body")
@@ -680,7 +687,7 @@
    (let* ((ic (engine-custom e 'favicon))
 	  (id (markup-ident n)))
       (unless (string? id)
-	 (skribe-error '&html-generic-header 
+	 (skribe-error '&html-generic-header
 		       (format "Illegal identifier `~a'" id)
 		       n))
       ;; title
@@ -716,7 +723,7 @@
 		 (ident (string-append id "-css"))
 		 (body (let ((c (engine-custom e 'css)))
 			  (if (string? c)
-			      (list c) 
+			      (list c)
 			      c))))
 	      e)
       ;; javascript
@@ -745,7 +752,7 @@
 		    (for-each (lambda (css)
 				 (printf " <link href=~s rel=\"stylesheet\" type=\"text/css\">\n" css))
 			      css)))))
-	      
+
 (markup-writer '&html-header-style
    :before " <style type=\"text/css\">\n  <!--\n"
    :action (lambda (n e)
@@ -767,7 +774,7 @@
 		    (for-each (lambda (css)
 				 (let ((p (open-input-file css)))
 				    (if (not (input-port? p))
-					(skribe-error 
+					(skribe-error
 					 'html-css
 					 "Can't open CSS file for input"
 					 css)
@@ -780,7 +787,7 @@
 					   (close-input-port p)))))
 			      icss))))
    :after "  -->\n </style>\n")
-	      
+
 (markup-writer '&html-header-javascript
    :action (lambda (n e)
 	      (when (engine-custom e 'javascript)
@@ -807,8 +814,8 @@
 		 (for-each (lambda (s)
 			      (printf "<script type=\"text/javascript\" src=\"~a\"></script>" s))
 			   js))))
-			      
-	      
+
+
 ;*---------------------------------------------------------------------*/
 ;*    &html-header ...                                                 */
 ;*---------------------------------------------------------------------*/
@@ -827,13 +834,20 @@
 	      (let ((body (markup-body n)))
 		 (if body
 		     (output body #t)
-		     (skribe-eval [
-,(hrule) 
-,(p :class "ending" (font :size -1 [
-This ,(sc "Html") page has been produced by 
-,(ref :url (skribe-url) :text "Skribe").
-,(linebreak)
-Last update ,(it (date)).]))] e))))
+		     (skribe-eval
+		      (list (hrule)
+			    (p :class "ending"
+			       (font :size -1
+				     (list "This HTML page was "
+					   "produced by "
+					   (ref :text "Skribilo"
+						:url (skribilo-url))
+					   "."
+					   (linebreak)
+					   "Last update: "
+					   (s19:date->string
+					    (s19:current-date))))))
+		      e))))
    :after "</div>\n")
 
 ;*---------------------------------------------------------------------*/
@@ -894,8 +908,8 @@ Last update ,(it (date)).]))] e))))
 		    (let loop ((fns footnotes))
 		       (if (pair? fns)
 			   (let ((fn (car fns)))
-			      (printf "<a name=\"footnote-~a\">" 
-				      (string-canonicalize 
+			      (printf "<a name=\"footnote-~a\">"
+				      (string-canonicalize
 				       (container-ident fn)))
 			      (printf "<sup><small>~a</small></sup></a>: "
 				      (markup-option fn :number))
@@ -1109,12 +1123,12 @@ Last update ,(it (date)).]))] e))))
 		    ;; blank columns
 		    (col level)
 		    ;; number
-		    (printf "<td valign=\"top\" align=\"left\">~a</td>" 
+		    (printf "<td valign=\"top\" align=\"left\">~a</td>"
 			    (html-container-number c e))
 		    ;; title
 		    (printf "<td colspan=\"~a\" width=\"100%\">"
 			    (- 4 level))
-		    (printf "<a href=\"~a#~a\">" 
+		    (printf "<a href=\"~a#~a\">"
 			    (if (string=? f *skribe-dest*)
 				""
 				(strip-ref-base (or f *skribe-dest* "")))
@@ -1139,8 +1153,8 @@ Last update ,(it (date)).]))] e))))
 			     (handle-ast b)
 			     b)))
 		 (if (not (container? bb))
-		     (error 'toc 
-			    "Illegal body (container expected)" 
+		     (error 'toc
+			    "Illegal body (container expected)"
 			    (if (markup? bb)
 				(markup-markup bb)
 				"???"))
@@ -1151,7 +1165,7 @@ Last update ,(it (date)).]))] e))))
 						      (and ss (is-markup? x 'subsection))
 						      (and s (is-markup? x 'section))
 						      (and c (is-markup? x 'chapter))
-						      (markup-option n (symbol->keyword 
+						      (markup-option n (symbol->keyword
 									(markup-markup x))))))
 					   (container-body bb))))
 		       ;; avoid to produce an empty table
@@ -1159,9 +1173,9 @@ Last update ,(it (date)).]))] e))))
 			  (display "<table cellspacing=\"1\" cellpadding=\"1\" width=\"100%\"")
 			  (html-class n)
 			  (display ">\n<tbody>\n")
-			  
+
 			  (for-each (lambda (n) (toc-entry n 0)) lst)
-			  
+
 			  (display "</tbody>\n</table>\n")))))))
 
 ;*---------------------------------------------------------------------*/
@@ -1186,7 +1200,7 @@ Last update ,(it (date)).]))] e))))
 		     (ident (string-append id "-footnote"))
 		     (class (markup-class n))
 		     (parent n)
-		     (body (reverse! 
+		     (body (reverse!
 			    (container-env-get n 'footnote-env)))))
 	  (page (new markup
 		   (markup '&html-page)
@@ -1202,7 +1216,7 @@ Last update ,(it (date)).]))] e))))
 		     (body (or (markup-option n :ending)
 			       (let ((p (ast-document n)))
 				  (and p (markup-option p :ending)))))))
-	  (body (new markup 
+	  (body (new markup
 		   (markup '&html-body)
 		   (ident (string-append id "-body"))
 		   (class (markup-class n))
@@ -1231,17 +1245,17 @@ Last update ,(it (date)).]))] e))))
 	  (ti (let* ((nb (html-container-number n e))
 		     (tc (markup-option n :title))
 		     (ti (if (document? p)
-			     (list (markup-option p :title) 
+			     (list (markup-option p :title)
 				   (engine-custom e 'file-title-separator)
 				   tc)
 			     tc))
-		     (sep (engine-custom 
+		     (sep (engine-custom
 			     e
-			     (symbol-append (markup-markup n) 
+			     (symbol-append (markup-markup n)
 					    '-title-number-separator)))
 		     (nti (and tc
 			       (if (and nb (not (equal? nb "")))
-				   (list nb 
+				   (list nb
 					 (if (unspecified? sep) ". " sep)
 					 ti)
 				   ti))))
@@ -1344,7 +1358,7 @@ Last update ,(it (date)).]))] e))))
 ;; on-file section writer
 (markup-writer 'section
    :options '(:title :html-title :number :toc :file :env)
-   :predicate (lambda (n e) 
+   :predicate (lambda (n e)
 		 (or (markup-option n :file)
 		     (engine-custom e 'section-file)))
    :action &html-generic-subdocument)
@@ -1356,11 +1370,11 @@ Last update ,(it (date)).]))] e))))
    :options '(:title :html-title :number :toc :env :file)
    :before html-section-title
    :after "</div>\n")
-		     
+
 ;; on-file subsection writer
 (markup-writer 'section
    :options '(:title :html-title :number :toc :file :env)
-   :predicate (lambda (n e) 
+   :predicate (lambda (n e)
 		 (or (markup-option n :file)
 		     (engine-custom e 'subsection-file)))
    :action &html-generic-subdocument)
@@ -1376,7 +1390,7 @@ Last update ,(it (date)).]))] e))))
 ;; on-file subsection writer
 (markup-writer 'section
    :options '(:title :html-title :number :toc :file :env)
-   :predicate (lambda (n e) 
+   :predicate (lambda (n e)
 		 (or (markup-option n :file)
 		     (engine-custom e 'subsubsection-file)))
    :action &html-generic-subdocument)
@@ -1384,7 +1398,7 @@ Last update ,(it (date)).]))] e))))
 ;*---------------------------------------------------------------------*/
 ;*    paragraph ...                                                    */
 ;*---------------------------------------------------------------------*/
-(markup-writer 'paragraph 
+(markup-writer 'paragraph
    :before (lambda (n e)
 	      (when (and (>= (skribe-debug) 2) (location? (ast-loc n)))
 		 (printf "<span style=\"display: block; position: relative; left: -2cm; font-size: x-small; font-style: italic; color: ff8e1e;\">~a</span>"
@@ -1405,7 +1419,7 @@ Last update ,(it (date)).]))] e))))
 ;*---------------------------------------------------------------------*/
 ;*    linebreak ...                                                    */
 ;*---------------------------------------------------------------------*/
-(markup-writer 'linebreak 
+(markup-writer 'linebreak
 	       :before (lambda (n e)
 			  (display "<br")
 			  (html-class n)
@@ -1414,14 +1428,14 @@ Last update ,(it (date)).]))] e))))
 ;*---------------------------------------------------------------------*/
 ;*    hrule ...                                                        */
 ;*---------------------------------------------------------------------*/
-(markup-writer 'hrule 
+(markup-writer 'hrule
    :options '(:width :height)
    :before (lambda (n e)
 	      (let ((width (markup-option n :width))
 		    (height (markup-option n :height)))
 		 (display "<hr")
 		 (html-class n)
-		 (if (< width 100) 
+		 (if (< width 100)
 		     (printf " width=\"~a\"" (html-width width)))
 		 (if (> height 1)
 		     (printf " size=\"~a\"" height))
@@ -1432,7 +1446,7 @@ Last update ,(it (date)).]))] e))))
 ;*---------------------------------------------------------------------*/
 (markup-writer 'color
    :options '(:bg :fg :width :margin)
-   :before (lambda (n e) 
+   :before (lambda (n e)
 	      (let ((m (markup-option n :margin))
 		    (w (markup-option n :width))
 		    (bg (markup-option n :bg))
@@ -1446,7 +1460,7 @@ Last update ,(it (date)).]))] e))))
 		    (display "<td bgcolor=\"")
 		    (output bg e)
 		    (display "\">"))
-		 (when (html-color-spec? fg) 
+		 (when (html-color-spec? fg)
 		    (display "<font color=\"")
 		    (output fg e)
 		    (display "\">"))))
@@ -1461,7 +1475,7 @@ Last update ,(it (date)).]))] e))))
 ;*---------------------------------------------------------------------*/
 (markup-writer 'frame
    :options '(:width :margin :border)
-   :before (lambda (n e) 
+   :before (lambda (n e)
 	      (let ((m (markup-option n :margin))
 		    (b (markup-option n :border))
 		    (w (markup-option n :width)))
@@ -1478,7 +1492,7 @@ Last update ,(it (date)).]))] e))))
 ;*---------------------------------------------------------------------*/
 (markup-writer 'font
    :options '(:size :face)
-   :before (lambda (n e) 
+   :before (lambda (n e)
 	      (let ((size (markup-option n :size))
 		    (face (markup-option n :face)))
 		 (when (and (number? size) (inexact? size))
@@ -1527,8 +1541,8 @@ Last update ,(it (date)).]))] e))))
 		  (html-class n)
 		  (display "width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td align=\"right\">"))
 		 (else
-		  (skribe-error 'flush 
-				"Illegal side" 
+		  (skribe-error 'flush
+				"Illegal side"
 				(markup-option n :side)))))
    :after (lambda (n e)
 	     (case (markup-option n :side)
@@ -1563,7 +1577,7 @@ Last update ,(it (date)).]))] e))))
 ;*    itemize ...                                                      */
 ;*---------------------------------------------------------------------*/
 (markup-writer 'itemize
-   :options '(:symbol)	       
+   :options '(:symbol)
    :before (html-markup-class "ul")
    :action (lambda (n e)
 	      (for-each (lambda (item)
@@ -1584,7 +1598,7 @@ Last update ,(it (date)).]))] e))))
 ;*    enumerate ...                                                    */
 ;*---------------------------------------------------------------------*/
 (markup-writer 'enumerate
-   :options '(:symbol)	       
+   :options '(:symbol)
    :before (html-markup-class "ol")
    :action (lambda (n e)
 	      (for-each (lambda (item)
@@ -1604,7 +1618,7 @@ Last update ,(it (date)).]))] e))))
 ;*    description ...                                                  */
 ;*---------------------------------------------------------------------*/
 (markup-writer 'description
-   :options '(:symbol)	       
+   :options '(:symbol)
    :before (html-markup-class "dl")
    :action (lambda (n e)
 	      (for-each (lambda (item)
@@ -1628,7 +1642,7 @@ Last update ,(it (date)).]))] e))))
 ;*    item ...                                                         */
 ;*---------------------------------------------------------------------*/
 (markup-writer 'item
-   :options '(:key)	       
+   :options '(:key)
    :action (lambda (n e)
 	      (let ((k (markup-option n :key)))
 		 (if k
@@ -1643,9 +1657,9 @@ Last update ,(it (date)).]))] e))))
 ;*---------------------------------------------------------------------*/
 ;*    blockquote ...                                                   */
 ;*---------------------------------------------------------------------*/
-(markup-writer 'blockquote 
+(markup-writer 'blockquote
    :options '()
-   :before (lambda (n e) 
+   :before (lambda (n e)
 	     (display "<blockquote ")
 	     (html-class n)
 	     (display ">\n"))
@@ -1679,17 +1693,17 @@ Last update ,(it (date)).]))] e))))
 ;*---------------------------------------------------------------------*/
 ;*    &html-figure-legend ...                                          */
 ;*---------------------------------------------------------------------*/
-(markup-writer '&html-figure-legend 
+(markup-writer '&html-figure-legend
    :options '(:number)
    :before (lambda (n e)
 	      (display "<center>")
 	      (let ((number (markup-option n :number))
 		    (legend (markup-option n :legend)))
-		 (if number 
+		 (if number
 		     (printf "<strong>Fig. ~a:</strong> " number)
 		     (printf "<strong>Fig. :</strong> "))))
    :after "</center>")
-   
+
 ;*---------------------------------------------------------------------*/
 ;*    table ...                                                        */
 ;*---------------------------------------------------------------------*/
@@ -1719,7 +1733,7 @@ Last update ,(it (date)).]))] e))))
 		    ((number? cstyle)
 		     (printf " style=\"border-collapse: separate; border-spacing=~apt\"" cstyle)))
 		 (if frame
-		     (printf " frame=\"~a\"" 
+		     (printf " frame=\"~a\""
 			     (if (eq? frame 'none) "void" frame)))
 		 (if (and rules (not (eq? rules 'header)))
 		     (printf " rules=\"~a\"" rules))
@@ -1738,7 +1752,7 @@ Last update ,(it (date)).]))] e))))
 		 (when (html-color-spec? bg) (printf " bgcolor=\"~a\"" bg))
 		 (display ">")))
    :after "</tr>\n")
-	      
+
 ;*---------------------------------------------------------------------*/
 ;*    tc ...                                                           */
 ;*---------------------------------------------------------------------*/
@@ -1771,7 +1785,7 @@ Last update ,(it (date)).]))] e))))
    :after (lambda (n e)
 	     (let ((markup (or (markup-option n 'markup) 'td)))
 		(printf "</~a>" markup))))
-	      
+
 ;*---------------------------------------------------------------------*/
 ;*    image ... @label image@                                          */
 ;*---------------------------------------------------------------------*/
@@ -1784,7 +1798,7 @@ Last update ,(it (date)).]))] e))))
 		     (height (markup-option n :height))
 		     (body (markup-body n))
 		     (efmt (engine-custom e 'image-format))
-		     (img (or url (convert-image file 
+		     (img (or url (convert-image file
 						 (if (list? efmt)
 						     efmt
 						     '("gif" "jpg" "png"))))))
@@ -1851,7 +1865,7 @@ Last update ,(it (date)).]))] e))))
 ;*---------------------------------------------------------------------*/
 (markup-writer 'mailto
    :options '(:text)
-   :predicate (lambda (n e) 
+   :predicate (lambda (n e)
 		 (and (engine-custom e 'javascript)
 		      (or (string? (markup-body n))
 			  (and (pair? (markup-body n))
@@ -1926,7 +1940,7 @@ Last update ,(it (date)).]))] e))))
 				(markup '&html-section-ref)
 				(body (markup-body n)))
 			     e))
-					
+
 		    ((not m)
 		     (output (new markup
 				(markup '&html-unmark-ref)
@@ -1939,7 +1953,7 @@ Last update ,(it (date)).]))] e))))
 ;*---------------------------------------------------------------------*/
 ;*    &html-figure-ref ...                                             */
 ;*---------------------------------------------------------------------*/
-(markup-writer '&html-figure-ref 
+(markup-writer '&html-figure-ref
    :action (lambda (n e)
 	      (let ((c (handle-ast (markup-body n))))
 		 (if (or (not (markup? c))
@@ -1950,7 +1964,7 @@ Last update ,(it (date)).]))] e))))
 ;*---------------------------------------------------------------------*/
 ;*    &html-section-ref ...                                            */
 ;*---------------------------------------------------------------------*/
-(markup-writer '&html-section-ref 
+(markup-writer '&html-section-ref
    :action (lambda (n e)
 	      (let ((c (handle-ast (markup-body n))))
 		 (if (not (markup? c))
@@ -1960,7 +1974,7 @@ Last update ,(it (date)).]))] e))))
 ;*---------------------------------------------------------------------*/
 ;*    &html-unmark-ref ...                                             */
 ;*---------------------------------------------------------------------*/
-(markup-writer '&html-unmark-ref 
+(markup-writer '&html-unmark-ref
    :action (lambda (n e)
 	      (let ((c (handle-ast (markup-body n))))
 		 (if (not (markup? c))
@@ -1971,8 +1985,8 @@ Last update ,(it (date)).]))] e))))
 			    (let ((l (markup-option c :legend)))
 			       (if l
 				   (output t e)
-				   (display 
-				    (string-canonicalize 
+				   (display
+				    (string-canonicalize
 				     (markup-ident c)))))))))))
 
 ;*---------------------------------------------------------------------*/
@@ -1990,7 +2004,7 @@ Last update ,(it (date)).]))] e))))
 (markup-writer 'bib-ref+
    :options '(:text :bib)
    :before "["
-   :action (lambda (n e) 
+   :action (lambda (n e)
 	      (let loop ((rs (markup-body n)))
 		 (cond
 		    ((null? rs)
@@ -2032,7 +2046,7 @@ Last update ,(it (date)).]))] e))))
 		 (display "\"")
 		 (when class (printf " class=\"~a\"" class))
 		 (display ">")))
-   :action (lambda (n e) 
+   :action (lambda (n e)
 	      (let ((v (markup-option n :text)))
 		 (output (or v (markup-option n :url)) e)))
    :after "</a>")
@@ -2060,7 +2074,7 @@ Last update ,(it (date)).]))] e))))
    :options '(:mark :handle)
    :action (lambda (n e)
 	      (error 'page-ref:html "Not implemented yet" n)))
-   
+
 ;*---------------------------------------------------------------------*/
 ;*    &bib-entry-label ...                                             */
 ;*---------------------------------------------------------------------*/
@@ -2125,7 +2139,7 @@ Last update ,(it (date)).]))] e))))
 			     (color :fg cc n1)
 			     n1)))
 		 (skribe-eval n2 e))))
-	      
+
 ;*---------------------------------------------------------------------*/
 ;*    &source-line-comment ...                                         */
 ;*---------------------------------------------------------------------*/
@@ -2137,7 +2151,7 @@ Last update ,(it (date)).]))] e))))
 			     (color :fg cc n1)
 			     n1)))
 		 (skribe-eval n2 e))))
-	      
+
 ;*---------------------------------------------------------------------*/
 ;*    &source-keyword ...                                              */
 ;*---------------------------------------------------------------------*/

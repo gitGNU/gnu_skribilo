@@ -10,7 +10,6 @@
 (define-public (skribilo-default-path)        "@SKRIBILO_SKR_PATH@")
 (define-public (skribilo-scheme)              "guile")
 
-
 ;; Compatibility.
 
 (define-public skribe-release      skribilo-release)

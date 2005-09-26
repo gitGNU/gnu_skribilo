@@ -27,10 +27,11 @@
 
 
 (define-module (skribilo biblio)
-   :use-module (skribilo runtime)
-   :export (bib-tables? make-bib-table default-bib-table
-	    bib-load! resolve-bib resolve-the-bib
-	    bib-sort/authors bib-sort/idents bib-sort/dates))
+  :use-module (skribilo runtime)
+  :use-module (skribilo lib)      ;; `when', `unless'
+  :use-module (skribilo vars)
+  :export (bib-table? make-bib-table default-bib-table
+	   bib-add!))
 
 (define *bib-table*	     #f)
 
@@ -50,7 +51,7 @@
    (make-hash-table))
 
 (define (bib-table? obj)
-  (hashtable? obj))
+  (hash-table? obj))
 
 (define (default-bib-table)
   (unless *bib-table*
@@ -143,7 +144,7 @@
 ;;; ======================================================================
 ;; FIXME: Factoriser
 (define (skribe-open-bib-file file command)
- (let ((path (find-path file *skribe-bib-path*)))
+ (let ((path (search-path *skribe-bib-path* file)))
    (if (string? path)
        (begin
 	 (when (> *skribe-verbose* 0)

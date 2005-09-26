@@ -20,7 +20,9 @@
 
 (define-module (skribilo module)
   :use-module (skribilo reader)
-  :use-module (skribilo eval)
+  :use-module (skribilo evaluator)
+  :use-module (skribilo debug)
+  :use-module (srfi srfi-1)
   :use-module (ice-9 optargs))
 
 ;;; Author:  Ludovic Courtès
@@ -35,44 +37,47 @@
 ;;;
 ;;; Code:
 
-(define-macro (define-skribe-module name)
+(define *skribilo-user-imports*
+  ;; List of modules that should be imported by any good Skribilo module.
+  '((srfi srfi-1)         ;; lists
+    (srfi srfi-13)        ;; strings
+    ;(srfi srfi-19)        ;; date and time
+    (oop goops)           ;; `make'
+    (ice-9 optargs)       ;; `define*'
+
+    (skribilo module)
+    (skribilo types)      ;; `<document>', `document?', etc.
+    (skribilo config)
+    (skribilo vars)
+    (skribilo runtime)    ;; `the-options', `the-body'
+    (skribilo biblio)
+    (skribilo lib)        ;; `define-markup', `unwind-protect', etc.
+    (skribilo resolve)
+    (skribilo engine)
+    (skribilo writer)
+    (skribilo output)
+    (skribilo evaluator)))
+
+(define *skribe-core-modules*
+  '("utils" "api" "bib" "index" "param" "sui"))
+
+(define-macro (define-skribe-module name . options)
   `(begin
-     (define-module ,name)
+     (define-module ,name
+       #:reader (make-reader 'skribe)
+       #:use-module (skribilo reader)
+       ,@options)
 
      ;; Pull all the bindings that Skribe code may expect, plus those needed
      ;; to actually create and read the module.
-     (use-modules (skribilo module)
-                  (skribilo reader)
-                  (skribilo eval)   ;; `run-time-module'
-
-                  (srfi srfi-1)
-                  (ice-9 optargs)
-
-                  (skribilo lib) ;; `define-markup', `unwind-protect', etc.
-                  (skribilo runtime)
-                  (skribilo vars)
-                  (skribilo config))
-
-     (use-syntax (skribilo lib))
-
-     ;; The `define' below results in a module-local definition.  So the
-     ;; definition of `read' in the `(guile-user)' module is left untouched.
-     ;(define read ,(make-reader 'skribe))
-
-     ;; Everything is exported.
-     (define-macro (define . things)
-       (let* ((first (car things))
-              (binding (cond ((symbol? first) first)
-                             ((list? first)   (car first))
-                             ((pair? first)   (car first))
-                             (else
-                              (error "define/skribe: bad formals" first)))))
-         `(begin
-            (define-public ,@things)
-            ;; Automatically push it to the run-time user module.
-;             (module-define! ,(run-time-module)
-;                             (quote ,binding) ,binding)
-            )))))
+     ,(cons 'use-modules
+	    (append *skribilo-user-imports*
+		    (filter-map (lambda (mod)
+				  (let ((m `(skribilo skribe
+						      ,(string->symbol
+							mod))))
+				    (and (not (equal? m name)) m)))
+				*skribe-core-modules*)))))
 
 
 ;; Make it available to the top-level module.
@@ -80,39 +85,70 @@
                 'define-skribe-module define-skribe-module)
 
 
+
+
+(define *skribilo-user-module* #f)
+
+;;;
+;;; MAKE-RUN-TIME-MODULE
+;;;
+(define-public (make-run-time-module)
+  "Return a new module that imports all the necessary bindings required for
+execution of Skribilo/Skribe code."
+  (let ((the-module (make-module)))
+        (for-each (lambda (iface)
+                    (module-use! the-module (resolve-module iface)))
+                  (append *skribilo-user-imports*
+			  (map (lambda (mod)
+				 `(skribilo skribe
+					    ,(string->symbol mod)))
+			       *skribe-core-modules*)))
+        (set-module-name! the-module '(skribilo-user))
+        the-module))
+
+;;;
+;;; RUN-TIME-MODULE
+;;;
+(define-public (run-time-module)
+  "Return the default instance of a Skribilo/Skribe run-time module."
+  (if (not *skribilo-user-module*)
+      (set! *skribilo-user-module* (make-run-time-module)))
+  *skribilo-user-module*)
+
+
+;; FIXME:  This will eventually be replaced by the per-module reader thing in
+;;         Guile.
 (define-public (load-file-with-read file read module)
-  (with-input-from-file file
-    (lambda ()
+  (with-debug 5 'load-file-with-read
+     (debug-item "loading " file)
+
+     (with-input-from-file (search-path %load-path file)
+       (lambda ()
 ;      (format #t "load-file-with-read: ~a~%" read)
-      (let loop ((sexp (read))
-                 (result #f))
-        (if (eof-object? sexp)
-            result
-            (begin
+	 (let loop ((sexp (read))
+		    (result #f))
+	   (if (eof-object? sexp)
+	       result
+	       (begin
 ;              (format #t "preparing to evaluate `~a'~%" sexp)
-              (loop (read)
-                    (eval sexp module))))))))
+		 (loop (read)
+		       (primitive-eval sexp)))))))))
 
 (define-public (load-skribilo-file file reader-name)
   (load-file-with-read file (make-reader reader-name) (current-module)))
-
-(define-public *skribe-core-modules*
-  '("utils" "api" "bib" "index" "param" "sui"))
 
 (define*-public (load-skribe-modules #:optional (debug? #f))
   "Load the core Skribe modules, both in the @code{(skribilo skribe)}
 hierarchy and in @code{(run-time-module)}."
   (for-each (lambda (mod)
-              (if debug?
-                  (format #t "loading skribe module `~a'...~%" mod))
-              (load-skribilo-file (string-append "skribe/" mod ".scm")
-                                  'skribe))
-            *skribe-core-modules*)
-  (for-each (lambda (mod)
+              (format #t "~~ loading skribe module `~a'...~%" mod)
+              (load-skribilo-file (string-append "skribilo/skribe/"
+                                                 mod ".scm")
+                                  'skribe)
               (module-use! (run-time-module)
-                           (resolve-interface (list skribilo skribe
-                                                    (string->symbol
-                                                     mod)))))
+                           (resolve-module `(skribilo skribe
+                                             ,(string->symbol mod)))))
             *skribe-core-modules*))
+
 
 ;;; module.scm ends here

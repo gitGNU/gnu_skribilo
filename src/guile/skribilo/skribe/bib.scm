@@ -32,7 +32,6 @@
 ;;; The contents of the file below are unchanged compared to Skribe 1.2d's
 ;;; `bib.scm' file found in the `common' directory.
 
-
 ;*---------------------------------------------------------------------*/
 ;*    bib-load! ...                                                    */
 ;*---------------------------------------------------------------------*/

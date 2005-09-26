@@ -1,24 +1,24 @@
 ;;;;
 ;;;; output.stk	-- Skribe Output Stage
-;;;; 
+;;;;
 ;;;; Copyright © 2003-2004 Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
-;;;; 
-;;;; 
+;;;;
+;;;;
 ;;;; This program is free software; you can redistribute it and/or modify
 ;;;; it under the terms of the GNU General Public License as published by
 ;;;; the Free Software Foundation; either version 2 of the License, or
 ;;;; (at your option) any later version.
-;;;; 
+;;;;
 ;;;; This program is distributed in the hope that it will be useful,
 ;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
 ;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ;;;; GNU General Public License for more details.
-;;;; 
+;;;;
 ;;;; You should have received a copy of the GNU General Public License
 ;;;; along with this program; if not, write to the Free Software
-;;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, 
+;;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ;;;; USA.
-;;;; 
+;;;;
 ;;;;           Author: Erick Gallesio [eg@essi.fr]
 ;;;;    Creation date: 13-Aug-2003 18:42 (eg)
 ;;;; Last file update:  5-Mar-2004 10:32 (eg)
@@ -29,8 +29,9 @@
 
 (use-modules (skribilo debug)
 	     (skribilo types)
-;	     (skribe engine)
-;	     (skribe writer)
+;	     (skribilo engine)
+	     (skribilo writer)
+	     (skribilo lib)    ;; `when', `unless'
 	     (oop goops))
 
 
@@ -47,7 +48,7 @@
 	(invoke (slot-ref w 'action) n e)
 	(invoke (slot-ref w 'after)  n e))))
 
-   
+
 
 (define (output node e . writer)
   (with-debug 3 'output
@@ -60,10 +61,10 @@
 	   (%out/writer node e (car writer)))
 	  ((not (car writer))
 	   (skribe-error 'output
-			 (format "Illegal ~A user writer" (engine-ident e))
+			 (format #f "illegal ~A user writer" (engine-ident e))
 			 (if (markup? node) (markup-markup node) node)))
 	  (else
-	   (skribe-error 'output "Illegal user writer" (car writer)))))))
+	   (skribe-error 'output "illegal user writer" (car writer)))))))
 
 
 ;;;
@@ -74,7 +75,7 @@
 
 
 (define-method (out (node <pair>) e)
-  (let Loop ((n* node))
+  (let loop ((n* node))
     (cond
       ((pair? n*)
        (out (car n*) e)
@@ -135,7 +136,7 @@
 		      (+ (- (char->integer c)
 			    (char->integer #\0))
 			 (* 10 n))))))))
-    
+
     (let loop ((i 0))
       (cond
 	((= i lf)

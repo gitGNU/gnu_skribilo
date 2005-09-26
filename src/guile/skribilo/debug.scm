@@ -73,8 +73,7 @@
 (define (debug-color col . o)
   (with-output-to-string
     (if (and *skribe-debug-color*
-	     (equal? (getenv "TERM") "xterm")
-	     (interactive-port? *debug-port*))
+	     (equal? (getenv "TERM") "xterm"))
 	(lambda ()
 	  (format #t "[0m[1;~Am" (+ 31 col))
 	  (for-each display o)
