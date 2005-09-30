@@ -28,9 +28,9 @@
    :export (verify))
 
 (use-modules (skribilo debug)
-;	     (skribilo engine)
+	     (skribilo engine)
 	     (skribilo writer)
-;	     (skribilo runtime)
+	     (skribilo runtime)
 	     (skribilo types)
 	     (skribilo lib)     ;; `when', `unless'
 	     (oop goops))
@@ -53,7 +53,7 @@
 	  (for-each (lambda (o)
 		      (if (not (memq o options))
 			  (skribe-error (engine-ident engine)
-					(format "Option unsupported: ~a, supported options: ~a" o options)
+					(format #f "option unsupported: ~a, supported options: ~a" o options)
 					markup)))
 		    required-options)
 	  (slot-set! writer 'verified? #t)))))
@@ -79,7 +79,7 @@
 		       3
 		       markup
 		       'verify
-		       (format "Engine ~a does not support markup ~a option `~a' -- ~a"
+		       (format #f "engine ~a does not support markup ~a option `~a' -- ~a"
 			       (engine-ident engine)
 			       (markup-markup markup)
 			       o
@@ -140,7 +140,7 @@
 	       (skribe-warning
 		     1
 		     node
-		     (format "Node `~a' forbidden here by ~a engine"
+		     (format #f "node `~a' forbidden here by ~a engine"
 			     (markup-markup node)
 			     (engine-ident e))))))))
      node))

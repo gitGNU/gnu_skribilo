@@ -34,7 +34,7 @@
 	    <engine> engine? engine-ident engine-format engine-customs
 		     engine-filter engine-symbol-table
 	    <writer> writer? write-object writer-options writer-ident
-	             writer-before writer-action writer-after
+	             writer-before writer-action writer-after writer-class
 	    <processor> processor? processor-combinator processor-engine
 	    <markup> markup? bind-markup! markup-options is-markup?
 		     markup-markup markup-body markup-ident markup-class

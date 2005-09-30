@@ -194,8 +194,9 @@
 ;;;
 (define (%skribe-warn level file line lst)
   (let ((port (current-error-port)))
-    (format port "**** WARNING:\n")
-    (when (and file line) (format port "~a: ~a: " file line))
+    (when (and file line)
+      (format port "~a:~a: " file line))
+    (format port "warning: ")
     (for-each (lambda (x) (format port "~a " x)) lst)
     (newline port)))
 
@@ -346,7 +347,7 @@
 (define hashtable-put!		hash-set!)
 (define hashtable-update!	hash-set!)
 (define hashtable->list	(lambda (h)
-                          (map cdr (hash-table->list h))))
+                          (map cdr (hash-map->list cons h))))
 
 (define find-runtime-type	(lambda (obj) obj))
 

@@ -40,6 +40,7 @@
           (gensym-orig (cond ((symbol? obj) (symbol->string obj))
                              (else obj))))))
 
+
 ;*---------------------------------------------------------------------*/
 ;*    include ...                                                      */
 ;*---------------------------------------------------------------------*/
@@ -253,7 +254,6 @@
 ;*    paragraph ...                                                    */
 ;*---------------------------------------------------------------------*/
 (define-simple-markup paragraph)
-(define-public p      paragraph)
 
 ;*---------------------------------------------------------------------*/
 ;*    footnote ...                                                     */
@@ -464,7 +464,7 @@
 	 ((and (integer? start) (integer? stop) (> start stop))
 	  (skribe-error 'source
 			"start line > stop line"
-			(format "~a/~a" start stop)))
+			(format #f "~a/~a" start stop)))
 	 ((and language (not (language? language)))
 	  (skribe-error 'source "Illegal language" language))
 	 ((and tab (not (integer? tab)))
@@ -553,7 +553,7 @@
 		 (if (not (is-markup? r markup))
 		     (skribe-warning 2
 				     for
-				     (format "Illegal `~a' element, `~a' expected"
+				     (format #f "illegal `~a' element, `~a' expected"
 					     (if (markup? r)
 						 (markup-markup r)
 						 (find-runtime-type r))
@@ -643,17 +643,17 @@
       (cond
 	 ((and frame (not (memq frame frame-vals)))
 	  (skribe-error 'table
-			(format "frame should be one of \"~a\"" frame-vals)
+			(format #f "frame should be one of \"~a\"" frame-vals)
 			frame))
 	 ((and rules (not (memq rules rules-vals)))
 	  (skribe-error 'table
-			(format "rules should be one of \"~a\"" rules-vals)
+			(format #f "rules should be one of \"~a\"" rules-vals)
 			rules))
 	 ((not (or (memq cellstyle cells-vals)
 		   (string? cellstyle)
 		   (number? cellstyle)))
 	  (skribe-error 'table
-			(format "cellstyle should be one of \"~a\", or a number, or a string" cells-vals)
+			(format #f "cellstyle should be one of \"~a\", or a number, or a string" cells-vals)
 			cellstyle))
 	 (else
 	  (new container
@@ -689,7 +689,7 @@
 		   #!key
 		   (ident #f) (class #f)
 		   (width #f) (align 'center) (valign #f)
-		   (colspan 1) (bg #f))
+		   (colspan 1) (rowspan 1) (bg #f))
    (let ((align (if (string? align)
 		    (string->symbol align)
 		    align))
@@ -735,7 +735,7 @@
 		   #!key
 		   (ident #f) (class #f)
 		   (width #f) (align 'center) (valign #f)
-		   (colspan 1) (bg #f))
+		   (colspan 1) (rowspan 1) (bg #f))
    (apply tc 'th opts))
 
 ;*---------------------------------------------------------------------*/
@@ -746,7 +746,7 @@
 		   #!key
 		   (ident #f) (class #f)
 		   (width #f) (align 'center) (valign #f)
-		   (colspan 1) (bg #f))
+		   (colspan 1) (rowspan 1) (bg #f))
    (apply tc 'td opts))
 
 ;*---------------------------------------------------------------------*/
@@ -818,19 +818,20 @@
 ;*---------------------------------------------------------------------*/
 ;*    symbol ...                                                       */
 ;*---------------------------------------------------------------------*/
-(define-markup (symbol symbol)
-   (let ((v (cond
-	       ((symbol? symbol)
-		(symbol->string symbol))
-	       ((string? symbol)
-		symbol)
-	       (else
-		(skribe-error 'symbol
-			      "Illegal argument (symbol expected)"
-			      symbol)))))
-      (new markup
-	 (markup 'symbol)
-	 (body v))))
+(set! symbol
+      (lambda (symbol)
+	(let ((v (cond
+		  ((symbol? symbol)
+		   (symbol->string symbol))
+		  ((string? symbol)
+		   symbol)
+		  (else
+		   (skribe-error 'symbol
+				 "Illegal argument (symbol expected)"
+				 symbol)))))
+	  (new markup
+	       (markup 'symbol)
+	       (body v)))))
 
 ;*---------------------------------------------------------------------*/
 ;*    ! ...                                                            */
@@ -972,7 +973,7 @@
 		    (skribe #f)
 		    (page #f))
    (define (unref ast text kind)
-      (let ((msg (format "Can't find `~a': " kind)))
+      (let ((msg (format #f "can't find `~a': " kind)))
 	 (if (ast? ast)
 	     (begin
 		(skribe-warning/ast 1 ast 'ref msg text)
@@ -1259,3 +1260,73 @@
 					 char-offset
 					 header-limit
 					 column))))))))
+
+
+;;; This part comes from the file `skribe.skr' in the original Skribe
+;;; distribution.
+
+;*---------------------------------------------------------------------*/
+;*    p ...                                                            */
+;*---------------------------------------------------------------------*/
+(define-markup (p #!rest opt #!key ident (class #f) &skribe-eval-location)
+   (paragraph :ident ident :class class :loc &skribe-eval-location
+      (the-body opt)))
+
+;*---------------------------------------------------------------------*/
+;*    fg ...                                                           */
+;*---------------------------------------------------------------------*/
+(define-public (fg c . body)
+   (color :fg c body))
+
+;*---------------------------------------------------------------------*/
+;*    bg ...                                                           */
+;*---------------------------------------------------------------------*/
+(define-public (bg c . body)
+   (color :bg c body))
+
+;*---------------------------------------------------------------------*/
+;*    counter ...                                                      */
+;*    -------------------------------------------------------------    */
+;*    This produces a kind of "local enumeration" that is:             */
+;*       (counting "toto," "tutu," "titi.")                            */
+;*    produces:                                                        */
+;*       i) toto, ii) tutu, iii) titi.                                 */
+;*---------------------------------------------------------------------*/
+(define-markup (counter #!rest opts #!key (numbering 'roman))
+   (define items (if (eq? (car opts) :numbering) (cddr opts) opts))
+   (define vroman #(- "i" "ii" "iii" "iv" "v" "vi" "vii" "viii" "ix" "x"))
+   (define (the-roman-number num)
+      (if (< num (vector-length vroman))
+	  (list (list "(" (it (vector-ref vroman num)) ") "))
+	  (skribe-error 'counter
+			"too many items for roman numbering"
+			(length items))))
+   (define (the-arabic-number num)
+      (list (list "(" (it (integer->string num)) ") ")))
+   (define (the-alpha-number num)
+      (list (list "(" (it (+ (integer->char #\a) num -1)) ") ")))
+   (let ((the-number (case numbering
+			((roman) the-roman-number)
+			((arabic) the-arabic-number)
+			((alpha) the-alpha-number)
+			(else (skribe-error 'counter
+					    "Illegal numbering"
+					    numbering)))))
+      (let loop ((num 1)
+		 (items items)
+		 (res '()))
+	   (if (null? items)
+	       (reverse! res)
+	       (loop (+ num 1)
+		     (cdr items)
+		     (cons (list (the-number num) (car items)) res))))))
+
+;*---------------------------------------------------------------------*/
+;*    q                                                                */
+;*---------------------------------------------------------------------*/
+(define-markup (q #!rest opt)
+   (new markup
+      (markup 'q)
+      (options (the-options opt))
+      (body (the-body opt))))
+

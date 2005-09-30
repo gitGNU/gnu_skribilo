@@ -152,9 +152,9 @@
 		     (k (markup-option n 'kind))
 		     (f (cond
 			   (s
-			    (format "?~a@~a " k s))
+			    (format #f "?~a@~a " k s))
 			   (else
-			    (format "?~a " k))))
+			    (format #f "?~a " k))))
 		     (msg (list f (markup-body n)))
 		     (n (list "[" (color :fg "red" (bold msg)) "]")))
 		 (skribe-eval n e))))

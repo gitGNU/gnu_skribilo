@@ -35,7 +35,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    bib-load! ...                                                    */
 ;*---------------------------------------------------------------------*/
-(define (bib-load! table filename command)
+(define-public (bib-load! table filename command)
    (if (not (bib-table? table))
        (skribe-error 'bib-load "Illegal bibliography table" table)
        ;; read the file
@@ -49,7 +49,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    resolve-bib ...                                                  */
 ;*---------------------------------------------------------------------*/
-(define (resolve-bib table ident)
+(define-public (resolve-bib table ident)
    (if (not (bib-table? table))
        (skribe-error 'resolve-bib "Illegal bibliography table" table)
        (let* ((i (cond
@@ -64,7 +64,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    make-bib-entry ...                                               */
 ;*---------------------------------------------------------------------*/
-(define (make-bib-entry kind ident fields from)
+(define-public (make-bib-entry kind ident fields from)
    (let* ((m (new markup
 		(markup '&bib-entry)
 		(ident ident)
@@ -91,7 +91,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    bib-sort/authors ...                                             */
 ;*---------------------------------------------------------------------*/
-(define (bib-sort/authors l)
+(define-public (bib-sort/authors l)
    (define (cmp i1 i2 def)
       (cond
 	 ((and (markup? i1) (markup? i2))
@@ -128,13 +128,13 @@
 ;*---------------------------------------------------------------------*/
 ;*    bib-sort/idents ...                                              */
 ;*---------------------------------------------------------------------*/
-(define (bib-sort/idents l)
+(define-public (bib-sort/idents l)
    (sort l (lambda (e f) (string<? (markup-ident e) (markup-ident f)))))
 
 ;*---------------------------------------------------------------------*/
 ;*    bib-sort/dates ...                                               */
 ;*---------------------------------------------------------------------*/
-(define (bib-sort/dates l)
+(define-public (bib-sort/dates l)
    (sort l (lambda (p1 p2)
 	      (define (month-num m)
 		 (let ((body (markup-body m)))
@@ -182,7 +182,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    resolve-the-bib ...                                              */
 ;*---------------------------------------------------------------------*/
-(define (resolve-the-bib table n sort pred count opts)
+(define-public (resolve-the-bib table n sort pred count opts)
    (define (count! entries)
       (let loop ((es entries)
 		 (i 1))

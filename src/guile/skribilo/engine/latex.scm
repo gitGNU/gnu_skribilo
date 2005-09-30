@@ -350,7 +350,7 @@
 		   (index-page-ref #t))
 	 :symbol-table (latex-symbol-table 
 			(lambda (m)
-			   (format "\\begin{math}~a\\end{math}" m))))))
+			   (format #f "\\begin{math}~a\\end{math}" m))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    latex-title-engine ...                                           */
@@ -361,7 +361,7 @@
       :format "latex-title"
       :delegate latex-engine
       :filter (make-string-replace latex-encoding)
-      :symbol-table (latex-symbol-table (lambda (m) (format "$~a$" m)))))
+      :symbol-table (latex-symbol-table (lambda (m) (format #f "$~a$" m)))))
 
 ;*---------------------------------------------------------------------*/
 ;*    latex-color? ...                                                 */
@@ -453,7 +453,7 @@
 	  "1.,1.,1.")
 	 (else
 	  (let ((ff (exact->inexact #xff)))
-	    (format "~a,~a,~a"
+	    (format #f "~a,~a,~a"
 		    (number->string (/ r ff))
 		    (number->string (/ g ff))
 		    (number->string (/ b ff))))))))
@@ -887,7 +887,7 @@
 				(if (not (number? nb))
 				    (skribe-error 
 				     'font
-				     (format "Illegal font size ~s" size)
+				     (format #f "Illegal font size ~s" size)
 				     nb)
 				    (+ cs nb))))))
 		     (ne (make-engine (gensym 'latex)
@@ -1170,7 +1170,7 @@
 			(output (new markup
 				   (markup '&latex-table-hline)
 				   (parent n)
-				   (ident (format "~a-above" id))
+				   (ident (format #f "~a-above" id))
 				   (class "table-line-above"))
 				e))
 		       ((above hsides)
@@ -1178,7 +1178,7 @@
 			(output (new markup
 				   (markup '&latex-table-hline)
 				   (parent n)
-				   (ident (format "~a-above" id))
+				   (ident (format #f "~a-above" id))
 				   (class "table-line-above"))
 				e))
 		       ((vsides)
@@ -1225,7 +1225,7 @@
 		 (output (new markup
 			    (markup '&latex-table-hline)
 			    (parent n)
-			    (ident (format "~a-below" (markup-ident n)))
+			    (ident (format #f "~a-below" (markup-ident n)))
 			    (class "table-hline-below"))
 			 e)))
 	     (output (new markup

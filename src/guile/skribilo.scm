@@ -387,7 +387,7 @@ Processes a Skribilo/Skribe source file and produces its output.
 					 skribilo-options))
 	 (engine            (string->symbol
 			     (option-ref options 'target "html")))
-	 (debugging-level   (option-ref options 'debug 0))
+	 (debugging-level   (option-ref options 'debug "0"))
 	 (load-path         (option-ref options 'load-path "."))
 	 (bib-path          (option-ref options 'bib-path "."))
 	 (preload           '())
@@ -454,6 +454,8 @@ Processes a Skribilo/Skribe source file and produces its output.
 		       (if (string? dest-file)
 			   (with-output-to-file dest-file doskribe)
 			   (doskribe)))))
+
+	(set! *skribe-dest* dest-file)
 
 	(if (and dest-file (file-exists? dest-file))
 	    (delete-file dest-file))
