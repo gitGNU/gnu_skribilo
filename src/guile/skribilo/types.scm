@@ -45,6 +45,7 @@
 		       document-options document-end
 	    <language> language?
 	    <location> location? ast-location
+	    location-file location-line location-pos
 
 	    *node-table*)
    :use-module (oop goops))
@@ -64,6 +65,15 @@
 (define-class <ast> ()
   (parent :accessor ast-parent :init-keyword :parent :init-value 'unspecified)
   (loc    :init-value #f))
+
+(define-method (initialize (ast <ast>) . args)
+  (next-method)
+  (let ((file (port-filename (current-input-port)))
+	(line (port-line (current-input-port)))
+	(column (port-column (current-input-port))))
+    (slot-set! ast 'loc
+	       (make <location>
+		 :file file :line line :pos (* line column)))))
 
 (define (ast? obj)		(is-a? obj <ast>))
 (define (ast-loc obj)		(slot-ref obj 'loc))
@@ -313,5 +323,5 @@
 			       (> lenf len))
 			  (substring fname len (+ 1 (string-length fname)))
 			  fname)))
-	  (format "~a, line ~a" file line))
+	  (format #f "~a, line ~a" file line))
 	"no source location")))

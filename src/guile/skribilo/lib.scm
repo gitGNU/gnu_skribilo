@@ -28,7 +28,7 @@
 
 (define-module (skribilo lib)
   :export (skribe-eval-location skribe-ast-error skribe-error
-           skribe-type-error skribe-line-error
+           skribe-type-error
            skribe-warning skribe-warning/ast
            skribe-message
 
@@ -167,13 +167,14 @@
   (let ((l     (ast-loc obj))
 	(shape (if (markup? obj) (markup-markup obj) obj)))
     (if (location? l)
-	(error "~a:~a: ~a: ~a ~s" (location-file l) (location-pos l) proc msg shape)
-	(error "~a: ~a ~s " proc msg shape))))
+	(error (format #f "~a:~a: ~a: ~a ~s" (location-file l)
+		       (location-line l) proc msg shape))
+	(error (format #f "~a: ~a ~s " proc msg shape)))))
 
 (define (skribe-error proc msg obj)
   (if (ast? obj)
       (skribe-ast-error proc msg obj)
-      (error proc msg obj)))
+      (error (format #f "~a: ~a ~s" proc msg obj))))
 
 
 ;;;
@@ -183,17 +184,16 @@
   (skribe-error proc (format "~a ~s (~a expected)" msg obj etype) #f))
 
 
-
-;;; FIXME: Peut-être virée maintenant
-(define (skribe-line-error file line proc msg obj)
-  (error (format "%a:%a:  ~a:~a ~S" file line proc msg obj)))
-
-
 ;;;
 ;;; SKRIBE-WARNING  &  SKRIBE-WARNING/AST
 ;;;
 (define (%skribe-warn level file line lst)
   (let ((port (current-error-port)))
+    (if (or (not file) (not line))
+	(begin
+	  ;; XXX:  This is a bit hackish, but it proves to be quite useful.
+	  (set! file (port-filename (current-input-port)))
+	  (set! line (port-line (current-input-port)))))
     (when (and file line)
       (format port "~a:~a: " file line))
     (format port "warning: ")
@@ -210,7 +210,7 @@
   (if (>= *skribe-warning* level)
       (let ((l (ast-loc ast)))
 	(if (location? l)
-	    (%skribe-warn level (location-file l) (location-pos l) obj)
+	    (%skribe-warn level (location-file l) (location-line l) obj)
 	    (%skribe-warn level #f #f obj)))))
 
 ;;;
