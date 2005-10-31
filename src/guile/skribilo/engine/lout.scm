@@ -2876,93 +2876,93 @@
 ;*---------------------------------------------------------------------*/
 ;*    Slides                                                           */
 ;*                                                                     */
-;* At some point, this should move to `slide.skr'.                     */
+;* At some point, we might want to move this to `slide.scm'.           */
 ;*---------------------------------------------------------------------*/
-; (skribe-load "slide.skr")
 
-; (markup-writer 'slide
-;    ;; FIXME:  In `slide.skr', `:ident' is systematically generated.
-;    :options '(:title :number :toc :ident) ;; '(:bg :vspace :image)
+(use-modules (skribilo packages slide))
 
-;    :validate (lambda (n e)
-; 		(eq? (engine-custom e 'document-type) 'slides))
+(markup-writer 'slide
+   :options '(:title :number :toc :ident) ;; '(:bg :vspace :image)
 
-;    :before (lambda (n e)
-; 	      (display "\n@Overhead\n")
-; 	      (display "  @Title { ")
-; 	      (output (markup-option n :title) e)
-; 	      (display " }\n")
-; 	      (if (markup-ident n)
-; 		  (begin
-; 		     (display "  @Tag { ")
-; 		     (display (lout-tagify (markup-ident n)))
-; 		     (display " }\n")))
-; 	      (if (markup-option n :number)
-; 		  (begin
-; 		     (display "  @BypassNumber { ")
-; 		     (output (markup-option n :number) e)
-; 		     (display " }\n")))
-; 	      (display "@Begin\n")
+   :validate (lambda (n e)
+		(eq? (engine-custom e 'document-type) 'slides))
 
-; 	      ;; `doc' documents produce their PDF outline right after
-; 	      ;; `@Text @Begin'; other types of documents must produce it
-; 	      ;; as part of their first chapter.
-; 	      (lout-output-pdf-meta-info (ast-document n) e))
+   :before (lambda (n e)
+	      (display "\n@Overhead\n")
+	      (display "  @Title { ")
+	      (output (markup-option n :title) e)
+	      (display " }\n")
+	      (if (markup-ident n)
+		  (begin
+		     (display "  @Tag { ")
+		     (display (lout-tagify (markup-ident n)))
+		     (display " }\n")))
+	      (if (markup-option n :number)
+		  (begin
+		     (display "  @BypassNumber { ")
+		     (output (markup-option n :number) e)
+		     (display " }\n")))
+	      (display "@Begin\n")
 
-;    :after "@End @Overhead\n")
+	      ;; `doc' documents produce their PDF outline right after
+	      ;; `@Text @Begin'; other types of documents must produce it
+	      ;; as part of their first chapter.
+	      (lout-output-pdf-meta-info (ast-document n) e))
 
-; (markup-writer 'slide-vspace
-;    :options '(:unit)
-;    :validate (lambda (n e)
-; 		(and (pair? (markup-body n))
-; 		     (number? (car (markup-body n)))))
-;    :action (lambda (n e)
-; 	      (printf "\n//~a~a # slide-vspace\n"
-; 		      (car (markup-body n))
-; 		      (case (markup-option n :unit)
-; 			 ((cm)              "c")
-; 			 ((point points pt) "p")
-; 			 ((inch inches)     "i")
-; 			 (else
-; 			  (skribe-error 'lout
-; 					"Unknown vspace unit"
-; 					(markup-option n :unit)))))))
+   :after "@End @Overhead\n")
 
-; (markup-writer 'slide-pause
-;    ;; FIXME:  Use a `pdfmark' custom action and a PDF transition action.
-;    ;; << /Type /Action
-;    ;; << /S /Trans
-;    ;; entry in the trans dict
-;    ;; << /Type /Trans  /S /Dissolve >>
-;    :action (lambda (n e)
-; 	     (let ((filter (make-string-replace lout-verbatim-encoding))
-; 		   (pdfmark "
-; [ {ThisPage} << /Trans << /S /Wipe /Dm /V /D 3 /M /O >> >> /PUT pdfmark"))
-;                (display (lout-embedded-postscript-code
-;                          (filter pdfmark))))))
+(markup-writer 'slide-vspace
+   :options '(:unit)
+   :validate (lambda (n e)
+		(and (pair? (markup-body n))
+		     (number? (car (markup-body n)))))
+   :action (lambda (n e)
+	      (printf "\n//~a~a # slide-vspace\n"
+		      (car (markup-body n))
+		      (case (markup-option n :unit)
+			 ((cm)              "c")
+			 ((point points pt) "p")
+			 ((inch inches)     "i")
+			 (else
+			  (skribe-error 'lout
+					"Unknown vspace unit"
+					(markup-option n :unit)))))))
 
-; ;; For movies, see
-; ;; http://www.tug.org/tex-archive/macros/latex/contrib/movie15/movie15.sty .
-; (markup-writer 'slide-embed
-;    :options '(:alt :geometry :rgeometry :geometry-opt :command)
-;    ;; FIXME:  `pdfmark'.
-;    ;; << /Type /Action   /S /Launch
-;    :action (lambda (n e)
-; 	     (let ((command (markup-option n :command))
-; 		   (filter (make-string-replace lout-verbatim-encoding))
-; 		   (pdfmark "[ /Rect [ 0 ysize xsize 0 ]
-;   /Name /Comment
-;   /Contents (This is an embedded application)
-;   /ANN pdfmark
+(markup-writer 'slide-pause
+   ;; FIXME:  Use a `pdfmark' custom action and a PDF transition action.
+   ;; << /Type /Action
+   ;; << /S /Trans
+   ;; entry in the trans dict
+   ;; << /Type /Trans  /S /Dissolve >>
+   :action (lambda (n e)
+	     (let ((filter (make-string-replace lout-verbatim-encoding))
+		   (pdfmark "
+[ {ThisPage} << /Trans << /S /Wipe /Dm /V /D 3 /M /O >> >> /PUT pdfmark"))
+               (display (lout-embedded-postscript-code
+                         (filter pdfmark))))))
 
-; [ /Type /Action
-;   /S    /Launch
-;   /F    (~a)
-;   /OBJ pdfmark"))
-; 	     (display (string-append
-; 		       "4c @Wide 3c @High "
-; 		       (lout-embedded-postscript-code
-; 			(filter (format #f pdfmark command))))))))
+For movies, see
+http://www.tug.org/tex-archive/macros/latex/contrib/movie15/movie15.sty .
+(markup-writer 'slide-embed
+   :options '(:alt :geometry :rgeometry :geometry-opt :command)
+   ;; FIXME:  `pdfmark'.
+   ;; << /Type /Action   /S /Launch
+   :action (lambda (n e)
+	     (let ((command (markup-option n :command))
+		   (filter (make-string-replace lout-verbatim-encoding))
+		   (pdfmark "[ /Rect [ 0 ysize xsize 0 ]
+  /Name /Comment
+  /Contents (This is an embedded application)
+  /ANN pdfmark
+
+[ /Type /Action
+  /S    /Launch
+  /F    (~a)
+  /OBJ pdfmark"))
+	     (display (string-append
+		       "4c @Wide 3c @High "
+		       (lout-embedded-postscript-code
+			(filter (format #f pdfmark command))))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    Restore the base engine                                          */

@@ -1,5 +1,0 @@
-(section :title "A title" "This is the body of the section")
-(section :title "A title" "This" " is" " the body of the section")
-(section :title "A title" :number 3 "This" " is" " the body of the section")
-(section :title "A title" :toc #f :number 3 "This" " is" " the body of the section")
-(section :title "A title" :number 3 :toc #f "This" " is" " the body of the section")

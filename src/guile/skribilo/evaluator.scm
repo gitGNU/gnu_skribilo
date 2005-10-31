@@ -50,7 +50,17 @@
 (define *skribe-load-options* '())
 
 (define (%evaluate expr)
-  (eval expr (current-module)))
+  (let ((result (eval expr (current-module))))
+    (if (or (ast? result) (markup? result))
+	(let ((file (source-property expr 'filename))
+	      (line (source-property expr 'line))
+	      (column (source-property expr 'column)))
+	  (format #t "~%~%*** source props for `~a': ~a~%~%"
+		  result (source-properties expr))
+	  (slot-set! result 'loc
+		     (make <location>
+		       :file file :line line :pos column))))
+    result))
 
 
 

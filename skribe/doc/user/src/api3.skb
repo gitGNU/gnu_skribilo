@@ -1,8 +1,0 @@
-(author :name "Manuel Serrano"
-	:affiliation "Inria Sophia-Antipolis"
-	:url (ref :url "http://www.inria.fr/mimosa/Manuel.Serrano")
-	:email (mailto "Manuel.Serrano@inria.fr")
-	:address `("2004 route des Lucioles - BP 93"
-		   "F-06902 Sophia Antipolis, Cedex"
-		   "France")
-	:phone "phone: (+33) 4 92 38 76 41")

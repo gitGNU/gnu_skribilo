@@ -66,14 +66,6 @@
   (parent :accessor ast-parent :init-keyword :parent :init-value 'unspecified)
   (loc    :init-value #f))
 
-(define-method (initialize (ast <ast>) . args)
-  (next-method)
-  (let ((file (port-filename (current-input-port)))
-	(line (port-line (current-input-port)))
-	(column (port-column (current-input-port))))
-    (slot-set! ast 'loc
-	       (make <location>
-		 :file file :line line :pos (* line column)))))
 
 (define (ast? obj)		(is-a? obj <ast>))
 (define (ast-loc obj)		(slot-ref obj 'loc))

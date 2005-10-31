@@ -44,15 +44,16 @@
 ;*    *skribe-auto-mode-alist* ...                                     */
 ;*---------------------------------------------------------------------*/
 (define *skribe-auto-mode-alist*
-   '(("html" . html)
-     ("sui" . sui)
-     ("tex" . latex)
-     ("ctex" . context)
-     ("xml" . xml)
-     ("info" . info)
-     ("txt" . ascii)
-     ("mgp" . mgp)
-     ("man" . man)))
+  ;; Note: In Skribilo, this list is completely useless.
+  '(("html" . html)
+    ("sui" . sui)
+    ("tex" . latex)
+    ("ctex" . context)
+    ("xml" . xml)
+    ("info" . info)
+    ("txt" . ascii)
+    ("mgp" . mgp)
+    ("man" . man)))
 
 ;*---------------------------------------------------------------------*/
 ;*    *skribe-auto-load-alist* ...                                     */

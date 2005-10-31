@@ -1,4 +1,0 @@
-[It is possible to send a mail by
-,(mailto "foo@nowhere.com" :text "clicking") that link. That same
-reference without ,(code ":text") options: ,(mailto "foo@nowhere.com").
-]

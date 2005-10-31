@@ -22,7 +22,7 @@
   :use-module (skribilo reader)
   :use-module (ice-9 optargs)
 
-   ;; the Scheme reader composition framework
+  ;; the Scheme reader composition framework
   :use-module ((system reader) #:renamer (symbol-prefix-proc 'r:))
 
   :export (reader-specification
@@ -55,18 +55,28 @@ the Skribe syntax."
                                             (map r:standard-token-reader
                                                  '(character srfi-4
                                                    number+radix
-                                                   boolean))))))
-    (r:make-reader (cons (r:make-token-reader #\# sharp-reader)
-                         (map r:standard-token-reader
-                              `(whitespace
-                                sexp string number
-                                symbol-lower-case
-                                symbol-upper-case
-                                symbol-misc-chars
-                                quote-quasiquote-unquote
-                                semicolon-comment
-                                keyword  ;; keywords à la `:key'
-                                skribe-exp))))))
+                                                   boolean)))
+				      #f ;; use default fault handler
+				      'reader/record-positions))
+	 (colon-keywords ;; keywords à la `:key' fashion
+	  (r:make-token-reader #\:
+			       (r:token-reader-procedure
+				(r:standard-token-reader 'keyword)))))
+
+    (r:make-reader (cons* (r:make-token-reader #\# sharp-reader)
+			  colon-keywords
+			  (map r:standard-token-reader
+			       `(whitespace
+				 sexp string number
+				 symbol-lower-case
+				 symbol-upper-case
+				 symbol-misc-chars
+				 quote-quasiquote-unquote
+				 semicolon-comment
+				 skribe-exp)))
+		   #f ;; use the default fault handler
+		   'reader/record-positions
+		   )))
 
 ;; We actually cache an instance here.
 (define *skribe-reader* (%make-skribe-reader))
