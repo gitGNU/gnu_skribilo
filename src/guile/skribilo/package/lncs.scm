@@ -9,7 +9,7 @@
 ;*    The Skribe style for LNCS articles.                              */
 ;*=====================================================================*/
 
-(define-skribe-module (skribilo packages lncs))
+(define-skribe-module (skribilo package lncs))
 
 ;*---------------------------------------------------------------------*/
 ;*    LaTeX global customizations                                      */

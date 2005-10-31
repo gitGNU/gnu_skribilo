@@ -9,7 +9,7 @@
 ;*    Scribe Compatibility kit                                         */
 ;*=====================================================================*/
 
-(define-skribe-module (skribilo packages scribe))
+(define-skribe-module (skribilo package scribe))
 
 ;*---------------------------------------------------------------------*/
 ;*    style ...                                                        */

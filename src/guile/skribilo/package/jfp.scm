@@ -9,7 +9,7 @@
 ;*    The Skribe style for JFP articles.                               */
 ;*=====================================================================*/
 
-(define-skribe-module (skribilo packages jfp))
+(define-skribe-module (skribilo package jfp))
 
 ;*---------------------------------------------------------------------*/
 ;*    LaTeX global customizations                                      */

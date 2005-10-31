@@ -9,7 +9,7 @@
 ;*    Skribe style for slides                                          */
 ;*=====================================================================*/
 
-(define-skribe-module (skribilo packages slide))
+(define-skribe-module (skribilo package slide))
 
 ;*---------------------------------------------------------------------*/
 ;*    slide-options                                                    */

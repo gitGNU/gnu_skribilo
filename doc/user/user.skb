@@ -36,7 +36,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    The document                                                     */
 ;*---------------------------------------------------------------------*/
-(document :title "Skribe User Manual"
+(document :title "Skribilo User Manual"
    :env '((example-counter 0) (example-env ()))
    :author (list (author :name "Erick Gallesio"
 		    :affiliation "Université de Nice - Sophia Antipolis"

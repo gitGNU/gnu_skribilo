@@ -9,7 +9,7 @@
 ;*    French Skribe style                                              */
 ;*=====================================================================*/
 
-(define-skribe-module (skribilo packages french))
+(define-skribe-module (skribilo package french))
 
 ;*---------------------------------------------------------------------*/
 ;*    LaTeX configuration                                              */

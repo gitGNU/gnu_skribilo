@@ -36,24 +36,24 @@
 ;*---------------------------------------------------------------------*/
 ;*    index? ...                                                       */
 ;*---------------------------------------------------------------------*/
-(define (index? obj)
+(define-public (index? obj)
    (hashtable? obj))
 
 ;*---------------------------------------------------------------------*/
 ;*    *index-table* ...                                                */
 ;*---------------------------------------------------------------------*/
-(define *index-table* #f)
+(define-public *index-table* #f)
 
 ;*---------------------------------------------------------------------*/
 ;*    make-index-table ...                                             */
 ;*---------------------------------------------------------------------*/
-(define (make-index-table ident)
+(define-public (make-index-table ident)
    (make-hashtable))
 
 ;*---------------------------------------------------------------------*/
 ;*    default-index ...                                                */
 ;*---------------------------------------------------------------------*/
-(define (default-index)
+(define-public (default-index)
    (if (not *index-table*)
        (set! *index-table* (make-index-table "default-index")))
    *index-table*)
@@ -61,7 +61,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    resolve-the-index ...                                            */
 ;*---------------------------------------------------------------------*/
-(define (resolve-the-index loc i c indexes split char-offset header-limit col)
+(define-public (resolve-the-index loc i c indexes split char-offset header-limit col)
    ;; fetch the descriminating index name letter
    (define (index-ref n)
       (let ((name (markup-option n 'name)))
@@ -70,7 +70,7 @@
 	     (string-ref name char-offset))))
    ;; sort a bucket of entries (the entries in a bucket share there name)
    (define (sort-entries-bucket ie)
-      (sort ie 
+      (sort ie
 	    (lambda (i1 i2)
 	       (or (not (markup-option i1 :note))
 		   (markup-option i2 :note)))))

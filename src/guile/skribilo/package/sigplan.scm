@@ -9,7 +9,7 @@
 ;*    The Skribe style for ACMPROC articles.                           */
 ;*=====================================================================*/
 
-(define-skribe-module (skribilo packages sigplan))
+(define-skribe-module (skribilo package sigplan))
 
 ;*---------------------------------------------------------------------*/
 ;*    LaTeX global customizations                                      */

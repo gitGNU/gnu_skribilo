@@ -54,6 +54,7 @@ the Skribe syntax."
          (sharp-reader (r:make-reader (cons dsssl-keyword-reader
                                             (map r:standard-token-reader
                                                  '(character srfi-4
+						   vector
                                                    number+radix
                                                    boolean)))
 				      #f ;; use default fault handler
@@ -61,16 +62,25 @@ the Skribe syntax."
 	 (colon-keywords ;; keywords à la `:key' fashion
 	  (r:make-token-reader #\:
 			       (r:token-reader-procedure
-				(r:standard-token-reader 'keyword)))))
+				(r:standard-token-reader 'keyword))))
+	 (square-bracket-free-symbol-misc-chars
+	  (let* ((tr (r:standard-token-reader 'guile-symbol-misc-chars))
+		 (tr-spec (r:token-reader-specification tr))
+		 (tr-proc (r:token-reader-procedure tr)))
+	  (r:make-token-reader (filter (lambda (chr)
+					 (not (or (eq? chr #\[)
+						  (eq? chr #\]))))
+				       tr-spec)
+			       tr-proc))))
 
     (r:make-reader (cons* (r:make-token-reader #\# sharp-reader)
 			  colon-keywords
+			  square-bracket-free-symbol-misc-chars
 			  (map r:standard-token-reader
 			       `(whitespace
-				 sexp string number
-				 symbol-lower-case
-				 symbol-upper-case
-				 symbol-misc-chars
+				 sexp string guile-number
+				 guile-symbol-lower-case
+				 guile-symbol-upper-case
 				 quote-quasiquote-unquote
 				 semicolon-comment
 				 skribe-exp)))

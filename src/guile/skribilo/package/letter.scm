@@ -9,7 +9,7 @@
 ;*    Skribe style for letters                                         */
 ;*=====================================================================*/
 
-(define-skribe-module (skribilo packages letter))
+(define-skribe-module (skribilo package letter))
 
 ;*---------------------------------------------------------------------*/
 ;*    document                                                         */

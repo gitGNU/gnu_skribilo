@@ -9,7 +9,7 @@
 ;*    A Skribe style for producing web articles                        */
 ;*=====================================================================*/
 
-(define-skribe-module (skribilo packages web-article))
+(define-skribe-module (skribilo package web-article))
 
 ;*---------------------------------------------------------------------*/
 ;*    &web-article-load-options ...                                    */

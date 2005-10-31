@@ -99,12 +99,23 @@
     (let loop ((args args)
 	       (result '())
 	       (rest-arg #f))
-      (if (null? args)
-	  (if rest-arg (append (reverse result) rest-arg) (reverse result))
-	  (let ((is-rest-arg? (eq? (car args) #:rest)))
-	    (loop (if is-rest-arg? (cddr args) (cdr args))
-		  (if is-rest-arg? result (cons (car args) result))
-		  (if is-rest-arg? (list (car args) (cadr args)) rest-arg))))))
+      (cond ((null? args)
+	     (if rest-arg
+		 (append (reverse result) rest-arg)
+		 (reverse result)))
+
+	    ((list? args)
+	     (let ((is-rest-arg? (eq? (car args) #:rest)))
+	       (loop (if is-rest-arg? (cddr args) (cdr args))
+		     (if is-rest-arg? result (cons (car args) result))
+		     (if is-rest-arg?
+			 (list (car args) (cadr args))
+			 rest-arg))))
+
+	    ((pair? args)
+	     (loop '()
+		   (cons (car args) result)
+		   (list #:rest (cdr args)))))))
 
   (let ((name (car bindings))
 	(opts (cdr bindings)))
