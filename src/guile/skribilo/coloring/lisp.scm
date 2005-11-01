@@ -1,46 +1,46 @@
 ;;;;
-;;;; lisp.stk	-- Lisp Family Fontification
-;;;; 
+;;;; lisp.scm	-- Lisp Family Fontification
+;;;;
 ;;;; Copyright © 2003-2004 Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
-;;;; 
-;;;; 
+;;;; Copyright © 2005      Ludovic Courtès  <ludovic.courtes@laas.fr>
+;;;;
+;;;;
 ;;;; This program is free software; you can redistribute it and/or modify
 ;;;; it under the terms of the GNU General Public License as published by
 ;;;; the Free Software Foundation; either version 2 of the License, or
 ;;;; (at your option) any later version.
-;;;; 
+;;;;
 ;;;; This program is distributed in the hope that it will be useful,
 ;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
 ;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ;;;; GNU General Public License for more details.
-;;;; 
+;;;;
 ;;;; You should have received a copy of the GNU General Public License
 ;;;; along with this program; if not, write to the Free Software
-;;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, 
+;;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ;;;; USA.
-;;;; 
+;;;;
 ;;;;           Author: Erick Gallesio [eg@essi.fr]
 ;;;;    Creation date: 16-Oct-2003 22:17 (eg)
 ;;;; Last file update: 28-Oct-2004 21:14 (eg)
 ;;;;
 
-(require "lex-rt")	;; to avoid module problems
+(define-module (skribilo coloring lisp)
+  :use-module (skribilo source)
+  :use-module (skribilo lib)
+  :use-module (skribilo runtime)
+  :export (skribe scheme stklos bigloo lisp))
 
-(define-module (skribilo lisp)
-  :export (skribe scheme stklos bigloo lisp)
-  :import (skribe source))
 
-(include "lisp-lex.stk")		;; SILex generated
-  
-(define *bracket-highlight* #f)
-(define *class-highlight*   #f)
-(define *the-keys*	    #f)
+(define *bracket-highlight* (make-fluid))
+(define *class-highlight*   (make-fluid))
+(define *the-keys*	    (make-fluid))
 
-(define *lisp-keys*	    #f)
-(define *scheme-keys*       #f)
-(define *skribe-keys*	    #f)
-(define *stklos-keys*	    #f)
-(define *lisp-keys*	    #f)
+(define *lisp-keys*	    (make-fluid))
+(define *scheme-keys*       (make-fluid))
+(define *skribe-keys*	    (make-fluid))
+(define *stklos-keys*	    (make-fluid))
+(define *lisp-keys*	    (make-fluid))
 
 
 ;;;
@@ -57,17 +57,17 @@
 
 
 (define (lisp-family-fontifier s)
-  (let ((lex (lisp-lex (open-input-string s))))
-    (let Loop ((token (lexer-next-token lex))
+  (let ((lisp-input (open-input-string s)))
+    (let loop ((token (read lisp-input))
 	       (res   '()))
-      (if (eq? token 'eof)
+      (if (eof-object? token)
 	  (reverse! res)
-	  (Loop (lexer-next-token lex)
+	  (loop (read lisp-input)
 		(cons token res))))))
 
 ;;;; ======================================================================
 ;;;;
-;;;; 				LISP
+;;;;				LISP
 ;;;;
 ;;;; ======================================================================
 (define (lisp-extractor iport def tab)
@@ -77,17 +77,17 @@
     (lambda (exp)
       (match-case exp
 	 (((or defun defmacro) ?fun ?- . ?-)
-	  	(and (eq? def fun) exp))
+		(and (eq? def fun) exp))
 	 ((defvar ?var . ?-)
-	 	(and (eq? var def) exp))
+		(and (eq? var def) exp))
 	 (else
-	  	#f)))))
+		#f)))))
 
 (define (init-lisp-keys)
   (unless *lisp-keys*
     (set! *lisp-keys*
       (append  ;; key
-               (map (lambda (x) (cons x '&source-keyword))
+	       (map (lambda (x) (cons x '&source-keyword))
 		    '(setq if let let* letrec cond case else progn lambda))
 	       ;; define
 	       (map (lambda (x) (cons x '&source-define))
@@ -95,9 +95,9 @@
   *lisp-keys*)
 
 (define (lisp-fontifier s)
-  (fluid-let ((*the-keys* 	   (init-lisp-keys))
-	      (*bracket-highlight* #f)
-	      (*class-highlight*   #f))
+  (with-fluids ((*the-keys*	   (init-lisp-keys))
+		(*bracket-highlight* #f)
+		(*class-highlight*   #f))
     (lisp-family-fontifier s)))
 
 
@@ -109,7 +109,7 @@
 
 ;;;; ======================================================================
 ;;;;
-;;;; 				SCHEME
+;;;;				SCHEME
 ;;;;
 ;;;; ======================================================================
 (define (scheme-extractor iport def tab)
@@ -130,7 +130,7 @@
   (unless *scheme-keys*
     (set! *scheme-keys*
       (append ;; key
-       	      (map (lambda (x) (cons x '&source-keyword))
+	      (map (lambda (x) (cons x '&source-keyword))
 		   '(set! if let let* letrec quote cond case else begin do lambda))
 	      ;; define
 	      (map (lambda (x) (cons x '&source-define))
@@ -139,11 +139,11 @@
 
 
 (define (scheme-fontifier s)
-  (fluid-let ((*the-keys* 	   (init-scheme-keys))
-	      (*bracket-highlight* #f)
-	      (*class-highlight*   #f))
+  (with-fluids ((*the-keys*	   (init-scheme-keys))
+		(*bracket-highlight* #f)
+		(*class-highlight*   #f))
     (lisp-family-fontifier s)))
-  
+
 
 (define scheme
   (new language
@@ -153,7 +153,7 @@
 
 ;;;; ======================================================================
 ;;;;
-;;;; 				STKLOS
+;;;;				STKLOS
 ;;;;
 ;;;; ======================================================================
 (define (stklos-extractor iport def tab)
@@ -164,11 +164,11 @@
       (match-case exp
 	 (((or define define-generic define-method define-macro)
 	   (?fun . ?-) . ?-)
-	        (and (eq? def fun) exp))
+		(and (eq? def fun) exp))
 	 (((or define define-module) (and (? symbol?) ?var) . ?-)
-	  	(and (eq? var def) exp))
+		(and (eq? var def) exp))
 	 (else
-	  	#f)))))
+		#f)))))
 
 
 (define (init-stklos-keys)
@@ -192,9 +192,9 @@
 
 
 (define (stklos-fontifier s)
-  (fluid-let ((*the-keys* 	   (init-stklos-keys))
-	      (*bracket-highlight* #t)
-	      (*class-highlight*   #t))
+  (with-fluids ((*the-keys*	   (init-stklos-keys))
+		(*bracket-highlight* #t)
+		(*class-highlight*   #t))
     (lisp-family-fontifier s)))
 
 
@@ -206,7 +206,7 @@
 
 ;;;; ======================================================================
 ;;;;
-;;;; 				SKRIBE
+;;;;				SKRIBE
 ;;;;
 ;;;; ======================================================================
 (define (skribe-extractor iport def tab)
@@ -250,12 +250,12 @@
 				(map (lambda (x) (cons x '&source-define))
 				     '(define-markup)))))
   *skribe-keys*)
-    
+
 
 (define (skribe-fontifier s)
-  (fluid-let ((*the-keys* 	   (init-skribe-keys))
-	      (*bracket-highlight* #t)
-	      (*class-highlight*   #t))
+  (with-fluids ((*the-keys*	   (init-skribe-keys))
+		(*bracket-highlight* #t)
+		(*class-highlight*   #t))
     (lisp-family-fontifier s)))
 
 
@@ -267,7 +267,7 @@
 
 ;;;; ======================================================================
 ;;;;
-;;;; 				BIGLOO
+;;;;				BIGLOO
 ;;;;
 ;;;; ======================================================================
 (define (bigloo-extractor iport def tab)
@@ -279,15 +279,14 @@
 	 (((or define define-inline define-generic
 	       define-method define-macro define-expander)
 	   (?fun . ?-) . ?-)
-	        (and (eq? def fun) exp))
+		(and (eq? def fun) exp))
 	 (((or define define-struct define-library) (and (? symbol?) ?var) . ?-)
-	  	(and (eq? var def) exp))
+		(and (eq? var def) exp))
 	 (else
-	  	#f)))))
+		#f)))))
 
 (define bigloo
   (new language
        (name "bigloo")
        (fontifier scheme-fontifier)
        (extractor bigloo-extractor)))
-

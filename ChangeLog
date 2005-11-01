@@ -2,6 +2,58 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2005-11-01 16:19:34 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-11
+
+    Summary:
+      Changes related to source-highlighting and to the manual.
+    Revision:
+      skribilo--devel--1.2--patch-11
+
+    * src/guile/skribilo/engine/lout.scm (lout-make-doc-cover-sheet): Fixed
+      the definition of MULTI-COLUMN? (fixes a bug when producing
+      multi-column documents).
+      (lout-definitions): `@SkribeLeaders' renamed to `@SkribiloLeaders'.
+    
+    * doc/skr/api.skr (api-search-definition): Fixed calls to `format'.
+    
+    * doc/skr/manual.skr (keyword): Use `write' instead of `keyword->string'.
+    
+    * doc/user/start.skb: Cosmetic changes.
+    
+    * src/guile/skribilo/coloring/lisp.scm: First stab at its adaptation.
+    
+    * src/guile/skribilo/coloring/xml.scm: Rewritten "by hand".
+    
+    * src/guile/skribilo/evaluator.scm (skribe-include): Removed debugging
+      statements.
+    
+    * src/guile/skribilo/lib.scm (new): Added a trick such that users of this
+      macro don't have to use `(oop goops)' and `(skribilo types)'.
+      (date): New procedure.
+    
+    * src/guile/skribilo/module.scm (*skribe-core-modules*): Renamed to
+      `%skribe-core-modules'.
+      (%skribe-core-modules): Removed `(oop goops)'.  Added `(skribilo
+      source)', `(skribilo coloring lisp)' and `(skribilo coloring xml)'.
+    
+    * src/guile/skribilo/skribe/api.scm (footnote): Fixed.
+    
+    * src/guile/skribilo/source.scm: Cosmetic changes.
+    
+    * src/guile/skribilo/types.scm: Export `language-extractor' and
+      `language-fontifier'.
+
+    modified files:
+     ChangeLog doc/skr/api.skr doc/skr/manual.skr
+     doc/user/start.skb src/guile/skribilo/coloring/lisp.scm
+     src/guile/skribilo/coloring/xml.scm
+     src/guile/skribilo/engine/lout.scm
+     src/guile/skribilo/evaluator.scm src/guile/skribilo/lib.scm
+     src/guile/skribilo/module.scm
+     src/guile/skribilo/skribe/api.scm
+     src/guile/skribilo/source.scm src/guile/skribilo/types.scm
+
+
 2005-10-31 23:26:24 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-10
 
     Summary:

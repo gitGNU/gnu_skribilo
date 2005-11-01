@@ -1,7 +1,8 @@
 ;;;;
-;;;; source.stk	-- Skibe SOURCE implementation stuff
+;;;; source.scm	-- Highlighting source files.
 ;;;;
 ;;;; Copyright © 2003-2004 Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
+;;;; Copyright © 2005      Ludovic Courtès  <ludovic.courtes@laas.fr>
 ;;;;
 ;;;;
 ;;;; This program is free software; you can redistribute it and/or modify
@@ -19,24 +20,16 @@
 ;;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ;;;; USA.
 ;;;;
-;;;;           Author: Erick Gallesio [eg@essi.fr]
-;;;;    Creation date:  3-Sep-2003 12:22 (eg)
-;;;; Last file update: 27-Oct-2004 20:09 (eg)
-;;;;
 
 
 
 (define-module (skribilo source)
   :export (source-read-lines source-read-definition source-fontify)
-  :use-module (skribilo vars))
+  :use-module (skribilo types)
+  :use-module (skribilo vars)
+  :use-module (skribilo lib)
+  :use-module (ice-9 rdelim))
 
-
-;; Temporary solution
-(define (language-extractor lang)
-  (slot-ref lang 'extractor))
-
-(define (language-fontifier lang)
-  (slot-ref lang 'fontifier))
 
 
 ;*---------------------------------------------------------------------*/
@@ -172,7 +165,7 @@
 	     (if (= i j)
 		 (reverse! r)
 		 (reverse! (cons (substring str j i) r))))
-	    ((char=? (string-ref str i) #\Newline)
+	    ((char=? (string-ref str i) #\newline)
 	     (loop (+ i 1)
 		   (+ i 1)
 		   (if (= i j)
@@ -180,7 +173,7 @@
 		       (cons* 'eol (substring str j i) r))))
 	    ((and (char=? (string-ref str i) #\cr)
 		  (< (+ i 1) l)
-		  (char=? (string-ref str (+ i 1)) #\Newline))
+		  (char=? (string-ref str (+ i 1)) #\newline))
 	     (loop (+ i 2)
 		   (+ i 2)
 		   (if (= i j)

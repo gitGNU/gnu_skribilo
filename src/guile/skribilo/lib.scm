@@ -1,5 +1,5 @@
 ;;;
-;;; lib.stk	-- Utilities
+;;; lib.scm	-- Utilities
 ;;;
 ;;; Copyright © 2003-2004 Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
 ;;;
@@ -18,11 +18,6 @@
 ;;; along with this program; if not, write to the Free Software
 ;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ;;; USA.
-;;;
-;;;           Author: Erick Gallesio [eg@essi.fr]
-;;;    Creation date: 11-Aug-2003 20:29 (eg)
-;;; Last file update: 27-Oct-2004 12:41 (eg)
-;;;
 
 (read-set! keywords 'prefix)
 
@@ -59,7 +54,9 @@
            hashtable->list
 
 	   skribe-read
-           find-runtime-type)
+           find-runtime-type
+
+	   date)
 
   :export-syntax (new define-markup define-simple-markup
                   define-simple-container define-processor-markup
@@ -73,6 +70,8 @@
   :use-module (skribilo vars)
 
   :use-module (srfi srfi-1)
+  :use-module ((srfi srfi-19) :renamer (symbol-prefix-proc 's19:)) ;; date
+  :use-module (oop goops)
   :use-module (ice-9 optargs))
 
 
@@ -81,11 +80,20 @@
 ;;;
 ;;; NEW
 ;;;
+
+(define %types-module (resolve-module '(skribilo types)))
+
 (define-macro (new class . parameters)
-  `(make ,(string->symbol (format #f "<~a>" class))
-     ,@(apply append (map (lambda (x)
-			    `(,(symbol->keyword (car x)) ,(cadr x)))
-			  parameters))))
+  ;; Thanks to the trick below, modules don't need to import `(oop goops)'
+  ;; and `(skribilo types)' in order to make use of `new'.
+  (let* ((class-name (symbol-append '< class '>))
+	 (actual-class (module-ref %types-module class-name)))
+    `(let ((make ,make)
+	   (,class-name ,actual-class))
+       (make ,class-name
+	 ,@(apply append (map (lambda (x)
+				`(,(symbol->keyword (car x)) ,(cadr x)))
+			      parameters))))))
 
 ;;;
 ;;; DEFINE-MARKUP
@@ -387,3 +395,9 @@
 
 (define-macro (when condition . exprs)
   `(if ,condition (begin ,@exprs)))
+
+(define (date)
+  (s19:date->string (s19:current-date) "~c"))
+
+
+;;; lib.scm ends here

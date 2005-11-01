@@ -175,16 +175,14 @@
 		    path))
     (when (> *skribe-verbose* 0)
       (format (current-error-port) "  [including file: ~S]\n" path))
+
     (with-input-from-file path
       (lambda ()
 	(let Loop ((exp (%default-reader (current-input-port)))
 		   (res '()))
-	  (format (current-error-port) "exp=~a~%" exp)
 	  (if (eof-object? exp)
-	      (begin
-		(format (current-error-port) "include: eof reached~%")
-		(if (and (pair? res) (null? (cdr res)))
+	      (if (and (pair? res) (null? (cdr res)))
 		    (car res)
-		    (reverse! res)))
+		    (reverse! res))
 	      (Loop (%default-reader (current-input-port))
 		    (cons (%evaluate exp) res))))))))

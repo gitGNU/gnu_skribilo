@@ -42,7 +42,6 @@
   '((srfi srfi-1)         ;; lists
     (srfi srfi-13)        ;; strings
     ;(srfi srfi-19)        ;; date and time
-    (oop goops)           ;; `make'
     (ice-9 optargs)       ;; `define*'
     (ice-9 and-let-star)  ;; `and-let*'
     (ice-9 receive)       ;; `receive'
@@ -60,9 +59,13 @@
     (skribilo output)
     (skribilo evaluator)
     (skribilo color)
-    (skribilo debug)))
+    (skribilo debug)
+    (skribilo source)     ;; `source-read-lines', `source-fontify', etc.
+    (skribilo coloring lisp) ;; `skribe', `scheme', `lisp'
+    (skribilo coloring xml)  ;; `xml'
+    ))
 
-(define *skribe-core-modules*
+(define %skribe-core-modules
   '("utils" "api" "bib" "index" "param" "sui"))
 
 (define-macro (define-skribe-module name . options)
@@ -81,7 +84,7 @@
 						      ,(string->symbol
 							mod))))
 				    (and (not (equal? m name)) m)))
-				*skribe-core-modules*)))))
+				%skribe-core-modules)))))
 
 
 ;; Make it available to the top-level module.
@@ -106,7 +109,7 @@ execution of Skribilo/Skribe code."
 			  (map (lambda (mod)
 				 `(skribilo skribe
 					    ,(string->symbol mod)))
-			       *skribe-core-modules*)))
+			       %skribe-core-modules)))
         (set-module-name! the-module '(skribilo-user))
         the-module))
 
@@ -152,7 +155,7 @@ hierarchy and in @code{(run-time-module)}."
               (module-use! (run-time-module)
                            (resolve-module `(skribilo skribe
                                              ,(string->symbol mod)))))
-            *skribe-core-modules*))
+            %skribe-core-modules))
 
 
 ;;; module.scm ends here

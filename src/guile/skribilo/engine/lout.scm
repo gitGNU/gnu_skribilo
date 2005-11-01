@@ -384,10 +384,10 @@
 	     "    @PageMark @Tag\n"
 	     "}\n\n"
 
-	     "# @SkribeLeaders is used in `toc'\n"
+	     "# @SkribiloLeaders is used in `toc'\n"
 	     "# (this is mostly copied from the expert's guide)\n"
-	     "def @SkribeLeaders { "
-	     ,leader " |" ,leader-space " @SkribeLeaders }\n\n"))))
+	     "def @SkribiloLeaders { "
+	     ,leader " |" ,leader-space " @SkribiloLeaders }\n\n"))))
 
 (define (lout-make-doc-cover-sheet doc engine)
   ;; Create a cover sheet for node `doc' which is a doc-style Lout document.
@@ -397,7 +397,8 @@
 	(author (markup-option doc :author))
 	(date-line (engine-custom engine 'date-line))
 	(cover-sheet? (engine-custom engine 'cover-sheet?))
-	(multi-column? (> 1 (engine-custom engine 'column-number))))
+	(multi-column? (> (engine-custom engine 'column-number) 1)))
+
     (if multi-column?
 	;; In single-column document, `@FullWidth' yields a blank page.
 	(display "\n@FullWidth {"))
@@ -1205,7 +1206,7 @@
 	  (entry-proc node engine)
 
 	  (display " &1rt @OneCol { ")
-	  (printf " @SkribeLeaders & @PageOf { ~a }"
+	  (printf " @SkribiloLeaders & @PageOf { ~a }"
 		  (lout-tagify (markup-ident node)))
 	  (display " &0io } }")
 

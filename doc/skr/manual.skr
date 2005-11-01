@@ -123,7 +123,9 @@
       (markup '&source-key)
       (body (cond
 	       ((keyword? arg)
-		(keyword->string arg))
+		(with-output-to-string
+		  (lambda ()
+		    (write arg))))
 	       ((symbol? arg)
 		(string-append ":" (symbol->string arg)))
 	       (else
