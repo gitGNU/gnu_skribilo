@@ -62,14 +62,15 @@
    (let ((f (find-file/path file *skribe-source-path*)))
       (if (not (string? f))
 	  (skribe-error 'api-search-definition
-			(format "Can't find source file `~a' in path" file)
+			(format #t "can't find source file `~a' in path" file)
 			*skribe-source-path*)
 	  (with-input-from-file f
 	     (lambda ()
 		(let loop ((exp (read)))
 		   (if (eof-object? exp)
-		       (skribe-error 'api-search-definition 
-				     (format "Can't find `~a' definition" id)
+		       (skribe-error 'api-search-definition
+				     (format #t
+					     "can't find `~a' definition" id)
 				     file)
 		       (or (pred id exp) (loop (read))))))))))
 

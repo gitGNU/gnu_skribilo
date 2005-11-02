@@ -1,3 +1,0 @@
-(resolve (lambda (n e env)
-	    (toc :chapter #t :section #t :subsection #t 
-		 (handle (ast-chapter n)))))

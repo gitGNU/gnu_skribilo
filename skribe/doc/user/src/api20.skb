@@ -1,2 +1,0 @@
-[A simple ,(! "string"). A more annoying one ,(! "<strong>string</strong>"). 
-A last one with arguments ,(! "<u>$1 $2</u>" (bold 1) (it 2)).]

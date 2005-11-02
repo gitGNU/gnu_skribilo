@@ -82,7 +82,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    html-engine ...                                                  */
 ;*---------------------------------------------------------------------*/
-(define html-engine
+(define-public html-engine
    ;; setup the html engine
    (default-engine-set!
       (make-engine 'html

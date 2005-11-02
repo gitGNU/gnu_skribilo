@@ -178,7 +178,7 @@
 	      (cadr c)
 	      n)))
        ((eq? (slot-ref n 'parent) 'unspecified)
-	(skribe-error 'resolve-parent "Orphan node" n))
+	(skribe-error 'resolve-parent "orphan node" n))
        (else
 	(slot-ref n 'parent)))))
 
@@ -211,7 +211,7 @@
   (let ((c (assq (symbol-append cnt '-counter) e)))
     (if (not (pair? c))
 	(if (or (null? opt) (not (car opt)) (null? e))
-	    (skribe-error cnt "Orphan node" n)
+	    (skribe-error cnt "orphan node" n)
 	    (begin
 	      (set-cdr! (last-pair e)
 			(list (list (symbol-append cnt '-counter) 0)

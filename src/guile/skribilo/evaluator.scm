@@ -39,8 +39,11 @@
              (skribilo types)
              (skribilo lib)
 	     (skribilo vars)
+
 	     (ice-9 optargs)
-	     (oop goops))
+	     (oop goops)
+	     (srfi srfi-13)
+	     (srfi srfi-1))
 
 
 
@@ -49,8 +52,21 @@
 (define *skribe-loaded* '())		;; List of already loaded files
 (define *skribe-load-options* '())
 
+;;;
+;;; %EVALUATE
+;;;
 (define (%evaluate expr)
-  (eval expr (current-module)))
+  (let ((result (eval expr (current-module))))
+    (if (or (ast? result) (markup? result))
+	(let ((file (source-property expr 'filename))
+	      (line (source-property expr 'line))
+	      (column (source-property expr 'column)))
+	  (format #t "~%~%*** source props for `~a': ~a~%~%"
+		  result (source-properties expr))
+	  (slot-set! result 'loc
+		     (make <location>
+		       :file file :line line :pos column))))
+    result))
 
 
 
@@ -74,6 +90,8 @@
 			                     (reader %default-reader))
   (with-debug 2 'skribe-eval-port
      (debug-item "engine=" engine)
+     (debug-item "reader=" reader)
+
      (let ((e (if (symbol? engine) (find-engine engine) engine)))
        (debug-item "e=" e)
        (if (not (is-a? e <engine>))
@@ -104,22 +122,31 @@
 		  ((engine? engine) engine)
 		  ((not (symbol? engine))
                    (skribe-error 'skribe-load
-                                 "Illegal engine" engine))
+                                 "illegal engine" engine))
 		  (else engine)))
-	    (path (cond
-		    ((not path) (skribe-path))
-		    ((string? path) (list path))
-		    ((not (and (list? path) (every? string? path)))
-			(skribe-error 'skribe-load "Illegal path" path))
-		    (else path)))
-            (filep (search-path path file)))
+	    (path (append (cond
+			   ((not path) (skribe-path))
+			   ((string? path) (list path))
+			   ((not (and (list? path) (every? string? path)))
+			    (skribe-error 'skribe-load "illegal path" path))
+			   (else path))
+			  %load-path))
+            (filep (or (search-path path file)
+		       (search-path (append path %load-path) file)
+		       (search-path (append path %load-path)
+				    (let ((dot (string-rindex file #\.)))
+				      (if dot
+					  (string-append
+					   (string-take file dot)
+					   ".scm")
+					  file))))))
 
        (set! *skribe-load-options* opt)
 
        (unless (and (string? filep) (file-exists? filep))
 	 (skribe-error 'skribe-load
 		       (string-append "cannot find `" file "' in path")
-		       (skribe-path)))
+		       path))
 
        ;; Load this file if not already done
        (unless (member filep *skribe-loaded*)
@@ -139,22 +166,23 @@
 ;;;
 (define* (skribe-include file #:optional (path (skribe-path)))
   (unless (every string? path)
-    (skribe-error 'skribe-include "Illegal path" path))
+    (skribe-error 'skribe-include "illegal path" path))
 
   (let ((path (search-path path file)))
     (unless (and (string? path) (file-exists? path))
       (skribe-error 'skribe-load
-		    (format "Cannot find ~S in path" file)
+		    (format #t "cannot find ~S in path" file)
 		    path))
     (when (> *skribe-verbose* 0)
       (format (current-error-port) "  [including file: ~S]\n" path))
+
     (with-input-from-file path
       (lambda ()
-	(let Loop ((exp (read (current-input-port)))
+	(let Loop ((exp (%default-reader (current-input-port)))
 		   (res '()))
 	  (if (eof-object? exp)
 	      (if (and (pair? res) (null? (cdr res)))
-		  (car res)
-		  (reverse! res))
-	      (Loop (read (current-input-port))
+		    (car res)
+		    (reverse! res))
+	      (Loop (%default-reader (current-input-port))
 		    (cons (%evaluate exp) res))))))))

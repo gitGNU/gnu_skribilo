@@ -1,3 +1,0 @@
-(itemize (item [The character ,(code "#\\a"): ,(char #\a).])
-	 (item [The character ,(code "\"a\""): ,(char "a").])
-	 (item [The character ,(code "97"): ,(char 97).]))

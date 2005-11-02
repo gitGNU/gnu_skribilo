@@ -36,21 +36,16 @@
 ;*---------------------------------------------------------------------*/
 ;*    The document                                                     */
 ;*---------------------------------------------------------------------*/
-(document :title "Skribe User Manual"
+(document :title "Skribilo User Manual"
    :env '((example-counter 0) (example-env ()))
    :author (list (author :name "Erick Gallesio"
 		    :affiliation "Université de Nice - Sophia Antipolis"
-		    :address '("930 route des Colles, BP 145"
-			       "F-06903 Sophia Antipolis, Cedex"
-			       "France")
 		    :email (mailto "eg@essi.fr"))
 		 (author :name "Manuel Serrano"
 		    :affiliation "Inria Sophia-Antipolis"
-		    :address `("2004 route des Lucioles - BP 93"
-			       "F-06902 Sophia Antipolis, Cedex"
-			       "France")
-		    :url (ref :url *serrano-url*)
-		    :email (mailto *serrano-mail*)))
+		    :email (mailto *serrano-mail*))
+		 (author :name "Ludovic Courtès"
+		    :email (mailto *courtes-mail*)))
    
    (linebreak 1)
    (center (frame (bold (font :size 1. [
@@ -120,7 +115,7 @@ as HTML, Info pages, man pages, Postscript, etc.]))))
 (include "bib.skb")
 
 ;;; Computer programs
-(include "prgm.skb")
+;;(include "prgm.skb")
 
 ;;; Standard Library
 (include "lib.skb")

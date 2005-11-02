@@ -274,8 +274,8 @@
 			  (new unresolved
 			       (proc (lambda (n e env)
 					(resolve-counter n env
-							 'footnote #t)))))
-			 ,@(the-options opts :ident :class)))))
+							 'footnote #t))))))
+		  ,@(the-options opts :ident :class))))
       (body (the-body opts))))
 
 ;*---------------------------------------------------------------------*/
@@ -466,9 +466,9 @@
 			"start line > stop line"
 			(format #f "~a/~a" start stop)))
 	 ((and language (not (language? language)))
-	  (skribe-error 'source "Illegal language" language))
+	  (skribe-error 'source "illegal language" language))
 	 ((and tab (not (integer? tab)))
-	  (skribe-error 'source "Illegal tab" tab))
+	  (skribe-error 'source "illegal tab" tab))
 	 (file
 	  (let ((s (if (not definition)
 		       (source-read-lines file start stop tab)
@@ -489,7 +489,7 @@
 ;*---------------------------------------------------------------------*/
 (define-markup (language #!key name (fontifier #f) (extractor #f))
    (if (not (string? name))
-       (skribe-type-error 'language "Illegal name, " name "string")
+       (skribe-type-error 'language "illegal name" name "string")
        (new language
 	  (name name)
 	  (fontifier fontifier)
