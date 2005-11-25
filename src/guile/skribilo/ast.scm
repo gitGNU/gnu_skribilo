@@ -1,7 +1,7 @@
+;;; ast.scm  --  Skribilo abstract syntax trees.
 ;;;
-;;; types.stk	-- Definition of Skribe classes
-;;;
-;;; Copyright © 2003-2004 Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
+;;; Copyright 2003-2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
+;;; Copyright 2005  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -18,37 +18,43 @@
 ;;; along with this program; if not, write to the Free Software
 ;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ;;; USA.
+
+(define-module (skribilo ast)
+  :use-module (oop goops)
+  :autoload (skribilo location) (location?)
+  :export (<ast> ast? ast-loc ast-loc-set!
+		 ast-parent ast->string
+
+	   <command> command? command-fmt command-body
+	   <unresolved> unresolved? unresolved-proc
+	   <handle> handle? handle-ast handle-body
+	   <node> node? node-options node-loc
+	   <processor> processor? processor-combinator processor-engine
+
+	   <markup> markup? bind-markup! markup-options is-markup?
+		    markup-markup markup-body markup-ident markup-class
+		    find-markups
+		    markup-option markup-option-add! markup-output
+		    markup-parent markup-document markup-chapter
+
+	   <container> container? container-options
+		       container-ident container-body
+		       container-env-get
+
+	   <document> document? document-ident document-body
+		      document-options document-end))
+
+;;; Author:  Ludovic Courtès
 ;;;
-;;;           Author: Erick Gallesio [eg@essi.fr]
-;;;    Creation date: 12-Aug-2003 22:18 (eg)
-;;; Last file update: 28-Oct-2004 16:18 (eg)
+;;; Commentary:
 ;;;
+;;; The abstract syntax tree (AST) and its sub-types.  These class form the
+;;; core of a document: each part of a document is an instance of `<ast>' or
+;;; one of its sub-classes.
+;;;
+;;; Code:
 
 (read-set! keywords 'prefix)
-(define-module (skribilo types)  ;; FIXME:  Why should it be a separate module?
-   :export (<ast> ast? ast-loc ast-loc-set!
-	    <command> command? command-fmt command-body
-	    <unresolved> unresolved? unresolved-proc
-	    <handle> handle? handle-ast
-	    <node> node? node-options node-loc
-	    <engine> engine? engine-ident engine-format engine-customs
-		     engine-filter engine-symbol-table
-	    <writer> writer? write-object writer-options writer-ident
-	             writer-before writer-action writer-after writer-class
-	    <processor> processor? processor-combinator processor-engine
-	    <markup> markup? bind-markup! markup-options is-markup?
-		     markup-markup markup-body markup-ident markup-class
-		     find-markups write-object
-	    <container> container? container-options
-			container-ident container-body
-	    <document> document? document-ident document-body
-		       document-options document-end
-	    <language> language? language-extractor language-fontifier
-	    <location> location? ast-location
-	    location-file location-line location-pos
-
-	    *node-table*)
-   :use-module (oop goops))
 
 (define *node-table* (make-hash-table))
 					; Used to stores the nodes of  an AST.
@@ -56,6 +62,7 @@
 					; identifier.
 
 
+
 ;;; ======================================================================
 ;;;
 ;;;				<AST>
@@ -70,7 +77,36 @@
 (define (ast? obj)		(is-a? obj <ast>))
 (define (ast-loc obj)		(slot-ref obj 'loc))
 (define (ast-loc-set! obj v)	(slot-set! obj 'loc v))
+(define (ast-parent n)
+  (slot-ref n 'parent))
 
+
+(define (ast->file-location ast)
+   (let ((l (ast-loc ast)))
+     (if (location? l)
+	 (format #f "~a:~a:" (location-file l) (location-line l))
+	 "")))
+
+(define-generic ast->string)
+
+(define-method (ast->string (ast <top>))     "")
+(define-method (ast->string (ast <string>))  ast)
+(define-method (ast->string (ast <number>))  (number->string ast))
+
+(define-method (ast->string (ast <pair>))
+  (let ((out (open-output-string)))
+    (let Loop ((lst ast))
+      (cond
+	((null? lst)
+	   (get-output-string out))
+	(else
+	   (display (ast->string (car lst)) out)
+	   (unless (null? (cdr lst))
+	     (display #\space out))
+	   (Loop (cdr lst)))))))
+
+
+
 ;;; ======================================================================
 ;;;
 ;;;				<COMMAND>
@@ -105,70 +141,7 @@
 
 (define (handle? obj)     (is-a? obj <handle>))
 (define (handle-ast obj)  (slot-ref obj 'ast))
-
-;;; ======================================================================
-;;;
-;;;				<ENGINE>
-;;;
-;;; ======================================================================
-(define-class <engine> ()
-  (ident		:init-keyword :ident		:init-value '???)
-  (format		:init-keyword :format		:init-value "raw")
-  (info		:init-keyword :info		:init-value '())
-  (version		:init-keyword :version		:init-value 'unspecified)
-  (delegate		:init-keyword :delegate		:init-value #f)
-  (writers		:init-keyword :writers		:init-value '())
-  (filter		:init-keyword :filter		:init-value #f)
-  (customs		:init-keyword :custom		:init-value '())
-  (symbol-table	:init-keyword :symbol-table	:init-value '()))
-
-
-
-
-(define (engine? obj)
-  (is-a? obj <engine>))
-
-(define (engine-ident obj)	;; Define it here since the doc searches it
-  (slot-ref obj 'ident))
-
-(define (engine-format obj)	;; Define it here since the doc searches it
-  (slot-ref obj 'format))
-
-(define (engine-customs obj)	;; Define it here since the doc searches it
-  (slot-ref obj 'customs))
-
-(define (engine-filter obj)	;; Define it here since the doc searches it
-  (slot-ref obj 'filter))
-
-(define (engine-symbol-table obj)	;; Define it here since the doc searches it
-  (slot-ref obj 'symbol-table))
-
-;;; ======================================================================
-;;;
-;;;				<WRITER>
-;;;
-;;; ======================================================================
-(define-class <writer> ()
-  (ident	:init-keyword :ident	 :init-value '??? :getter writer-ident)
-  (class	:init-keyword :class	 :init-value 'unspecified
-		:getter writer-class)
-  (pred	:init-keyword :pred	 :init-value 'unspecified)
-  (upred	:init-keyword :upred	 :init-value 'unspecified)
-  (options	:init-keyword :options	 :init-value '()  :getter writer-options)
-  (verified?	:init-keyword :verified? :init-value #f)
-  (validate	:init-keyword :validate  :init-value #f)
-  (before	:init-keyword :before	 :init-value #f   :getter writer-before)
-  (action	:init-keyword :action	 :init-value #f   :getter writer-action)
-  (after	:init-keyword :after	 :init-value #f   :getter writer-after))
-
-(define (writer? obj)
-  (is-a? obj <writer>))
-
-(define-method (write-object (obj <writer>) port)
-  (format port "#[~A (~A) ~A]"
-	  (class-name (class-of obj))
-	  (slot-ref obj 'ident)
-	  (address-of obj)))
+(define (handle-body h)   (slot-ref h 'body))
 
 ;;; ======================================================================
 ;;;
@@ -185,6 +158,9 @@
 (define (node-options obj) (slot-ref obj 'options))
 (define node-loc	   ast-loc)
 
+(define-method (ast->string (ast <node>))
+  (ast->string (slot-ref ast 'body)))
+
 
 ;;; ======================================================================
 ;;;
@@ -200,6 +176,8 @@
 (define (processor-combinator obj) (slot-ref obj 'combinator))
 (define (processor-engine obj)     (slot-ref obj 'engine))
 
+
+
 ;;; ======================================================================
 ;;;
 ;;;				<MARKUP>
@@ -227,10 +205,47 @@
 (define (markup-options obj)	(slot-ref obj 'options))
 (define markup-body    node-body)
 
+(define (markup-option m opt)
+  (if (markup? m)
+      (let ((c (assq opt (slot-ref m 'options))))
+	(and (pair? c) (pair? (cdr c))
+	     (cadr c)))
+      (skribe-type-error 'markup-option "Illegal markup: " m "markup")))
+
+
+(define (markup-option-add! m opt val)
+  (if (markup? m)
+      (slot-set! m 'options (cons (list opt val)
+				  (slot-ref m 'options)))
+      (skribe-type-error 'markup-option "Illegal markup: " m "markup")))
+
 
 (define (is-markup? obj markup)
   (and (is-a? obj <markup>)
        (eq? (slot-ref obj 'markup) markup)))
+
+
+(define (markup-parent m)
+  (let ((p (slot-ref m 'parent)))
+    (if (eq? p 'unspecified)
+	(skribe-error 'markup-parent "Unresolved parent reference" m)
+	p)))
+
+(define (markup-document m)
+  (let Loop ((p m)
+	     (l #f))
+    (cond
+      ((is-markup? p 'document)           p)
+      ((or (eq? p 'unspecified) (not p))  l)
+      (else			          (Loop (slot-ref p 'parent) p)))))
+
+(define (markup-chapter m)
+  (let loop ((p m)
+	     (l #f))
+    (cond
+      ((is-markup? p 'chapter)           p)
+      ((or (eq? p 'unspecified) (not p)) l)
+      (else				 (loop (slot-ref p 'parent) p)))))
 
 
 
@@ -244,6 +259,35 @@
 	  (slot-ref obj 'markup)
 	  (slot-ref obj 'ident)
 	  (address-of obj)))
+
+
+;;; XXX: This was already commented out in the original Skribe source.
+;;;
+;; (define (markup-output markup
+;;		       :optional (engine    #f)
+;;		       :key	 (predicate #f)
+;;				 (options  '())
+;;				 (before    #f)
+;;				 (action    #f)
+;;				 (after     #f))
+;;   (let ((e (or engine (use-engine))))
+;;     (cond
+;;       ((not (is-a? e <engine>))
+;;           (skribe-error 'markup-writer "illegal engine" e))
+;;       ((and (not before)
+;;	    (not action)
+;;	    (not after))
+;;           (%find-markup-output e markup))
+;;       (else
+;;	  (let ((mp (if (procedure? predicate)
+;;			(lambda (n e) (and (is-markup? n markup) (predicate n e)))
+;;			(lambda (n e) (is-markup? n markup)))))
+;;	    (engine-output e markup mp options
+;;			   (or before (slot-ref e 'default-before))
+;;			   (or action (slot-ref e 'default-action))
+;;			   (or after  (slot-ref e 'default-after))))))))
+
+
 
 ;;; ======================================================================
 ;;;
@@ -259,6 +303,9 @@
 (define container-ident     markup-ident)
 (define container-body      node-body)
 
+(define (container-env-get m key)
+  (let ((c (assq key (slot-ref m 'env))))
+    (and (pair? c) (cadr c))))
 
 
 ;;; ======================================================================
@@ -275,45 +322,6 @@
 (define document-env         container-env)
 
 
+;;; arch-tag: e2489bd6-1b6d-4b03-bdfb-83cffd2f7ce7
 
-;;; ======================================================================
-;;;
-;;;				<LANGUAGE>
-;;;
-;;; ======================================================================
-(define-class <language> ()
-  (name	:init-keyword :name	 :init-value #f :getter langage-name)
-  (fontifier	:init-keyword :fontifier :init-value #f :getter language-fontifier)
-  (extractor	:init-keyword :extractor :init-value #f :getter language-extractor))
-
-(define (language? obj)
-  (is-a? obj <language>))
-
-
-;;; ======================================================================
-;;;
-;;;				<LOCATION>
-;;;
-;;; ======================================================================
-(define-class <location> ()
-  (file :init-keyword :file :getter location-file)
-  (pos  :init-keyword :pos  :getter location-pos)
-  (line :init-keyword :line :getter location-line))
-
-(define (location? obj)
-  (is-a? obj <location>))
-
-(define (ast-location obj)
-  (let ((loc (slot-ref obj 'loc)))
-    (if (location? loc)
-	(let* ((fname (location-file loc))
-	       (line  (location-line loc))
-	       (pwd   (getcwd))
-	       (len   (string-length pwd))
-	       (lenf  (string-length fname))
-	       (file  (if (and (substring=? pwd fname len)
-			       (> lenf len))
-			  (substring fname len (+ 1 (string-length fname)))
-			  fname)))
-	  (format #f "~a, line ~a" file line))
-	"no source location")))
+;;; ast.scm ends here

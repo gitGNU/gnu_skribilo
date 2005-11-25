@@ -515,184 +515,183 @@
 ;*    lout-engine ...                                                 */
 ;*---------------------------------------------------------------------*/
 (define lout-engine
-   (default-engine-set!
-      (make-engine 'lout
-		   :version 0.2
-		   :format "lout"
-		   :delegate (find-engine 'base)
-		   :filter (make-string-replace lout-encoding)
-		   :custom `(;; The underlying Lout document type, i.e. one
-			     ;; of `doc', `report', `book' or `slides'.
-			     (document-type report)
+  (make-engine 'lout
+	       :version 0.2
+	       :format "lout"
+	       :delegate (find-engine 'base)
+	       :filter (make-string-replace lout-encoding)
+	       :custom `(;; The underlying Lout document type, i.e. one
+			 ;; of `doc', `report', `book' or `slides'.
+			 (document-type report)
 
-			     ;; Document style file include line (a string
-			     ;; such as `@Include { doc-style.lout }') or
-			     ;; `auto' (symbol) in which case the include
-			     ;; file is deduced from `document-type'.
-			     (document-include auto)
+			 ;; Document style file include line (a string
+			 ;; such as `@Include { doc-style.lout }') or
+			 ;; `auto' (symbol) in which case the include
+			 ;; file is deduced from `document-type'.
+			 (document-include auto)
 
-			     (includes "@SysInclude { tbl }\n")
-			     (initial-font "Palatino Base 10p")
-			     (initial-break
-			      ,(string-append "unbreakablefirst "
-					      "unbreakablelast "
-					      "hyphen adjust 1.2fx"))
+			 (includes "@SysInclude { tbl }\n")
+			 (initial-font "Palatino Base 10p")
+			 (initial-break
+			  ,(string-append "unbreakablefirst "
+					  "unbreakablelast "
+					  "hyphen adjust 1.2fx"))
 
-			     ;; The document's language, used for hyphenation
-			     ;; and other things.
-			     (initial-language "English")
+			 ;; The document's language, used for hyphenation
+			 ;; and other things.
+			 (initial-language "English")
 
-			     ;; Number of columns.
-			     (column-number 1)
+			 ;; Number of columns.
+			 (column-number 1)
 
-			     ;; First page number.
-			     (first-page-number 1)
+			 ;; First page number.
+			 (first-page-number 1)
 
-			     ;; Page orientation, `portrait', `landscape',
-			     ;; `reverse-portrait' or `reverse-landscape'.
-			     (page-orientation portrait)
+			 ;; Page orientation, `portrait', `landscape',
+			 ;; `reverse-portrait' or `reverse-landscape'.
+			 (page-orientation portrait)
 
-			     ;; For reports, whether to produce a cover
-			     ;; sheet.  The `doc-cover-sheet-proc' custom may
-			     ;; also honor this custom for `doc' documents.
-			     (cover-sheet? #t)
+			 ;; For reports, whether to produce a cover
+			 ;; sheet.  The `doc-cover-sheet-proc' custom may
+			 ;; also honor this custom for `doc' documents.
+			 (cover-sheet? #t)
 
-			     ;; For reports, the date line.
-			     (date-line #t)
+			 ;; For reports, the date line.
+			 (date-line #t)
 
-			     ;; For reports, an abstract.
-			     (abstract #f)
+			 ;; For reports, an abstract.
+			 (abstract #f)
 
-			     ;; For reports, title/name of the abstract.  If
-			     ;; `#f', the no abstract title will be
-			     ;; produced.  If `#t', a default name in the
-			     ;; current language is chosen.
-			     (abstract-title #t)
+			 ;; For reports, title/name of the abstract.  If
+			 ;; `#f', the no abstract title will be
+			 ;; produced.  If `#t', a default name in the
+			 ;; current language is chosen.
+			 (abstract-title #t)
 
-			     ;; Whether to optimize pages.
-			     (optimize-pages? #f)
+			 ;; Whether to optimize pages.
+			 (optimize-pages? #f)
 
-			     ;; For docs, the procedure that produces the
-			     ;; Lout code for the cover sheet or title.
-			     (doc-cover-sheet-proc
-			      ,lout-make-doc-cover-sheet)
+			 ;; For docs, the procedure that produces the
+			 ;; Lout code for the cover sheet or title.
+			 (doc-cover-sheet-proc
+			  ,lout-make-doc-cover-sheet)
 
-			     ;; Procedure used to sort bibliography
-			     ;; references when several are referred to at
-			     ;; the same time, as in:
-			     ;;  (ref :bib '("smith03" "jones98")) .
-			     ;; By default they are sorted by number.  If
-			     ;; `#f' is given, they are left as is.
-			     (bib-refs-sort-proc
-			      ,lout-bib-refs-sort/number)
+			 ;; Procedure used to sort bibliography
+			 ;; references when several are referred to at
+			 ;; the same time, as in:
+			 ;;  (ref :bib '("smith03" "jones98")) .
+			 ;; By default they are sorted by number.  If
+			 ;; `#f' is given, they are left as is.
+			 (bib-refs-sort-proc
+			  ,lout-bib-refs-sort/number)
 
-			     ;; Lout code for paragraph gaps (similar to
-			     ;; `@PP' with `@ParaGap' equal to `1.0vx' by
-			     ;; default)
-			     (paragraph-gap
-			      "\n//1.0vx @ParaIndent @Wide &{0i}\n")
+			 ;; Lout code for paragraph gaps (similar to
+			 ;; `@PP' with `@ParaGap' equal to `1.0vx' by
+			 ;; default)
+			 (paragraph-gap
+			  "\n//1.0vx @ParaIndent @Wide &{0i}\n")
 
-			     ;; For multi-page tables, it may be
-			     ;; useful to set this to `#t'.  However,
-			     ;; this looks kind of buggy.
-			     (use-header-rows? #f)
+			 ;; For multi-page tables, it may be
+			 ;; useful to set this to `#t'.  However,
+			 ;; this looks kind of buggy.
+			 (use-header-rows? #f)
 
-			     ;; Tells whether to use Skribe's footnote
-			     ;; numbers or Lout's numbering scheme (the
-			     ;; latter may be better, typography-wise).
-			     (use-skribe-footnote-numbers? #t)
+			 ;; Tells whether to use Skribe's footnote
+			 ;; numbers or Lout's numbering scheme (the
+			 ;; latter may be better, typography-wise).
+			 (use-skribe-footnote-numbers? #t)
 
-			     ;; A procedure that is passed the engine
-			     ;; and produces Lout definitions.
-			     (inline-definitions-proc ,lout-definitions)
+			 ;; A procedure that is passed the engine
+			 ;; and produces Lout definitions.
+			 (inline-definitions-proc ,lout-definitions)
 
-			     ;; A procedure that takes a URL `ref' markup and
-			     ;; returns a list containing (maybe) one such
-			     ;; `ref' markup.  This custom can be used to
-			     ;; modified the way URLs are rendered.  The
-			     ;; default value is a procedure that limits the
-			     ;; size of Lout's @ExternalLink symbols since
-			     ;; they are unbreakable.  In order to completely
-			     ;; disable use of @ExternalLinks, just set it to
-			     ;; `markup-body'.
-			     (transform-url-ref-proc
-			      ,lout-split-external-link)
+			 ;; A procedure that takes a URL `ref' markup and
+			 ;; returns a list containing (maybe) one such
+			 ;; `ref' markup.  This custom can be used to
+			 ;; modified the way URLs are rendered.  The
+			 ;; default value is a procedure that limits the
+			 ;; size of Lout's @ExternalLink symbols since
+			 ;; they are unbreakable.  In order to completely
+			 ;; disable use of @ExternalLinks, just set it to
+			 ;; `markup-body'.
+			 (transform-url-ref-proc
+			  ,lout-split-external-link)
 
-			     ;; Leader used in the table of contents entries.
-			     (toc-leader ".")
+			 ;; Leader used in the table of contents entries.
+			 (toc-leader ".")
 
-			     ;; Inter-leader spacing in the TOC entries.
-			     (toc-leader-space "2.5s")
+			 ;; Inter-leader spacing in the TOC entries.
+			 (toc-leader-space "2.5s")
 
-			     ;; Procedure that takes a large-scale structure
-			     ;; (chapter, section, etc.) and the engine and
-			     ;; produces the number and possibly title of
-			     ;; this structure for use the TOC.
-			     (toc-entry-proc ,lout-make-toc-entry)
+			 ;; Procedure that takes a large-scale structure
+			 ;; (chapter, section, etc.) and the engine and
+			 ;; produces the number and possibly title of
+			 ;; this structure for use the TOC.
+			 (toc-entry-proc ,lout-make-toc-entry)
 
-			     ;; The Lout program name, only useful when using
-			     ;; `lout-illustration' on other back-ends.
-			     (lout-program-name "lout")
+			 ;; The Lout program name, only useful when using
+			 ;; `lout-illustration' on other back-ends.
+			 (lout-program-name "lout")
 
-			     ;; Title and author information in the PDF
-			     ;; document information.  If `#t', the
-			     ;; document's `:title' and `:author' are used.
-			     (pdf-title #t)
-			     (pdf-author #t)
+			 ;; Title and author information in the PDF
+			 ;; document information.  If `#t', the
+			 ;; document's `:title' and `:author' are used.
+			 (pdf-title #t)
+			 (pdf-author #t)
 
-			     ;; Keywords (a list of string) in the PDF
-			     ;; document information.
-			     (pdf-keywords #f)
+			 ;; Keywords (a list of string) in the PDF
+			 ;; document information.
+			 (pdf-keywords #f)
 
-			     ;; Extra PDF information, an alist of key-value
-			     ;; pairs (string pairs).
-			     (pdf-extra-info (("SkribeVersion"
-					       ,(skribe-release))))
+			 ;; Extra PDF information, an alist of key-value
+			 ;; pairs (string pairs).
+			 (pdf-extra-info (("SkribeVersion"
+					   ,(skribe-release))))
 
-			     ;; Tells whether to produce PDF "docinfo"
-			     ;; (meta-information with title, author,
-			     ;; keywords, etc.).
-			     (make-pdf-docinfo? #t)
+			 ;; Tells whether to produce PDF "docinfo"
+			 ;; (meta-information with title, author,
+			 ;; keywords, etc.).
+			 (make-pdf-docinfo? #t)
 
-			     ;; Tells whether a PDF outline
-			     ;; (aka. "bookmarks") should be produced.
-			     (make-pdf-outline? #t)
+			 ;; Tells whether a PDF outline
+			 ;; (aka. "bookmarks") should be produced.
+			 (make-pdf-outline? #t)
 
-			     ;; Procedure that takes a node and an engine and
-			     ;; return a string representing the title of
-			     ;; that node's PDF bookmark.
-			     (pdf-bookmark-title-proc ,lout-pdf-bookmark-title)
+			 ;; Procedure that takes a node and an engine and
+			 ;; return a string representing the title of
+			 ;; that node's PDF bookmark.
+			 (pdf-bookmark-title-proc ,lout-pdf-bookmark-title)
 
-			     ;; Procedure that takes a node and an engine and
-			     ;; returns true if that node should have a PDF
-			     ;; outline entry.
-			     (pdf-bookmark-node-pred ,lout-pdf-bookmark-node?)
+			 ;; Procedure that takes a node and an engine and
+			 ;; returns true if that node should have a PDF
+			 ;; outline entry.
+			 (pdf-bookmark-node-pred ,lout-pdf-bookmark-node?)
 
-			     ;; Procedure that takes a node and an engine and
-			     ;; returns true if the bookmark for that node
-			     ;; should be closed ("folded") when the user
-			     ;; opens the PDF document.
-			     (pdf-bookmark-closed-pred
-			      ,(lambda (n e)
-				 (not (is-markup? n 'chapter))))
+			 ;; Procedure that takes a node and an engine and
+			 ;; returns true if the bookmark for that node
+			 ;; should be closed ("folded") when the user
+			 ;; opens the PDF document.
+			 (pdf-bookmark-closed-pred
+			  ,(lambda (n e)
+			     (not (is-markup? n 'chapter))))
 
-			     ;; color
-			     (color? #t)
+			 ;; color
+			 (color? #t)
 
-			     ;; source fontification
-			     (source-color #t)
-			     (source-comment-color "#ffa600")
-			     (source-define-color "#6959cf")
-			     (source-module-color "#1919af")
-			     (source-markup-color "#1919af")
-			     (source-thread-color "#ad4386")
-			     (source-string-color "red")
-			     (source-bracket-color "red")
-			     (source-type-color "#00cf00"))
+			 ;; source fontification
+			 (source-color #t)
+			 (source-comment-color "#ffa600")
+			 (source-define-color "#6959cf")
+			 (source-module-color "#1919af")
+			 (source-markup-color "#1919af")
+			 (source-thread-color "#ad4386")
+			 (source-string-color "red")
+			 (source-bracket-color "red")
+			 (source-type-color "#00cf00"))
 
-		   :symbol-table (lout-symbol-table
-				  (lambda (m)
-				     (format #f "@Eq { ~a }\n" m))))))
+	       :symbol-table (lout-symbol-table
+			      (lambda (m)
+				(format #f "@Eq { ~a }\n" m)))))
 
 
 

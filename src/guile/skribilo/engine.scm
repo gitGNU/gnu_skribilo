@@ -1,7 +1,6 @@
+;;; engine.scm	-- Skribilo engines.
 ;;;
-;;; engine.scm	-- Skribe Engines Stuff
-;;;
-;;; Copyright © 2003-2004 Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
+;;; Copyright 2003-2004  Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
 ;;; Copyright 2005  Ludovic Courtès  <ludovic.courtes@laas.fr>
 ;;;
 ;;;
@@ -19,24 +18,24 @@
 ;;; along with this program; if not, write to the Free Software
 ;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ;;; USA.
-;;;
-;;;           Author: Erick Gallesio [eg@essi.fr]
-;;;    Creation date: 24-Jul-2003 20:33 (eg)
-;;; Last file update: 28-Oct-2004 21:21 (eg)
-;;;
 
 (define-module (skribilo engine)
-  :use-module (skribilo module)
   :use-module (skribilo debug)
-  :use-module (skribilo writer)
-  :use-module (skribilo types)
   :use-module (skribilo lib)
-  :use-module (skribilo vars)
+
+  ;; `(skribilo writer)' depends on this module so it needs to be loaded
+  ;; after we defined `<engine>' and the likes.
+  :autoload (skribilo writer) (<writer>)
 
   :use-module (oop goops)
   :use-module (ice-9 optargs)
+  :autoload   (srfi srfi-39)  (make-parameter)
 
-  :export (default-engine default-engine-set!
+  :export (<engine> engine? engine-ident engine-format
+		    engine-customs engine-filter engine-symbol-table
+
+	   *current-engine*
+	   default-engine default-engine-set!
 	   make-engine copy-engine find-engine lookup-engine
 	   engine-custom engine-custom-set!
 	   engine-format? engine-add-writer!
@@ -45,10 +44,47 @@
 
 
 
+
+;;;
+;;; Class definition.
+;;;
 
-;;; Module definition is split here because this file is read by the
-;;; documentation Should be changed.
-;(select-module SKRIBE-ENGINE-MODULE)
+(define-class <engine> ()
+  (ident		:init-keyword :ident		:init-value '???)
+  (format		:init-keyword :format		:init-value "raw")
+  (info		:init-keyword :info		:init-value '())
+  (version		:init-keyword :version
+			:init-value 'unspecified)
+  (delegate		:init-keyword :delegate		:init-value #f)
+  (writers		:init-keyword :writers		:init-value '())
+  (filter		:init-keyword :filter		:init-value #f)
+  (customs		:init-keyword :custom		:init-value '())
+  (symbol-table	:init-keyword :symbol-table	:init-value '()))
+
+
+(define (engine? obj)
+  (is-a? obj <engine>))
+
+(define (engine-ident obj)
+  (slot-ref obj 'ident))
+
+(define (engine-format obj)
+  (slot-ref obj 'format))
+
+(define (engine-customs obj)
+  (slot-ref obj 'customs))
+
+(define (engine-filter obj)
+  (slot-ref obj 'filter))
+
+(define (engine-symbol-table obj)
+  (slot-ref obj 'symbol-table))
+
+
+
+;;;
+;;; Default engines.
+;;;
 
 (define *engines*		'())
 (define *default-engine*	#f)
@@ -97,8 +133,7 @@
 (define (engine-format? fmt . e)
   (let ((e (cond
 	     ((pair? e) (car e))
-	     ((engine? *skribe-engine*) *skribe-engine*)
-	     (else (find-engine *skribe-engine*)))))
+	     (else (*current-engine*)))))
     (if (not (engine? e))
 	(skribe-error 'engine-format? "no engine" e)
 	(string=? fmt (engine-format e)))))
@@ -164,9 +199,11 @@ otherwise the requested engine is returned."
   (false-if-exception (apply lookup-engine args)))
 
 
+
 ;;;
-;;; ENGINE-CUSTOM
+;;; Engine methods.
 ;;;
+
 (define (engine-custom e id)
   (let* ((customs (slot-ref e 'customs))
 	 (c       (assq id customs)))
@@ -175,9 +212,6 @@ otherwise the requested engine is returned."
 	'unspecified)))
 
 
-;;;
-;;; ENGINE-CUSTOM-SET!
-;;;
 (define (engine-custom-set! e id val)
   (let* ((customs (slot-ref e 'customs))
 	 (c       (assq id customs)))
@@ -186,9 +220,6 @@ otherwise the requested engine is returned."
 	(slot-set! e 'customs (cons (list id val) customs)))))
 
 
-;;;
-;;; ENGINE-ADD-WRITER!
-;;;
 (define (engine-add-writer! e ident pred upred opt before action after class valid)
   (define (check-procedure name proc arity)
     (cond
@@ -233,14 +264,27 @@ otherwise the requested engine is returned."
     (slot-set! e 'writers (cons n (slot-ref e 'writers)))
     n))
 
-;;; ======================================================================
-;;;
-;;;				    I N I T S
-;;;
-;;; ======================================================================
 
-;; A base engine must pre-exist before anything is loaded. In
-;; particular, this dummy base engine is used to load the actual
-;; definition of base.
+
+;;;
+;;; Current engine.
+;;;
 
-(make-engine 'base :version 'bootstrap)
+;;; `(skribilo module)' must be loaded before the first `find-engine' call.
+(use-modules (skribilo module))
+
+;; At this point, we're almost done with the bootstrap process.
+(format #t "base engine: ~a~%" (lookup-engine 'base))
+
+(define *current-engine*
+  ;; By default, use the HTML engine.
+  (make-parameter (lookup-engine 'html)
+		  (lambda (val)
+		    (cond ((symbol? val) (lookup-engine val))
+			  ((engine? val) val)
+			  (else
+			   (error "invalid value for `*current-engine*'"
+				  val))))))
+
+
+;;; engine.scm ends here

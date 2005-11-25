@@ -26,25 +26,57 @@
 
 
 (define-module (skribilo writer)
-  :export (invoke markup-writer markup-writer-get markup-writer-get*
-	   lookup-markup-writer copy-markup-writer))
+  :export (<writer> writer? write-object writer-options writer-ident
+	            writer-before writer-action writer-after writer-class
+
+	   invoke markup-writer markup-writer-get markup-writer-get*
+	   lookup-markup-writer copy-markup-writer)
+
+  :autoload (skribilo engine) (engine? engine-ident? default-engine))
 
 
 (use-modules (skribilo debug)
-	     (skribilo engine)
 	     (skribilo output)
-	     (skribilo types)
+	     (skribilo ast)
 	     (skribilo lib)
 
 	     (oop goops)
 	     (ice-9 optargs))
 
 
-;;;; ======================================================================
-;;;;
-;;;;				INVOKE
-;;;;
-;;;; ======================================================================
+
+;;;
+;;; Class definition.
+;;;
+
+(define-class <writer> ()
+  (ident	:init-keyword :ident	 :init-value '??? :getter writer-ident)
+  (class	:init-keyword :class	 :init-value 'unspecified
+		:getter writer-class)
+  (pred	:init-keyword :pred	 :init-value 'unspecified)
+  (upred	:init-keyword :upred	 :init-value 'unspecified)
+  (options	:init-keyword :options	 :init-value '()  :getter writer-options)
+  (verified?	:init-keyword :verified? :init-value #f)
+  (validate	:init-keyword :validate  :init-value #f)
+  (before	:init-keyword :before	 :init-value #f   :getter writer-before)
+  (action	:init-keyword :action	 :init-value #f   :getter writer-action)
+  (after	:init-keyword :after	 :init-value #f   :getter writer-after))
+
+(define (writer? obj)
+  (is-a? obj <writer>))
+
+(define-method (write-object (obj <writer>) port)
+  (format port "#[~A (~A) ~A]"
+	  (class-name (class-of obj))
+	  (slot-ref obj 'ident)
+	  (address-of obj)))
+
+
+
+;;;
+;;; Writer methods.
+;;;
+
 (define (invoke proc node e)
   (with-debug 5 'invoke
      (debug-item "e=" (engine-ident e))
@@ -56,11 +88,6 @@
 	     (proc node e)))))
 
 
-;;;; ======================================================================
-;;;;
-;;;;				LOOKUP-MARKUP-WRITER
-;;;;
-;;;; ======================================================================
 (define (lookup-markup-writer node e)
   (let ((writers (slot-ref e 'writers))
 	(delegate (slot-ref e 'delegate)))
@@ -76,11 +103,6 @@
 	(else
 	   #f)))))
 
-;;;; ======================================================================
-;;;;
-;;;;				MAKE-WRITER-PREDICATE
-;;;;
-;;;; ======================================================================
 (define (make-writer-predicate markup predicate class)
   (let* ((t1 (if (symbol? markup)
 		 (lambda (n e) (is-markup? n markup))
@@ -165,11 +187,6 @@
 			     options before ac after class validate))))))
 
 
-;;;; ======================================================================
-;;;;
-;;;;				MARKUP-WRITER-GET
-;;;;
-;;;; ======================================================================
 (define* (markup-writer-get markup :optional engine :key (class #f) (pred #f))
   (let ((e (or engine (default-engine))))
     (cond
@@ -193,14 +210,8 @@
 	     (else
 		#f))))))))
 
-;;;; ======================================================================
-;;;;
-;;;;				MARKUP-WRITER-GET*
-;;;;
-;;;; ======================================================================
 
 ;; Finds all writers that matches MARKUP with optional CLASS attribute.
-
 (define* (markup-writer-get* markup #:optional engine #:key (class #f))
   (let ((e (or engine (default-engine))))
     (cond
@@ -224,11 +235,6 @@
 	     (else
 	      (reverse! res)))))))))
 
-;;; ======================================================================
-;;;;
-;;;;				COPY-MARKUP-WRITER
-;;;;
-;;;; ======================================================================
 (define* (copy-markup-writer markup old-engine :optional new-engine
 			      :key (predicate 'unspecified)
 				   (class 'unspecified)
@@ -247,3 +253,5 @@
 	 :before    (if (unspecified? before)    (slot-ref old 'before) before)
 	 :action    (if (unspecified? action)    (slot-ref old 'action) action)
 	 :after     (if (unspecified? after)     (slot-ref old 'after) after))))
+
+;;; writer.scm ends here

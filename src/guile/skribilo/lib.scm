@@ -2,6 +2,7 @@
 ;;; lib.scm	-- Utilities
 ;;;
 ;;; Copyright © 2003-2004 Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
+;;; Copyright © 2005 Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -26,37 +27,9 @@
            skribe-type-error
            skribe-warning skribe-warning/ast
            skribe-message
-
-           ;; paths as lists of directories
-
-           %skribilo-load-path
-           %skribilo-image-path %skribilo-bib-path %skribilo-source-path
-
-           ;; compatibility
-
-           skribe-path skribe-path-set!
-           skribe-image-path skribe-image-path-set!
-           skribe-bib-path skribe-bib-path-set!
-           skribe-source-path skribe-source-path-set!
-
-           ;; various utilities for compatiblity
-
-           substring=?
-           file-suffix file-prefix prefix suffix
-           directory->list find-file/path
-           printf fprintf
-           any? every?
-           process-input-port process-output-port process-error-port
-	   %procedure-arity
-
-           make-hashtable hashtable?
-           hashtable-get hashtable-put! hashtable-update!
-           hashtable->list
-
 	   skribe-read
-           find-runtime-type
 
-	   date)
+	   %procedure-arity)
 
   :export-syntax (new define-markup define-simple-markup
                   define-simple-container define-processor-markup
@@ -65,12 +38,16 @@
                   unwind-protect unless when)
 
   :use-module (skribilo config)
-  :use-module (skribilo types)
+  :use-module (skribilo ast)
+
+  ;; useful for `new' to work well with <language>
+  :autoload   (skribilo source)   (<language>)
+
   :use-module (skribilo reader)
-  :use-module (skribilo vars)
+  :use-module (skribilo parameters)
+  :use-module (skribilo location)
 
   :use-module (srfi srfi-1)
-  :use-module ((srfi srfi-19) :renamer (symbol-prefix-proc 's19:)) ;; date
   :use-module (oop goops)
   :use-module (ice-9 optargs))
 
@@ -81,11 +58,11 @@
 ;;; NEW
 ;;;
 
-(define %types-module (resolve-module '(skribilo types)))
+(define %types-module (current-module))
 
 (define-macro (new class . parameters)
   ;; Thanks to the trick below, modules don't need to import `(oop goops)'
-  ;; and `(skribilo types)' in order to make use of `new'.
+  ;; and `(skribilo ast)' in order to make use of `new'.
   (let* ((class-name (symbol-append '< class '>))
 	 (actual-class (module-ref %types-module class-name)))
     `(let ((make ,make)
@@ -221,12 +198,12 @@
 
 
 (define (skribe-warning level . obj)
-  (if (>= *skribe-warning* level)
+  (if (>= (*warning*) level)
       (%skribe-warn level #f #f obj)))
 
 
 (define (skribe-warning/ast level ast . obj)
-  (if (>= *skribe-warning* level)
+  (if (>= (*warning*) level)
       (let ((l (ast-loc ast)))
 	(if (location? l)
 	    (%skribe-warn level (location-file l) (location-line l) obj)
@@ -236,27 +213,9 @@
 ;;; SKRIBE-MESSAGE
 ;;;
 (define (skribe-message fmt . obj)
-  (when (> *skribe-verbose* 0)
+  (when (> (*verbose*) 0)
     (apply format (current-error-port) fmt obj)))
 
-;;;
-;;; FILE-PREFIX / FILE-SUFFIX
-;;;
-(define (file-prefix fn)
-  (if fn
-      (let ((match (regexp-match "(.*)\\.([^/]*$)" fn)))
-	(if match
-	    (cadr match)
-	    fn))
-      "./SKRIBE-OUTPUT"))
-
-(define (file-suffix s)
-  ;; Not completely correct, but sufficient here
-  (let* ((basename (regexp-replace "^(.*)/(.*)$" s "\\2"))
-	 (split    (string-split basename ".")))
-    (if (> (length split) 1)
-	(car (reverse! split))
-	"")))
 
 
 ;;;
@@ -289,87 +248,6 @@
        (else
 	(Loop (cdr l))))))
 
-
-
-;;; ======================================================================
-;;;
-;;;				A C C E S S O R S
-;;;
-;;; ======================================================================
-
-
-(define %skribilo-load-path (list (skribilo-default-path) "."))
-(define %skribilo-image-path '("."))
-(define %skribilo-bib-path '("."))
-(define %skribilo-source-path '("."))
-
-(define-macro (define-compatibility-accessors var oldname)
-  (let ((newname (symbol-append '%skribilo- var))
-        (setter  (symbol-append oldname '-set!)))
-    `(begin
-       (define (,oldname) ,newname)
-       (define (,setter path)
-         (if (not (and (list? path) (every string? path)))
-             (skribe-error ',setter "illegal path" path)
-             (set! ,newname path))))))
-
-(define-compatibility-accessors load-path   skribe-path)
-(define-compatibility-accessors image-path  skribe-image-path)
-(define-compatibility-accessors bib-path    skribe-bib-path)
-(define-compatibility-accessors source-path skribe-source-path)
-
-
-
-;;; ======================================================================
-;;;
-;;;				Compatibility with Bigloo
-;;;
-;;; ======================================================================
-
-(define (substring=? s1 s2 len)
-  (let ((l1 (string-length s1))
-	(l2 (string-length s2)))
-    (let Loop ((i 0))
-      (cond
-	((= i len) #t)
-	((= i l1)  #f)
-	((= i l2)  #f)
-	((char=? (string-ref s1 i) (string-ref s2 i)) (Loop (+ i 1)))
-	(else #f)))))
-
-(define (directory->list str)
-  (map basename (glob (string-append str "/*") (string-append "/.*"))))
-
-(define-macro (printf . args)   `(format #t ,@args))
-(define fprintf			format)
-
-
-(define prefix			file-prefix)
-(define suffix			file-suffix)
-(define system->string		system)  ;; FIXME
-(define any?			any)
-(define every?			every)
-(define find-file/path		(lambda (. args)
-				  (format #t "find-file/path: ~a~%" args)
-				  #f))
-(define process-input-port	#f) ;process-input)
-(define process-output-port	#f) ;process-output)
-(define process-error-port	#f) ;process-error)
-
-
-;;;
-;;; h a s h   t a b l e s
-;;;
-(define make-hashtable		make-hash-table)
-(define hashtable?		hash-table?)
-(define hashtable-get		(lambda (h k) (hash-ref h k #f)))
-(define hashtable-put!		hash-set!)
-(define hashtable-update!	hash-set!)
-(define hashtable->list	(lambda (h)
-                          (map cdr (hash-map->list cons h))))
-
-(define find-runtime-type	(lambda (obj) obj))
-
 
 ;;;
 ;;; Various things.
@@ -395,9 +273,6 @@
 
 (define-macro (when condition . exprs)
   `(if ,condition (begin ,@exprs)))
-
-(define (date)
-  (s19:date->string (s19:current-date) "~c"))
 
 
 ;;; lib.scm ends here

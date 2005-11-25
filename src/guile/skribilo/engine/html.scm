@@ -17,11 +17,14 @@
 ;*=====================================================================*/
 
 (define-skribe-module (skribilo engine html)
-  #:use-module ((srfi srfi-19) :renamer (symbol-prefix-proc 's19:)))
+  :use-module ((srfi srfi-19) :renamer (symbol-prefix-proc 's19:)))
 
 
 ;; Keep a reference to the base engine.
 (define base-engine (find-engine 'base))
+
+(if (not (engine? base-engine))
+    (error "bootstrap problem: base engine broken" base-engine))
 
 ;*---------------------------------------------------------------------*/
 ;*    html-file-default ...                                            */

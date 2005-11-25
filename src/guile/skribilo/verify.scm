@@ -31,7 +31,7 @@
 	     (skribilo engine)
 	     (skribilo writer)
 	     (skribilo runtime)
-	     (skribilo types)
+	     (skribilo ast)
 	     (skribilo lib)     ;; `when', `unless'
 	     (oop goops))
 

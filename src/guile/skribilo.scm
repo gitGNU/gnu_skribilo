@@ -60,23 +60,21 @@ exec ${GUILE-guile} --debug -l $0 -c "(apply $main (cdr (command-line)))" "$@"
 
 
 
-(define-module (skribilo))
+(define-module (skribilo)
+  :autoload (skribilo module) (make-run-time-module)
+  :autoload (skribilo engine) (*current-engine*))
 
-(use-modules (skribilo module)
-	     (skribilo runtime)
-	     (skribilo evaluator)
-	     (skribilo types)
-	     (skribilo engine)
+(use-modules (skribilo evaluator)
 	     (skribilo debug)
-	     (skribilo vars)
+	     (skribilo parameters)
 	     (skribilo lib)
 
+	     (srfi srfi-39)
 	     (ice-9 optargs)
 	     (ice-9 getopt-long))
 
 
 
-;;; FIXME:  With my `#:reader' thing added to `define-module',
 
 
 
@@ -351,7 +349,7 @@ Processes a Skribilo/Skribe source file and produces its output.
 
 (define (load-rc)
   (if *load-rc*
-    (let ((file (make-path *skribe-rc-directory* *skribe-rc-file*)))
+    (let ((file (make-path (*rc-directory*) (*rc-file*))))
       (if (and file (file-exists? file))
 	(load file)))))
 
@@ -373,8 +371,15 @@ Processes a Skribilo/Skribe source file and produces its output.
 ; 	 (skribe-eval-port (current-input-port) *skribe-engine*))))
 
 (define (doskribe)
-  (set-current-module (make-run-time-module))
-  (skribe-eval-port (current-input-port) *skribe-engine*))
+  (let ((user-module (current-module)))
+    (dynamic-wind
+	(lambda ()
+	  (set-current-module (make-run-time-module)))
+	(lambda ()
+	  (format #t "engine is ~a~%" (*current-engine*))
+	  (skribe-eval-port (current-input-port) (*current-engine*)))
+	(lambda ()
+	  (set-current-module user-module)))))
 
 
 ;;;; ======================================================================
@@ -407,8 +412,6 @@ Processes a Skribilo/Skribe source file and produces its output.
 
     ;; Parse the most important options.
 
-    (set! *skribe-engine* engine)
-
     (set-skribe-debug! (string->number debugging-level))
 
     (if (> (skribe-debug) 4)
@@ -416,54 +419,50 @@ Processes a Skribilo/Skribe source file and produces its output.
 	      (lambda (file)
 		(format #t "~~ loading `~a'...~%" file))))
 
-    (set! %skribilo-load-path
-	  (cons load-path %skribilo-load-path))
-    (set! %skribilo-bib-path
-	  (cons bib-path %skribilo-bib-path))
+    (parameterize ((*current-engine* engine)
+		   (*document-path*  (cons load-path (*document-path*)))
+		   (*bib-path*       (cons bib-path (*bib-path*)))
+		   (*verbose*        (option-ref options 'verbose #f)))
 
-    (if (option-ref options 'verbose #f)
-	(set! *skribe-verbose* #t))
+      ;; Load the user rc file
+      ;;(load-rc)
 
-    ;; Load the user rc file
-    ;(load-rc)
+      (for-each (lambda (f)
+		  (skribe-load f :engine (*current-engine*)))
+		preload)
 
-    ;; Load the base file to bootstrap the system as well as the files
-    ;; that are in the PRELOAD variable.
-    (find-engine 'base)
-    (for-each (lambda (f)
-		(skribe-load f :engine *skribe-engine*))
-	      preload)
+      ;; Load the specified variants.
+      (for-each (lambda (x)
+		  (skribe-load (format #f "~a.skr" x)
+			       :engine (*current-engine*)))
+		(reverse! variants))
 
-    ;; Load the specified variants.
-    (for-each (lambda (x)
-		(skribe-load (format #f "~a.skr" x) :engine *skribe-engine*))
-	      (reverse! variants))
+      (let ((files (option-ref options '() '())))
 
-    (let ((files (option-ref options '() '())))
+	(if (> (length files) 2)
+	    (error "you can specify at most one input file and one output file"
+		   files))
 
-      (if (> (length files) 2)
-	  (error "you can specify at most one input file and one output file"
-		 files))
+	(let* ((source-file (if (null? files) #f (car files)))
+	       (dest-file (if (or (not source-file)
+				  (null? (cdr files)))
+			      #f
+			      (cadr files)))
+	       (do-it! (lambda ()
+			 (if (string? dest-file)
+			     (with-output-to-file dest-file doskribe)
+			     (doskribe)))))
 
-      (let* ((source-file (if (null? files) #f (car files)))
-	     (dest-file (if (or (not source-file)
-				(null? (cdr files)))
-			    #f
-			    (cadr files)))
-	     (do-it! (lambda ()
-		       (if (string? dest-file)
-			   (with-output-to-file dest-file doskribe)
-			   (doskribe)))))
+	  (parameterize ((*destination-file* dest-file)
+			 (*source-file*      source-file))
 
-	(set! *skribe-dest* dest-file)
+	    (if (and dest-file (file-exists? dest-file))
+		(delete-file dest-file))
 
-	(if (and dest-file (file-exists? dest-file))
-	    (delete-file dest-file))
-
-	(if source-file
-	    (with-input-from-file source-file
-	      do-it!)
-	    (do-it!))))))
+	    ;;	(start-stack 7
+	    (if source-file
+		(with-input-from-file source-file do-it!)
+		(do-it!))))))))
 
 
 (define main skribilo)

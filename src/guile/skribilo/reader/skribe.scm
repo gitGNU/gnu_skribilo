@@ -37,6 +37,7 @@
 ;;;
 ;;; Code:
 
+;;; Note: We need guile-reader 0.2 at least.
 
 (define* (make-skribe-reader #:optional (version "1.2d"))
   "Return a Skribe reader (a procedure) suitable for version @var{version} of

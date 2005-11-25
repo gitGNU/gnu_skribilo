@@ -1,7 +1,6 @@
+;;;; output.scm  --  Skribilo output stage.
 ;;;;
-;;;; output.stk	-- Skribe Output Stage
-;;;;
-;;;; Copyright © 2003-2004 Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
+;;;; Copyright 2003-2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
 ;;;;
 ;;;;
 ;;;; This program is free software; you can redistribute it and/or modify
@@ -18,21 +17,15 @@
 ;;;; along with this program; if not, write to the Free Software
 ;;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ;;;; USA.
-;;;;
-;;;;           Author: Erick Gallesio [eg@essi.fr]
-;;;;    Creation date: 13-Aug-2003 18:42 (eg)
-;;;; Last file update:  5-Mar-2004 10:32 (eg)
-;;;;
+
 
 (define-module (skribilo output)
-   :export (output))
-
-(use-modules (skribilo debug)
-	     (skribilo types)
-;	     (skribilo engine)
-	     (skribilo writer)
-	     (skribilo lib)    ;; `when', `unless'
-	     (oop goops))
+  :export (output)
+  :use-module (skribilo ast)
+  :use-module (skribilo writer)
+  :use-module (skribilo lib)
+  :use-module (skribilo debug)
+  :use-module (oop goops))
 
 
 (define-generic out)
