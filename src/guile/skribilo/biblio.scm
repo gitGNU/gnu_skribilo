@@ -1,7 +1,6 @@
+;;; biblio.scm  --  Bibliography functions.
 ;;;
-;;; biblio.scm				-- Bibliography functions
-;;;
-;;; Copyright © 2003-2004 Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
+;;; Copyright 2003-2004  Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
 ;;; Copyright 2005  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -18,21 +17,22 @@
 ;;; along with this program; if not, write to the Free Software
 ;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ;;; USA.main.st
-;;;
-;;;           Author: Erick Gallesio [eg@essi.fr]
-;;;    Creation date: 31-Aug-2003 22:07 (eg)
-;;; Last file update: 28-Oct-2004 21:19 (eg)
-;;;
 
 
 
 (define-module (skribilo biblio)
   :use-module (skribilo runtime)
   :use-module (skribilo lib)      ;; `when', `unless'
-  :use-module (skribilo vars)
+  :use-module (skribilo module)
+  :use-module (skribilo skribe bib) ;; `make-bib-entry'
+  :autoload   (skribilo parameters)  (*bib-path*)
+  :autoload   (ice-9 format)         (format)
   :export (bib-table? make-bib-table default-bib-table
 	   bib-add!))
 
+
+
+;; FIXME: Should be a fluid?
 (define *bib-table*	     #f)
 
 ;; Forward declarations
@@ -76,13 +76,13 @@
   (let ((ofrom (markup-option old 'from)))
     (skribe-warning 2
 		    'bib
-		    (format "Duplicated bibliographic entry ~a'.\n" ident)
+		    (format #f "duplicated bibliographic entry ~a'.\n" ident)
 		    (if ofrom
-			(format " Using version of `~a'.\n" ofrom)
+			(format #f " using version of `~a'.\n" ofrom)
 			"")
 		    (if from
-			(format " Ignoring version of `~a'." from)
-			" Ignoring redefinition."))))
+			(format #f " ignoring version of `~a'." from)
+			" ignoring redefinition."))))
 
 
 ;;; ======================================================================
@@ -99,14 +99,13 @@
 	    (cond
 	      ((and (list? entry) (> (length entry) 2))
 	       (let* ((kind   (car entry))
-		      (key    (format "~A" (cadr entry)))
+		      (key    (format #f "~A" (cadr entry)))
 		      (fields (cddr entry))
-		      (old    (hashtable-get table key)))
+		      (old    (hash-ref table key)))
 		 (if old
 		     (bib-duplicate ident from old)
-		     (hash-table-put! table
-				      key
-				      (make-bib-entry kind key fields from)))
+		     (hash-set! table key
+				(make-bib-entry kind key fields from)))
 		 (Loop (read port))))
 	      (else
 	       (%bib-error 'bib-parse entry))))))))
@@ -124,14 +123,13 @@
 		  (cond
 		    ((and (list? entry) (> (length entry) 2))
 		     (let* ((kind   (car entry))
-			    (key    (format "~A" (cadr entry)))
+			    (key    (format #f "~A" (cadr entry)))
 			    (fields (cddr entry))
-			    (old    (hashtable-get table ident)))
+			    (old    (hash-ref table key)))
 		       (if old
 			   (bib-duplicate key #f old)
-			   (hash-table-put! table
-					    key
-					    (make-bib-entry kind key fields #f)))))
+			   (hash-set! table key
+				      (make-bib-entry kind key fields #f)))))
 		    (else
 		     (%bib-error 'bib-add! entry))))
 		entries)))
@@ -144,14 +142,14 @@
 ;;; ======================================================================
 ;; FIXME: Factoriser
 (define (skribe-open-bib-file file command)
- (let ((path (search-path *skribe-bib-path* file)))
+ (let ((path (search-path (*bib-path*) file)))
    (if (string? path)
        (begin
-	 (when (> *skribe-verbose* 0)
+	 (when (> (*verbose*) 0)
 	   (format (current-error-port) "  [loading bibliography: ~S]\n" path))
 	 (open-input-file (if (string? command)
 			      (string-append "| "
-					     (format command path))
+					     (format #f command path))
 			      path)))
        (begin
 	 (skribe-warning 1

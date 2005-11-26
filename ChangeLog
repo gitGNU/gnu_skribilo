@@ -2,6 +2,60 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2005-11-26 18:03:04 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-13
+
+    Summary:
+      Merge from lcourtes@laas.fr--2004-libre
+    Revision:
+      skribilo--devel--1.2--patch-13
+
+    Patches applied:
+    
+     * lcourtes@laas.fr--2004-libre/skribilo--devel--1.2  (patch 6-11)
+    
+       - Lots of changes...
+       - Started relying on the per-module reader;  first doc produced ever!
+       - The first vaguely working version.
+       - Minor fixes for file/line error reporting.
+       - Cleaned up the source tree and the installation process.
+       - Overhaul: emphasized logical separation of the modules.
+
+    new files:
+     src/guile/skribilo/ast.scm src/guile/skribilo/location.scm
+     src/guile/skribilo/parameters.scm
+
+    removed files:
+     doc/.arch-ids/Makefile.id doc/Makefile
+     src/guile/skribilo/.arch-ids/types.scm.id
+     src/guile/skribilo/types.scm
+
+    modified files:
+     ChangeLog src/guile/skribilo.scm src/guile/skribilo/biblio.scm
+     src/guile/skribilo/compat.scm src/guile/skribilo/engine.scm
+     src/guile/skribilo/engine/html.scm
+     src/guile/skribilo/engine/lout.scm
+     src/guile/skribilo/evaluator.scm src/guile/skribilo/lib.scm
+     src/guile/skribilo/module.scm src/guile/skribilo/output.scm
+     src/guile/skribilo/reader/skribe.scm
+     src/guile/skribilo/resolve.scm src/guile/skribilo/runtime.scm
+     src/guile/skribilo/source.scm src/guile/skribilo/verify.scm
+     src/guile/skribilo/writer.scm
+
+    renamed files:
+     src/guile/skribilo/.arch-ids/vars.scm.id
+       ==> src/guile/skribilo/.arch-ids/compat.scm.id
+     src/guile/skribilo/vars.scm
+       ==> src/guile/skribilo/compat.scm
+
+    new patches:
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-6
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-7
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-8
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-9
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-10
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-11
+
+
 2005-11-26 18:01:09 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-12
 
     Summary:

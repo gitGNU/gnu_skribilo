@@ -27,7 +27,7 @@
 (define-module (skribilo resolve)
   :use-module (skribilo debug)
   :use-module (skribilo runtime)
-  :use-module (skribilo types)
+  :use-module (skribilo ast)
   :use-module (skribilo lib)  ;; `unless' and `when'
 
   :use-module (oop goops)

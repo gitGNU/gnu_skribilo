@@ -20,7 +20,6 @@
 
 (define-module (skribilo module)
   :use-module (skribilo reader)
-  :use-module (skribilo evaluator)
   :use-module (skribilo debug)
   :use-module (srfi srfi-1)
   :use-module (ice-9 optargs))
@@ -37,20 +36,20 @@
 ;;;
 ;;; Code:
 
-(define *skribilo-user-imports*
+(define %skribilo-user-imports
   ;; List of modules that should be imported by any good Skribilo module.
   '((srfi srfi-1)         ;; lists
     (srfi srfi-13)        ;; strings
-    ;(srfi srfi-19)        ;; date and time
     (ice-9 optargs)       ;; `define*'
     (ice-9 and-let-star)  ;; `and-let*'
     (ice-9 receive)       ;; `receive'
 
     (skribilo module)
-    (skribilo types)      ;; `<document>', `document?', etc.
+    (skribilo parameters) ;; run-time parameters
+    (skribilo compat)     ;; `skribe-load-path', etc.
+    (skribilo ast)        ;; `<document>', `document?', etc.
     (skribilo config)
-    (skribilo vars)
-    (skribilo runtime)    ;; `the-options', `the-body'
+    (skribilo runtime)    ;; `the-options', `the-body', `make-string-replace'
     (skribilo biblio)
     (skribilo lib)        ;; `define-markup', `unwind-protect', etc.
     (skribilo resolve)
@@ -78,7 +77,7 @@
      ;; Pull all the bindings that Skribe code may expect, plus those needed
      ;; to actually create and read the module.
      ,(cons 'use-modules
-	    (append *skribilo-user-imports*
+	    (append %skribilo-user-imports
 		    (filter-map (lambda (mod)
 				  (let ((m `(skribilo skribe
 						      ,(string->symbol
@@ -94,7 +93,7 @@
 
 
 
-(define *skribilo-user-module* #f)
+(define %skribilo-user-module #f)
 
 ;;;
 ;;; MAKE-RUN-TIME-MODULE
@@ -105,7 +104,7 @@ execution of Skribilo/Skribe code."
   (let ((the-module (make-module)))
         (for-each (lambda (iface)
                     (module-use! the-module (resolve-module iface)))
-                  (append *skribilo-user-imports*
+                  (append %skribilo-user-imports
 			  (map (lambda (mod)
 				 `(skribilo skribe
 					    ,(string->symbol mod)))
@@ -118,9 +117,9 @@ execution of Skribilo/Skribe code."
 ;;;
 (define-public (run-time-module)
   "Return the default instance of a Skribilo/Skribe run-time module."
-  (if (not *skribilo-user-module*)
-      (set! *skribilo-user-module* (make-run-time-module)))
-  *skribilo-user-module*)
+  (if (not %skribilo-user-module)
+      (set! %skribilo-user-module (make-run-time-module)))
+  %skribilo-user-module)
 
 
 ;; FIXME:  This will eventually be replaced by the per-module reader thing in
@@ -134,12 +133,11 @@ execution of Skribilo/Skribe code."
 ;      (format #t "load-file-with-read: ~a~%" read)
 	 (let loop ((sexp (read))
 		    (result #f))
-	   (if (eof-object? sexp)
-	       result
+	   (if (not (eof-object? sexp))
 	       (begin
 ;              (format #t "preparing to evaluate `~a'~%" sexp)
-		 (loop (read)
-		       (primitive-eval sexp)))))))))
+		 (primitive-eval sexp)
+		 (loop (read)))))))))
 
 (define-public (load-skribilo-file file reader-name)
   (load-file-with-read file (make-reader reader-name) (current-module)))

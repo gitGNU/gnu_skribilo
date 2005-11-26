@@ -1,4 +1,3 @@
-;;;;
 ;;;; source.scm	-- Highlighting source files.
 ;;;;
 ;;;; Copyright © 2003-2004 Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
@@ -22,16 +21,33 @@
 ;;;;
 
 
-
 (define-module (skribilo source)
-  :export (source-read-lines source-read-definition source-fontify)
-  :use-module (skribilo types)
-  :use-module (skribilo vars)
+  :export (<language> language? language-extractor language-fontifier
+	   source-read-lines source-read-definition source-fontify)
+  :use-module (skribilo parameters)
   :use-module (skribilo lib)
+  :use-module (oop goops)
   :use-module (ice-9 rdelim))
 
+(read-set! keywords 'prefix)
+
+
+;;;
+;;; Class definition.
+;;;
+
+(define-class <language> ()
+  (name	:init-keyword :name	 :init-value #f :getter langage-name)
+  (fontifier	:init-keyword :fontifier :init-value #f
+		:getter language-fontifier)
+  (extractor	:init-keyword :extractor :init-value #f
+		:getter language-extractor))
+
+(define (language? obj)
+  (is-a? obj <language>))
 
 
+
 ;*---------------------------------------------------------------------*/
 ;*    source-read-lines ...                                            */
 ;*---------------------------------------------------------------------*/
@@ -43,7 +59,7 @@
 			(skribe-source-path))
 	  (with-input-from-file p
 	     (lambda ()
-		(if (> *skribe-verbose* 0)
+		(if (> (*verbose*) 0)
 		    (format (current-error-port) "  [source file: ~S]\n" p))
 		(let ((startl (if (string? start) (string-length start) -1))
 		      (stopl  (if (string? stop)  (string-length stop)  -1)))
@@ -125,7 +141,7 @@
 			(skribe-source-path)))
 	 (else
 	  (let ((ip (open-input-file p)))
-	     (if (> *skribe-verbose* 0)
+	     (if (> (*verbose*) 0)
 		 (format (current-error-port) "  [source file: ~S]\n" p))
 	     (if (not (input-port? ip))
 		 (skribe-error 'source "Can't open file for input" p)

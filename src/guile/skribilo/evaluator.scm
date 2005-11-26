@@ -1,7 +1,6 @@
+;;; eval.scm  --  Skribilo evaluator.
 ;;;
-;;; eval.stk		-- Skribe Evaluator
-;;;
-;;; Copyright © 2003-2004 Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
+;;; Copyright 2003-2004  Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
 ;;; Copyright 2005  Ludovic Courtès  <ludovic.courtes@laas.fr>
 ;;;
 ;;;
@@ -19,26 +18,24 @@
 ;;; along with this program; if not, write to the Free Software
 ;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ;;; USA.
-;;;
-
-
-
-;; FIXME; On peut implémenter maintenant skribe-warning/node
 
 
 (define-module (skribilo evaluator)
   :export (skribe-eval skribe-eval-port skribe-load skribe-load-options
-	   skribe-include))
+	   skribe-include)
+  :autoload (skribilo parameters) (*verbose*)
+  :autoload (skribilo location)   (<location>)
+  :autoload (skribilo ast)        (ast? markup?)
+  :autoload (skribilo engine)     (engine? find-engine engine-ident)
+  :autoload (skribilo reader)     (%default-reader)
+
+  :autoload (skribilo verify)     (verify)
+  :autoload (skribilo resolve)    (resolve!))
+
 
 (use-modules (skribilo debug)
-	     (skribilo reader)
-	     (skribilo engine)
-	     (skribilo verify)
-	     (skribilo resolve)
 	     (skribilo output)
-             (skribilo types)
              (skribilo lib)
-	     (skribilo vars)
 
 	     (ice-9 optargs)
 	     (oop goops)
@@ -94,8 +91,10 @@
 
      (let ((e (if (symbol? engine) (find-engine engine) engine)))
        (debug-item "e=" e)
-       (if (not (is-a? e <engine>))
-	   (skribe-error 'skribe-eval-port "cannot find engine" engine)
+       (if (not (engine? e))
+	   (begin
+	     (format #t "engine: ~a~%" e)
+	     (skribe-error 'skribe-eval-port "cannot find engine" engine))
 	   (let loop ((exp (reader port)))
 	     (with-debug 10 'skribe-eval-port
 		(debug-item "exp=" exp))
@@ -106,6 +105,8 @@
 ;;;
 ;;; SKRIBE-LOAD
 ;;;
+
+;;; FIXME: Use a fluid for that.
 (define *skribe-load-options* '())
 
 (define (skribe-load-options)
@@ -117,13 +118,7 @@
      (debug-item "  path=" path)
      (debug-item "  opt=" opt)
 
-     (let* ((ei  (cond
-		  ((not engine) *skribe-engine*)
-		  ((engine? engine) engine)
-		  ((not (symbol? engine))
-                   (skribe-error 'skribe-load
-                                 "illegal engine" engine))
-		  (else engine)))
+     (let* ((ei  (*current-engine*))
 	    (path (append (cond
 			   ((not path) (skribe-path))
 			   ((string? path) (list path))
@@ -151,9 +146,9 @@
        ;; Load this file if not already done
        (unless (member filep *skribe-loaded*)
 	 (cond
-	   ((> *skribe-verbose* 1)
+	   ((> (*verbose*) 1)
 	    (format (current-error-port) "  [loading file: ~S ~S]\n" filep opt))
-	   ((> *skribe-verbose* 0)
+	   ((> (*verbose*) 0)
 	    (format (current-error-port) "  [loading file: ~S]\n" filep)))
 	 ;; Load it
 	 (with-input-from-file filep
@@ -173,7 +168,7 @@
       (skribe-error 'skribe-load
 		    (format #t "cannot find ~S in path" file)
 		    path))
-    (when (> *skribe-verbose* 0)
+    (when (> (*verbose*) 0)
       (format (current-error-port) "  [including file: ~S]\n" path))
 
     (with-input-from-file path
