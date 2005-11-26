@@ -2,6 +2,20 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2005-11-26 18:01:09 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-12
+
+    Summary:
+      Fixed the documentation's Makefile.am.
+    Revision:
+      skribilo--devel--1.2--patch-12
+
+    * doc/user/Makefile.am: Fixed GUILE_LOAD_PATH.
+    
+
+    modified files:
+     ChangeLog doc/user/Makefile.am
+
+
 2005-11-01 16:19:34 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-11
 
     Summary:
