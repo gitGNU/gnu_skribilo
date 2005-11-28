@@ -21,6 +21,7 @@
 
 (define-module (skribilo location)
   :use-module (oop goops)
+  :use-module ((skribilo utils syntax) :select (%skribilo-module-reader))
   :export (<location> location? ast-location
 	   location-file location-line location-pos))
 
@@ -32,7 +33,7 @@
 ;;;
 ;;; Code:
 
-(read-set! keywords 'prefix)
+(set-current-reader %skribilo-module-reader)
 
 
 ;;;

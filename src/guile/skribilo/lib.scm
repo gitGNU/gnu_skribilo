@@ -20,9 +20,8 @@
 ;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ;;; USA.
 
-(read-set! keywords 'prefix)
-
 (define-module (skribilo lib)
+  :use-module (skribilo utils syntax)
   :export (skribe-eval-location skribe-ast-error skribe-error
            skribe-type-error
            skribe-warning skribe-warning/ast
@@ -32,10 +31,7 @@
 	   %procedure-arity)
 
   :export-syntax (new define-markup define-simple-markup
-                  define-simple-container define-processor-markup
-
-                  ;; for compatibility
-                  unwind-protect unless when)
+                  define-simple-container define-processor-markup)
 
   :use-module (skribilo config)
   :use-module (skribilo ast)
@@ -52,6 +48,7 @@
   :use-module (ice-9 optargs))
 
 
+(set-current-reader %skribilo-module-reader)
 
 
 ;;;
@@ -253,26 +250,12 @@
 ;;; Various things.
 ;;;
 
-(define %skribe-reader (make-reader 'skribe))
 
 (define* (skribe-read #:optional (port (current-input-port)))
   (%skribe-reader port))
 
 (define (%procedure-arity proc)
     (car (procedure-property proc 'arity)))
-
-(define-macro (unwind-protect expr1 expr2)
-  ;; This is no completely correct.
-  `(dynamic-wind
-       (lambda () #f)
-       (lambda () ,expr1)
-       (lambda () ,expr2)))
-
-(define-macro (unless condition . exprs)
-  `(if (not ,condition) (begin ,@exprs)))
-
-(define-macro (when condition . exprs)
-  `(if ,condition (begin ,@exprs)))
 
 
 ;;; lib.scm ends here

@@ -19,8 +19,9 @@
 ;;; USA.
 
 (define-module (skribilo module)
-  :use-module (skribilo reader)
+  :autoload   (skribilo reader) (make-reader)
   :use-module (skribilo debug)
+  :use-module (system reader confinement) ;; `set-current-reader'
   :use-module (srfi srfi-1)
   :use-module (ice-9 optargs))
 
@@ -41,11 +42,8 @@
   '((srfi srfi-1)         ;; lists
     (srfi srfi-13)        ;; strings
     (ice-9 optargs)       ;; `define*'
-    (ice-9 and-let-star)  ;; `and-let*'
-    (ice-9 receive)       ;; `receive'
 
     (skribilo module)
-    (skribilo parameters) ;; run-time parameters
     (skribilo compat)     ;; `skribe-load-path', etc.
     (skribilo ast)        ;; `<document>', `document?', etc.
     (skribilo config)
@@ -57,25 +55,38 @@
     (skribilo writer)
     (skribilo output)
     (skribilo evaluator)
-    (skribilo color)
     (skribilo debug)
-    (skribilo source)     ;; `source-read-lines', `source-fontify', etc.
-    (skribilo coloring lisp) ;; `skribe', `scheme', `lisp'
-    (skribilo coloring xml)  ;; `xml'
     ))
+
+(define %skribilo-user-autoloads
+  ;; List of auxiliary modules that may be lazily autoloaded.
+  '(((skribilo source)        . (source-read-lines source-fontify))
+    ((skribilo coloring lisp) . (skribe scheme lisp))
+    ((skribilo coloring xml)  . (xml))
+    ((skribilo color) .
+     (skribe-color->rgb skribe-get-used-colors skribe-use-color!))
+
+    ((ice-9 and-let-star)     . (and-let*))
+    ((ice-9 receive)          . (receive))))
 
 (define %skribe-core-modules
   '("utils" "api" "bib" "index" "param" "sui"))
 
+
 (define-macro (define-skribe-module name . options)
   `(begin
      (define-module ,name
-       #:reader (make-reader 'skribe)
-       #:use-module (skribilo reader)
+       #:use-module ((skribilo reader) #:select (%default-reader))
+       #:use-module (system reader confinement)
+       #:use-module (srfi srfi-1)
+       ,@(append-map (lambda (mod)
+		       (list #:autoload (car mod) (cdr mod)))
+		     %skribilo-user-autoloads)
        ,@options)
 
      ;; Pull all the bindings that Skribe code may expect, plus those needed
      ;; to actually create and read the module.
+     ;; TODO: These should be auto-loaded.
      ,(cons 'use-modules
 	    (append %skribilo-user-imports
 		    (filter-map (lambda (mod)
@@ -83,7 +94,14 @@
 						      ,(string->symbol
 							mod))))
 				    (and (not (equal? m name)) m)))
-				%skribe-core-modules)))))
+				%skribe-core-modules)))
+
+     ;; Change the current reader to a Skribe-compatible reader.  If this
+     ;; primitive is not provided by Guile, it should be provided by the
+     ;; `confinement' module (version 0.2 and later).
+     (set-current-reader %default-reader)
+     (format #t "module: ~a  current-reader: ~a~%"
+	     (current-module) (current-reader))))
 
 
 ;; Make it available to the top-level module.

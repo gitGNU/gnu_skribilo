@@ -39,9 +39,6 @@ exec ${GUILE-guile} --debug -l $0 -c "(apply $main (cdr (command-line)))" "$@"
 ;;;;
 ;;;; Code:
 
-;; Allow for this `:style' of keywords.
-(read-set! keywords 'prefix)
-
 (let ((gensym-orig gensym))
   ;; In Skribe, `gensym' expects a symbol as its (optional) argument, while
   ;; Guile's `gensym' expect a string.  XXX
@@ -62,7 +59,11 @@ exec ${GUILE-guile} --debug -l $0 -c "(apply $main (cdr (command-line)))" "$@"
 
 (define-module (skribilo)
   :autoload (skribilo module) (make-run-time-module)
-  :autoload (skribilo engine) (*current-engine*))
+  :autoload (skribilo engine) (*current-engine*)
+  :use-module (skribilo utils syntax))
+
+;; Install the Skribilo module syntax reader.
+(set-current-reader %skribilo-module-reader)
 
 (use-modules (skribilo evaluator)
 	     (skribilo debug)
@@ -405,7 +406,6 @@ Processes a Skribilo/Skribe source file and produces its output.
     (debug-enable 'debug)
     (debug-enable 'backtrace)
     (debug-enable 'procnames)
-    (read-enable  'positions)
 
     (cond (help-wanted    (begin (skribilo-show-help) (exit 1)))
 	  (version-wanted (begin (skribilo-show-version) (exit 1))))
@@ -422,7 +422,10 @@ Processes a Skribilo/Skribe source file and produces its output.
     (parameterize ((*current-engine* engine)
 		   (*document-path*  (cons load-path (*document-path*)))
 		   (*bib-path*       (cons bib-path (*bib-path*)))
-		   (*verbose*        (option-ref options 'verbose #f)))
+		   (*verbose*        (let ((v (option-ref options
+							  'verbose 0)))
+				       (if (number? v) v
+					   (if v 1 0)))))
 
       ;; Load the user rc file
       ;;(load-rc)

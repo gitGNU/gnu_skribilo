@@ -2941,8 +2941,8 @@
                (display (lout-embedded-postscript-code
                          (filter pdfmark))))))
 
-For movies, see
-http://www.tug.org/tex-archive/macros/latex/contrib/movie15/movie15.sty .
+;; For movies, see
+;; http://www.tug.org/tex-archive/macros/latex/contrib/movie15/movie15.sty .
 (markup-writer 'slide-embed
    :options '(:alt :geometry :rgeometry :geometry-opt :command)
    ;; FIXME:  `pdfmark'.

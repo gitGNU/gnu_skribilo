@@ -22,6 +22,7 @@
 (define-module (skribilo ast)
   :use-module (oop goops)
   :autoload (skribilo location) (location?)
+  :use-module (skribilo utils syntax)
   :export (<ast> ast? ast-loc ast-loc-set!
 		 ast-parent ast->string
 
@@ -54,7 +55,7 @@
 ;;;
 ;;; Code:
 
-(read-set! keywords 'prefix)
+(set-current-reader %skribilo-module-reader)
 
 (define *node-table* (make-hash-table))
 					; Used to stores the nodes of  an AST.

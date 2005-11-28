@@ -23,7 +23,7 @@
 (define-module (skribilo evaluator)
   :export (skribe-eval skribe-eval-port skribe-load skribe-load-options
 	   skribe-include)
-  :autoload (skribilo parameters) (*verbose*)
+  :autoload (skribilo parameters) (*verbose* *document-path*)
   :autoload (skribilo location)   (<location>)
   :autoload (skribilo ast)        (ast? markup?)
   :autoload (skribilo engine)     (engine? find-engine engine-ident)
@@ -33,7 +33,8 @@
   :autoload (skribilo resolve)    (resolve!))
 
 
-(use-modules (skribilo debug)
+(use-modules (skribilo utils syntax)
+	     (skribilo debug)
 	     (skribilo output)
              (skribilo lib)
 
@@ -43,7 +44,7 @@
 	     (srfi srfi-1))
 
 
-
+(set-current-reader %skribilo-module-reader)
 
 
 (define *skribe-loaded* '())		;; List of already loaded files
@@ -71,7 +72,7 @@
 ;;;
 ;;; SKRIBE-EVAL
 ;;;
-(define* (skribe-eval a e #:key (env '()))
+(define* (skribe-eval a e :key (env '()))
   (with-debug 2 'skribe-eval
      (debug-item "a=" a " e=" (engine-ident e))
      (let ((a2 (resolve! a e env)))
@@ -83,8 +84,8 @@
 ;;;
 ;;; SKRIBE-EVAL-PORT
 ;;;
-(define* (skribe-eval-port port engine #:key (env '())
-			                     (reader %default-reader))
+(define* (skribe-eval-port port engine :key (env '())
+			                    (reader %default-reader))
   (with-debug 2 'skribe-eval-port
      (debug-item "engine=" engine)
      (debug-item "reader=" reader)
@@ -112,7 +113,7 @@
 (define (skribe-load-options)
   *skribe-load-options*)
 
-(define* (skribe-load file #:key (engine #f) (path #f) #:rest opt)
+(define* (skribe-load file :key (engine #f) (path #f) :rest opt)
   (with-debug 4 'skribe-load
      (debug-item "  engine=" engine)
      (debug-item "  path=" path)
@@ -120,7 +121,7 @@
 
      (let* ((ei  (*current-engine*))
 	    (path (append (cond
-			   ((not path) (skribe-path))
+			   ((not path) (*document-path*))
 			   ((string? path) (list path))
 			   ((not (and (list? path) (every? string? path)))
 			    (skribe-error 'skribe-load "illegal path" path))
@@ -159,7 +160,7 @@
 ;;;
 ;;; SKRIBE-INCLUDE
 ;;;
-(define* (skribe-include file #:optional (path (skribe-path)))
+(define* (skribe-include file :optional (path (*document-path*)))
   (unless (every string? path)
     (skribe-error 'skribe-include "illegal path" path))
 

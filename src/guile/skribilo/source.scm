@@ -20,16 +20,17 @@
 ;;;; USA.
 ;;;;
 
-
 (define-module (skribilo source)
   :export (<language> language? language-extractor language-fontifier
 	   source-read-lines source-read-definition source-fontify)
+  :use-module (skribilo utils syntax)
   :use-module (skribilo parameters)
   :use-module (skribilo lib)
   :use-module (oop goops)
   :use-module (ice-9 rdelim))
 
-(read-set! keywords 'prefix)
+
+(set-current-reader %skribilo-module-reader)
 
 
 ;;;

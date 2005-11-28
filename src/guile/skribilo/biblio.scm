@@ -22,7 +22,7 @@
 
 (define-module (skribilo biblio)
   :use-module (skribilo runtime)
-  :use-module (skribilo lib)      ;; `when', `unless'
+  :use-module (skribilo utils syntax) ;; `when', `unless'
   :use-module (skribilo module)
   :use-module (skribilo skribe bib) ;; `make-bib-entry'
   :autoload   (skribilo parameters)  (*bib-path*)
@@ -30,6 +30,7 @@
   :export (bib-table? make-bib-table default-bib-table
 	   bib-add!))
 
+(set-current-reader %skribilo-module-reader)
 
 
 ;; FIXME: Should be a fluid?
