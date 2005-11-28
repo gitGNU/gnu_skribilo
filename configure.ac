@@ -28,6 +28,7 @@ AC_OUTPUT([Makefile
 	   src/guile/Makefile
 	   src/guile/skribilo/Makefile
 	   src/guile/skribilo/config.scm
+	   src/guile/skribilo/utils/Makefile
 	   src/guile/skribilo/engine/Makefile
 	   src/guile/skribilo/reader/Makefile
 	   src/guile/skribilo/package/Makefile

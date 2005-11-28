@@ -62,9 +62,6 @@ exec ${GUILE-guile} --debug -l $0 -c "(apply $main (cdr (command-line)))" "$@"
   :autoload (skribilo engine) (*current-engine*)
   :use-module (skribilo utils syntax))
 
-;; Install the Skribilo module syntax reader.
-(set-current-reader %skribilo-module-reader)
-
 (use-modules (skribilo evaluator)
 	     (skribilo debug)
 	     (skribilo parameters)
@@ -75,13 +72,18 @@ exec ${GUILE-guile} --debug -l $0 -c "(apply $main (cdr (command-line)))" "$@"
 	     (ice-9 getopt-long))
 
 
+;; Install the Skribilo module syntax reader.
+(set-current-reader %skribilo-module-reader)
+
+(if (not (keyword? :kw))
+    (error "guile-reader sucks"))
 
 
 
 
-(define* (process-option-specs longname #:key (alternate #f)
-			       (arg #f) (help #f)
-			       #:rest thunk)
+(define* (process-option-specs longname
+			       :key (alternate #f) (arg #f) (help #f)
+			       :rest thunk)
   "Process STkLos-like option specifications and return getopt-long option
 specifications."
   `(,(string->symbol longname)
@@ -181,6 +183,7 @@ specifications."
    (with-input-from-string expr
       (lambda () (eval (read))))))
 
+
 ; (define skribilo-options
 ;   ;; Skribilo options in getopt-long's format, as computed by
 ;   ;; `raw-options->getopt-long'.
@@ -217,7 +220,7 @@ Processes a Skribilo/Skribe source file and produces its output.
 
   --help           Give this help list
   --version        Print program version
-"))
+~%"))
 
 (define (skribilo-show-version)
   (format #t "skribilo ~a~%" (skribilo-release)))
@@ -371,15 +374,22 @@ Processes a Skribilo/Skribe source file and produces its output.
 ; 		   *skribe-src*)
 ; 	 (skribe-eval-port (current-input-port) *skribe-engine*))))
 
+(define *skribilo-output-port* (make-parameter (current-output-port)))
+
 (define (doskribe)
-  (let ((user-module (current-module)))
+  (let ((output-port (current-output-port))
+	(user-module (current-module)))
     (dynamic-wind
 	(lambda ()
+	  ;; FIXME: Using this technique, anything written to `stderr' will
+	  ;; also end up in the output file (e.g. Guile warnings).
+	  (set-current-output-port (*skribilo-output-port*))
 	  (set-current-module (make-run-time-module)))
 	(lambda ()
-	  (format #t "engine is ~a~%" (*current-engine*))
+	  ;;(format #t "engine is ~a~%" (*current-engine*))
 	  (skribe-eval-port (current-input-port) (*current-engine*)))
 	(lambda ()
+	  (set-current-output-port output-port)
 	  (set-current-module user-module)))))
 
 
@@ -393,6 +403,7 @@ Processes a Skribilo/Skribe source file and produces its output.
 					 skribilo-options))
 	 (engine            (string->symbol
 			     (option-ref options 'target "html")))
+	 (output-file       (option-ref options 'output #f))
 	 (debugging-level   (option-ref options 'debug "0"))
 	 (load-path         (option-ref options 'load-path "."))
 	 (bib-path          (option-ref options 'bib-path "."))
@@ -446,26 +457,22 @@ Processes a Skribilo/Skribe source file and produces its output.
 	    (error "you can specify at most one input file and one output file"
 		   files))
 
-	(let* ((source-file (if (null? files) #f (car files)))
-	       (dest-file (if (or (not source-file)
-				  (null? (cdr files)))
-			      #f
-			      (cadr files)))
-	       (do-it! (lambda ()
-			 (if (string? dest-file)
-			     (with-output-to-file dest-file doskribe)
-			     (doskribe)))))
+	(let* ((source-file (if (null? files) #f (car files))))
 
-	  (parameterize ((*destination-file* dest-file)
-			 (*source-file*      source-file))
+	  (if (and output-file (file-exists? output-file))
+	      (delete-file output-file))
 
-	    (if (and dest-file (file-exists? dest-file))
-		(delete-file dest-file))
+	  (parameterize ((*destination-file* output-file)
+			 (*source-file*      source-file)
+			 (*skribilo-output-port*
+			  (if (string? output-file)
+			      (open-output-file output-file)
+			      (current-output-port))))
 
 	    ;;	(start-stack 7
 	    (if source-file
-		(with-input-from-file source-file do-it!)
-		(do-it!))))))))
+		(with-input-from-file source-file doskribe)
+		(doskribe))))))))
 
 
 (define main skribilo)

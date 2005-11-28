@@ -1,8 +1,8 @@
+;;; debug.scm  --  Debug facilities.
 ;;;
-;;; debug.scm	-- Debug Facilities (stolen to Manuel Serrano)
+;;; Copyright 2003-2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
+;;; Copyright 2005  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
-;;;
-;;; Copyright © 2003-2004 Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
 ;;; This program is free software; you can redistribute it and/or modify
 ;;; it under the terms of the GNU General Public License as published by
 ;;; the Free Software Foundation; either version 2 of the License, or
@@ -17,19 +17,20 @@
 ;;; along with this program; if not, write to the Free Software
 ;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ;;; USA.
-;;;
-;;;           Author: Erick Gallesio [eg@essi.fr]
-;;;    Creation date: 10-Aug-2003 20:45 (eg)
-;;; Last file update: 28-Oct-2004 13:16 (eg)
-;;;
 
 
 (define-module (skribilo debug)
-   :export (with-debug %with-debug
-	    debug-item skribe-debug set-skribe-debug! add-skribe-debug-symbol
-	    no-debug-color)
-   :use-module (srfi srfi-17))
+  :export (with-debug %with-debug
+	   debug-item skribe-debug set-skribe-debug! add-skribe-debug-symbol
+	   no-debug-color)
+  :use-module (skribilo utils syntax)
+  :use-module (srfi srfi-17))
 
+(set-current-reader %skribilo-module-reader)
+
+
+;;; FIXME: Use SRFI-39 fluids.
+;;; FIXME: Move this to `parameters.scm'?
 
 (define *skribe-debug*			0)
 (define *skribe-debug-symbols*		'())
@@ -160,3 +161,5 @@
 ;	(debug-item 'foo4.2))
 ;      (debug-item 'foo3.3))
 ;   (debug-item 'foo2.4))
+
+;;; debug.scm ends here

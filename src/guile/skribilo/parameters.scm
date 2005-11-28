@@ -35,18 +35,39 @@
 ;;; Switches.
 ;;;
 
-(define-public *verbose*       (make-parameter #f))
-(define-public *warning*       (make-parameter 5))
+(define (make-expect pred pred-name parameter)
+  (let ((msg (string-append parameter ": " pred-name " expected")))
+    (lambda (val)
+      (if (pred val)
+	  val
+	  (error msg val)))))
+
+(define-macro (define-number-parameter name)
+  `(define-public ,name
+     (make-parameter 0
+		     (make-expect number? "number" ,(symbol->string name)))))
+
+(define-number-parameter *verbose*)
+(define-number-parameter *warning*)
+
 (define-public *load-rc-file?* (make-parameter #f))
 
 ;;;
 ;;; Paths.
 ;;;
 
-(define-public *document-path* (make-parameter (list ".")))
-(define-public *bib-path*      (make-parameter (list ".")))
-(define-public *source-path*   (make-parameter (list ".")))
-(define-public *image-path*    (make-parameter (list ".")))
+
+(define-macro (define-path-parameter name)
+  `(define-public ,name
+     (make-parameter (list ".")
+		     (make-expect list? "list" ,(symbol->string name)))))
+
+
+(define-path-parameter *document-path*)
+(define-path-parameter *bib-path*)
+(define-path-parameter *source-path*)
+(define-path-parameter *image-path*)
+
 
 ;;;
 ;;; Files.

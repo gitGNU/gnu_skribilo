@@ -59,8 +59,8 @@
 	(let ((file (source-property expr 'filename))
 	      (line (source-property expr 'line))
 	      (column (source-property expr 'column)))
-	  (format #t "~%~%*** source props for `~a': ~a~%~%"
-		  result (source-properties expr))
+; 	  (format #t "~%* source props for `~a': ~a~%"
+; 		  result (source-properties expr))
 	  (slot-set! result 'loc
 		     (make <location>
 		       :file file :line line :pos column))))

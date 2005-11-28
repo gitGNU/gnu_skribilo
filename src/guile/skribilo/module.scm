@@ -23,7 +23,10 @@
   :use-module (skribilo debug)
   :use-module (system reader confinement) ;; `set-current-reader'
   :use-module (srfi srfi-1)
-  :use-module (ice-9 optargs))
+  :use-module (ice-9 optargs)
+  :use-module (skribilo utils syntax))
+
+(set-current-reader %skribilo-module-reader)
 
 ;;; Author:  Ludovic Courtès
 ;;;
@@ -43,6 +46,7 @@
     (srfi srfi-13)        ;; strings
     (ice-9 optargs)       ;; `define*'
 
+    (skribilo utils syntax) ;; `unless', `when', etc.
     (skribilo module)
     (skribilo compat)     ;; `skribe-load-path', etc.
     (skribilo ast)        ;; `<document>', `document?', etc.
@@ -73,14 +77,18 @@
   '("utils" "api" "bib" "index" "param" "sui"))
 
 
+
+;; The very macro to turn a legacy Skribe file (which uses Skribe's syntax)
+;; into a Guile module.
+
 (define-macro (define-skribe-module name . options)
   `(begin
      (define-module ,name
-       #:use-module ((skribilo reader) #:select (%default-reader))
-       #:use-module (system reader confinement)
-       #:use-module (srfi srfi-1)
+       :use-module ((skribilo reader) :select (%default-reader))
+       :use-module (system reader confinement)
+       :use-module (srfi srfi-1)
        ,@(append-map (lambda (mod)
-		       (list #:autoload (car mod) (cdr mod)))
+		       (list :autoload (car mod) (cdr mod)))
 		     %skribilo-user-autoloads)
        ,@options)
 
@@ -99,9 +107,7 @@
      ;; Change the current reader to a Skribe-compatible reader.  If this
      ;; primitive is not provided by Guile, it should be provided by the
      ;; `confinement' module (version 0.2 and later).
-     (set-current-reader %default-reader)
-     (format #t "module: ~a  current-reader: ~a~%"
-	     (current-module) (current-reader))))
+     (set-current-reader %default-reader)))
 
 
 ;; Make it available to the top-level module.
@@ -160,7 +166,7 @@ execution of Skribilo/Skribe code."
 (define-public (load-skribilo-file file reader-name)
   (load-file-with-read file (make-reader reader-name) (current-module)))
 
-(define*-public (load-skribe-modules #:optional (debug? #f))
+(define*-public (load-skribe-modules :optional (debug? #f))
   "Load the core Skribe modules, both in the @code{(skribilo skribe)}
 hierarchy and in @code{(run-time-module)}."
   (for-each (lambda (mod)
