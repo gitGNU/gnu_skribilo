@@ -2879,7 +2879,7 @@
 ;* At some point, we might want to move this to `slide.scm'.           */
 ;*---------------------------------------------------------------------*/
 
-(use-modules (skribilo packages slide))
+(use-modules (skribilo package slide))
 
 (markup-writer 'slide
    :options '(:title :number :toc :ident) ;; '(:bg :vspace :image)

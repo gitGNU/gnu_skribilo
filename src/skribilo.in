@@ -1,0 +1,7 @@
+#!/bin/sh
+# The `skribilo' executable.
+
+main='(module-ref (resolve-module '\''(skribilo)) '\'main')'
+exec ${GUILE-@GUILE@} --debug \
+                      -c "(apply $main (cdr (command-line)))" "$@"
+
