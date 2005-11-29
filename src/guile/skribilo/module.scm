@@ -146,38 +146,4 @@ execution of Skribilo/Skribe code."
   %skribilo-user-module)
 
 
-;; FIXME:  This will eventually be replaced by the per-module reader thing in
-;;         Guile.
-(define-public (load-file-with-read file read module)
-  (with-debug 5 'load-file-with-read
-     (debug-item "loading " file)
-
-     (with-input-from-file (search-path %load-path file)
-       (lambda ()
-;      (format #t "load-file-with-read: ~a~%" read)
-	 (let loop ((sexp (read))
-		    (result #f))
-	   (if (not (eof-object? sexp))
-	       (begin
-;              (format #t "preparing to evaluate `~a'~%" sexp)
-		 (primitive-eval sexp)
-		 (loop (read)))))))))
-
-(define-public (load-skribilo-file file reader-name)
-  (load-file-with-read file (make-reader reader-name) (current-module)))
-
-(define*-public (load-skribe-modules :optional (debug? #f))
-  "Load the core Skribe modules, both in the @code{(skribilo skribe)}
-hierarchy and in @code{(run-time-module)}."
-  (for-each (lambda (mod)
-              (format #t "~~ loading skribe module `~a'...~%" mod)
-              (load-skribilo-file (string-append "skribilo/skribe/"
-                                                 mod ".scm")
-                                  'skribe)
-              (module-use! (run-time-module)
-                           (resolve-module `(skribilo skribe
-                                             ,(string->symbol mod)))))
-            %skribe-core-modules))
-
-
 ;;; module.scm ends here

@@ -55,15 +55,15 @@
 ;;;
 (define (%evaluate expr)
   (let ((result (eval expr (current-module))))
-    (if (or (ast? result) (markup? result))
+
+    (if (ast? result)
 	(let ((file (source-property expr 'filename))
 	      (line (source-property expr 'line))
 	      (column (source-property expr 'column)))
-; 	  (format #t "~%* source props for `~a': ~a~%"
-; 		  result (source-properties expr))
 	  (slot-set! result 'loc
 		     (make <location>
 		       :file file :line line :pos column))))
+
     result))
 
 
@@ -93,9 +93,7 @@
      (let ((e (if (symbol? engine) (find-engine engine) engine)))
        (debug-item "e=" e)
        (if (not (engine? e))
-	   (begin
-	     (format #t "engine: ~a~%" e)
-	     (skribe-error 'skribe-eval-port "cannot find engine" engine))
+	   (skribe-error 'skribe-eval-port "cannot find engine" engine)
 	   (let loop ((exp (reader port)))
 	     (with-debug 10 'skribe-eval-port
 		(debug-item "exp=" exp))

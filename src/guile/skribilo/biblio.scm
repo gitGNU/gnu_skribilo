@@ -25,10 +25,12 @@
   :use-module (skribilo utils syntax) ;; `when', `unless'
   :use-module (skribilo module)
   :use-module (skribilo skribe bib) ;; `make-bib-entry'
+  :autoload   (skribilo reader)      (%default-reader)
   :autoload   (skribilo parameters)  (*bib-path*)
   :autoload   (ice-9 format)         (format)
   :export (bib-table? make-bib-table default-bib-table
-	   bib-add!))
+	   bib-add! bib-duplicate
+	   skribe-open-bib-file parse-bib))
 
 (set-current-reader %skribilo-module-reader)
 
@@ -92,24 +94,25 @@
 ;;;
 ;;; ======================================================================
 (define (parse-bib table port)
-  (if (not (bib-table? table))
-      (skribe-error 'parse-bib "Illegal bibliography table" table)
-      (let ((from (port-file-name port)))
-	(let Loop ((entry (read port)))
-	  (unless (eof-object? entry)
-	    (cond
-	      ((and (list? entry) (> (length entry) 2))
-	       (let* ((kind   (car entry))
-		      (key    (format #f "~A" (cadr entry)))
-		      (fields (cddr entry))
-		      (old    (hash-ref table key)))
-		 (if old
-		     (bib-duplicate ident from old)
-		     (hash-set! table key
-				(make-bib-entry kind key fields from)))
-		 (Loop (read port))))
-	      (else
-	       (%bib-error 'bib-parse entry))))))))
+  (let ((read %default-reader)) ;; FIXME: We should use a fluid
+    (if (not (bib-table? table))
+	(skribe-error 'parse-bib "Illegal bibliography table" table)
+	(let ((from (port-filename port)))
+	  (let Loop ((entry (read port)))
+	    (unless (eof-object? entry)
+	      (cond
+	       ((and (list? entry) (> (length entry) 2))
+		(let* ((kind   (car entry))
+		       (key    (format #f "~A" (cadr entry)))
+		       (fields (cddr entry))
+		       (old    (hash-ref table key)))
+		  (if old
+		      (bib-duplicate ident from old)
+		      (hash-set! table key
+				 (make-bib-entry kind key fields from)))
+		  (Loop (read port))))
+	       (else
+		(%bib-error 'bib-parse entry)))))))))
 
 
 ;;; ======================================================================

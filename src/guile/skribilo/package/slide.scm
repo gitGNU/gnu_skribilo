@@ -119,33 +119,52 @@
 ;*---------------------------------------------------------------------*/
 (define %slide-old-ref ref)
 
-(define-markup (ref #!rest opt #!key (slide #f))
-   (if (not slide)
-       (apply %slide-old-ref opt)
-       (new unresolved
-	  (proc (lambda (n e env)
-		   (cond
-		      ((eq? slide 'next)
-		       (let ((c (assq n %slide-the-slides)))
-			  (if (pair? c)
-			      (handle (cadr c))
-			      #f)))
-		      ((eq? slide 'prev)
-		       (let ((c (assq n (reverse %slide-the-slides))))
-			  (if (pair? c)
-			      (handle (cadr c))
-			      #f)))
-		      ((number? slide)
-		       (let loop ((s %slide-the-slides))
-			  (cond
-			     ((null? s)
-			      #f)
-			     ((= slide (markup-option (car s) :number))
-			      (handle (car s)))
-			     (else
-			      (loop (cdr s))))))
-		      (else
-		       #f)))))))
+;; Extend the definition of `ref'.
+;; FIXME: This technique breaks `ref' for some reason.
+; (set! ref
+;       (lambda args
+; 	;; Filter out ARGS and look for a `:slide' keyword argument.
+; 	(let loop ((slide #f)
+; 		   (opt '())
+; 		   (args args))
+; 	  (if (null? args)
+; 	      (set! opt (reverse! opt))
+; 	      (let ((s? (eq? (car args) :slide)))
+; 		(loop (if s? (cadr args) #f)
+; 		      (if s? opt (cons (car args) opt))
+; 		      (if s? (cddr args) (cdr args)))))
+
+; 	  (format (current-error-port)
+; 		  "slide.scm:ref: slide=~a opt=~a~%" slide opt)
+
+; 	  (if (not slide)
+; 	      (apply %slide-old-ref opt)
+; 	      (new unresolved
+; 		   (proc (lambda (n e env)
+; 			   (cond
+; 			    ((eq? slide 'next)
+; 			     (let ((c (assq n %slide-the-slides)))
+; 			       (if (pair? c)
+; 				   (handle (cadr c))
+; 				   #f)))
+; 			    ((eq? slide 'prev)
+; 			     (let ((c (assq n (reverse %slide-the-slides))))
+; 			       (if (pair? c)
+; 				   (handle (cadr c))
+; 				   #f)))
+; 			    ((number? slide)
+; 			     (let loop ((s %slide-the-slides))
+; 			       (cond
+; 				((null? s)
+; 				 #f)
+; 				((= slide (markup-option
+; 					   (car s) :number))
+; 				 (handle (car s)))
+; 				(else
+; 				 (loop (cdr s))))))
+; 			    (else
+; 			     #f)))))))))
+
 
 ;*---------------------------------------------------------------------*/
 ;*    slide-pause ...                                                  */
@@ -368,6 +387,8 @@
 (define &latex-play #f)
 (define &latex-play* #f)
 
+;;; FIXME: We shouldn't load `latex.scm' from here.  Instead, we should
+;;; register a hook on its load.
 (let ((le (find-engine 'latex)))
    ;; slide-vspace
    (markup-writer 'slide-vspace le

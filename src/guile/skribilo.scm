@@ -393,6 +393,7 @@ Processes a Skribilo/Skribe source file and produces its output.
 	  (set-current-module user-module)))))
 
 
+
 ;;;; ======================================================================
 ;;;;
 ;;;;				      M A I N
@@ -405,6 +406,7 @@ Processes a Skribilo/Skribe source file and produces its output.
 			     (option-ref options 'target "html")))
 	 (output-file       (option-ref options 'output #f))
 	 (debugging-level   (option-ref options 'debug "0"))
+	 (warning-level     (option-ref options 'warning "2"))
 	 (load-path         (option-ref options 'load-path "."))
 	 (bib-path          (option-ref options 'bib-path "."))
 	 (preload           '())
@@ -433,6 +435,7 @@ Processes a Skribilo/Skribe source file and produces its output.
     (parameterize ((*current-engine* engine)
 		   (*document-path*  (cons load-path (*document-path*)))
 		   (*bib-path*       (cons bib-path (*bib-path*)))
+		   (*warning*        (string->number warning-level))
 		   (*verbose*        (let ((v (option-ref options
 							  'verbose 0)))
 				       (if (number? v) v
