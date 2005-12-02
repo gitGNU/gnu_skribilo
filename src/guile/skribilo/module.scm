@@ -64,7 +64,11 @@
 
 (define %skribilo-user-autoloads
   ;; List of auxiliary modules that may be lazily autoloaded.
-  '(((skribilo source)        . (source-read-lines source-fontify))
+  '(((skribilo engine lout)   . (lout-illustration
+				 ;; FIXME: The following should eventually be
+				 ;;        removed from here.
+				 lout-structure-number-string))
+    ((skribilo source)        . (source-read-lines source-fontify))
     ((skribilo coloring lisp) . (skribe scheme lisp))
     ((skribilo coloring xml)  . (xml))
     ((skribilo color) .

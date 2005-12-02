@@ -1,30 +1,30 @@
-;*=====================================================================*/
-;*    Lout Skribe engine                                               */
-;*    -------------------------------------------------------------    */
-;*    (C) Copyright 2004, 2005 Ludovic Courtès                         */
-;*                                                                     */
-;*    Taken from `lcourtes@laas.fr--2004-libre/                        */
-;*                skribe-lout--main--0.2--patch-15'                    */
-;*    Based on `latex.skr', copyright 2003,2004 Manuel Serrano.        */
-;*=====================================================================*/
+;;; lout.scm  --  A Lout engine.
+;;;
+;;; Copyright 2004, 2005  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;;
+;;;
+;;; This program is free software; you can redistribute it and/or modify
+;;; it under the terms of the GNU General Public License as published by
+;;; the Free Software Foundation; either version 2 of the License, or
+;;; (at your option) any later version.
+;;;
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;;
+;;; You should have received a copy of the GNU General Public License
+;;; along with this program; if not, write to the Free Software
+;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+;;; USA.
 
-(define-skribe-module (skribilo engine lout))
+;;;    Taken from `lcourtes@laas.fr--2004-libre',
+;;;               `skribe-lout--main--0.2--patch-15'.
+;;;    Based on `latex.skr', copyright 2003, 2004 Manuel Serrano.
 
-;*  This is the Lout engine, part of Skribilo.
-;*
-;*  Skribe is free software; you can redistribute it and/or modify
-;*  it under the terms of the GNU General Public License as published by
-;*  the Free Software Foundation; either version 2 of the License, or
-;*  (at your option) any later version.
-;*
-;*  Skribe is distributed in the hope that it will be useful,
-;*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-;*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;*  GNU General Public License for more details.
-;*
-;*  You should have received a copy of the GNU General Public License
-;*  along with Skribe; if not, write to the Free Software
-;*  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+(define-skribe-module (skribilo engine lout)
+  :autoload (ice-9 rdelim)  (read-line))
 
 
 ;*---------------------------------------------------------------------*/
@@ -1277,8 +1277,10 @@
 		     "`document-type' should be one of `book', `report' or `doc'"
 		     doc-type)))))
 
-(define (lout-structure-number-string markup)
+(define-public (lout-structure-number-string markup)
   ;; Return a structure number string such as "1.2".
+  ;; FIXME: External code has started to rely on this.  This should be
+  ;;        generalized and moved elsewhere.
   (let loop ((struct markup))
     (if (document? struct)
 	""
@@ -1496,7 +1498,7 @@
 ;*    footnote ...                                                     */
 ;*---------------------------------------------------------------------*/
 (markup-writer 'footnote
-   :options '(:number)
+   :options '(:label)
    :before (lambda (n e)
 	     (let ((number (markup-option n :number))
 		   (use-number?
@@ -2777,7 +2779,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    Illustrations                                                    */
 ;*---------------------------------------------------------------------*/
-(define (lout-illustration . args)
+(define-public (lout-illustration . args)
   ;; Introduce a Lout illustration (such as a diagram) whose code is either
   ;; the body of `lout-illustration' or the contents of `file'.  For engines
   ;; other than Lout, an EPS file is produced and then converted if needed.
