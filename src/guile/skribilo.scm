@@ -39,9 +39,6 @@ exec ${GUILE-guile} --debug -l $0 -c "(apply $main (cdr (command-line)))" "$@"
 ;;;;
 ;;;; Code:
 
-;; Allow for this `:style' of keywords.
-(read-set! keywords 'prefix)
-
 (let ((gensym-orig gensym))
   ;; In Skribe, `gensym' expects a symbol as its (optional) argument, while
   ;; Guile's `gensym' expect a string.  XXX
@@ -62,7 +59,8 @@ exec ${GUILE-guile} --debug -l $0 -c "(apply $main (cdr (command-line)))" "$@"
 
 (define-module (skribilo)
   :autoload (skribilo module) (make-run-time-module)
-  :autoload (skribilo engine) (*current-engine*))
+  :autoload (skribilo engine) (*current-engine*)
+  :use-module (skribilo utils syntax))
 
 (use-modules (skribilo evaluator)
 	     (skribilo debug)
@@ -74,13 +72,18 @@ exec ${GUILE-guile} --debug -l $0 -c "(apply $main (cdr (command-line)))" "$@"
 	     (ice-9 getopt-long))
 
 
+;; Install the Skribilo module syntax reader.
+(set-current-reader %skribilo-module-reader)
+
+(if (not (keyword? :kw))
+    (error "guile-reader sucks"))
 
 
 
 
-(define* (process-option-specs longname #:key (alternate #f)
-			       (arg #f) (help #f)
-			       #:rest thunk)
+(define* (process-option-specs longname
+			       :key (alternate #f) (arg #f) (help #f)
+			       :rest thunk)
   "Process STkLos-like option specifications and return getopt-long option
 specifications."
   `(,(string->symbol longname)
@@ -180,6 +183,7 @@ specifications."
    (with-input-from-string expr
       (lambda () (eval (read))))))
 
+
 ; (define skribilo-options
 ;   ;; Skribilo options in getopt-long's format, as computed by
 ;   ;; `raw-options->getopt-long'.
@@ -216,7 +220,7 @@ Processes a Skribilo/Skribe source file and produces its output.
 
   --help           Give this help list
   --version        Print program version
-"))
+~%"))
 
 (define (skribilo-show-version)
   (format #t "skribilo ~a~%" (skribilo-release)))
@@ -370,18 +374,26 @@ Processes a Skribilo/Skribe source file and produces its output.
 ; 		   *skribe-src*)
 ; 	 (skribe-eval-port (current-input-port) *skribe-engine*))))
 
+(define *skribilo-output-port* (make-parameter (current-output-port)))
+
 (define (doskribe)
-  (let ((user-module (current-module)))
+  (let ((output-port (current-output-port))
+	(user-module (current-module)))
     (dynamic-wind
 	(lambda ()
+	  ;; FIXME: Using this technique, anything written to `stderr' will
+	  ;; also end up in the output file (e.g. Guile warnings).
+	  (set-current-output-port (*skribilo-output-port*))
 	  (set-current-module (make-run-time-module)))
 	(lambda ()
-	  (format #t "engine is ~a~%" (*current-engine*))
+	  ;;(format #t "engine is ~a~%" (*current-engine*))
 	  (skribe-eval-port (current-input-port) (*current-engine*)))
 	(lambda ()
+	  (set-current-output-port output-port)
 	  (set-current-module user-module)))))
 
 
+
 ;;;; ======================================================================
 ;;;;
 ;;;;				      M A I N
@@ -392,7 +404,9 @@ Processes a Skribilo/Skribe source file and produces its output.
 					 skribilo-options))
 	 (engine            (string->symbol
 			     (option-ref options 'target "html")))
+	 (output-file       (option-ref options 'output #f))
 	 (debugging-level   (option-ref options 'debug "0"))
+	 (warning-level     (option-ref options 'warning "2"))
 	 (load-path         (option-ref options 'load-path "."))
 	 (bib-path          (option-ref options 'bib-path "."))
 	 (preload           '())
@@ -405,7 +419,6 @@ Processes a Skribilo/Skribe source file and produces its output.
     (debug-enable 'debug)
     (debug-enable 'backtrace)
     (debug-enable 'procnames)
-    (read-enable  'positions)
 
     (cond (help-wanted    (begin (skribilo-show-help) (exit 1)))
 	  (version-wanted (begin (skribilo-show-version) (exit 1))))
@@ -422,7 +435,11 @@ Processes a Skribilo/Skribe source file and produces its output.
     (parameterize ((*current-engine* engine)
 		   (*document-path*  (cons load-path (*document-path*)))
 		   (*bib-path*       (cons bib-path (*bib-path*)))
-		   (*verbose*        (option-ref options 'verbose #f)))
+		   (*warning*        (string->number warning-level))
+		   (*verbose*        (let ((v (option-ref options
+							  'verbose 0)))
+				       (if (number? v) v
+					   (if v 1 0)))))
 
       ;; Load the user rc file
       ;;(load-rc)
@@ -443,26 +460,22 @@ Processes a Skribilo/Skribe source file and produces its output.
 	    (error "you can specify at most one input file and one output file"
 		   files))
 
-	(let* ((source-file (if (null? files) #f (car files)))
-	       (dest-file (if (or (not source-file)
-				  (null? (cdr files)))
-			      #f
-			      (cadr files)))
-	       (do-it! (lambda ()
-			 (if (string? dest-file)
-			     (with-output-to-file dest-file doskribe)
-			     (doskribe)))))
+	(let* ((source-file (if (null? files) #f (car files))))
 
-	  (parameterize ((*destination-file* dest-file)
-			 (*source-file*      source-file))
+	  (if (and output-file (file-exists? output-file))
+	      (delete-file output-file))
 
-	    (if (and dest-file (file-exists? dest-file))
-		(delete-file dest-file))
+	  (parameterize ((*destination-file* output-file)
+			 (*source-file*      source-file)
+			 (*skribilo-output-port*
+			  (if (string? output-file)
+			      (open-output-file output-file)
+			      (current-output-port))))
 
 	    ;;	(start-stack 7
 	    (if source-file
-		(with-input-from-file source-file do-it!)
-		(do-it!))))))))
+		(with-input-from-file source-file doskribe)
+		(doskribe))))))))
 
 
 (define main skribilo)

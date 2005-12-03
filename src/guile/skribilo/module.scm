@@ -19,10 +19,14 @@
 ;;; USA.
 
 (define-module (skribilo module)
-  :use-module (skribilo reader)
+  :autoload   (skribilo reader) (make-reader)
   :use-module (skribilo debug)
+  :use-module (system reader confinement) ;; `set-current-reader'
   :use-module (srfi srfi-1)
-  :use-module (ice-9 optargs))
+  :use-module (ice-9 optargs)
+  :use-module (skribilo utils syntax))
+
+(set-current-reader %skribilo-module-reader)
 
 ;;; Author:  Ludovic Courtès
 ;;;
@@ -41,11 +45,9 @@
   '((srfi srfi-1)         ;; lists
     (srfi srfi-13)        ;; strings
     (ice-9 optargs)       ;; `define*'
-    (ice-9 and-let-star)  ;; `and-let*'
-    (ice-9 receive)       ;; `receive'
 
+    (skribilo utils syntax) ;; `unless', `when', etc.
     (skribilo module)
-    (skribilo parameters) ;; run-time parameters
     (skribilo compat)     ;; `skribe-load-path', etc.
     (skribilo ast)        ;; `<document>', `document?', etc.
     (skribilo config)
@@ -57,25 +59,46 @@
     (skribilo writer)
     (skribilo output)
     (skribilo evaluator)
-    (skribilo color)
     (skribilo debug)
-    (skribilo source)     ;; `source-read-lines', `source-fontify', etc.
-    (skribilo coloring lisp) ;; `skribe', `scheme', `lisp'
-    (skribilo coloring xml)  ;; `xml'
     ))
+
+(define %skribilo-user-autoloads
+  ;; List of auxiliary modules that may be lazily autoloaded.
+  '(((skribilo engine lout)   . (lout-illustration
+				 ;; FIXME: The following should eventually be
+				 ;;        removed from here.
+				 lout-structure-number-string))
+    ((skribilo source)        . (source-read-lines source-fontify))
+    ((skribilo coloring lisp) . (skribe scheme lisp))
+    ((skribilo coloring xml)  . (xml))
+    ((skribilo color) .
+     (skribe-color->rgb skribe-get-used-colors skribe-use-color!))
+
+    ((ice-9 and-let-star)     . (and-let*))
+    ((ice-9 receive)          . (receive))))
 
 (define %skribe-core-modules
   '("utils" "api" "bib" "index" "param" "sui"))
 
+
+
+;; The very macro to turn a legacy Skribe file (which uses Skribe's syntax)
+;; into a Guile module.
+
 (define-macro (define-skribe-module name . options)
   `(begin
      (define-module ,name
-       #:reader (make-reader 'skribe)
-       #:use-module (skribilo reader)
+       :use-module ((skribilo reader) :select (%default-reader))
+       :use-module (system reader confinement)
+       :use-module (srfi srfi-1)
+       ,@(append-map (lambda (mod)
+		       (list :autoload (car mod) (cdr mod)))
+		     %skribilo-user-autoloads)
        ,@options)
 
      ;; Pull all the bindings that Skribe code may expect, plus those needed
      ;; to actually create and read the module.
+     ;; TODO: These should be auto-loaded.
      ,(cons 'use-modules
 	    (append %skribilo-user-imports
 		    (filter-map (lambda (mod)
@@ -83,7 +106,12 @@
 						      ,(string->symbol
 							mod))))
 				    (and (not (equal? m name)) m)))
-				%skribe-core-modules)))))
+				%skribe-core-modules)))
+
+     ;; Change the current reader to a Skribe-compatible reader.  If this
+     ;; primitive is not provided by Guile, it should be provided by the
+     ;; `confinement' module (version 0.2 and later).
+     (set-current-reader %default-reader)))
 
 
 ;; Make it available to the top-level module.
@@ -120,40 +148,6 @@ execution of Skribilo/Skribe code."
   (if (not %skribilo-user-module)
       (set! %skribilo-user-module (make-run-time-module)))
   %skribilo-user-module)
-
-
-;; FIXME:  This will eventually be replaced by the per-module reader thing in
-;;         Guile.
-(define-public (load-file-with-read file read module)
-  (with-debug 5 'load-file-with-read
-     (debug-item "loading " file)
-
-     (with-input-from-file (search-path %load-path file)
-       (lambda ()
-;      (format #t "load-file-with-read: ~a~%" read)
-	 (let loop ((sexp (read))
-		    (result #f))
-	   (if (not (eof-object? sexp))
-	       (begin
-;              (format #t "preparing to evaluate `~a'~%" sexp)
-		 (primitive-eval sexp)
-		 (loop (read)))))))))
-
-(define-public (load-skribilo-file file reader-name)
-  (load-file-with-read file (make-reader reader-name) (current-module)))
-
-(define*-public (load-skribe-modules #:optional (debug? #f))
-  "Load the core Skribe modules, both in the @code{(skribilo skribe)}
-hierarchy and in @code{(run-time-module)}."
-  (for-each (lambda (mod)
-              (format #t "~~ loading skribe module `~a'...~%" mod)
-              (load-skribilo-file (string-append "skribilo/skribe/"
-                                                 mod ".scm")
-                                  'skribe)
-              (module-use! (run-time-module)
-                           (resolve-module `(skribilo skribe
-                                             ,(string->symbol mod)))))
-            %skribe-core-modules))
 
 
 ;;; module.scm ends here

@@ -2,6 +2,62 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2005-12-03 11:35:47 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-14
+
+    Summary:
+      Merge from lcourtes@laas.fr--2004-libre
+    Revision:
+      skribilo--devel--1.2--patch-14
+
+    Patches applied:
+    
+     * lcourtes@laas.fr--2004-libre/skribilo--devel--1.2  (patch 12-16)
+    
+       - Fixed and updated the installation process.
+       - Created a canonical module for Skribilo syntactic sugar.
+       - More `%skribilo-module-reader' fixes.
+       - Fixed `ref' and bibliography-related things.
+       - Fixed Lout-related thingies.
+
+    new files:
+     src/.arch-ids/skribilo.in.id
+     src/guile/skribilo/utils/.arch-ids/=id
+     src/guile/skribilo/utils/Makefile.am
+     src/guile/skribilo/utils/syntax.scm src/skribilo.in
+
+    removed files:
+     src/guile/skribilo/.arch-ids/Makefile.in.id
+     src/guile/skribilo/Makefile.in
+
+    modified files:
+     ChangeLog configure.ac src/Makefile.am src/guile/Makefile.am
+     src/guile/skribilo.scm src/guile/skribilo/Makefile.am
+     src/guile/skribilo/ast.scm src/guile/skribilo/biblio.scm
+     src/guile/skribilo/coloring/Makefile.am
+     src/guile/skribilo/debug.scm src/guile/skribilo/engine.scm
+     src/guile/skribilo/engine/lout.scm
+     src/guile/skribilo/evaluator.scm src/guile/skribilo/lib.scm
+     src/guile/skribilo/location.scm src/guile/skribilo/module.scm
+     src/guile/skribilo/output.scm
+     src/guile/skribilo/package/slide.scm
+     src/guile/skribilo/parameters.scm
+     src/guile/skribilo/resolve.scm
+     src/guile/skribilo/skribe/Makefile.am
+     src/guile/skribilo/skribe/bib.scm
+     src/guile/skribilo/source.scm src/guile/skribilo/verify.scm
+     src/guile/skribilo/writer.scm
+
+    new directories:
+     src/guile/skribilo/utils src/guile/skribilo/utils/.arch-ids
+
+    new patches:
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-12
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-13
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-14
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-15
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-16
+
+
 2005-11-26 18:03:04 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-13
 
     Summary:

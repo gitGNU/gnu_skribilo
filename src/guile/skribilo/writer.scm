@@ -32,6 +32,7 @@
 	   invoke markup-writer markup-writer-get markup-writer-get*
 	   lookup-markup-writer copy-markup-writer)
 
+  :use-module (skribilo utils syntax)
   :autoload (skribilo engine) (engine? engine-ident? default-engine))
 
 
@@ -42,6 +43,9 @@
 
 	     (oop goops)
 	     (ice-9 optargs))
+
+
+(set-current-reader %skribilo-module-reader)
 
 
 

@@ -23,10 +23,12 @@ AC_SUBST([SKRIBILO_EXT_DIR], ["$datadir/skribilo/1.2/"])
 AC_SUBST([SKRIBILO_SKR_PATH], ["$GUILE_SITE/"])
 
 AC_OUTPUT([Makefile
+	   src/skribilo
 	   src/Makefile
 	   src/guile/Makefile
 	   src/guile/skribilo/Makefile
 	   src/guile/skribilo/config.scm
+	   src/guile/skribilo/utils/Makefile
 	   src/guile/skribilo/engine/Makefile
 	   src/guile/skribilo/reader/Makefile
 	   src/guile/skribilo/package/Makefile

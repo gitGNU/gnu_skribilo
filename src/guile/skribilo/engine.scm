@@ -21,6 +21,7 @@
 
 (define-module (skribilo engine)
   :use-module (skribilo debug)
+  :use-module (skribilo utils syntax)
   :use-module (skribilo lib)
 
   ;; `(skribilo writer)' depends on this module so it needs to be loaded
@@ -43,6 +44,7 @@
 	   push-default-engine pop-default-engine))
 
 
+(set-current-reader %skribilo-module-reader)
 
 
 ;;;
