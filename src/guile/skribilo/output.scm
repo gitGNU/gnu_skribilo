@@ -151,7 +151,7 @@
 
 
 (define-method (out (n <unresolved>) e)
-  (skribe-error 'output "Orphan unresolved" n))
+  (skribe-error 'output "orphan unresolved" n))
 
 
 (define-method (out (node <markup>) e)
