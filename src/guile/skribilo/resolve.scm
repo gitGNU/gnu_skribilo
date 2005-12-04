@@ -26,6 +26,7 @@
   :use-module (skribilo utils syntax)
 
   :use-module (oop goops)
+  :use-module (srfi srfi-39)
 
   :export (resolve! resolve-search-parent resolve-children resolve-children*
 	   find1 resolve-counter resolve-parent resolve-ident))
@@ -33,7 +34,7 @@
 (set-current-reader %skribilo-module-reader)
 
 
-(define *unresolved* #f)
+(define *unresolved* (make-parameter #f))
 (define-generic do-resolve!)
 
 
@@ -48,14 +49,14 @@
 (define (resolve! ast engine env)
   (with-debug 3 'resolve
      (debug-item "ast=" ast)
-     (let ((*unresolved* (make-fluid)))
-       (fluid-set! *unresolved* #f)
-
+     (parameterize ((*unresolved* #f))
        (let Loop ((ast ast))
-	 (fluid-set! *unresolved* #f)
+	 (*unresolved* #f)
 	 (let ((ast (do-resolve! ast engine env)))
-	   (if (fluid-ref *unresolved*)
-	       (Loop ast)
+	   (if (*unresolved*)
+	       (begin
+		 (debug-item "iterating over ast " ast)
+		 (Loop ast))
 	       ast))))))
 
 ;;;; ======================================================================
@@ -75,7 +76,7 @@
        (set-car! n* (do-resolve! (car n*) engine env))
        (Loop (cdr n*)))
       ((not (null? n*))
-       (error 'do-resolve "Illegal argument" n*))
+       (error 'do-resolve "illegal argument" n*))
       (else
        ast))))
 
@@ -121,9 +122,9 @@
 			   (set-car! (cdr o)
 				     (do-resolve! (cadr o) engine e)))
 			 options)
-	       (debug-item "resolved options=" options)))
-	   (let ((e `((parent ,node) ,@env ,@env0)))
-	     (slot-set! node 'body (do-resolve! body engine e)))))
+	       (debug-item "resolved options=" options)))))
+       (let ((e `((parent ,node) ,@env ,@env0)))
+	 (slot-set! node 'body (do-resolve! body engine e)))
        node)))
 
 
@@ -147,12 +148,12 @@
        (slot-set! node 'parent (and (pair? p) (pair? (cdr p)) (cadr p))))
 
      (let* ((proc (slot-ref node 'proc))
-	    (res  (resolve! (proc node engine env) engine env))
+	    (res  (proc node engine env))
 	    (loc  (ast-loc node)))
        (when (ast? res)
 	 (ast-loc-set! res loc))
        (debug-item "res=" res)
-       (set! *unresolved* #t)
+       (*unresolved* #t)
        res)))
 
 

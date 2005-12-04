@@ -2,6 +2,30 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2005-12-03 16:44:38 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-15
+
+    Summary:
+      Fixed the resolution mechanism and converted it to SRFI-39.
+    Revision:
+      skribilo--devel--1.2--patch-15
+
+    * src/guile/skribilo/output.scm: Cosmetic changes.
+    
+    * src/guile/skribilo/resolve.scm: Use SRFI-39.
+      (*unresolved*): Became an SRFI-39 parameter object.
+      (resolve!): Use `parameterize' over `*unresolved*'.
+      (do-resolve!): For `<container>', resolve the body of NODE even if
+      PARENT is not unspecified.  A similar fix had gone into the Bigloo
+      implementation of Skribe (the patch was never actually integrated as it
+      seems).  This makes it possible to use `numref'.
+      For `<unresolved>', to not invoke `do-resolve!' on the result of PROC's
+      invocation.  Similarly, this had gone into Skribe.
+
+    modified files:
+     ChangeLog src/guile/skribilo/output.scm
+     src/guile/skribilo/resolve.scm
+
+
 2005-12-03 11:35:47 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-14
 
     Summary:
