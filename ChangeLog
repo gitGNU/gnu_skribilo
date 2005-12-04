@@ -2,6 +2,130 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2005-12-03 11:35:47 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-14
+
+    Summary:
+      Merge from lcourtes@laas.fr--2004-libre
+    Revision:
+      skribilo--devel--1.2--patch-14
+
+    Patches applied:
+    
+     * lcourtes@laas.fr--2004-libre/skribilo--devel--1.2  (patch 12-16)
+    
+       - Fixed and updated the installation process.
+       - Created a canonical module for Skribilo syntactic sugar.
+       - More `%skribilo-module-reader' fixes.
+       - Fixed `ref' and bibliography-related things.
+       - Fixed Lout-related thingies.
+
+    new files:
+     src/.arch-ids/skribilo.in.id
+     src/guile/skribilo/utils/.arch-ids/=id
+     src/guile/skribilo/utils/Makefile.am
+     src/guile/skribilo/utils/syntax.scm src/skribilo.in
+
+    removed files:
+     src/guile/skribilo/.arch-ids/Makefile.in.id
+     src/guile/skribilo/Makefile.in
+
+    modified files:
+     ChangeLog configure.ac src/Makefile.am src/guile/Makefile.am
+     src/guile/skribilo.scm src/guile/skribilo/Makefile.am
+     src/guile/skribilo/ast.scm src/guile/skribilo/biblio.scm
+     src/guile/skribilo/coloring/Makefile.am
+     src/guile/skribilo/debug.scm src/guile/skribilo/engine.scm
+     src/guile/skribilo/engine/lout.scm
+     src/guile/skribilo/evaluator.scm src/guile/skribilo/lib.scm
+     src/guile/skribilo/location.scm src/guile/skribilo/module.scm
+     src/guile/skribilo/output.scm
+     src/guile/skribilo/package/slide.scm
+     src/guile/skribilo/parameters.scm
+     src/guile/skribilo/resolve.scm
+     src/guile/skribilo/skribe/Makefile.am
+     src/guile/skribilo/skribe/bib.scm
+     src/guile/skribilo/source.scm src/guile/skribilo/verify.scm
+     src/guile/skribilo/writer.scm
+
+    new directories:
+     src/guile/skribilo/utils src/guile/skribilo/utils/.arch-ids
+
+    new patches:
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-12
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-13
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-14
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-15
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-16
+
+
+2005-11-26 18:03:04 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-13
+
+    Summary:
+      Merge from lcourtes@laas.fr--2004-libre
+    Revision:
+      skribilo--devel--1.2--patch-13
+
+    Patches applied:
+    
+     * lcourtes@laas.fr--2004-libre/skribilo--devel--1.2  (patch 6-11)
+    
+       - Lots of changes...
+       - Started relying on the per-module reader;  first doc produced ever!
+       - The first vaguely working version.
+       - Minor fixes for file/line error reporting.
+       - Cleaned up the source tree and the installation process.
+       - Overhaul: emphasized logical separation of the modules.
+
+    new files:
+     src/guile/skribilo/ast.scm src/guile/skribilo/location.scm
+     src/guile/skribilo/parameters.scm
+
+    removed files:
+     doc/.arch-ids/Makefile.id doc/Makefile
+     src/guile/skribilo/.arch-ids/types.scm.id
+     src/guile/skribilo/types.scm
+
+    modified files:
+     ChangeLog src/guile/skribilo.scm src/guile/skribilo/biblio.scm
+     src/guile/skribilo/compat.scm src/guile/skribilo/engine.scm
+     src/guile/skribilo/engine/html.scm
+     src/guile/skribilo/engine/lout.scm
+     src/guile/skribilo/evaluator.scm src/guile/skribilo/lib.scm
+     src/guile/skribilo/module.scm src/guile/skribilo/output.scm
+     src/guile/skribilo/reader/skribe.scm
+     src/guile/skribilo/resolve.scm src/guile/skribilo/runtime.scm
+     src/guile/skribilo/source.scm src/guile/skribilo/verify.scm
+     src/guile/skribilo/writer.scm
+
+    renamed files:
+     src/guile/skribilo/.arch-ids/vars.scm.id
+       ==> src/guile/skribilo/.arch-ids/compat.scm.id
+     src/guile/skribilo/vars.scm
+       ==> src/guile/skribilo/compat.scm
+
+    new patches:
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-6
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-7
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-8
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-9
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-10
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-11
+
+
+2005-11-26 18:01:09 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-12
+
+    Summary:
+      Fixed the documentation's Makefile.am.
+    Revision:
+      skribilo--devel--1.2--patch-12
+
+    * doc/user/Makefile.am: Fixed GUILE_LOAD_PATH.
+    
+
+    modified files:
+     ChangeLog doc/user/Makefile.am
+
+
 2005-11-01 16:19:34 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-11
 
     Summary:
