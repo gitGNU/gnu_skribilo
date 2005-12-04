@@ -255,6 +255,19 @@
 ;*---------------------------------------------------------------------*/
 (define-simple-markup paragraph)
 
+
+;*---------------------------------------------------------------------*/
+;*    ~ (unbreakable space) ...                                        */
+;*---------------------------------------------------------------------*/
+(define-markup (~ #!rest opts #!key (class #f))
+  (new markup
+     (markup '~)
+     (ident (gensym '~))
+     (class class)
+     (required-options '())
+     (options (the-options opts :class))
+     (body (the-body opts))))
+
 ;*---------------------------------------------------------------------*/
 ;*    footnote ...                                                     */
 ;*---------------------------------------------------------------------*/
@@ -1062,7 +1075,8 @@
 		    (o (markup-option s 'used)))
 		(markup-option-add! s 'used (if (pair? o) (cons h o) (list h)))
 		n)
-	     (unref #f v 'bib))))
+	     (unref #f v 'bib)))) ; FIXME: This prevents source location
+				  ; info to be provided in the warning msg
    (define (bib-ref text)
       (if (pair? text)
 	  (new markup

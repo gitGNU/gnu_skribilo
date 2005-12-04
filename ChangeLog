@@ -2,6 +2,41 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2005-12-04 21:20:44 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-16
+
+    Summary:
+      Added the `~' markup.  Added SRFI-62 and SRFI-30 support to the Skribe reader.
+    Revision:
+      skribilo--devel--1.2--patch-16
+
+    * NEWS: Added actual news.
+    
+    * src/guile/skribilo/skribe/api.scm (~): New markup.
+    
+    * src/guile/skribilo/engine/html.scm: Added a writer for `~'.
+    
+    * src/guile/skribilo/engine/latex.scm: Likewise.
+    
+    * src/guile/skribilo/engine/lout.scm: Likewise.
+    
+    * src/guile/skribilo/evaluator.scm (skribe-include): Added a `:reader'
+      argument.
+    
+    * src/guile/skribilo/reader/skribe.scm (*skribe-reader*): Renamed to
+      `%skribe-reader'.
+      (%make-skribe-reader): Moved the sharp reader code to...
+      (&sharp-reader): ... here.  Added support for SRFI-62 and SRFI-30
+      (Bigloo supports both).
+
+    modified files:
+     ChangeLog NEWS src/guile/skribilo/engine/html.scm
+     src/guile/skribilo/engine/latex.scm
+     src/guile/skribilo/engine/lout.scm
+     src/guile/skribilo/evaluator.scm
+     src/guile/skribilo/reader/skribe.scm
+     src/guile/skribilo/skribe/api.scm
+
+
 2005-12-03 16:44:38 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-15
 
     Summary:

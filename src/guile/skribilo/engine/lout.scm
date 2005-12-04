@@ -941,9 +941,9 @@
 			   (list r g b)))))))
 
 ;*---------------------------------------------------------------------*/
-;*    &~ ...                                                           */
+;*    ~ ...                                                           */
 ;*---------------------------------------------------------------------*/
-(markup-writer '&~ :before "~" :action #f)
+(markup-writer '~ :before "~" :action #f)
 
 (define (lout-page-orientation orientation)
   ;; Return a string representing the Lout page orientation name for symbol

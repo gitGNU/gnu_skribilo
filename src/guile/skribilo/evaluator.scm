@@ -158,7 +158,9 @@
 ;;;
 ;;; SKRIBE-INCLUDE
 ;;;
-(define* (skribe-include file :optional (path (*document-path*)))
+(define* (skribe-include file :key (path (*document-path*))
+			           (reader %default-reader))
+  ;; FIXME: We should default to `*skribilo-current-reader*'.
   (unless (every string? path)
     (skribe-error 'skribe-include "illegal path" path))
 
@@ -172,11 +174,11 @@
 
     (with-input-from-file path
       (lambda ()
-	(let Loop ((exp (%default-reader (current-input-port)))
+	(let Loop ((exp (reader (current-input-port)))
 		   (res '()))
 	  (if (eof-object? exp)
 	      (if (and (pair? res) (null? (cdr res)))
 		    (car res)
 		    (reverse! res))
-	      (Loop (%default-reader (current-input-port))
+	      (Loop (reader (current-input-port))
 		    (cons (%evaluate exp) res))))))))
