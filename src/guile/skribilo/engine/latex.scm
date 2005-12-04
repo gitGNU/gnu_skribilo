@@ -478,9 +478,9 @@
 	     colors))
 
 ;*---------------------------------------------------------------------*/
-;*    &~ ...                                                           */
+;*    ~ ...                                                           */
 ;*---------------------------------------------------------------------*/
-(markup-writer '&~
+(markup-writer '~
    :before "~"
    :action #f)
 
@@ -1468,7 +1468,7 @@
 		 (if t
 		     (begin
 			(output t e)
-			(output "~" e (markup-writer-get '&~ e))))))
+			(output "~" e (markup-writer-get '~ e))))))
    :after (lambda (n e)
 	     (let* ((c (handle-ast (markup-body n)))
 		    (id (markup-ident c)))
