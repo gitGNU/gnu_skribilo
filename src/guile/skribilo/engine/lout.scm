@@ -1500,12 +1500,12 @@
 (markup-writer 'footnote
    :options '(:label)
    :before (lambda (n e)
-	     (let ((number (markup-option n :number))
+	     (let ((label (markup-option n :label))
 		   (use-number?
 		    (engine-custom e 'use-skribe-footnote-numbers?)))
-	       (if use-number?
+	       (if (or (and (number? label) use-number?) label)
 		   (printf "{ @FootNote @Label { ~a } { "
-			   (if number number ""))
+			   (if label label ""))
 		   (printf "{ @FootNote ~a{ "
 			   (if (not number) "@Label { } " "")))))
    :after (lambda (n e)
