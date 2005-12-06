@@ -2,6 +2,23 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2005-12-06 23:22:51 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-17
+
+    Summary:
+      Fixed the handling of `footnote''s `:label' by the Lout/HTML engines.
+    Revision:
+      skribilo--devel--1.2--patch-17
+
+    * src/guile/skribilo/engine/lout.scm (footnote): Take the `:label' option
+      into account.
+    
+    * src/guile/skribilo/engine/html.scm (footnote): Likewise.
+
+    modified files:
+     ChangeLog src/guile/skribilo/engine/html.scm
+     src/guile/skribilo/engine/lout.scm
+
+
 2005-12-04 21:20:44 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-16
 
     Summary:

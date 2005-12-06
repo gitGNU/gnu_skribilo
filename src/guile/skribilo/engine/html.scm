@@ -1422,11 +1422,11 @@
 ;*    footnote ...                                                     */
 ;*---------------------------------------------------------------------*/
 (markup-writer 'footnote
-   :options '(:number)
+   :options '(:label)
    :action (lambda (n e)
 	      (printf "<a href=\"#footnote-~a\"><sup><small>~a</small></sup></a>"
 		      (string-canonicalize (container-ident n))
-		      (markup-option n :number))))
+		      (markup-option n :label))))
 
 ;*---------------------------------------------------------------------*/
 ;*    linebreak ...                                                    */
