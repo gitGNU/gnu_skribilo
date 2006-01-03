@@ -19,7 +19,8 @@
 ;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ;;; USA.
 
-(define-skribe-module (skribilo skribe api))
+(define-skribe-module (skribilo skribe api)
+  :replace (gensym))
 
 ;;; Author:  Manuel Serrano
 ;;; Commentary:
@@ -32,13 +33,16 @@
 ;;; The contents of the file below are unchanged compared to Skribe 1.2d's
 ;;; `api.scm' file found in the `common' directory.
 
-(let ((gensym-orig gensym))
+(define %gensym-orig (module-ref the-root-module 'gensym))
+
+(define gensym
   ;; In Skribe, `gensym' accepts a symbol.  Guile's `gensym' accepts only
-  ;; strings.
-  (set! gensym
-        (lambda (obj)
-          (gensym-orig (cond ((symbol? obj) (symbol->string obj))
-                             (else obj))))))
+  ;; strings (or no argument).
+  (lambda obj
+    (apply %gensym-orig
+	   (cond ((null? obj) '())
+		 ((symbol? (car obj)) (list (symbol->string (car obj))))
+		 (else (skribe-error 'gensym "invalid argument" obj))))))
 
 
 ;*---------------------------------------------------------------------*/

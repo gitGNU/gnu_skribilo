@@ -2,6 +2,27 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-01-03 23:16:53 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-18
+
+    Summary:
+      Cleaned up the use of a Skribe-compatible `gensym'.
+    Revision:
+      skribilo--devel--1.2--patch-18
+
+    * src/guile/skribilo.scm (gensym): Removed.
+    
+    * src/guile/skribilo/lib.scm (define-simple-markup): Comply with Guile's
+      version of `gensym'.
+      (define-simple-container): Likewise.
+    
+    * src/guile/skribilo/skribe/api.scm (gensym): Improved.  Exported via
+      `#:replace'.
+
+    modified files:
+     ChangeLog src/guile/skribilo.scm src/guile/skribilo/lib.scm
+     src/guile/skribilo/skribe/api.scm
+
+
 2005-12-06 23:22:51 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-17
 
     Summary:
