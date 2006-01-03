@@ -111,7 +111,8 @@
   `(define-markup (,markup :rest opts :key ident class loc)
      (new markup
 	  (markup ',markup)
-	  (ident (or ident (symbol->string (gensym ',markup))))
+	  (ident (or ident (symbol->string
+			    (gensym ',(symbol->string markup)))))
 	  (loc loc)
 	  (class class)
 	  (required-options '())
@@ -126,7 +127,8 @@
    `(define-markup (,markup :rest opts :key ident class loc)
        (new container
 	  (markup ',markup)
-	  (ident (or ident (symbol->string (gensym ',markup))))
+	  (ident (or ident (symbol->string
+			    (gensym ',(symbol->string markup)))))
 	  (loc loc)
 	  (class class)
 	  (required-options '())

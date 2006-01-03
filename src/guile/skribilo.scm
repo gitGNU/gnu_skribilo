@@ -39,22 +39,6 @@ exec ${GUILE-guile} --debug -l $0 -c "(apply $main (cdr (command-line)))" "$@"
 ;;;;
 ;;;; Code:
 
-(let ((gensym-orig gensym))
-  ;; In Skribe, `gensym' expects a symbol as its (optional) argument, while
-  ;; Guile's `gensym' expect a string.  XXX
-  (set! gensym
-	(lambda args
-	  (if (null? args)
-	      (gensym-orig)
-	      (let ((the-arg (car args)))
-		(cond ((symbol? the-arg)
-		       (gensym-orig (symbol->string the-arg)))
-		      ((string? the-arg)
-		       (gensym-orig the-arg))
-		      (else
-		       (skribe-error 'gensym "Invalid argument type"
-				     the-arg))))))))
-
 
 
 (define-module (skribilo)
