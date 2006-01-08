@@ -2,6 +2,56 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-01-08 17:13:42 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-19
+
+    Summary:
+      Cleaning the compatibility module and other annoyances.
+    Revision:
+      skribilo--devel--1.2--patch-19
+
+    * src/skribilo.in: Catch exceptions and call `(exit 1)' when caught.
+    
+    * doc/user/Makefile.am (skribilo): Fixed.
+    
+    * src/guile/skribilo.scm: Updated copyright year.
+    
+    * src/guile/skribilo/compat.scm: Moved to `utils'.
+    
+    * src/guile/skribilo/Makefile.am (dist_guilemodule_DATA): Removed
+      `compat.scm'.
+    
+    * src/guile/skribilo/Makefile.am (dist_guilemodule_DATA): Added
+      `compat.scm'.
+    
+    * src/guile/skribilo/coloring/lisp.scm: Use `(skribilo utils syntax)'.
+    
+    * src/guile/skribilo/module.scm (%skribilo-user-imports): Import
+      `(skribilo utils compat)' instead of `(skribilo compat)'.
+      Added more triggering procedures for `(skribilo source)'.
+    
+    * src/guile/skribilo/skribe/api.scm: Moved the definition of a
+      Skribe-compatible `gensym' to `compat.scm'.
+    
+    * src/guile/skribilo/source.scm: Use `*source-path*' instead of
+      `skribe-source-path'.
+
+    modified files:
+     ChangeLog doc/user/Makefile.am src/guile/skribilo.scm
+     src/guile/skribilo/Makefile.am
+     src/guile/skribilo/coloring/lisp.scm
+     src/guile/skribilo/module.scm
+     src/guile/skribilo/skribe/api.scm
+     src/guile/skribilo/source.scm
+     src/guile/skribilo/utils/Makefile.am
+     src/guile/skribilo/utils/compat.scm src/skribilo.in
+
+    renamed files:
+     src/guile/skribilo/.arch-ids/compat.scm.id
+       ==> src/guile/skribilo/utils/.arch-ids/compat.scm.id
+     src/guile/skribilo/compat.scm
+       ==> src/guile/skribilo/utils/compat.scm
+
+
 2006-01-03 23:16:53 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-18
 
     Summary:

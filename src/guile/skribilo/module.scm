@@ -47,8 +47,8 @@
     (ice-9 optargs)       ;; `define*'
 
     (skribilo utils syntax) ;; `unless', `when', etc.
+    (skribilo utils compat) ;; `skribe-load-path', etc.
     (skribilo module)
-    (skribilo compat)     ;; `skribe-load-path', etc.
     (skribilo ast)        ;; `<document>', `document?', etc.
     (skribilo config)
     (skribilo runtime)    ;; `the-options', `the-body', `make-string-replace'
@@ -68,7 +68,9 @@
 				 ;; FIXME: The following should eventually be
 				 ;;        removed from here.
 				 lout-structure-number-string))
-    ((skribilo source)        . (source-read-lines source-fontify))
+    ((skribilo source)        . (source-read-lines source-fontify
+				 language? language-extractor
+				 language-fontifier source-fontify))
     ((skribilo coloring lisp) . (skribe scheme lisp))
     ((skribilo coloring xml)  . (xml))
     ((skribilo color) .

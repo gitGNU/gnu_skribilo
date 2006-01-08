@@ -53,11 +53,11 @@
 ;*    source-read-lines ...                                            */
 ;*---------------------------------------------------------------------*/
 (define (source-read-lines file start stop tab)
-   (let ((p (search-path (skribe-source-path) file)))
+   (let ((p (search-path (*source-path*) file)))
      (if (or (not (string? p)) (not (file-exists? p)))
 	  (skribe-error 'source
 			(format "Can't find `~a' source file in path" file)
-			(skribe-source-path))
+			(*source-path*))
 	  (with-input-from-file p
 	     (lambda ()
 		(if (> (*verbose*) 0)
@@ -130,7 +130,7 @@
 ;*    source-read-definition ...                                       */
 ;*---------------------------------------------------------------------*/
 (define (source-read-definition file definition tab lang)
-   (let ((p (search-path (skribe-source-path) file)))
+   (let ((p (search-path (*source-path*) file)))
       (cond
 	 ((not (language-extractor lang))
 	  (skribe-error 'source
@@ -139,7 +139,7 @@
 	 ((or (not p) (not (file-exists? p)))
 	  (skribe-error 'source
 			(format "Can't find `~a' program file in path" file)
-			(skribe-source-path)))
+			(*source-path*)))
 	 (else
 	  (let ((ip (open-input-file p)))
 	     (if (> (*verbose*) 0)

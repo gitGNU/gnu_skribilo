@@ -3,5 +3,5 @@
 
 main='(module-ref (resolve-module '\''(skribilo)) '\'main')'
 exec ${GUILE-@GUILE@} --debug \
-                      -c "(apply $main (cdr (command-line)))" "$@"
+                      -c "(catch #t (lambda () (apply $main (cdr (command-line)))) (lambda (key . args) (format (current-error-port) \"exception \`~a' raised~%\" key) (exit 1)))" "$@"
 

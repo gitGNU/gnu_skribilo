@@ -1,6 +1,6 @@
 ;;; compat.scm  --  Skribe compatibility module.
 ;;;
-;;; Copyright 2005  Ludovic Courtès  <ludovic.courtes@laas.fr>
+;;; Copyright 2005, 2006  Ludovic Courtès  <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -19,9 +19,27 @@
 ;;; USA.
 
 
-(define-module (skribilo compat)
+(define-module (skribilo utils compat)
   :use-module (skribilo parameters)
-  :use-module (srfi srfi-1))
+  :use-module (srfi srfi-1)
+  :replace (gensym))
+
+
+;;;
+;;; gensym
+;;;
+
+(define %gensym-orig (module-ref the-root-module 'gensym))
+
+(define gensym
+  ;; In Skribe, `gensym' accepts a symbol.  Guile's `gensym' accepts only
+  ;; strings (or no argument).
+  (lambda obj
+    (apply %gensym-orig
+	   (cond ((null? obj) '())
+		 ((symbol? (car obj)) (list (symbol->string (car obj))))
+		 ((string? (car obj)) (list (car obj)))
+		 (else (skribe-error 'gensym "invalid argument" obj))))))
 
 
 ;;;

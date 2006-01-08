@@ -1,6 +1,6 @@
 BUILT_SOURCES = user.html
 
-skribilo = $(top_srcdir)/src/guile/skribilo.scm
+skribilo = $(top_srcdir)/src/skribilo
 load_path = $(top_srcdir)/src/guile:$(top_srcdir)/src/guile/skribilo/package
 
 %.html: %.skb
