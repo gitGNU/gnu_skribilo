@@ -26,6 +26,7 @@
 ;;;;
 
 (define-module (skribilo coloring lisp)
+  :use-module (skribilo utils syntax)
   :use-module (skribilo source)
   :use-module (skribilo lib)
   :use-module (skribilo runtime)

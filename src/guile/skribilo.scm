@@ -4,11 +4,10 @@ main='(module-ref (resolve-module '\''(skribilo)) '\'main')'
 exec ${GUILE-guile} --debug -l $0 -c "(apply $main (cdr (command-line)))" "$@"
 !#
 
-;;;;
 ;;;; skribilo.scm
 ;;;;
 ;;;; Copyright © 2003-2004 Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
-;;;; Copyright 2005  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;;; Copyright 2005, 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;;
 ;;;;
 ;;;; This program is free software; you can redistribute it and/or modify
@@ -25,11 +24,6 @@ exec ${GUILE-guile} --debug -l $0 -c "(apply $main (cdr (command-line)))" "$@"
 ;;;; along with this program; if not, write to the Free Software
 ;;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ;;;; USA.
-;;;;
-;;;;           Author: Erick Gallesio [eg@essi.fr]
-;;;;    Creation date: 24-Jul-2003 20:33 (eg)
-;;;; Last file update:  6-Mar-2004 16:13 (eg)
-;;;;
 
 ;;;; Commentary:
 ;;;;
