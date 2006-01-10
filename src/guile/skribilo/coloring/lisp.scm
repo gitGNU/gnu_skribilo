@@ -30,6 +30,7 @@
   :use-module (skribilo source)
   :use-module (skribilo lib)
   :use-module (skribilo runtime)
+  :autoload   (skribilo reader)  (make-reader)
   :export (skribe scheme stklos bigloo lisp))
 
 
@@ -57,7 +58,7 @@
 	  (Loop (%read inp))))))
 
 
-(define (lisp-family-fontifier s)
+(define (lisp-family-fontifier s read)
   (let ((lisp-input (open-input-string s)))
     (let loop ((token (read lisp-input))
 	       (res   '()))
@@ -99,7 +100,7 @@
   (with-fluids ((*the-keys*	   (init-lisp-keys))
 		(*bracket-highlight* #f)
 		(*class-highlight*   #f))
-    (lisp-family-fontifier s)))
+    (lisp-family-fontifier s read)))
 
 
 (define lisp
@@ -143,7 +144,7 @@
   (with-fluids ((*the-keys*	   (init-scheme-keys))
 		(*bracket-highlight* #f)
 		(*class-highlight*   #f))
-    (lisp-family-fontifier s)))
+    (lisp-family-fontifier s read)))
 
 
 (define scheme
@@ -196,7 +197,7 @@
   (with-fluids ((*the-keys*	   (init-stklos-keys))
 		(*bracket-highlight* #t)
 		(*class-highlight*   #t))
-    (lisp-family-fontifier s)))
+    (lisp-family-fontifier s read)))
 
 
 (define stklos
@@ -257,7 +258,7 @@
   (with-fluids ((*the-keys*	   (init-skribe-keys))
 		(*bracket-highlight* #t)
 		(*class-highlight*   #t))
-    (lisp-family-fontifier s)))
+    (lisp-family-fontifier s (make-reader 'skribe))))
 
 
 (define skribe

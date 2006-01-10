@@ -2,6 +2,40 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-01-10 23:40:38 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-20
+
+    Summary:
+      Syntax highlighting and `image'-related fixes.
+    Revision:
+      skribilo--devel--1.2--patch-20
+
+    * src/guile/skribilo/coloring/lisp.scm: Use `(skribilo reader)'.
+      (lisp-family-fontifier): Take a READ argument.
+      (skribe-fontifier): Pass `(make-reader 'skribe)' as the reader.
+    
+    * src/guile/skribilo/module.scm (%skribilo-user-autoloads): Added
+      `(skribilo prog)'.
+    
+    * src/guile/skribilo/parameters.scm (*ref-base*): New.
+    
+    * src/guile/skribilo/prog.scm: Guilified.
+    
+    * src/guile/skribilo/reader/skribe.scm: Nothing changed.
+    
+    * src/guile/skribilo/runtime.scm (suffix): New.
+      (string-ref-base): Don't use `file-separator'.  Use `string-contains'
+      instead of Bigloo/STkLos' `substring=?'.
+      (convert-image): Use `*image-path*' instead of `skribe-image-path'.
+      Don't use `make-path'.
+
+    modified files:
+     ChangeLog src/guile/skribilo/coloring/lisp.scm
+     src/guile/skribilo/module.scm
+     src/guile/skribilo/parameters.scm src/guile/skribilo/prog.scm
+     src/guile/skribilo/reader/skribe.scm
+     src/guile/skribilo/runtime.scm
+
+
 2006-01-08 17:13:42 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-19
 
     Summary:

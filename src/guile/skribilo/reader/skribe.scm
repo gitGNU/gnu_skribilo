@@ -50,8 +50,8 @@ the Skribe syntax."
   ;; The reader for what comes after a `#' character.
   (let* ((dsssl-keyword-reader  ;; keywords à la `#!key'
           (r:make-token-reader #\!
-			       (r:token-reader-procedure
-				(r:standard-token-reader 'keyword)))))
+ 			       (r:token-reader-procedure
+ 				(r:standard-token-reader 'keyword)))))
       (r:make-reader (cons dsssl-keyword-reader
 			   (map r:standard-token-reader
 				'(character srfi-4 vector

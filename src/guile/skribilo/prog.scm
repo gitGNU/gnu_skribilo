@@ -1,39 +1,40 @@
-;;;;
-;;;; prog.stk	-- All the stuff for the prog markup
-;;;; 
-;;;; Copyright © 2003 Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
-;;;; 
-;;;; 
-;;;; This program is free software; you can redistribute it and/or modify
-;;;; it under the terms of the GNU General Public License as published by
-;;;; the Free Software Foundation; either version 2 of the License, or
-;;;; (at your option) any later version.
-;;;; 
-;;;; This program is distributed in the hope that it will be useful,
-;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;;;; GNU General Public License for more details.
-;;;; 
-;;;; You should have received a copy of the GNU General Public License
-;;;; along with this program; if not, write to the Free Software
-;;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, 
-;;;; USA.
-;;;; 
-;;;;           Author: Erick Gallesio [eg@essi.fr]
-;;;;    Creation date: 31-Aug-2003 23:42 (eg)
-;;;; Last file update: 22-Oct-2003 19:35 (eg)
-;;;;
+;;; prog.scm  --  All the stuff for the prog markup
+;;;
+;;; Copyright 2003 Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
+;;; Copyright 2006 Ludovic Courtès  <ludovic.courtes@laas.fr>
+;;;
+;;;
+;;; This program is free software; you can redistribute it and/or modify
+;;; it under the terms of the GNU General Public License as published by
+;;; the Free Software Foundation; either version 2 of the License, or
+;;; (at your option) any later version.
+;;;
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;;
+;;; You should have received a copy of the GNU General Public License
+;;; along with this program; if not, write to the Free Software
+;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+;;; USA.
 
-(define-module SKRIBE-PROG-MODULE
-  (export make-prog-body resolve-line)
+(define-module (skribilo prog)
+  :use-module (ice-9 regex)
+  :autoload   (ice-9 receive) (receive)
+  :use-module (skribilo lib)  ;; `new'
+  :autoload   (skribilo ast) (node?)
+  :export (make-prog-body resolve-line))
 
 ;;; ======================================================================
 ;;;
 ;;; COMPATIBILITY
 ;;;
 ;;; ======================================================================
-(define pregexp-match 	regexp-match)
-(define pregexp-replace regexp-replace)
+(define pregexp-match 	string-match)
+(define pregexp-replace (lambda (rx str what)
+			  (regexp-substitute/global #f rx str
+						    'pre what 'post)))
 (define pregexp-quote   regexp-quote)
 
 
@@ -188,7 +189,7 @@
 	     (string-append (make-string (- rl l) #\space) s))))
  
    (let* ((regexp (and mark
-		       (format "~a[-a-zA-Z_][-0-9a-zA-Z_]+"
+		       (format #f "~a[-a-zA-Z_][-0-9a-zA-Z_]+"
 			       (pregexp-quote mark))))
 	  (src (cond
 		  ((not (pair? src)) (list src))
