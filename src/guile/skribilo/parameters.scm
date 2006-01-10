@@ -76,6 +76,9 @@
 (define-public *destination-file* (make-parameter "output.html"))
 (define-public *source-file*      (make-parameter "default-input-file.skb"))
 
+;; FIXME: I don't understand exactly what this is.  See, for instance, the
+;; HTML and Context engines.
+(define-public *ref-base*         (make-parameter ""))
 
 ;;; TODO: Skribe used to have other parameters as global variables.  See
 ;;; which ones need to be kept.

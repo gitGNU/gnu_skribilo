@@ -73,6 +73,7 @@
 				 language-fontifier source-fontify))
     ((skribilo coloring lisp) . (skribe scheme lisp))
     ((skribilo coloring xml)  . (xml))
+    ((skribilo prog)          . (make-prog-body resolve-line))
     ((skribilo color) .
      (skribe-color->rgb skribe-get-used-colors skribe-use-color!))
 

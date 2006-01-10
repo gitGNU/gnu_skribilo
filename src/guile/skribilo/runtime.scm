@@ -36,6 +36,11 @@
   :use-module (srfi srfi-13))
 
 
+(define (suffix path)
+  (let ((dot (string-rindex path #\.)))
+    (if (not dot)
+	path
+	(substring path (+ dot 1) (string-length path)))))
 
 ;;; ======================================================================
 ;;;
@@ -52,9 +57,9 @@
 	(cond
 	  ((not (> (string-length file) (+ l 2)))
 	   file)
-	  ((not (substring=? file (*ref-base*) l))
+	  ((not (string-contains file (*ref-base*) 0 l))
 	   file)
-	  ((not (char=? (string-ref file l) (file-separator)))
+	  ((not (char=? (string-ref file l) #\/))
 	   file)
 	  (else
 	   (substring file (+ l 1) (string-length file)))))))
@@ -121,11 +126,11 @@
 	      to))))))
 
 (define (convert-image file formats)
-  (let ((path (search-path (skribe-image-path) file)))
+  (let ((path (search-path (*image-path*) file)))
     (if (not path)
 	(skribe-error 'convert-image
 		      (format #f "can't find `~a' image file in path: " file)
-		      (skribe-image-path))
+		      (*image-path*))
 	(let ((suf (suffix file)))
 	  (if (member suf formats)
 	      (let* ((dir (if (string? (*destination-file*))
@@ -133,7 +138,7 @@
 			      #f)))
 		(if dir
 		    (let ((dest (basename path)))
-		      (copy-file path (make-path dir dest))
+		      (copy-file path (string-append dir "/" dest))
 		      dest)
 		    path))
 	      (let loop ((fmts formats))
