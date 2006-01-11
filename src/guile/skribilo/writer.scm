@@ -45,7 +45,7 @@
 	     (ice-9 optargs))
 
 
-(set-current-reader %skribilo-module-reader)
+(fluid-set! current-reader %skribilo-module-reader)
 
 
 

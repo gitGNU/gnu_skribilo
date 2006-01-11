@@ -19,11 +19,12 @@
 ;;; USA.
 
 (define-module (skribilo utils syntax)
-  #:use-module (skribilo reader)
-  #:use-module (system reader library)
-  #:use-module (system reader confinement)
-  #:export (%skribe-reader %skribilo-module-reader)
-  #:export-syntax (unwind-protect unless when))
+  :use-module (skribilo reader)
+  :use-module (system reader library)
+  :use-module (system reader compat) ;; make sure `current-reader' exists
+  :use-module (system reader confinement)
+  :export (%skribe-reader %skribilo-module-reader)
+  :export-syntax (unwind-protect unless when))
 
 ;;; Author:  Ludovic Courtès
 ;;;

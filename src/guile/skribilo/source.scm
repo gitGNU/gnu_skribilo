@@ -30,7 +30,7 @@
   :use-module (ice-9 rdelim))
 
 
-(set-current-reader %skribilo-module-reader)
+(fluid-set! current-reader %skribilo-module-reader)
 
 
 ;;;

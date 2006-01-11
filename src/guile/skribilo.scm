@@ -51,7 +51,7 @@ exec ${GUILE-guile} --debug -l $0 -c "(apply $main (cdr (command-line)))" "$@"
 
 
 ;; Install the Skribilo module syntax reader.
-(set-current-reader %skribilo-module-reader)
+(fluid-set! current-reader %skribilo-module-reader)
 
 (if (not (keyword? :kw))
     (error "guile-reader sucks"))

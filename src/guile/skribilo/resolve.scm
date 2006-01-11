@@ -31,7 +31,7 @@
   :export (resolve! resolve-search-parent resolve-children resolve-children*
 	   find1 resolve-counter resolve-parent resolve-ident))
 
-(set-current-reader %skribilo-module-reader)
+(fluid-set! current-reader %skribilo-module-reader)
 
 
 (define *unresolved* (make-parameter #f))

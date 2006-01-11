@@ -30,7 +30,7 @@
   :use-module (skribilo utils syntax)
   :use-module (oop goops))
 
-(set-current-reader %skribilo-module-reader)
+(fluid-set! current-reader %skribilo-module-reader)
 
 
 (define-generic out)

@@ -26,7 +26,7 @@
   :use-module (skribilo utils syntax)
   :use-module (srfi srfi-17))
 
-(set-current-reader %skribilo-module-reader)
+(fluid-set! current-reader %skribilo-module-reader)
 
 
 ;;; FIXME: Use SRFI-39 fluids.

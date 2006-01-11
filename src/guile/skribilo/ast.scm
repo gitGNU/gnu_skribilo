@@ -55,7 +55,7 @@
 ;;;
 ;;; Code:
 
-(set-current-reader %skribilo-module-reader)
+(fluid-set! current-reader %skribilo-module-reader)
 
 (define *node-table* (make-hash-table))
 					; Used to stores the nodes of  an AST.

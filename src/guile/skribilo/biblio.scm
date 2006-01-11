@@ -32,7 +32,7 @@
 	   bib-add! bib-duplicate
 	   skribe-open-bib-file parse-bib))
 
-(set-current-reader %skribilo-module-reader)
+(fluid-set! current-reader %skribilo-module-reader)
 
 
 ;; FIXME: Should be a fluid?

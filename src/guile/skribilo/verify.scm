@@ -32,7 +32,7 @@
 	     (skribilo utils syntax)
 	     (oop goops))
 
-(set-current-reader %skribilo-module-reader)
+(fluid-set! current-reader %skribilo-module-reader)
 
 
 

@@ -44,7 +44,7 @@
 	   push-default-engine pop-default-engine))
 
 
-(set-current-reader %skribilo-module-reader)
+(fluid-set! current-reader %skribilo-module-reader)
 
 
 ;;;

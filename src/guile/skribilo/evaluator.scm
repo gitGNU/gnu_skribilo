@@ -44,7 +44,7 @@
 	     (srfi srfi-1))
 
 
-(set-current-reader %skribilo-module-reader)
+(fluid-set! current-reader %skribilo-module-reader)
 
 
 (define *skribe-loaded* '())		;; List of already loaded files
