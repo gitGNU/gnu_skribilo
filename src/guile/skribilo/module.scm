@@ -21,12 +21,11 @@
 (define-module (skribilo module)
   :autoload   (skribilo reader) (make-reader)
   :use-module (skribilo debug)
-  :use-module (system reader confinement) ;; `set-current-reader'
   :use-module (srfi srfi-1)
   :use-module (ice-9 optargs)
   :use-module (skribilo utils syntax))
 
-(set-current-reader %skribilo-module-reader)
+(fluid-set! current-reader %skribilo-module-reader)
 
 ;;; Author:  Ludovic Courtès
 ;;;
@@ -92,7 +91,6 @@
   `(begin
      (define-module ,name
        :use-module ((skribilo reader) :select (%default-reader))
-       :use-module (system reader confinement)
        :use-module (srfi srfi-1)
        ,@(append-map (lambda (mod)
 		       (list :autoload (car mod) (cdr mod)))
@@ -112,9 +110,10 @@
 				%skribe-core-modules)))
 
      ;; Change the current reader to a Skribe-compatible reader.  If this
-     ;; primitive is not provided by Guile, it should be provided by the
-     ;; `confinement' module (version 0.2 and later).
-     (set-current-reader %default-reader)))
+     ;; primitive is not provided by Guile (i.e., version <= 1.7.2), then it
+     ;; should be provided by `guile-reader' (version >= 0.3) as a core
+     ;; binding and installed by `(skribilo utils syntax)'.
+     (fluid-set! current-reader %default-reader)))
 
 
 ;; Make it available to the top-level module.

@@ -2,6 +2,44 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-01-14 12:33:12 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-21
+
+    Summary:
+      Merge from lcourtes@laas.fr--2004-libre
+    Revision:
+      skribilo--devel--1.2--patch-21
+
+    Patches applied:
+    
+     * lcourtes@laas.fr--2004-libre/skribilo--devel--1.2  (patch 17-24)
+    
+       - Merge from lcourtes@laas.fr--2005-mobile
+       - Cleaned up the use of a Skribe-compatible `gensym'.
+       - Cleaning the compatibility module and other annoyances.
+       - Syntax highlighting and `image'-related fixes.
+       - Made compatible with the new `current-reader' as a fluid.
+
+    modified files:
+     ChangeLog src/guile/skribilo.scm src/guile/skribilo/ast.scm
+     src/guile/skribilo/biblio.scm src/guile/skribilo/debug.scm
+     src/guile/skribilo/engine.scm src/guile/skribilo/evaluator.scm
+     src/guile/skribilo/lib.scm src/guile/skribilo/location.scm
+     src/guile/skribilo/module.scm src/guile/skribilo/output.scm
+     src/guile/skribilo/resolve.scm src/guile/skribilo/source.scm
+     src/guile/skribilo/utils/syntax.scm
+     src/guile/skribilo/verify.scm src/guile/skribilo/writer.scm
+
+    new patches:
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-17
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-18
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-19
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-20
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-21
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-22
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-23
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-24
+
+
 2006-01-10 23:40:38 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-20
 
     Summary:
