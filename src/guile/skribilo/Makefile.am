@@ -4,6 +4,7 @@ dist_guilemodule_DATA = biblio.scm color.scm config.scm		\
 		        lib.scm module.scm output.scm prog.scm	\
 		        reader.scm resolve.scm runtime.scm	\
 			source.scm parameters.scm verify.scm	\
-			writer.scm ast.scm location.scm
+			writer.scm ast.scm location.scm		\
+			condition.scm
 
 SUBDIRS = utils reader engine package skribe coloring
