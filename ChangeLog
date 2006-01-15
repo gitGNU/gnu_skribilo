@@ -2,6 +2,38 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-01-15 10:12:33 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-23
+
+    Summary:
+      Cleaned up the Arch inventory and removed old useless makefiles.
+    Revision:
+      skribilo--devel--1.2--patch-23
+
+    Cleaned up the Arch inventory and removed old useless makefiles.
+
+    new files:
+     .arch-inventory doc/user/.arch-inventory src/.arch-inventory
+     src/guile/skribilo/.arch-inventory
+
+    removed files:
+     emacs/.arch-ids/Makefile.id emacs/Makefile
+     etc/.arch-ids/Makefile.id etc/Makefile
+     etc/bigloo/.arch-ids/Makefile.id etc/bigloo/Makefile
+     etc/bigloo/autoconf/.arch-ids/Makefile.id
+     etc/bigloo/autoconf/Makefile
+     etc/stklos/.arch-ids/Makefile.in.id etc/stklos/Makefile.in
+     examples/.arch-ids/Makefile.id examples/Makefile
+     examples/slide/.arch-ids/Makefile.id examples/slide/Makefile
+     tools/.arch-ids/Makefile.id tools/Makefile
+     tools/skribebibtex/bigloo/.arch-ids/Makefile.id
+     tools/skribebibtex/bigloo/Makefile
+     tools/skribebibtex/stklos/.arch-ids/Makefile.id
+     tools/skribebibtex/stklos/Makefile
+
+    modified files:
+     ChangeLog {arch}/=tagging-method
+
+
 2006-01-15 09:57:49 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-22
 
     Summary:
