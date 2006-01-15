@@ -2,6 +2,146 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-01-15 09:57:49 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-22
+
+    Summary:
+      Removed the Bigloo/STkLos in the `legacy' directory.
+    Revision:
+      skribilo--devel--1.2--patch-22
+
+    Removed the `legacy' directory.
+
+    removed files:
+     legacy/.arch-ids/=id legacy/bigloo/.arch-ids/=id
+     legacy/bigloo/.arch-ids/Makefile.id
+     legacy/bigloo/.arch-ids/api.bgl.id
+     legacy/bigloo/.arch-ids/api.sch.id
+     legacy/bigloo/.arch-ids/asm.scm.id
+     legacy/bigloo/.arch-ids/bib.bgl.id
+     legacy/bigloo/.arch-ids/c.scm.id
+     legacy/bigloo/.arch-ids/color.scm.id
+     legacy/bigloo/.arch-ids/configure.bgl.id
+     legacy/bigloo/.arch-ids/debug.sch.id
+     legacy/bigloo/.arch-ids/debug.scm.id
+     legacy/bigloo/.arch-ids/engine.scm.id
+     legacy/bigloo/.arch-ids/eval.scm.id
+     legacy/bigloo/.arch-ids/evapi.scm.id
+     legacy/bigloo/.arch-ids/index.bgl.id
+     legacy/bigloo/.arch-ids/lib.bgl.id
+     legacy/bigloo/.arch-ids/lisp.scm.id
+     legacy/bigloo/.arch-ids/main.scm.id
+     legacy/bigloo/.arch-ids/new.sch.id
+     legacy/bigloo/.arch-ids/output.scm.id
+     legacy/bigloo/.arch-ids/param.bgl.id
+     legacy/bigloo/.arch-ids/parseargs.scm.id
+     legacy/bigloo/.arch-ids/prog.scm.id
+     legacy/bigloo/.arch-ids/read.scm.id
+     legacy/bigloo/.arch-ids/resolve.scm.id
+     legacy/bigloo/.arch-ids/source.scm.id
+     legacy/bigloo/.arch-ids/sui.bgl.id
+     legacy/bigloo/.arch-ids/types.scm.id
+     legacy/bigloo/.arch-ids/verify.scm.id
+     legacy/bigloo/.arch-ids/writer.scm.id
+     legacy/bigloo/.arch-ids/xml.scm.id legacy/bigloo/Makefile
+     legacy/bigloo/api.bgl legacy/bigloo/api.sch
+     legacy/bigloo/asm.scm legacy/bigloo/bib.bgl
+     legacy/bigloo/c.scm legacy/bigloo/color.scm
+     legacy/bigloo/configure.bgl legacy/bigloo/debug.sch
+     legacy/bigloo/debug.scm legacy/bigloo/engine.scm
+     legacy/bigloo/eval.scm legacy/bigloo/evapi.scm
+     legacy/bigloo/index.bgl legacy/bigloo/lib.bgl
+     legacy/bigloo/lisp.scm legacy/bigloo/main.scm
+     legacy/bigloo/new.sch legacy/bigloo/output.scm
+     legacy/bigloo/param.bgl legacy/bigloo/parseargs.scm
+     legacy/bigloo/prog.scm legacy/bigloo/read.scm
+     legacy/bigloo/resolve.scm legacy/bigloo/source.scm
+     legacy/bigloo/sui.bgl legacy/bigloo/types.scm
+     legacy/bigloo/verify.scm legacy/bigloo/writer.scm
+     legacy/bigloo/xml.scm legacy/stklos/.arch-ids/=id
+     legacy/stklos/.arch-ids/Makefile.in.id
+     legacy/stklos/.arch-ids/biblio.stk.id
+     legacy/stklos/.arch-ids/c-lex.l.id
+     legacy/stklos/.arch-ids/c.stk.id
+     legacy/stklos/.arch-ids/color.stk.id
+     legacy/stklos/.arch-ids/configure.stk.id
+     legacy/stklos/.arch-ids/debug.stk.id
+     legacy/stklos/.arch-ids/engine.stk.id
+     legacy/stklos/.arch-ids/eval.stk.id
+     legacy/stklos/.arch-ids/lib.stk.id
+     legacy/stklos/.arch-ids/lisp-lex.l.id
+     legacy/stklos/.arch-ids/lisp.stk.id
+     legacy/stklos/.arch-ids/main.stk.id
+     legacy/stklos/.arch-ids/output.stk.id
+     legacy/stklos/.arch-ids/prog.stk.id
+     legacy/stklos/.arch-ids/reader.stk.id
+     legacy/stklos/.arch-ids/resolve.stk.id
+     legacy/stklos/.arch-ids/runtime.stk.id
+     legacy/stklos/.arch-ids/source.stk.id
+     legacy/stklos/.arch-ids/types.stk.id
+     legacy/stklos/.arch-ids/vars.stk.id
+     legacy/stklos/.arch-ids/verify.stk.id
+     legacy/stklos/.arch-ids/writer.stk.id
+     legacy/stklos/.arch-ids/xml-lex.l.id
+     legacy/stklos/.arch-ids/xml.stk.id legacy/stklos/Makefile.in
+     legacy/stklos/biblio.stk legacy/stklos/c-lex.l
+     legacy/stklos/c.stk legacy/stklos/color.stk
+     legacy/stklos/configure.stk legacy/stklos/debug.stk
+     legacy/stklos/engine.stk legacy/stklos/eval.stk
+     legacy/stklos/lib.stk legacy/stklos/lisp-lex.l
+     legacy/stklos/lisp.stk legacy/stklos/main.stk
+     legacy/stklos/output.stk legacy/stklos/prog.stk
+     legacy/stklos/reader.stk legacy/stklos/resolve.stk
+     legacy/stklos/runtime.stk legacy/stklos/source.stk
+     legacy/stklos/types.stk legacy/stklos/vars.stk
+     legacy/stklos/verify.stk legacy/stklos/writer.stk
+     legacy/stklos/xml-lex.l legacy/stklos/xml.stk
+
+    modified files:
+     ChangeLog
+
+    removed directories:
+     legacy legacy/.arch-ids legacy/bigloo legacy/bigloo/.arch-ids
+     legacy/stklos legacy/stklos/.arch-ids
+
+
+2006-01-14 12:33:12 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-21
+
+    Summary:
+      Merge from lcourtes@laas.fr--2004-libre
+    Revision:
+      skribilo--devel--1.2--patch-21
+
+    Patches applied:
+    
+     * lcourtes@laas.fr--2004-libre/skribilo--devel--1.2  (patch 17-24)
+    
+       - Merge from lcourtes@laas.fr--2005-mobile
+       - Cleaned up the use of a Skribe-compatible `gensym'.
+       - Cleaning the compatibility module and other annoyances.
+       - Syntax highlighting and `image'-related fixes.
+       - Made compatible with the new `current-reader' as a fluid.
+
+    modified files:
+     ChangeLog src/guile/skribilo.scm src/guile/skribilo/ast.scm
+     src/guile/skribilo/biblio.scm src/guile/skribilo/debug.scm
+     src/guile/skribilo/engine.scm src/guile/skribilo/evaluator.scm
+     src/guile/skribilo/lib.scm src/guile/skribilo/location.scm
+     src/guile/skribilo/module.scm src/guile/skribilo/output.scm
+     src/guile/skribilo/resolve.scm src/guile/skribilo/source.scm
+     src/guile/skribilo/utils/syntax.scm
+     src/guile/skribilo/verify.scm src/guile/skribilo/writer.scm
+
+    new patches:
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-17
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-18
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-19
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-20
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-21
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-22
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-23
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-24
+
+
 2006-01-10 23:40:38 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-20
 
     Summary:
