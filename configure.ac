@@ -14,6 +14,9 @@ GUILE_SITE_DIR
 # Need guile-reader 0.2.
 GUILE_MODULE_REQUIRED([system reader])
 
+# Need SRFI-35, available in `guile-library'.
+GUILE_MODULE_REQUIRED([srfi srfi-35])
+
 # Look for Lout.
 AC_PATH_PROG([LOUT], [lout], [not-found])
 AM_CONDITIONAL([HAVE_LOUT], [test "x$LOUT" != "xnot-found"])

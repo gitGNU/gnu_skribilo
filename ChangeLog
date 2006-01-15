@@ -2,6 +2,54 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-01-15 21:22:18 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-24
+
+    Summary:
+      Introduced SRFI-3[45] conditions; cleaned up `evaluator.scm'.
+    Revision:
+      skribilo--devel--1.2--patch-24
+
+    * src/guile/skribilo/condition.scm: New.
+    
+    * src/guile/skribilo/Makefile.am (dist_guilemodule_DATA): Added
+      `condition.scm'.
+    
+    * src/guile/skribilo/evaluator.scm (skribe-eval): Renamed to
+      `evaluate-document'.
+      (skribe-eval-port): Renamed to `evaluate-document-from-port'.
+      (skribe-load-options): Renamed to `*load-options*', a fluid.
+      (skribe-load): Renamed to `load-document'.  Use SRFI-34 `raise' when a
+      file is not found.
+      (skribe-include): Renamed to `include-document'.  Use `raise'.
+    
+    * src/guile/skribilo/utils/compat.scm (%skribe-known-files): New.
+      (skribe-load): New.
+      (skribe-include): New.
+      (skribe-load-options): New.
+      (skribe-eval): New.
+      (skribe-eval-port): New.
+    
+    * src/skribilo.in: Invoke `call-with-skribilo-error-catch'.  Added a
+      copyright notice.
+    
+    * src/guile/skribilo.scm (doskribe): Use `evaluate-document-from-port',
+      not `skribe-eval-port'.
+    
+    * configure.ac: Look for `(srfi srfi-35)'.
+    
+    * AUTHORS: Mention that most of the code comes from the STkLos
+      implementation.
+
+    new files:
+     src/guile/skribilo/condition.scm
+
+    modified files:
+     AUTHORS ChangeLog configure.ac src/guile/skribilo.scm
+     src/guile/skribilo/Makefile.am
+     src/guile/skribilo/evaluator.scm
+     src/guile/skribilo/utils/compat.scm src/skribilo.in
+
+
 2006-01-15 10:12:33 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-23
 
     Summary:

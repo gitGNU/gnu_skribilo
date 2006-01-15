@@ -20,9 +20,22 @@
 
 
 (define-module (skribilo utils compat)
+  :use-module (skribilo utils syntax)
   :use-module (skribilo parameters)
+  :use-module (skribilo evaluator)
   :use-module (srfi srfi-1)
+  :use-module (ice-9 optargs)
   :replace (gensym))
+
+;;; Author:  Ludovic Courtès
+;;;
+;;; Commentary:
+;;;
+;;; This module defines symbols for compatibility with Skribe 1.2.
+;;;
+;;; Code:
+
+(fluid-set! current-reader %skribilo-module-reader)
 
 
 ;;;
@@ -87,6 +100,29 @@
 (define-public skribe-image-path  *image-path*)
 (define-public skribe-source-path *source-path*)
 (define-public skribe-bib-path    *bib-path*)
+
+
+;;;
+;;; Evaluator.
+;;;
+
+(define %skribe-known-files
+  ;; Like of Skribe package files and their equivalent Skribilo module.
+  '(("web-book.skr" . (skribilo packages web-book))))
+
+(define*-public (skribe-load file :rest args)
+  (let ((mod (assoc-ref %skribe-known-files file)))
+    (if mod
+	(set-module-uses! (current-module)
+			  (cons mod (module-uses (current-module))))
+	(apply load-document file args))))
+
+(define-public skribe-include      include-document)
+(define-public skribe-load-options *load-options*)
+
+(define-public skribe-eval         evaluate-document)
+(define-public skribe-eval-port    evaluate-document-from-port)
+
 
 
 ;;;
