@@ -9,6 +9,8 @@
 ;*    The Skribe style for documenting Lisp APIs.                      */
 ;*=====================================================================*/
 
+(use-modules (ice-9 match))
+
 ;*---------------------------------------------------------------------*/
 ;*    Html configuration                                               */
 ;*---------------------------------------------------------------------*/
@@ -59,11 +61,13 @@
 ;*    Find a definition inside a source file.                          */
 ;*---------------------------------------------------------------------*/
 (define (api-search-definition id file pred)
-   (let ((f (find-file/path file *skribe-source-path*)))
+   (let* ((path (append %load-path (skribe-path)))
+	  (f (find-file/path file path)))
       (if (not (string? f))
 	  (skribe-error 'api-search-definition
-			(format #t "can't find source file `~a' in path" file)
-			*skribe-source-path*)
+			(format #f "can't find source file `~a' in path"
+				file)
+			path)
 	  (with-input-from-file f
 	     (lambda ()
 		(let loop ((exp (read)))
@@ -104,9 +108,10 @@
 ;*    define-markup? ...                                               */
 ;*---------------------------------------------------------------------*/
 (define (define-markup? id o)
-   (match-case o
-      (((or define-markup define define-inline)
-	((? (lambda (x) (eq? x id))) . (? (lambda (x) (or (pair? x) (null? x))))) . ?-)
+   (match o
+      ((or 'define-markup 'define 'define-inline
+	   (? (lambda (x) (eq? x id)))
+	   (? (lambda (x) (or (pair? x) (null? x)))))
        o)
       ((define-simple-markup (? (lambda (x) (eq? x id))))
        o)
@@ -119,7 +124,7 @@
 ;*    make-engine? ...                                                 */
 ;*---------------------------------------------------------------------*/
 (define (make-engine? id o)
-   (match-case o
+   (match o
       (((or make-engine copy-engine) (quote (? (lambda (x) (eq? x id)))) . ?-)
        o)
       ((quasiquote . ?-)
@@ -135,7 +140,7 @@
 ;*    make-engine-custom ...                                           */
 ;*---------------------------------------------------------------------*/
 (define (make-engine-custom def)
-   (match-case (memq :custom def)
+   (match (memq :custom def)
       ((:custom (quote ?custom) . ?-)
        custom)
       ((:custom ?custom . ?-)
@@ -150,7 +155,7 @@
 ;*    options).                                                        */
 ;*---------------------------------------------------------------------*/
 (define (define-markup-formals def)
-   (match-case def
+   (match def
       ((?- (?- . ?args) . ?-)
        (if (symbol? args)
 	   (list args)
@@ -180,7 +185,7 @@
 ;*    Returns the options parameters of a define-markup.               */
 ;*---------------------------------------------------------------------*/
 (define (define-markup-options def)
-   (match-case def
+   (match def
       ((?- (?- . ?args) . ?-)
        (if (not (list? args))
 	   '()
@@ -203,7 +208,7 @@
 ;*    Returns the rest parameter of a define-markup.                   */
 ;*---------------------------------------------------------------------*/
 (define (define-markup-rest def)
-   (match-case def
+   (match def
       ((?- (?- . ?args) . ?-)
        (if (not (pair? args))
 	   args
@@ -270,7 +275,7 @@
        (table :cellpadding 0 :cellspacing 0 
 	  (tr (td :align 'left exp))))
       (else 
-       (match-case exp
+       (match exp
 	  ((quote (and ?sym (? symbol?)))
 	   (string-append "'" (symbol->string sym)))
 	  (else
@@ -319,7 +324,7 @@
 			   (idx *markup-index*)
 			   (idx-note "definition")
 		           (idx-suffix #f)
-			   (source "src/common/api.scm")
+			   (source "skribilo/skribe/api.scm")
 			   (def #f)
 			   (see-also '())
 			   (others '())

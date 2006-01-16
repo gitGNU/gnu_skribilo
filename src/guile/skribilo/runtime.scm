@@ -33,7 +33,10 @@
 	   make-string-replace)
   :use-module (skribilo parameters)
   :use-module (skribilo lib)
-  :use-module (srfi srfi-13))
+  :use-module (srfi srfi-13)
+  :use-module (srfi srfi-35)
+  :autoload   (skribilo condition) (&file-search-error)
+  :autoload   (srfi srfi-34) (raise))
 
 
 (define (suffix path)
@@ -128,9 +131,8 @@
 (define (convert-image file formats)
   (let ((path (search-path (*image-path*) file)))
     (if (not path)
-	(skribe-error 'convert-image
-		      (format #f "can't find `~a' image file in path: " file)
-		      (*image-path*))
+	(raise (condition (&file-search-error (file-name file)
+					      (path (*image-path*)))))
 	(let ((suf (suffix file)))
 	  (if (member suf formats)
 	      (let* ((dir (if (string? (*destination-file*))

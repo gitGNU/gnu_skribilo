@@ -23,6 +23,11 @@
 (define-module (skribilo source)
   :export (<language> language? language-extractor language-fontifier
 	   source-read-lines source-read-definition source-fontify)
+
+  :use-module (srfi srfi-35)
+  :autoload   (srfi srfi-34) (raise)
+  :autoload   (skribilo condition) (&file-search-error &file-open-error)
+
   :use-module (skribilo utils syntax)
   :use-module (skribilo parameters)
   :use-module (skribilo lib)
@@ -53,40 +58,39 @@
 ;*    source-read-lines ...                                            */
 ;*---------------------------------------------------------------------*/
 (define (source-read-lines file start stop tab)
-   (let ((p (search-path (*source-path*) file)))
-     (if (or (not (string? p)) (not (file-exists? p)))
-	  (skribe-error 'source
-			(format "Can't find `~a' source file in path" file)
-			(*source-path*))
-	  (with-input-from-file p
-	     (lambda ()
-		(if (> (*verbose*) 0)
-		    (format (current-error-port) "  [source file: ~S]\n" p))
-		(let ((startl (if (string? start) (string-length start) -1))
-		      (stopl  (if (string? stop)  (string-length stop)  -1)))
-		   (let loop ((l      1)
-			      (armedp (not (or (integer? start) (string? start))))
-			      (s      (read-line))
-			      (r      '()))
-		      (cond
-			 ((or (eof-object? s)
-			      (and (integer? stop) (> l stop))
-			      (and (string? stop) (substring=? stop s stopl)))
-			  (apply string-append (reverse! r)))
-			 (armedp
-			  (loop (+ l 1)
-				#t
-				(read-line)
-				(cons* "\n" (untabify s tab) r)))
-			 ((and (integer? start) (>= l start))
-			  (loop (+ l 1)
-				#t
-				(read-line)
-				(cons* "\n" (untabify s tab) r)))
-			 ((and (string? start) (substring=? start s startl))
-			  (loop (+ l 1) #t (read-line) r))
-			 (else
-			  (loop (+ l 1) #f (read-line) r))))))))))
+  (let ((p (search-path (*source-path*) file)))
+    (if (or (not (string? p)) (not (file-exists? p)))
+	(raise (condition (&file-search-error (file-name file)
+					      (path (*source-path*)))))
+	(with-input-from-file p
+	  (lambda ()
+	    (if (> (*verbose*) 0)
+		(format (current-error-port) "  [source file: ~S]\n" p))
+	    (let ((startl (if (string? start) (string-length start) -1))
+		  (stopl  (if (string? stop)  (string-length stop)  -1)))
+	      (let loop ((l      1)
+			 (armedp (not (or (integer? start) (string? start))))
+			 (s      (read-line))
+			 (r      '()))
+		(cond
+		 ((or (eof-object? s)
+		      (and (integer? stop) (> l stop))
+		      (and (string? stop) (substring=? stop s stopl)))
+		  (apply string-append (reverse! r)))
+		 (armedp
+		  (loop (+ l 1)
+			#t
+			(read-line)
+			(cons* "\n" (untabify s tab) r)))
+		 ((and (integer? start) (>= l start))
+		  (loop (+ l 1)
+			#t
+			(read-line)
+			(cons* "\n" (untabify s tab) r)))
+		 ((and (string? start) (substring=? start s startl))
+		  (loop (+ l 1) #t (read-line) r))
+		 (else
+		  (loop (+ l 1) #f (read-line) r))))))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    untabify ...                                                     */
@@ -136,16 +140,17 @@
 	  (skribe-error 'source
 			"The specified language has not defined extractor"
 			(slot-ref lang 'name)))
+
 	 ((or (not p) (not (file-exists? p)))
-	  (skribe-error 'source
-			(format "Can't find `~a' program file in path" file)
-			(*source-path*)))
+	  (raise (condition (&file-search-error (file-name file)
+						(path (*source-path*))))))
+
 	 (else
 	  (let ((ip (open-input-file p)))
 	     (if (> (*verbose*) 0)
 		 (format (current-error-port) "  [source file: ~S]\n" p))
 	     (if (not (input-port? ip))
-		 (skribe-error 'source "Can't open file for input" p)
+		 (raise (condition (&file-open-error (file-name p))))
 		 (unwind-protect
 		    (let ((s ((language-extractor lang) ip definition tab)))
 		       (if (not (string? s))
