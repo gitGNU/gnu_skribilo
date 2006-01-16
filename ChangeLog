@@ -2,6 +2,41 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-01-16 22:31:32 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-25
+
+    Summary:
+      More SRFI-3[45] enhancements; first stab at the user documentation.
+    Revision:
+      skribilo--devel--1.2--patch-25
+
+    * src/guile/skribilo/biblio.scm (skribe-open-bib-file): Raise a
+      `&file-search-error' when needed.
+    
+    * src/guile/skribilo/runtime.scm (convert-image): Likewise.
+    
+    * src/guile/skribilo/source.scm (source-read-lines): Likewise.
+      (source-read-definition): Likewise.
+    
+    * src/guile/skribilo/utils/compat.scm (skribe-load): Only look up
+      `%skribe-known-files' when `load-document' failed.
+      (find-file/path): Use `search-path'.
+      (find-runtime-type): Implemented.
+    
+    * doc/skr/api.skr: Use `(ice-9 match)'.  Use `match' instead of
+      `match-case'.
+      (api-search-definition): Search in `%load-path' and `(skribe-path)'.
+      (define-markup?): First stab at getting the `match' syntax right.
+    
+    * doc/user/src/start[3-5].skb: Small fixes.
+
+    modified files:
+     ChangeLog doc/skr/api.skr doc/user/src/start3.skb
+     doc/user/src/start4.skb doc/user/src/start5.skb
+     src/guile/skribilo/biblio.scm src/guile/skribilo/runtime.scm
+     src/guile/skribilo/source.scm
+     src/guile/skribilo/utils/compat.scm
+
+
 2006-01-15 21:22:18 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-24
 
     Summary:

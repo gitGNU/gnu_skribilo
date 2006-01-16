@@ -24,7 +24,11 @@
   :use-module (skribilo parameters)
   :use-module (skribilo evaluator)
   :use-module (srfi srfi-1)
+  :use-module (srfi srfi-34)
+  :use-module (srfi srfi-35)
   :use-module (ice-9 optargs)
+  :autoload   (skribilo ast) (ast?)
+  :autoload   (skribilo condition) (file-search-error? &file-search-error)
   :replace (gensym))
 
 ;;; Author:  Ludovic Courtès
@@ -111,11 +115,26 @@
   '(("web-book.skr" . (skribilo packages web-book))))
 
 (define*-public (skribe-load file :rest args)
-  (let ((mod (assoc-ref %skribe-known-files file)))
-    (if mod
-	(set-module-uses! (current-module)
-			  (cons mod (module-uses (current-module))))
-	(apply load-document file args))))
+  (call/cc
+   (lambda (return)
+     (guard (c ((file-search-error? c)
+		;; Regular file loading failed.  Try built-ins.
+		(let ((mod-name (assoc-ref %skribe-known-files file)))
+		  (if mod-name
+		      (let ((mod (false-if-exception
+				  (resolve-module mod-name))))
+			(if (not mod)
+			    (raise c)
+			    (begin
+			      (set-module-uses!
+			       (current-module)
+			       (cons mod (module-uses (current-module))))
+			      (return #t))))
+		      (raise c)))))
+
+	    ;; Try a regular `load-document'.
+	    (apply load-document file args)))))
+
 
 (define-public skribe-include      include-document)
 (define-public skribe-load-options *load-options*)
@@ -175,9 +194,9 @@
 (define-public system->string		system)  ;; FIXME
 (define-public any?			any)
 (define-public every?			every)
-(define-public find-file/path		(lambda (. args)
-				  (format #t "find-file/path: ~a~%" args)
-				  #f))
+(define-public (find-file/path file path)
+  (search-path path file))
+
 (define-public process-input-port	#f) ;process-input)
 (define-public process-output-port	#f) ;process-output)
 (define-public process-error-port	#f) ;process-error)
@@ -191,7 +210,16 @@
 (define-public hashtable->list	(lambda (h)
                           (map cdr (hash-map->list cons h))))
 
-(define-public find-runtime-type	(lambda (obj) obj))
+(define-public (find-runtime-type obj)
+  (cond ((string? obj)  "string")
+	((ast? obj)     "ast")
+	((list? obj)    "list")
+	((pair? obj)    "pair")
+	((number? obj)  "number")
+	((char? obj)    "character")
+	((keyword? obj) "keyword")
+	(else           (with-output-to-string
+			  (lambda () (write obj))))))
 
 
 

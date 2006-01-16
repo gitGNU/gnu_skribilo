@@ -25,6 +25,11 @@
   :use-module (skribilo utils syntax) ;; `when', `unless'
   :use-module (skribilo module)
   :use-module (skribilo skribe bib) ;; `make-bib-entry'
+
+  :autoload   (srfi srfi-34) (raise)
+  :use-module (srfi srfi-35)
+  :autoload   (skribilo condition) (&file-search-error)
+
   :autoload   (skribilo reader)      (%default-reader)
   :autoload   (skribilo parameters)  (*bib-path*)
   :autoload   (ice-9 format)         (format)
@@ -155,8 +160,5 @@
 			      (string-append "| "
 					     (format #f command path))
 			      path)))
-       (begin
-	 (skribe-warning 1
-			 'bibliography
-			 "Can't find bibliography -- " file)
-	 #f))))
+       (raise (condition (&file-search-error (file-name file)
+					     (path (*bib-path*))))))))
