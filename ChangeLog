@@ -2,6 +2,41 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-01-17 22:50:23 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-26
+
+    Summary:
+      Towards a self-hosted user manual.
+    Revision:
+      skribilo--devel--1.2--patch-26
+
+    * doc/skr/api.skr: Use `(skribilo reader)' and `(skribilo utils syntax)'.
+      (api-search-definition): Added a SKRIBE-SOURCE? argument.
+      Determine the appropriate reader based on its value.
+      (keyword->symbol): Removed.
+      (define-markup?): Fixed.
+      (make-engine?): Fixed (but unverified).
+      (make-engine-custom): Likewise.
+      (sym/kw?): New.
+      (define-markup-formals): Fixed.
+      (define-markup-options): Likewise.
+      (define-markup-rest): Likewise.
+      (doc-markup): Added a SKRIBE-SOURCE? argument.
+      (doc-engine): Likewise.
+    
+    * doc/user/*.skb: Updated the `:source' arguments to `doc-markup' and
+      `doc-engine'.
+    
+    * src/guile/skribilo/utils/compat.scm (hashtable-update!): Fixed
+      according to the Bigloo manual.
+
+    modified files:
+     ChangeLog doc/skr/api.skr doc/user/bib.skb doc/user/engine.skb
+     doc/user/htmle.skb doc/user/image.skb doc/user/index.skb
+     doc/user/latexe.skb doc/user/lib.skb doc/user/package.skb
+     doc/user/sectioning.skb doc/user/slide.skb doc/user/xmle.skb
+     src/guile/skribilo/utils/compat.scm
+
+
 2006-01-16 22:31:32 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-25
 
     Summary:

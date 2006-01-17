@@ -106,6 +106,6 @@ the document.])
 	   (source-bracket-color "The source bracket color.")
 	   (source-type-color "The source type color.")
 	   (image-format "The image formats for this engine."))
-	 :source "skr/html.skr")))
+	 :source "skribilo/engine/html.scm")))
 	    
 

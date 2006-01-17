@@ -11,6 +11,9 @@
 ;; @indent: (put 'doc-markup 'skribe-indent 'skribe-indent-function)@
 
 (cond-expand 
+   (guile
+    (define *engine-src*  "skribilo/engine.scm")
+    (define *types-src*   #f))
    (bigloo 
     (define *engine-src*  "../src/bigloo/engine.scm")
     (define *types-src*   "../src/bigloo/types.scm"))
@@ -55,6 +58,7 @@ given below:])
 	      (:custom [The engine custom list.])
 	      (:info [Miscellaneous.]))
 	    :common-args '()
+            :skribe-source? #f
 	    :source *engine-src*
 	    :idx *function-index*)
 	 
@@ -68,6 +72,7 @@ given below:])
 	      (:symbol-table [The engine symbol table.])
 	      (:custom [The engine custom list.]))
 	    :common-args '()
+            :skribe-source? #f
 	    :source *engine-src*
 	    :idx *function-index*))
 	      
@@ -80,6 +85,7 @@ on failure.])
 	    '((id [The name (a symbol) of the engine to be searched.])
 	      (:version [An optional version number for the searched engine.]))
 	    :common-args '()
+            :skribe-source? #f
 	    :source *engine-src*
 	    :idx *function-index*))
       
@@ -91,7 +97,8 @@ argument is an engine. Otherwise, it returns ,(code "#f"). In other words,
 	 (doc-markup 'engine?
 	    '((obj [The checked object.]))
 	    :common-args '()
-	    :source *types-src*
+            :skribe-source? #f
+	    :source *engine-src*
 	    :idx *function-index*)
 	 
 	 (p [The following functions return information about engines.])
@@ -100,7 +107,8 @@ argument is an engine. Otherwise, it returns ,(code "#f"). In other words,
 	    '((obj [The engine.]))
 	    :common-args '()
 	    :others '(engine-format engine-customs engine-filter engine-symbol-table)
-	    :source *types-src*
+            :skribe-source? #f
+	    :source *engine-src*
 	    :idx *function-index*))
       
       (subsection :title "Engine customs"
@@ -117,6 +125,7 @@ a custom.])
 ,(ref :mark "find-engine" :text (code "find-engine"))).])
 	      (id [The name of the custom.]))
 	    :common-args '()
+            :skribe-source? #f
 	    :source *engine-src*
 	    :idx *function-index*)
 	 
@@ -126,6 +135,7 @@ a custom.])
 	      (id [The name of the custom.])
 	      (val [The new value of the custom.]))
 	    :common-args '()
+            :skribe-source? #f
 	    :source *engine-src*
 	    :idx *function-index*)))
 

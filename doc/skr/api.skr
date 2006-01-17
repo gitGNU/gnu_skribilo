@@ -9,7 +9,9 @@
 ;*    The Skribe style for documenting Lisp APIs.                      */
 ;*=====================================================================*/
 
-(use-modules (ice-9 match))
+(use-modules (ice-9 match)
+	     (skribilo reader)        ;; `make-reader'
+	     (skribilo utils syntax)) ;; `%skribilo-module-reader'
 
 ;*---------------------------------------------------------------------*/
 ;*    Html configuration                                               */
@@ -60,9 +62,13 @@
 ;*    -------------------------------------------------------------    */
 ;*    Find a definition inside a source file.                          */
 ;*---------------------------------------------------------------------*/
-(define (api-search-definition id file pred)
+(define* (api-search-definition id file pred :optional (skribe-source? #t))
+   ;; If SKRIBE-SOURCE? is true, then assume Skribe syntax.  Otherwise, use
+   ;; the ``Skribilo module syntax''.
    (let* ((path (append %load-path (skribe-path)))
-	  (f (find-file/path file path)))
+	  (f (find-file/path file path))
+	  (read (if skribe-source? (make-reader 'skribe)
+		    %skribilo-module-reader)))
       (if (not (string? f))
 	  (skribe-error 'api-search-definition
 			(format #f "can't find source file `~a' in path"
@@ -73,7 +79,7 @@
 		(let loop ((exp (read)))
 		   (if (eof-object? exp)
 		       (skribe-error 'api-search-definition
-				     (format #t
+				     (format #f
 					     "can't find `~a' definition" id)
 				     file)
 		       (or (pred id exp) (loop (read))))))))))
@@ -93,29 +99,20 @@
       (or (and (null? d1) (null? d2))
 	  (list d1 d2))))
 
-;*---------------------------------------------------------------------*/
-;*    keyword->symbol ...                                              */
-;*---------------------------------------------------------------------*/
-(define (keyword->symbol kwd)
-   (let ((s (keyword->string kwd)))
-     (if (char=? #\: (string-ref s 0))
-	 ;; Bigloo
-	 (string->symbol (substring s 1 (string-length s)))
-	 ;; STklos
-	 (string->symbol s))))			 
 
 ;*---------------------------------------------------------------------*/
 ;*    define-markup? ...                                               */
 ;*---------------------------------------------------------------------*/
 (define (define-markup? id o)
    (match o
-      ((or 'define-markup 'define 'define-inline
-	   (? (lambda (x) (eq? x id)))
-	   (? (lambda (x) (or (pair? x) (null? x)))))
+      (((or 'define-markup 'define 'define-inline)
+	((? (lambda (x) (eq? x id)))
+	 . (? (lambda (x) (or (pair? x) (null? x)))))
+	. _)
        o)
-      ((define-simple-markup (? (lambda (x) (eq? x id))))
+      (('define-simple-markup (? (lambda (x) (eq? x id))))
        o)
-      ((define-simple-container (? (lambda (x) (eq? x id))))
+      (('define-simple-container (? (lambda (x) (eq? x id))))
        o)
       (else
        #f)))
@@ -125,13 +122,14 @@
 ;*---------------------------------------------------------------------*/
 (define (make-engine? id o)
    (match o
-      (((or make-engine copy-engine) (quote (? (lambda (x) (eq? x id)))) . ?-)
+      (((or 'make-engine 'copy-engine)
+	(quote (? (lambda (x) (eq? x id)))) _)
        o)
-      ((quasiquote . ?-)
+      ((`_)
        #f)
-      ((quote . ?-)
+      ((_)
        #f)
-      ((?a . ?d)
+      ((a d)
        (or (make-engine? id a) (make-engine? id d)))
       (else
        #f)))
@@ -141,12 +139,15 @@
 ;*---------------------------------------------------------------------*/
 (define (make-engine-custom def)
    (match (memq :custom def)
-      ((:custom (quote ?custom) . ?-)
+      ((:custom `custom _)
        custom)
-      ((:custom ?custom . ?-)
+      ((:custom custom _)
        (eval custom))
-      (else 
+      (else
        '())))
+
+(define (sym/kw? x)
+  (or (symbol? x) (keyword? x)))
 
 ;*---------------------------------------------------------------------*/
 ;*    define-markup-formals ...                                        */
@@ -156,26 +157,24 @@
 ;*---------------------------------------------------------------------*/
 (define (define-markup-formals def)
    (match def
-      ((?- (?- . ?args) . ?-)
-       (if (symbol? args)
-	   (list args)
-	   (let loop ((args args)
-		      (res '()))
-	      (cond
-		 ((null? args)
-		  (reverse! res))
-		 ((symbol? args)
-		  (reverse! (cons args res)))
-		 ((not (symbol? (car args)))
-		  (reverse! res))
-		 (else
-		  (loop (cdr args) (cons (car args) res)))))))
-      ((define-simple-markup ?-)
+      ((_ (id args ___) _ ___)
+       (let loop ((args args)
+		  (res '()))
+	 (cond
+	  ((null? args)
+	   (reverse! res))
+	  ((symbol? args)
+	   (reverse! (cons args res)))
+	  ((not (symbol? (car args)))
+	   (reverse! res))
+	  (else
+	   (loop (cdr args) (cons (car args) res))))))
+      (('define-simple-markup _)
        '())
-      ((define-simple-container ?-)
+      (('define-simple-container _)
        '())
       (else
-       (skribe-error 'define-markup-formals 
+       (skribe-error 'define-markup-formals
 		     "Illegal `define-markup' form"
 		     def))))
 
@@ -186,19 +185,19 @@
 ;*---------------------------------------------------------------------*/
 (define (define-markup-options def)
    (match def
-      ((?- (?- . ?args) . ?-)
+      (('define-markup (args ___) _)
        (if (not (list? args))
 	   '()
 	   (let ((keys (memq #!key args)))
 	      (if (pair? keys)
-		  (cdr keys)
+		  (cdr keys) ;; FIXME: do we need to filter ((key val)...)?
 		  '()))))
-      ((define-simple-markup ?-)
+      (('define-simple-markup _)
        '((ident #f) (class #f)))
-      ((define-simple-container ?-)
+      (('define-simple-container _)
        '((ident #f) (class #f)))
       (else
-       (skribe-error 'define-markup-formals 
+       (skribe-error 'define-markup-formals
 		     "Illegal `define-markup' form"
 		     def))))
 
@@ -209,7 +208,7 @@
 ;*---------------------------------------------------------------------*/
 (define (define-markup-rest def)
    (match def
-      ((?- (?- . ?args) . ?-)
+      (('define-markup (args ___) _)
        (if (not (pair? args))
 	   args
 	   (let ((l (last-pair args)))
@@ -224,12 +223,12 @@
 					   def)
 			     (cadr rest))
 			 #f))))))
-      ((define-simple-markup ?-)
+      (('define-simple-markup _)
        'node)
-      ((define-simple-container ?-)
+      (('define-simple-container _)
        'node)
       (else
-       (skribe-error 'define-markup-formals 
+       (skribe-error 'define-markup-rest
 		     "Illegal `define-markup' form"
 		     def))))
 
@@ -254,10 +253,10 @@
 		(d2 (cadr d)))
 	     (if (pair? d1)
 		 (skribe-error 'doc-markup 
-			       (format "~a: missing descriptions" id)
+			       (format #f "~a: missing descriptions" id)
 			       d1)
 		 (skribe-error 'doc-markup 
-			       (format "~a: extra descriptions" id)
+			       (format #f "~a: extra descriptions" id)
 			       d2))))))
 
 ;*---------------------------------------------------------------------*/
@@ -294,7 +293,8 @@
 	  (list " " (keyword opt))))
    (define (formal f)
       (list " " (param f)))
-   (code (list (bold "(") (bold :class 'api-proto-ident (format "~a" id)))
+   (code (list (bold "(") (bold :class 'api-proto-ident
+				(format #f "~a" id)))
 	 (map option (sort options 
 			   (lambda (s1 s2)
 			      (cond
@@ -331,6 +331,7 @@
 			   (force-engines '())
 			   (engines *api-engines*)
 			   (sui #f)
+			   (skribe-source? #t)
 			   &skribe-eval-location)
    (define (opt-engine-support opt)
       ;; find the engines providing a writer for id
@@ -372,9 +373,11 @@
       ((and (not def) (not source))
        (skribe-error 'doc-markup "source or def must be specified" id))
       (else
-       (let* ((d (or def (api-search-definition id source define-markup?)))
+       (let* ((d (or def (api-search-definition id source define-markup?
+						skribe-source?)))
 	      (od (map (lambda (o)
-			  (api-search-definition o source define-markup?))
+			  (api-search-definition o source define-markup?
+						 skribe-source?))
 		       others))
 	      (args (append common-args args))
 	      (formals (define-markup-formals d))
@@ -545,6 +548,7 @@
 			   #!key 
 			   (idx *custom-index*)
 			   source
+			   (skribe-source? #t)
 			   (def #f))
    (cond
       ((and def source)
@@ -552,7 +556,8 @@
       ((and (not def) (not source))
        (skribe-error 'doc-engine "source or def must be specified" id))
       (else
-       (let* ((d (or def (api-search-definition id source make-engine?)))
+       (let* ((d (or def (api-search-definition id source make-engine?
+						skribe-source?)))
 	      (c (make-engine-custom d)))
 	  (doc-check-arguments id c args)
 	  (cond
@@ -571,7 +576,8 @@
 				   (td :align 'left :valign 'top
 				      (list (index (symbol->string (car r))
 					       :index idx
-					       :note (format "~a custom" id))
+					       :note (format #f "~a custom"
+							     id))
 					    (symbol->string (car r))))
 				   (let ((def (assq (car r) c)))
 				      (td :valign 'top

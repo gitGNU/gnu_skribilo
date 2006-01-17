@@ -40,7 +40,8 @@ in the ,(ref :mark "skribe-path" :text "Skribe path").])
 		 (:path ,[The optional path where to find the file. The default
                           path is ,(markup-ref "skribe-path").])
 		 (#!rest opt... [Additional user options.]))
-	       :source "../src/bigloo/eval.scm"
+               :skribe-source? #f
+	       :source "skribilo/evaluator.scm"
 	       :common-args '()
 	       :see-also '(skribe-load-options skribe-path skribe-path-set!)
 	       :idx *function-index*)
@@ -49,7 +50,8 @@ in the ,(ref :mark "skribe-path" :text "Skribe path").])
 ,(markup-ref "skribe-load")])
    (doc-markup 'skribe-load-options
 	       '()
-	       :source "../src/bigloo/eval.scm"
+               :skribe-source? #f-
+	       :source "skribilo/evaluator.scm"
 	       :common-args '()
 	       :see-also '(skribe-load)
 	       :idx *function-index*)
@@ -61,7 +63,8 @@ when the Skribe compiler is invoked (see Chapter
    
    (doc-markup 'skribe-path
 	       '()
-	       :source "../src/bigloo/eval.scm"
+               :skribe-source? #f
+	       :source "skribilo/evaluator.scm"
 	       :common-args '()
 	       :others '(skribe-image-path skribe-bib-path skribe-source-path)
 	       :see-also '(include skribe-load image source bibliography skribe-path-set! skribe-image-path-set! skribe-bib-path-set! skribe-source-path-set!)
@@ -70,7 +73,8 @@ when the Skribe compiler is invoked (see Chapter
    (p [The function ,(code "skribe-path-set!") sets a new path.])
    (doc-markup 'skribe-path-set!
 	       '((path [A list of strings which is the new Skribe search path.]))
-	       :source "../src/bigloo/eval.scm"
+               :skribe-source? #f
+	       :source "skribilo/evaluator.scm"
 	       :common-args '()
 	       :others '(skribe-image-path-set! skribe-bib-path-set! skribe-source-path-set!)
 	       :see-also '(skribe-path skribe-image-path skribe-bib-path skribe-source-path)

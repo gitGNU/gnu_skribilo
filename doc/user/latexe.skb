@@ -45,7 +45,7 @@
 	   (hyperref-usepackage "The LaTeX package for hyperref.")
 	   (image-format "The image formats for this engine.")
 	   (index-page-ref "Indexes use page references."))
-	 :source "skr/latex.skr"))
+	 :source "skribilo/engine/latex.scm"))
    
    (subsection :title "LaTeX documentclass"
       

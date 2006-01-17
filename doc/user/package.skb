@@ -47,7 +47,7 @@ markup ,(code "abstract"):])
 	 :idx-note "acmproc"
 	 :idx-suffix " (acmproc)"
 	 :force-engines *api-engines*
-	 :source "../skr/acmproc.skr"))
+	 :source "skribilo/package/acmproc.scm"))
 
    (subsection :title (tt "jfp.skr") :ident "jfp"
       (index :index *package-index* "jfp.skr" :note "package")
@@ -61,7 +61,7 @@ markup ,(code "abstract"):])
 	 :idx-note "jfp"
 	 :idx-suffix " (jfp)"
 	 :force-engines *api-engines*
-	 :source "../skr/jfp.skr"))
+	 :source "skribilo/package/jfp.scm"))
 
    (subsection :title (tt "lncs.skr") :ident "lncs"
       (index :index *package-index* "lncs.skr" :note "package")
@@ -75,7 +75,7 @@ markup ,(code "abstract"):])
 	 :idx-note "lncs"
 	 :idx-suffix " (lncs)"
 	 :force-engines *api-engines*
-	 :source "../skr/lncs.skr")))
+	 :source "skribilo/package/lncs.scm")))
 
 ;*---------------------------------------------------------------------*/
 ;*    french                                                           */
@@ -102,7 +102,7 @@ This package is to be used to authoring simple letters. It redefines the
       :idx-note "letter"
       :idx-suffix " (letter)"
       :force-engines *api-engines*
-      :source "../skr/letter.skr"))
+      :source "skribilo/package/letter.scm"))
 
 ;*---------------------------------------------------------------------*/
 ;*    Web                                                              */
