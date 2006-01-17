@@ -73,7 +73,9 @@ returns the name of the new converted image. On failure, it returns
 searched in the ,(ref :mark "skribe-image-path" :text "image path").])
 		 (formats [A list of formats into which images are converted to.]))
 	       :common-args '()
-	       :source "../src/bigloo/lib.bgl"
+               :skribe-source? #f
+	       :source #f ;;"skribilo/runtime.scm"
+               :def '(define-markup (convert-image file formats) ...)
 	       :see-also '(skribe-image-path)
 	       :idx *function-index*)))
    

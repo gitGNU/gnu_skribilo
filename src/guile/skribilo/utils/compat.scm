@@ -206,7 +206,13 @@
 (define-public hashtable?		hash-table?)
 (define-public hashtable-get		(lambda (h k) (hash-ref h k #f)))
 (define-public hashtable-put!		hash-set!)
-(define-public hashtable-update!	hash-set!)
+(define-public (hashtable-update! table key update-proc init-value)
+  ;; This is a Bigloo-specific API.
+  (let ((handle (hash-get-handle table key)))
+    (if (not handle)
+	(hash-set! table key init-value)
+	(set-cdr! handle (update-proc (cdr handle))))))
+
 (define-public hashtable->list	(lambda (h)
                           (map cdr (hash-map->list cons h))))
 

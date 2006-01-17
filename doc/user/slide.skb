@@ -44,7 +44,7 @@ the vertical space size between the title and the body of the slide.])
 list ,(code "(split blinds box wipe dissolve glitter)").])
 		 (:bg [The background color of the slide.])
 		 (:image [The background image of the slide.]))
-	       :source "../skr/slide.skr"))
+	       :source "skribilo/package/slide.scm"))
 
 ;*---------------------------------------------------------------------*/
 ;*    slide-pause                                                      */
@@ -57,7 +57,7 @@ projection.])
    (doc-markup 'slide-pause
 	       '()
 	       :common-args '()
-	       :source "../skr/slide.skr"))
+	       :source "skribilo/package/slide.scm"))
 
 ;*---------------------------------------------------------------------*/
 ;*    slide-vspace ...                                                 */
@@ -70,7 +70,7 @@ projection.])
 	       '((:unit [The unit of the space.])
 		 (#!rest val [The size of the vertical space.]))
 	       :common-args '()
-	       :source "../skr/slide.skr"))
+	       :source "skribilo/package/slide.scm"))
 
 ;*---------------------------------------------------------------------*/
 ;*    slide-embed ...                                                  */
@@ -92,7 +92,7 @@ to the embedded application.])
 		 (:alt [An alternative Skribe expression to be used if the
 output format does not support embedded application.]))
 	       :common-args '()
-	       :source "../skr/slide.skr"))
+	       :source "skribilo/package/slide.scm"))
 
 ;*---------------------------------------------------------------------*/
 ;*    Example                                                          */
