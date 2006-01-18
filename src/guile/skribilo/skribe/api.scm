@@ -1,7 +1,7 @@
-;;; api.scm
+;;; api.scm -- The markup API of Skribe/Skribilo.
 ;;;
 ;;; Copyright 2003, 2004  Manuel Serrano
-;;; Copyright 2005  Ludovic Courtès  <ludovic.courtes@laas.fr>
+;;; Copyright 2005, 2006  Ludovic Courtès  <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -19,7 +19,8 @@
 ;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ;;; USA.
 
-(define-skribe-module (skribilo skribe api))
+(define-skribe-module (skribilo skribe api)
+  :replace (symbol))
 
 ;;; Author:  Manuel Serrano
 ;;; Commentary:
@@ -824,20 +825,19 @@
 ;*---------------------------------------------------------------------*/
 ;*    symbol ...                                                       */
 ;*---------------------------------------------------------------------*/
-(set! symbol
-      (lambda (symbol)
-	(let ((v (cond
-		  ((symbol? symbol)
-		   (symbol->string symbol))
-		  ((string? symbol)
-		   symbol)
-		  (else
-		   (skribe-error 'symbol
-				 "Illegal argument (symbol expected)"
-				 symbol)))))
-	  (new markup
-	       (markup 'symbol)
-	       (body v)))))
+(define-markup (symbol symbol)
+  (let ((v (cond
+	    ((symbol? symbol)
+	     (symbol->string symbol))
+	    ((string? symbol)
+	     symbol)
+	    (else
+	     (skribe-error 'symbol
+			   "Illegal argument (symbol expected)"
+			   symbol)))))
+    (new markup
+	 (markup 'symbol)
+	 (body v))))
 
 ;*---------------------------------------------------------------------*/
 ;*    ! ...                                                            */

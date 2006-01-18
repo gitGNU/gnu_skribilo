@@ -105,7 +105,7 @@
 ;*---------------------------------------------------------------------*/
 (define (define-markup? id o)
    (match o
-      (((or 'define-markup 'define 'define-inline)
+      (((or 'define-markup 'define 'define-public 'define-inline)
 	((? (lambda (x) (eq? x id)))
 	 . (? (lambda (x) (or (pair? x) (null? x)))))
 	. _)
@@ -185,7 +185,7 @@
 ;*---------------------------------------------------------------------*/
 (define (define-markup-options def)
    (match def
-      (('define-markup (args ___) _)
+      ((_ (args ___) _ ___)
        (if (not (list? args))
 	   '()
 	   (let ((keys (memq #!key args)))
@@ -197,7 +197,7 @@
       (('define-simple-container _)
        '((ident #f) (class #f)))
       (else
-       (skribe-error 'define-markup-formals
+       (skribe-error 'define-markup-options
 		     "Illegal `define-markup' form"
 		     def))))
 
@@ -208,7 +208,7 @@
 ;*---------------------------------------------------------------------*/
 (define (define-markup-rest def)
    (match def
-      (('define-markup (args ___) _)
+      ((_ (args ___) _)
        (if (not (pair? args))
 	   args
 	   (let ((l (last-pair args)))

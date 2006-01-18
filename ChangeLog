@@ -2,6 +2,81 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-01-18 23:22:29 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-28
+
+    Summary:
+      More fixes in the hope to get the manual compiled.
+    Revision:
+      skribilo--devel--1.2--patch-28
+
+    * doc/skr/api.skr (define-markup?): Accept `define-public'.
+      (define-markup-options): Accept any kind of `define' symbol.
+      (define-markup-rest): Likewise.
+    
+    * doc/user/bib.skb (bibliography): Use `src/bib1.sbib'.
+      (bib-table?): Provide a definition.
+      (default-bib-table): Likewise.
+      (make-bib-table): Likewise.
+      (bibliography): Fixed a `ref'.
+      (example): Fixed file name.  This example does not work yet.
+    
+    * doc/user/footnote.skb (footnote): Documented `label', removed
+      `number'.
+    
+    * doc/user/table.skb (th): Documented `rowspan'.
+    
+    * src/guile/skribilo.scm (skribilo-options): Added `-S'/`--source-path'.
+      Honor it.
+    
+    * src/guile/skribilo/coloring/lisp.scm: Use `(ice-9 match)'.  Rewrote all
+      the `match-case' code into corresponding `match' statements.
+      (definition-search): Fixed, using `source-property' and `port-line'.
+      Does not work yet due to a bug in guile-reader's source position
+      recording (shows 1 line earlier).  Added a READ parameter.
+    
+    * src/guile/skribilo/skribe/api.scm: Mark SYMBOL as replaced instead of
+      blindly overriding the core binding.
+
+    modified files:
+     ChangeLog doc/skr/api.skr doc/user/bib.skb
+     doc/user/footnote.skb doc/user/table.skb
+     src/guile/skribilo.scm src/guile/skribilo/coloring/lisp.scm
+     src/guile/skribilo/skribe/api.scm
+
+
+2006-01-18 22:16:43 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-27
+
+    Summary:
+      Merge from lcourtes@laas.fr--2004-libre
+    Revision:
+      skribilo--devel--1.2--patch-27
+
+    Patches applied:
+    
+     * lcourtes@laas.fr--2004-libre/skribilo--devel--1.2  (patch 25-30)
+    
+       - Removed the Bigloo/STkLos in the `legacy' directory.
+       - Cleaned up the Arch inventory and removed old useless makefiles.
+       - Introduced SRFI-3[45] conditions; cleaned up `evaluator.scm'.
+       - More SRFI-3[45] enhancements; first stab at the user documentation.
+       - Towards a self-hosted user manual.
+       - Various fixes: HTML engine, resolution, compatibility.
+
+    modified files:
+     ChangeLog src/guile/skribilo/engine/html.scm
+     src/guile/skribilo/parameters.scm src/guile/skribilo/prog.scm
+     src/guile/skribilo/resolve.scm
+     src/guile/skribilo/utils/compat.scm
+
+    new patches:
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-25
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-26
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-27
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-28
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-29
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-30
+
+
 2006-01-17 22:50:23 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-26
 
     Summary:

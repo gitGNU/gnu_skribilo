@@ -30,6 +30,7 @@
   :use-module (skribilo source)
   :use-module (skribilo lib)
   :use-module (skribilo runtime)
+  :use-module (ice-9 match)
   :autoload   (skribilo reader)  (make-reader)
   :export (skribe scheme stklos bigloo lisp))
 
@@ -48,14 +49,16 @@
 ;;;
 ;;; DEFINITION-SEARCH
 ;;;
-(define (definition-search inp tab test)
-  (let Loop ((exp (%read inp)))
+(define (definition-search inp read tab def?)
+  (let Loop ((exp (read inp)))
     (unless (eof-object? exp)
-      (if (test exp)
-	  (let ((start (and (%epair? exp) (%epair-line exp)))
-		(stop  (port-current-line inp)))
-	    (source-read-lines (port-file-name inp) start stop tab))
-	  (Loop (%read inp))))))
+      (if (def? exp)
+	  (let ((start (and (pair? exp) (source-property exp 'line)))
+		(stop  (port-line inp)))
+	    (format (current-error-port) "READ-LINES: `~a' ~a->~a~%"
+		    exp start stop)
+	    (source-read-lines (port-filename inp) start stop tab))
+	  (Loop (read inp))))))
 
 
 (define (lisp-family-fontifier s read)
@@ -75,15 +78,15 @@
 (define (lisp-extractor iport def tab)
   (definition-search
     iport
+    read
     tab
     (lambda (exp)
-      (match-case exp
-	 (((or defun defmacro) ?fun ?- . ?-)
-		(and (eq? def fun) exp))
-	 ((defvar ?var . ?-)
-		(and (eq? var def) exp))
-	 (else
-		#f)))))
+      (match exp
+	 (((or 'defun 'defmacro) fun _ . _)
+	  (and (eq? def fun) exp))
+	 (('defvar var . _)
+	  (and (eq? var def) exp))
+	 (else #f)))))
 
 (define (init-lisp-keys)
   (unless *lisp-keys*
@@ -117,15 +120,15 @@
 (define (scheme-extractor iport def tab)
   (definition-search
     iport
+    %skribilo-module-reader
     tab
     (lambda (exp)
-      (match-case exp
-	 (((or define define-macro) (?fun . ?-) . ?-)
-	     (and (eq? def fun) exp))
-	 ((define (and (? symbol?) ?var) . ?-)
-	     (and (eq? var def) exp))
-	 (else
-	     #f)))))
+      (match exp
+	 (((or 'define 'define-macro) (fun . _) . _)
+	  (and (eq? def fun) exp))
+	 (('define (? symbol? var) . _)
+	  (and (eq? var def) exp))
+	 (else #f)))))
 
 
 (define (init-scheme-keys)
@@ -161,14 +164,15 @@
 (define (stklos-extractor iport def tab)
   (definition-search
     iport
+    %skribilo-module-reader
     tab
     (lambda (exp)
-      (match-case exp
-	 (((or define define-generic define-method define-macro)
-	   (?fun . ?-) . ?-)
-		(and (eq? def fun) exp))
-	 (((or define define-module) (and (? symbol?) ?var) . ?-)
-		(and (eq? var def) exp))
+      (match exp
+	 (((or 'define 'define-generic 'define-method 'define-macro)
+	   (fun . _) . _)
+	  (and (eq? def fun) exp))
+	 (((or 'define 'define-module) (? symbol? var) . _)
+	  (and (eq? var def) exp))
 	 (else
 		#f)))))
 
@@ -214,17 +218,18 @@
 (define (skribe-extractor iport def tab)
   (definition-search
     iport
+    (make-reader 'skribe)
     tab
     (lambda (exp)
-      (match-case exp
-	(((or define define-macro define-markup) (?fun . ?-) . ?-)
-	   (and (eq? def fun) exp))
-	((define (and (? symbol?) ?var) . ?-)
-	   (and (eq? var def) exp))
-	((markup-output (quote ?mk) . ?-)
-	   (and (eq? mk def) exp))
-	(else
-	   #f)))))
+      (match exp
+	(((or 'define 'define-macro 'define-markup 'define-public)
+	  (fun . _) . _)
+	 (and (eq? def fun) exp))
+	(('define (? symbol? var) . _)
+	 (and (eq? var def) exp))
+	(('markup-output (quote mk) . _)
+	 (and (eq? mk def) exp))
+	(else #f)))))
 
 
 (define (init-skribe-keys)
@@ -275,17 +280,18 @@
 (define (bigloo-extractor iport def tab)
   (definition-search
     iport
+    %skribilo-module-reader
     tab
     (lambda (exp)
-      (match-case exp
-	 (((or define define-inline define-generic
-	       define-method define-macro define-expander)
-	   (?fun . ?-) . ?-)
-		(and (eq? def fun) exp))
-	 (((or define define-struct define-library) (and (? symbol?) ?var) . ?-)
-		(and (eq? var def) exp))
-	 (else
-		#f)))))
+      (match exp
+	 (((or 'define 'define-inline 'define-generic
+	       'define-method 'define-macro 'define-expander)
+	   (fun . _) . _)
+	  (and (eq? def fun) exp))
+	 (((or 'define 'define-struct 'define-library)
+	   (? symbol? var) . _)
+	  (and (eq? var def) exp))
+	 (else #f)))))
 
 (define bigloo
   (new language
