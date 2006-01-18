@@ -72,13 +72,16 @@
 (define-method (do-resolve! (ast <pair>) engine env)
   (let Loop ((n* ast))
     (cond
-      ((pair? n*)
+      ((null? n*)
+       ast)
+      ((list? n*)
        (set-car! n* (do-resolve! (car n*) engine env))
        (Loop (cdr n*)))
-      ((not (null? n*))
-       (error 'do-resolve "illegal argument" n*))
+      ((pair? n*)
+       (set-car! n* (do-resolve! (car n*) engine env))
+       (set-cdr! n* (do-resolve! (cdr n*) engine env)))
       (else
-       ast))))
+       (error 'do-resolve "illegal argument" n*)))))
 
 
 (define-method (do-resolve! (node <node>) engine env)

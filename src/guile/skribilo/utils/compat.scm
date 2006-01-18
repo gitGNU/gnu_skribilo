@@ -24,6 +24,7 @@
   :use-module (skribilo parameters)
   :use-module (skribilo evaluator)
   :use-module (srfi srfi-1)
+  :autoload   (srfi srfi-13) (string-rindex)
   :use-module (srfi srfi-34)
   :use-module (srfi srfi-35)
   :use-module (ice-9 optargs)
@@ -63,6 +64,9 @@
 ;;; Global variables that have been replaced by parameter objects
 ;;; in `(skribilo parameters)'.
 ;;;
+;;; FIXME: There's not much we can do about these variables (as opposed to
+;;; the _accessors_ below).  Perhaps we should just not define them?
+;;;
 
 ;;; Switches
 (define-public *skribe-verbose*	0)
@@ -86,7 +90,7 @@
 (define-public *skribe-dest*		#f)
 
 ;;; Engine
-(define-public *skribe-engine*	'html)	;; Use HTML by default
+(define-public *skribe-engine*  	'html)	;; Use HTML by default
 
 ;;; Misc
 (define-public *skribe-chapter-split*	'())
@@ -112,7 +116,16 @@
 
 (define %skribe-known-files
   ;; Like of Skribe package files and their equivalent Skribilo module.
-  '(("web-book.skr" . (skribilo packages web-book))))
+  '(("web-book.skr"     . (skribilo package web-book))
+    ("web-article.skr"  . (skribilo package web-article))
+    ("slide.skr"        . (skribilo package slide))
+    ("sigplan.skr"      . (skribilo package sigplan))
+    ("scribe.skr"       . (skribilo package scribe))
+    ("lncs.skr"         . (skribilo package lncs))
+    ("letter.skr"       . (skribilo package letter))
+    ("jfp.skr"          . (skribilo package jfp))
+    ("french.skr"       . (skribilo package french))
+    ("acmproc.skr"      . (skribilo package acmproc))))
 
 (define*-public (skribe-load file :rest args)
   (call/cc
@@ -121,15 +134,20 @@
 		;; Regular file loading failed.  Try built-ins.
 		(let ((mod-name (assoc-ref %skribe-known-files file)))
 		  (if mod-name
-		      (let ((mod (false-if-exception
-				  (resolve-module mod-name))))
-			(if (not mod)
-			    (raise c)
-			    (begin
-			      (set-module-uses!
-			       (current-module)
-			       (cons mod (module-uses (current-module))))
-			      (return #t))))
+		      (begin
+			(if (> (*verbose*) 1)
+			    (format (current-error-port)
+				    "  skribe-load: `~a' -> `~a'~%"
+				    file mod-name))
+			(let ((mod (false-if-exception
+				    (resolve-module mod-name))))
+			  (if (not mod)
+			      (raise c)
+			      (begin
+				(set-module-uses!
+				 (current-module)
+				 (cons mod (module-uses (current-module))))
+				(return #t)))))
 		      (raise c)))))
 
 	    ;; Try a regular `load-document'.
@@ -175,19 +193,18 @@
 
 (define-public (file-prefix fn)
   (if fn
-      (let ((match (regexp-match "(.*)\\.([^/]*$)" fn)))
-	(if match
-	    (cadr match)
-	    fn))
+      (let ((dot (string-rindex fn #\.)))
+	(if dot (substring fn 0 dot) fn))
       "./SKRIBILO-OUTPUT"))
 
-(define-public (file-suffix s)
-  ;; Not completely correct, but sufficient here
-  (let* ((basename (regexp-replace "^(.*)/(.*)$" s "\\2"))
-	 (split    (string-split basename ".")))
-    (if (> (length split) 1)
-	(car (reverse! split))
-	"")))
+(define-public (file-suffix fn)
+  (if fn
+      (let ((dot (string-rindex fn #\.)))
+	(if dot
+	    (substring fn (+ dot 1) (string-length fn))
+	    ""))
+      #f))
+
 
 (define-public prefix			file-prefix)
 (define-public suffix			file-suffix)

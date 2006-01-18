@@ -17,6 +17,7 @@
 ;*=====================================================================*/
 
 (define-skribe-module (skribilo engine html)
+  :autoload   (skribilo parameters) (*destination-file*)
   :use-module ((srfi srfi-19) :renamer (symbol-prefix-proc 's19:)))
 
 
@@ -60,17 +61,17 @@
 			(engine-custom e 'subsection-file))
 		   (and (is-markup? node 'subsubsection)
 			(engine-custom e 'subsubsection-file)))
-	       (let* ((b (or (and (string? *skribe-dest*)
-				  (prefix *skribe-dest*))
+	       (let* ((b (or (and (string? (*destination-file*))
+				  (prefix (*destination-file*)))
 			     ""))
-		      (s (or (and (string? *skribe-dest*)
-				  (suffix *skribe-dest*))
+		      (s (or (and (string? (*destination-file*))
+				  (suffix (*destination-file*)))
 			     "html"))
 		      (nm (get-file-name b s)))
 		  (markup-option-add! node filename nm)
 		  nm))
 	      ((document? node)
-	       *skribe-dest*)
+	       (*destination-file*))
 	      (else
 	       (let ((p (ast-parent node)))
 		  (if (container? p)
@@ -986,8 +987,8 @@
       (sui-blocks 'subsection n e)
       (sui-blocks 'subsubsection n e)
       (display "  )\n"))
-   (if (string? *skribe-dest*)
-       (let ((f (format #f "~a.sui" (prefix *skribe-dest*))))
+   (if (string? (*destination-file*))
+       (let ((f (format #f "~a.sui" (prefix (*destination-file*)))))
 	  (with-output-to-file f sui))
        (sui)))
 
@@ -1132,22 +1133,17 @@
 		    (printf "<td colspan=\"~a\" width=\"100%\">"
 			    (- 4 level))
 		    (printf "<a href=\"~a#~a\">"
-			    (if (and *skribe-dest*
-				     (string=? f *skribe-dest*))
+			    (if (and (*destination-file*)
+				     (string=? f (*destination-file*)))
 				""
-				(strip-ref-base (or f *skribe-dest* "")))
+				(strip-ref-base (or f (*destination-file*) "")))
 			    (string-canonicalize id))
 		    (output (markup-option c :title) e)
 		    (display "</a></td>")
 		    (display "</tr>\n")
 		    ;; the children
 		    (for-each (lambda (n) (toc-entry n (+ 1 level))) ch)))
-	      (define (symbol->keyword s)
-		 (cond-expand
-		    (stklos
-		     (make-keyword s))
-		    (bigloo
-		     (string->keyword (string-append ":" (symbol->string s))))))
+
 	      (let* ((c (markup-option n :chapter))
 		     (s (markup-option n :section))
 		     (ss (markup-option n :subsection))
@@ -1925,9 +1921,10 @@
 				(markup-class n)
 				"inbound")))
 		 (printf "<a href=\"~a#~a\" class=\"~a\""
-			 (if (and *skribe-dest* (string=? f *skribe-dest*))
+			 (if (and (*destination-file*)
+				  (string=? f (*destination-file*)))
 			     ""
-			     (strip-ref-base (or f *skribe-dest* "")))
+			     (strip-ref-base (or f (*destination-file*) "")))
 			 (string-canonicalize id)
 			 class)
 		 (display ">")))

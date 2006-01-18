@@ -89,7 +89,7 @@
        (values #f line))
       ((string? line)
        (extract-string-mark line mark regexp))
-      ((pair? line)
+      ((list? line)
        (let loop ((ls line)
 		  (res '()))
 	  (if (null? ls)
@@ -135,7 +135,7 @@
 		 (loop r1
 		       (+ r2 1)
 		       res))))))
-      ((pair? line)
+      ((list? line)
        (let loop ((ls line)
 		  (res '()))
 	  (if (null? ls)
