@@ -66,6 +66,7 @@ attribute is only supported by HTML engines supporting
 	      (:valign [The vertical alignment of the cell. The value can
 		        be ,(code "top"), ,(code "center"), ,(code "bottom").])
               (:colspan [The number of columns that the cell expands to.])
+	      (:rowspan [The number of columns that the cell spans over.])
 	      (#!rest node [The value of the cell.]))
 	    :writer-id 'tc
 	    :ignore-args '(m)

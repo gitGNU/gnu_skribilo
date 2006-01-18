@@ -18,7 +18,10 @@
 the reference to the footnote.])
 
 (doc-markup 'footnote
-	    `((:number [The number of the footnote.])
+	    `((:label [This may be either a boolean (i.e., ,(code "#f")
+or ,(code "#t")) indicating whether a footnote label should
+automatically be produced, a string specifying a label to use (e.g.,
+,(code ["*"])), or a number.])
 	      (#!rest text... [The text of the footnote.]))
 	    :see-also '(document chapter section))
 

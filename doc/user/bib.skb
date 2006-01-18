@@ -9,7 +9,7 @@
 ;*    The Skribe index                                                 */
 ;*=====================================================================*/
 
-(bibliography "user/src/bib1.sbib")
+(bibliography "src/bib1.sbib")
 
 ;*---------------------------------------------------------------------*/
 ;*    Index                                                            */
@@ -51,8 +51,8 @@ if its argument is a bibliography table as returned by
 	       :see-also '(make-bib-table default-bib-table bibliography the-bibliography)
 	       :force-engines *api-engines*
 	       :common-args '()
-               :skribe-source? #f
-	       :source "skribilo/biblio.scm")
+	       :source #f ;;"skribilo/biblio.scm"
+               :def '(define-markup (bib-table? obj) ...))
    
    (p [The function ,(code "default-bib-table") returns a global, pre-existing
 bibliography-table:])
@@ -61,8 +61,8 @@ bibliography-table:])
 	       :see-also '(bib-table? make-bib-table bibliography the-bibliography)
 	       :force-engines *api-engines*
 	       :common-args '()
-               :skribe-source? #f
-	       :source "skribilo/biblio.scm")
+               :source #f
+               :def '(define-markup (default-bib-table) ...))
    
    (p [The function ,(code "make-bib-table") constructs a new 
 bibliography-table:])
@@ -71,8 +71,8 @@ bibliography-table:])
 	       :see-also '(bib-table? default-bib-table bibliography the-bibliography)
 	       :force-engines *api-engines*
 	       :common-args '()
-               :skribe-source? #f
-	       :source "skribilo/biblio.scm"))
+	       :source #f
+               :def '(define-markup (make-bib-table ident) ...)))
    
 ;*---------------------------------------------------------------------*/
 ;*    bibliography ... @label bibliography@                            */
@@ -84,7 +84,7 @@ into the Skribe memory. An ,(emph "entry") is either a list
 representing one entry (such as an article or book reference) or a
 string which denotes a file name that contains several
 entries. All the entries loaded in memory are available for the function
-,(ref :ident "ref" :node "references"). A bibliography database must be loaded
+,(ref :ident "ref" :text "references"). A bibliography database must be loaded
 ,(emph "before") any reference is introduced. It is advised to place
 the ,(code "bibliography") Skribe function call before the call to the
 ,(markup-ref "document") function call.])
@@ -217,7 +217,8 @@ entries identifier. The last one sorts according to entries date.])
 
 (example-produce 
  (example :legend "Sorting bibliography entries" 
-	  (prgm :file "src/common/bib.scm" :definition 'bib-sort/idents)))))
+	  (prgm :file "skribilo/skribe/bib.scm"
+	        :definition 'bib-sort/idents)))))
 
 ;*---------------------------------------------------------------------*/
 ;*    skribebibtex                                                     */
