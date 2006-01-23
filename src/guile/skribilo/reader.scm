@@ -21,8 +21,15 @@
 (define-module (skribilo reader)
   :use-module (srfi srfi-9)  ;; records
   :use-module (srfi srfi-17) ;; generalized `set!'
+  :use-module (srfi srfi-39) ;; parameter objects
+  :use-module (skribilo condition)
+  :autoload   (srfi srfi-34) (raise)
+  :use-module (srfi srfi-35)
   :export (%make-reader lookup-reader make-reader
-	   %default-reader)
+	   %default-reader *document-reader*
+
+	   &reader-search-error reader-search-error?
+	   reader-search-error:reader)
   :export-syntax (define-reader define-public-reader))
 
 ;;; Author:  Ludovic Courtès
@@ -60,6 +67,13 @@
 (define-macro (define-public-reader name version make-proc)
   `(define-reader ,name ,version ,make-proc))
 
+
+;;; Error condition.
+
+(define-condition-type &reader-search-error &skribilo-error
+  reader-search-error?
+  (reader reader-search-error:reader))
+
 
 
 ;;; The mechanism below is inspired by Guile-VM code written by K. Nishida.
@@ -68,10 +82,12 @@
   "Look for a reader named @var{name} (a symbol) in the @code{(skribilo
 reader)} module hierarchy.  If no such reader was found, an error is
 raised."
-  (let ((m (resolve-module `(skribilo reader ,name))))
-    (if (module-bound? m 'reader-specification)
+  (let ((m (false-if-exception
+	    (resolve-module `(skribilo reader ,name)))))
+    (if (and (module? m)
+	     (module-bound? m 'reader-specification))
 	(module-ref m 'reader-specification)
-	(error "no such reader" name))))
+	(raise (condition (&reader-search-error (reader name)))))))
 
 (define (make-reader name)
   "Look for reader @var{name} and instantiate it."
@@ -80,5 +96,11 @@ raised."
     (make)))
 
 (define %default-reader (make-reader 'skribe))
+
+
+;;; Current document reader.
+
+(define *document-reader* (make-parameter %default-reader))
+
 
 ;;; reader.scm ends here
