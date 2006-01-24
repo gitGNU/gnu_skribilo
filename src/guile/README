@@ -13,6 +13,8 @@ Here are a few goals.
 
 ** Add useful markups
 
+- `document': add `:keywords' and `:language', maybe `:date'
+
 - numbered references
 
 - improved footnotes
@@ -25,9 +27,15 @@ Here are a few goals.
 
 ** Skribe front-end (read Skribe syntax)
 
+Done.
+
 ** Texinfo front-end
 
+Use guile-library's `stexi'.
+
 ** Simple markup front-end (à la `txt2tags', Emacs' outline mode, or Wiki)
+
+Almost done (Emacs `outline-mode').
 
 * Back-ends (engines)
 
@@ -37,6 +45,8 @@ Here are a few goals.
 
 ** Lout back-end (including automatic `lout' invocation?)
 
+Done, except automatic invocation.
+
 ** Info back-end
 
 * Packages
@@ -45,6 +55,9 @@ Here are a few goals.
 
 ** Equations
 
+* Toys
+
+** Document browser with guile-gnome
 
 
 ;;; arch-tag: 2d0a6235-5c09-4930-998c-56a4de2c0aca
