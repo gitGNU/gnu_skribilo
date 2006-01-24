@@ -40,18 +40,76 @@
 ;;;
 ;;; Code:
 
+;;; TODO:
+;;;
+;;; - add source position information;
+;;; - handle `itemize' and/or `enumerate';
+;;; - handle inline Skribe code: `\n{skribe\n(table (tr ... ))\n}\n'
+
+
+
+
+;;;
+;;; Tools.
+;;;
+
+(define (apply-any procs args)
+  "Apply the procedure listed in @var{procs} to @var{args} until one of these
+procedure returns true."
+  (let loop ((procs procs))
+    (if (null? procs)
+	#f
+	(let ((result (apply (car procs) args)))
+	  (if result result (loop (cdr procs)))))))
+
+
+(define (append-trees . trees)
+  "Append markup trees @var{trees}.  Trees whose car is a symbol (e.g.,
+@code{(bold \"paf\")} will be considered as sub-trees of the resulting tree."
+  (let loop ((trees trees)
+	     (result '()))
+    (if (null? trees)
+	result
+	(let ((tree (car trees)))
+	  (loop (cdr trees)
+		(append result
+			(if (list? tree)
+			    (cond ((null? tree) '())
+				  ((symbol? (car tree)) (list tree))
+				  (else tree))
+			    (list tree))))))))
+
+(define (null-string? s)
+  (and (string? s) (string=? s "")))
+
+
+(define empty-line-rx (make-regexp "^([[:space:]]*|;.*)$"))
+(define (empty-line? s)
+  "Return true if string @var{s} denotes an ``empty'' line, i.e., a blank
+line or a line comment."
+  (regexp-exec empty-line-rx s))
+
+
 
 ;;;
 ;;; In-line markup, i.e., markup that doesn't span over multiple lines.
 ;;;
 
 (define %inline-markup
+  ;; Note: the order matters because, for instance, URLs must be searched for
+  ;; _before_ italics (`/italic/').
   `(("_([^_]+)_" .
      ,(lambda (m)
 	(values (match:prefix m)                           ;; before
 		(match:substring m 1)                      ;; body
 		(match:suffix m)                           ;; after
 		(lambda (body) `(emph ,body)))))           ;; process-body
+    ("(f|ht)tp://[a-zA-Z0-9\\._~%/-]+" .
+     ,(lambda (m)
+	(values (match:prefix m)
+		(match:substring m)
+		(match:suffix m)
+		(lambda (url) `(ref :url ,url)))))
     ("\\/([^\\/]+)\\/" .
      ,(lambda (m)
 	(values (match:prefix m)
@@ -64,6 +122,12 @@
 		(match:substring m 1)
 		(match:suffix m)
 		(lambda (body) `(bold ,body)))))
+    ("``(([^`]|[^'])+)''" .
+     ,(lambda (m)
+	(values (match:prefix m)
+		(match:substring m 1)
+		(match:suffix m)
+		(lambda (body) `(q ,body)))))
     ("`(([^`]|[^'])+)'" .
      ,(lambda (m)
 	(values (match:prefix m)
@@ -78,21 +142,6 @@
 	  (proc match)
 	  #f))))
 
-(define (append-trees . trees)
-  "Append markup trees @var{trees}.  Trees whose car is a symbol will be
-considered as sub-trees of the resulting tree."
-  (let loop ((trees trees)
-	     (result '()))
-    (if (null? trees)
-	result
-	(let ((tree (car trees)))
-	  (loop (cdr trees)
-		(append result
-			(if (list? tree)
-			    (cond ((symbol? (car tree)) (list tree))
-				  (else tree))
-			    (list tree))))))))
-
 (define (make-line-processor markup-alist)
   "Returns a @dfn{line processor}.  A line processor is a procedure that
 takes a string and returns a list."
@@ -105,24 +154,29 @@ takes a string and returns a list."
 		     markups)))
     (lambda (line)
       (let self ((line line))
-	(format #t "self: ~a~%" line)
+	;;(format #t "self: ~a~%" line)
 	(cond ((string? line)
-	       (let loop ((procs procs))
-		 (if (null? procs)
-		     line
-		     (let ((result (apply (car procs) (list line))))
-		       (if result
-			   (let-values (((before body after proc-body)
-					 result))
+	       (let ((result (apply-any procs (list line))))
+		 (if result
+		     (let-values (((before body after proc-body)
+				   result))
+		       (let ((body+
+			      (if (string=? (string-append before body after)
+					    line)
+				  body (self body))))
+			 (if (and (null-string? before)
+				  (null-string? after))
+			     (proc-body body+)
 			     (append-trees (self before)
-					   (proc-body (self body))
-					   (self after)))
-			   (loop (cdr procs)))))))
+					   (proc-body body+)
+					   (self after)))))
+		     line)))
 	      (else
 	       (error "line-processor: internal error" line)))))))
 
 (define %line-processor
   (make-line-processor %inline-markup))
+
 
 
 ;;;
@@ -132,12 +186,11 @@ takes a string and returns a list."
 (define (process-paragraph line line-proc port)
   (let loop ((line line)
 	     (result '()))
-    (if (or (eof-object? line) (string=? line ""))
+    (if (or (eof-object? line) (empty-line? line))
 	(cons 'p result)
 	(loop (read-line port)
 	      (let ((line (line-proc line)))
-		(append result
-			(if (list? line) line (list line))))))))
+		(append-trees result line "\n"))))))
 
 (define (make-node-processor rx node-type title-proc line-proc
 			     subnode-proc end-of-node?)
@@ -148,7 +201,7 @@ header, then the rest of the node is read from @var{port}."
     (let ((match (regexp-exec rx line)))
       (if (not match)
 	  #f
-	  (let ((title (title-proc match)))
+	  (let ((title (line-proc (title-proc match))))
 	    (let loop ((line (read-line port))
 		       (body '()))
 	      (cond ((or (eof-object? line)
@@ -158,7 +211,7 @@ header, then the rest of the node is read from @var{port}."
 		     (values line
 			     `(,node-type :title ,title ,@(reverse! body))))
 
-		    ((string=? "" line)
+		    ((empty-line? line)
 		     (loop (read-line port) body))
 
 		    (else
@@ -199,22 +252,24 @@ header, then the rest of the node is read from @var{port}."
 ;;; The top-level parser.
 ;;;
 
-(define (make-document-processor node-procs line-proc port)
+(define (make-document-processor node-procs line-proc)
   (lambda (line port)
     (let self ((line line)
 	       (doc '()))
-      (format #t "doc-proc: ~a~%" line)
+      ;;(format #t "doc-proc: ~a~%" line)
       (if (eof-object? line)
-	  (reverse! doc)
-	  (let loop ((node-procs node-procs))
-	    (if (null? node-procs)
-		(self (read-line port)
-		      (cons (process-paragraph line line-proc port) doc))
-		(let ((result (apply (car node-procs) (list line port))))
-		  (if result
-		      (let-values (((line node) result))
-			(self line (cons node doc)))
-		      (loop (cdr node-procs))))))))))
+	  (if (null? doc)
+	      line
+	      (reverse! doc))
+	  (if (empty-line? line)
+	      (self (read-line port) doc)
+	      (let ((result (apply-any node-procs (list line port))))
+		(if result
+		    (let-values (((line node) result))
+		      (self line (cons node doc)))
+		    (let ((par (process-paragraph line line-proc port)))
+		      (self (read-line port)
+			    (cons par doc))))))))))
 
 
 (define* (outline-reader :optional (port (current-input-port)))
@@ -223,16 +278,17 @@ header, then the rest of the node is read from @var{port}."
   (define title-rx (make-regexp "^[Tt]itle: (.+)$" regexp/extended))
   (define author-rx (make-regexp "^[Aa]uthor: (.+)$" regexp/extended))
 
-  (let ((doc-proc (make-document-processor %node-processors %line-processor
-					   port)))
+  (let ((doc-proc (make-document-processor %node-processors %line-processor)))
 
     (let loop ((title #f)
 	       (author #f)
 	       (line (read-line port)))
 
       (if (eof-object? line)
-	  `(document :title ,title :author (author :name ,author) '())
-	  (if (or (string=? line "")
+	  (if (or title author)
+	      `(document :title ,title :author (author :name ,author) '())
+	      line)
+	  (if (or (empty-line? line)
 		  (regexp-exec modeline-rx line))
 	      (loop title author (read-line port))
 	      (let ((title-match (regexp-exec title-rx line)))
