@@ -27,7 +27,7 @@
   :autoload (skribilo location)   (<location>)
   :autoload (skribilo ast)        (ast? markup?)
   :autoload (skribilo engine)     (engine? find-engine engine-ident)
-  :autoload (skribilo reader)     (%default-reader)
+  :autoload (skribilo reader)     (*document-reader*)
 
   :autoload (skribilo verify)     (verify)
   :autoload (skribilo resolve)    (resolve!))
@@ -91,7 +91,7 @@
 ;;;
 (define* (evaluate-document-from-port port engine
 				      :key (env '())
-				           (reader %default-reader))
+				           (reader (*document-reader*)))
   (with-debug 2 'evaluate-document-from-port
      (debug-item "engine=" engine)
      (debug-item "reader=" reader)
@@ -173,8 +173,7 @@
 ;;; INCLUDE-DOCUMENT
 ;;;
 (define* (include-document file :key (path (*document-path*))
-			             (reader %default-reader))
-  ;; FIXME: We should default to `*skribilo-current-reader*'.
+			             (reader (*document-reader*)))
   (unless (every string? path)
     (raise (condition (&invalid-argument-error (proc-name 'include-document)
 					       (argument  path)))))

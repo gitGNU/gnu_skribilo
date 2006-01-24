@@ -522,7 +522,7 @@
 	       :filter (make-string-replace lout-encoding)
 	       :custom `(;; The underlying Lout document type, i.e. one
 			 ;; of `doc', `report', `book' or `slides'.
-			 (document-type report)
+			 (document-type doc)
 
 			 ;; Document style file include line (a string
 			 ;; such as `@Include { doc-style.lout }') or

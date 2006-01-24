@@ -711,7 +711,8 @@
 			  ((string? ic)
 			   ic)
 			  ((procedure? ic)
-			   (ic d e)))))
+			   (ic d e))
+			  (else #f))))
 	      e)
       ;; style
       (output (new markup

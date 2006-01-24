@@ -38,6 +38,7 @@ exec ${GUILE-guile} --debug -l $0 -c "(apply $main (cdr (command-line)))" "$@"
 (define-module (skribilo)
   :autoload (skribilo module) (make-run-time-module)
   :autoload (skribilo engine) (*current-engine*)
+  :autoload (skribilo reader) (*document-reader*)
   :use-module (skribilo utils syntax))
 
 (use-modules (skribilo evaluator)
@@ -80,6 +81,8 @@ specifications."
   `(define ,binding (quote ,(raw-options->getopt-long options))))
 
 (define-options skribilo-options
+  (("reader" :alternate "R" :arg reader
+    (nothing)))
   (("target" :alternate "t" :arg target
     :help "sets the output format to <target>")
    (set! engine (string->symbol target)))
@@ -194,6 +197,8 @@ specifications."
 
 Processes a Skribilo/Skribe source file and produces its output.
 
+  --reader=READER  Use READER to parse the input file (by default,
+                   the `skribe' reader is used)
   --target=ENGINE  Use ENGINE as the underlying engine
 
   --help           Give this help list
@@ -381,6 +386,8 @@ Processes a Skribilo/Skribe source file and produces its output.
 (define-public (skribilo . args)
   (let* ((options           (getopt-long (cons "skribilo" args)
 					 skribilo-options))
+	 (reader-name       (string->symbol
+			     (option-ref options 'reader "skribe")))
 	 (engine            (string->symbol
 			     (option-ref options 'target "html")))
 	 (output-file       (option-ref options 'output #f))
@@ -412,7 +419,8 @@ Processes a Skribilo/Skribe source file and produces its output.
 	      (lambda (file)
 		(format #t "~~ loading `~a'...~%" file))))
 
-    (parameterize ((*current-engine* engine)
+    (parameterize ((*document-reader* (make-reader reader-name))
+		   (*current-engine* engine)
 		   (*document-path*  (cons load-path (*document-path*)))
 		   (*bib-path*       (cons bib-path (*bib-path*)))
 		   (*source-path*    (cons source-path
