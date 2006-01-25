@@ -2,6 +2,44 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-01-25 22:57:34 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-30
+
+    Summary:
+      More progress towards a working user manual.
+    Revision:
+      skribilo--devel--1.2--patch-30
+
+    * doc/skr/api.skr (define-markup?): Support `define*' and
+      `define*-public'.
+    
+    * doc/user/bib.skb: Commented out problematic `skribebibtex'-related
+      things.
+    
+    * doc/user/lib.skb (skribe-load): Replaced by `load-document'.
+      (skribe-load-options): Replaced by `*load-options*'.
+      (skribe-path): Replaced by `*document-path*'.
+    
+    * src/guile/skribilo/coloring/lisp.scm (definition-search): Removed
+      debugging statement.
+    
+    * src/guile/skribilo/engine.scm (find-engine): For documentation
+      purposes, explicitly list all keyword parameters.
+    
+    * src/guile/skribilo/source.scm (source-read-lines): Start line numbers
+      from 0.
+    
+    * src/guile/skribilo/utils/compat.scm (skribe-path-set!): New.
+      (skribe-image-path-set!): New.
+      (skribe-source-path-set!): New.
+      (skribe-bib-path-set!): New.
+
+    modified files:
+     ChangeLog doc/skr/api.skr doc/user/bib.skb doc/user/lib.skb
+     src/guile/skribilo/coloring/lisp.scm
+     src/guile/skribilo/engine.scm src/guile/skribilo/source.scm
+     src/guile/skribilo/utils/compat.scm
+
+
 2006-01-24 20:02:40 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-29
 
     Summary:

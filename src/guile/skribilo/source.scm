@@ -68,7 +68,7 @@
 		(format (current-error-port) "  [source file: ~S]\n" p))
 	    (let ((startl (if (string? start) (string-length start) -1))
 		  (stopl  (if (string? stop)  (string-length stop)  -1)))
-	      (let loop ((l      1)
+	      (let loop ((l      0) ;; In Guile, line nums are 0-origined.
 			 (armedp (not (or (integer? start) (string? start))))
 			 (s      (read-line))
 			 (r      '()))

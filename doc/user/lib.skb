@@ -34,26 +34,30 @@ Skribe document (the expressions placed before the ,(markup-ref "document")
 call) contains several ,(code "skribe-load"). The file is search
 in the ,(ref :mark "skribe-path" :text "Skribe path").])
    
-   (doc-markup 'skribe-load
+   (doc-markup 'load-document
 	       `((file [The file containing the expressions to be loaded.])
 		 (:engine [The engine used to evaluate the expressions.])
 		 (:path ,[The optional path where to find the file. The default
                           path is ,(markup-ref "skribe-path").])
 		 (#!rest opt... [Additional user options.]))
-               :skribe-source? #f
-	       :source "skribilo/evaluator.scm"
+               ;;:skribe-source? #f
+	       ;;:source "skribilo/evaluator.scm"
+               :source #f
+      	       :def '(define (load-document file #!rest opt #!key engine path) ...)
 	       :common-args '()
 	       :see-also '(skribe-load-options skribe-path skribe-path-set!)
 	       :idx *function-index*)
    
    (p [Returns the user of options of the last call to 
 ,(markup-ref "skribe-load")])
-   (doc-markup 'skribe-load-options
+   (doc-markup '*load-options*
 	       '()
                :skribe-source? #f-
-	       :source "skribilo/evaluator.scm"
+	       ;;:source "skribilo/evaluator.scm"
+               :source #f
+               :def '(define (*load-options* #!optional opt) ...)
 	       :common-args '()
-	       :see-also '(skribe-load)
+	       :see-also '(load-document)
 	       :idx *function-index*)
    
    (p [Skribe provides functions for dealing with paths. These functions
@@ -61,23 +65,31 @@ are related to the path that can be specified on the command line,
 when the Skribe compiler is invoked (see Chapter 
 ,(ref :chapter "Skribe compiler").)])
    
-   (doc-markup 'skribe-path
+   (doc-markup '*document-path*
 	       '()
-               :skribe-source? #f
-	       :source "skribilo/evaluator.scm"
+               ;;:skribe-source? #f
+	       ;;:source "skribilo/parameters.scm"
+               :source #f
+               :def '(define (*document-path* #!optional opt) ...)
 	       :common-args '()
-	       :others '(skribe-image-path skribe-bib-path skribe-source-path)
-	       :see-also '(include skribe-load image source bibliography skribe-path-set! skribe-image-path-set! skribe-bib-path-set! skribe-source-path-set!)
+	       :others '()  ;;'(*image-path* *bib-path* *source-path*)
+	       :see-also '(include-document load-document image source
+bibliography)
 	       :idx *function-index*)
    
-   (p [The function ,(code "skribe-path-set!") sets a new path.])
+   (p [,(tt [*document-path*]) is a procedure as returned by SRFI-39
+,(tt [make-parameter]).  As such, ,(tt [(*document-path*)]) returns the
+current document path, while ,(tt [(*document-path* '("."
+"/some/path"))]) changes the value of the current path.  An equivalent
+way to achieve this is by using ,(tt [skribe-path-set!]):])
+
    (doc-markup 'skribe-path-set!
 	       '((path [A list of strings which is the new Skribe search path.]))
                :skribe-source? #f
-	       :source "skribilo/evaluator.scm"
+	       :source "skribilo/utils/compat.scm"
 	       :common-args '()
-	       :others '(skribe-image-path-set! skribe-bib-path-set! skribe-source-path-set!)
-	       :see-also '(skribe-path skribe-image-path skribe-bib-path skribe-source-path)
+	       :others '()
+	       :see-also '(*document-path*)
 	       :idx *function-index*))
    
 ;;; Misc   
@@ -103,10 +115,10 @@ Skribe configuration. It can be used to ,(emph "get") or ,(emph "check")
 the configuration.])
    
    (doc-markup 'skribe-configure
-	       '((opt... [Optional arguments.]))
+	       '((#!rest opt... [Optional arguments.]))
 	       :common-args '()
 	       :source #f
-	       :def '(define (skribe-configure . opt...) ...)
+	       :def '(define (skribe-configure #!rest opt...) ...)
 	       :idx *function-index*)
    
    (p [The function ,(code "skribe-configure") can be used in three distinct 
@@ -150,10 +162,10 @@ arguments if the same as that of ,(code "skribe-configure") when invoked
 with several arguments.])
    
    (doc-markup 'skribe-enforce-configure
-	       '((opt... [Optional arguments.]))
+	       '((#!rest opt... [Optional arguments.]))
 	       :common-args '()
 	       :source #f
-	       :def '(define (skribe-enforce-configure . opt...) ...)
+	       :def '(define (skribe-enforce-configure #!rest opt...) ...)
 	       :idx *function-index*))
    
 

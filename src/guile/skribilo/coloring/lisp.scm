@@ -55,8 +55,6 @@
       (if (def? exp)
 	  (let ((start (and (pair? exp) (source-property exp 'line)))
 		(stop  (port-line inp)))
-	    (format (current-error-port) "READ-LINES: `~a' ~a->~a~%"
-		    exp start stop)
 	    (source-read-lines (port-filename inp) start stop tab))
 	  (Loop (read inp))))))
 

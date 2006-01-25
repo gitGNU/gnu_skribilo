@@ -109,6 +109,12 @@
 (define-public skribe-source-path *source-path*)
 (define-public skribe-bib-path    *bib-path*)
 
+(define-public (skribe-path-set! path)        (*document-path* path))
+(define-public (skribe-image-path-set! path)  (*image-path* path))
+(define-public (skribe-source-path-set! path) (*source-path* path))
+(define-public (skribe-bib-path-set! path)    (*bib-path* path))
+
+
 
 ;;;
 ;;; Evaluator.
