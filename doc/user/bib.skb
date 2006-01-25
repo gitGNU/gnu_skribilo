@@ -230,9 +230,9 @@ entries identifier. The last one sorts according to entries date.])
 In this section we present the Skribebibtex translator that compiles Bibtex
 source files into a Skribe bibliography.])
 
-;; Synopsis
-(subsection :title "SYNOPSIS" :number #f
-   (compiler-command *skribebibtex-bin* "options" "input"))
+;; Synopsis (FIXME)
+;;(subsection :title "SYNOPSIS" :number #f
+;;   (compiler-command *skribebibtex-bin* "options" "input"))
 
 ;; Description
 (subsection :title "DESCRIPTION" :number #f [
@@ -250,7 +250,9 @@ These suffixes are:
 
 ,(description (item :key (it ".bib") [a ,(bold "Bibtex") source file.]))])
 
-;; Options
-(subsection :title "OPTIONS" :number #f 
-(compiler-options *skribebibtex-bin*))))
+;; Options (FIXME)
+;;(subsection :title "OPTIONS" :number #f 
+;;(compiler-options *skribebibtex-bin*))
+
+   ))
 

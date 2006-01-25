@@ -143,7 +143,7 @@
 ;;;
 ;;; MAKE-ENGINE
 ;;;
-(define* (make-engine ident #:key (version 'unspecified)
+(define* (make-engine ident :key (version 'unspecified)
 				(format "raw")
 				(filter #f)
 				(delegate #f)
@@ -163,7 +163,7 @@
 ;;;
 ;;; COPY-ENGINE
 ;;;
-(define* (copy-engine ident e #:key (version 'unspecified)
+(define* (copy-engine ident e :key (version 'unspecified)
 				  (filter #f)
 				  (delegate #f)
 				  (symbol-table #f)
@@ -184,7 +184,7 @@
 ;;;	FIND-ENGINE
 ;;;
 
-(define* (lookup-engine id #:key (version 'unspecified))
+(define* (lookup-engine id :key (version 'unspecified))
   "Look for an engine named @var{name} (a symbol) in the @code{(skribilo
 engine)} module hierarchy.  If no such engine was found, an error is raised,
 otherwise the requested engine is returned."
@@ -197,8 +197,8 @@ otherwise the requested engine is returned."
 	   (module-ref m engine)
 	   (error "no such engine" id)))))
 
-(define (find-engine . args)
-  (false-if-exception (apply lookup-engine args)))
+(define* (find-engine id :key (version 'unspecified))
+  (false-if-exception (apply lookup-engine (list id version))))
 
 
 

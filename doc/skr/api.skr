@@ -105,7 +105,7 @@
 ;*---------------------------------------------------------------------*/
 (define (define-markup? id o)
    (match o
-      (((or 'define-markup 'define 'define-public 'define-inline)
+      (((or 'define-markup 'define 'define* 'define-public 'define*-public)
 	((? (lambda (x) (eq? x id)))
 	 . (? (lambda (x) (or (pair? x) (null? x)))))
 	. _)
