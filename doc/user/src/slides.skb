@@ -7,8 +7,8 @@
 
    (if (engine-format? "html")
        (slide :title "Table of contents" :number #f :toc #f
-	  (toc :chapter #f :section #f :subsection #f :subsubsection #f
-	       :slide #t)))
+	  (toc :chapter #f :section #f :subsection #f :subsubsection #f)))
+;;;	       :slide #t)))
 
    (slide :title "X11 client" :toc #t :vspace 0.3
 

@@ -25,7 +25,7 @@ Skribe distribution.])
 In order to use the facilities described in the following sections, the 
 Skribe source file must contains expressions such as:])
 
-(prgm [(skribe-load ,(it "package.skr") ...)])
+(prgm "(skribe-load \"package.skr\" ...)")
 
 [where ,(it (tt "package.skr")) is the described package.]
 

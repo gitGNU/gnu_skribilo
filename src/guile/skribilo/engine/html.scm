@@ -531,7 +531,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    html-width ...                                                   */
 ;*---------------------------------------------------------------------*/
-(define (html-width width)
+(define-public (html-width width)
    (cond
       ((and (integer? width) (exact? width))
        (format #f "~A" width))
@@ -545,7 +545,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    html-class ...                                                   */
 ;*---------------------------------------------------------------------*/
-(define (html-class m)
+(define-public (html-class m)
    (if (markup? m)
        (let ((c (markup-class m)))
 	  (if (or (string? c) (symbol? c) (number? c))
@@ -926,7 +926,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    html-title-authors ...                                           */
 ;*---------------------------------------------------------------------*/
-(define (html-title-authors authors e)
+(define-public (html-title-authors authors e)
    (define (html-authorsN authors cols first)
       (define (make-row authors . opt)
 	 (tr (map (lambda (v)

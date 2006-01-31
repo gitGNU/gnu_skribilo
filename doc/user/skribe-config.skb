@@ -29,16 +29,18 @@ The ,(code "skribe-config") gives information about the Skribe configuration.
 This information can be the directories used to install Skribe, the Scheme
 implementation used for compiling Skribe, etc.])
 
-;; Options
-(section :title "OPTIONS" :number #f [
-,(pre (let* ((proc (run-process "../etc/skribe-config" "--help" error: pipe:))
-	     (port (process-error-port proc)))
-	 (let loop ((line (read-line port))
-		    (lines '()))
-	    (if (eof-object? line)
-		(reverse! lines)
-		(begin
-		   (loop (read-line port) (cons* line "\n" lines)))))))]))
+;; Options (FIXME)
+; (section :title "OPTIONS" :number #f [
+; ,(pre (let* ((proc (run-process "../etc/skribe-config" "--help" error: pipe:))
+; 	     (port (process-error-port proc)))
+; 	 (let loop ((line (read-line port))
+; 		    (lines '()))
+; 	    (if (eof-object? line)
+; 		(reverse! lines)
+; 		(begin
+; 		   (loop (read-line port) (cons* line "\n" lines)))))))])
+
+)
 
 
 

@@ -248,14 +248,18 @@
 		     (nc (markup-option n :column))
 		     (pref (eq? (engine-custom e 'index-page-ref) #t))
 		     (loc (ast-loc n))
+		     ;; FIXME: Since we don't support
+		     ;; `:&skribe-eval-location', we could set up a
+		     ;; `parameterize' thing around `skribe-eval' to provide
+		     ;; it with the right location information.
 		     (t (cond
 			   ((null? ie)
 			    "")
 			   ((or (not (integer? nc)) (= nc 1))
-			    (table :width 100. :&skribe-eval-location loc
+			    (table :width 100. ;;:&skribe-eval-location loc
 			       (make-column ie pref)))
 			   (else
-			    (table :width 100. :&skribe-eval-location loc
+			    (table :width 100. ;;:&skribe-eval-location loc
 			       (make-sub-tables ie nc pref))))))
 		 (output (skribe-eval t e) e))))
 

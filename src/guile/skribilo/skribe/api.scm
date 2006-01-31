@@ -102,7 +102,8 @@
 		    opts
 		    #!key
 		    (ident #f) (class "toc")
-		    (chapter #t) (section #t) (subsection #f))
+		    (chapter #t) (section #t) (subsection #f)
+		    (subsubsection #f))
    (let ((body (the-body opts)))
       (new container
 	 (markup 'toc)
@@ -112,6 +113,7 @@
 	 (options `((:chapter ,chapter)
 		    (:section ,section)
 		    (:subsection ,subsection)
+		    (:subsubsection ,subsubsection)
 		    ,@(the-options opts :ident :class)))
 	 (body (cond
 		  ((null? body)

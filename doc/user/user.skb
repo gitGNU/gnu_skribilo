@@ -146,12 +146,12 @@ as HTML, Info pages, man pages, Postscript, etc.]))))
     (begin
        (chapter :title "Table of contents"
 	  (toc :chapter #t :section #t :subsection #t))
-       (section :title "Index" :number #f
+       (section :title "Index" :number #f :ident "Index"
 	  (mark "global index")
 	  (the-index :column (if (engine-format? "latex") 2 3)
 	     *markup-index* *custom-index* *function-index* *package-index*
 	     (default-index))))
-    (chapter :title "Index"
+    (chapter :title "Index" :ident "Index"
        (mark "global index")
        (the-index :column (if (engine-format? "latex") 2 3)
 	  *markup-index* *custom-index* *function-index* *package-index*

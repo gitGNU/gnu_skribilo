@@ -101,7 +101,8 @@ output format does not support embedded application.]))
    (p [Here is a complete example of Skribe slides:])
    
    (if (and (engine-format? "html") 
-	    (not (equal? (engine-custom html-engine 'html-variant) "html4")))
+	    (not (equal? (engine-custom (find-engine 'html) 'html-variant)
+	         "html4")))
        ;; Show the example and its result
        (example-produce
          (example :legend "Example of Skribe slides"
