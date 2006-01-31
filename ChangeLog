@@ -2,6 +2,72 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-01-31 23:23:15 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-31
+
+    Summary:
+      First time the user manual is compiled to HTML.
+    Revision:
+      skribilo--devel--1.2--patch-31
+
+    * doc/skr/api.skr (make-engine?): Fixed.
+      (make-engine-custom): Likewise.
+    
+    * doc/skr/manual.skr (the-index): Don't pass `:&skribe-eval-location'.
+    
+    * doc/user/emacs.skb: Fixed typo.
+    
+    * doc/user/htmle.skb: Documented the `file-name-proc' custom.
+    
+    * doc/user/package.skb: Fixed the `prgm' example there.
+    
+    * doc/user/skribe-config.skb: Commented out the `OPTIONS' section.
+    
+    * doc/user/skribec.skb: Likewise.
+    
+    * doc/user/slide.skb: Don't refer to HTML-ENGINE, use `find-engine'
+      instead.
+    
+    * doc/user/src/slides.skb: Don't pass `:slide' to `toc'.
+    
+    * doc/user/toc.skb: Commented the `:subsubsection' argument.
+    
+    * doc/user/user.skb (Index): Set `:indent' to "Index".
+    
+    * src/guile/skribilo.scm (skribilo-options): Added `--image-path'.
+      (skribilo): Handle it.
+    
+    * src/guile/skribilo/ast.scm (ast->file-location): Exported.
+    
+    * src/guile/skribilo/engine/base.scm (the-index): Don't pass
+      `:&skribe-eval-location'.
+    
+    * src/guile/skribilo/engine/html.scm: Export `html-width' and
+      `html-title-authors'.
+    
+    * src/guile/skribilo/engine/lout.scm (lout-width): Don't use `flonum?'.
+    
+    * src/guile/skribilo/evaluator.scm (load-document): Added
+      `:allow-other-keys' so that the optional parameters may contain
+      keywords, too.
+    
+    * src/guile/skribilo/package/slide.scm: Use `(skribilo engine html)'.
+    
+    * src/guile/skribilo/skribe/api.scm (toc): Added `subsubsection'.
+
+    modified files:
+     ChangeLog doc/skr/api.skr doc/skr/manual.skr
+     doc/user/emacs.skb doc/user/htmle.skb doc/user/package.skb
+     doc/user/skribe-config.skb doc/user/skribec.skb
+     doc/user/slide.skb doc/user/src/slides.skb doc/user/toc.skb
+     doc/user/user.skb src/guile/skribilo.scm
+     src/guile/skribilo/ast.scm src/guile/skribilo/engine/base.scm
+     src/guile/skribilo/engine/html.scm
+     src/guile/skribilo/engine/lout.scm
+     src/guile/skribilo/evaluator.scm
+     src/guile/skribilo/package/slide.scm
+     src/guile/skribilo/skribe/api.scm
+
+
 2006-01-25 22:57:34 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-30
 
     Summary:

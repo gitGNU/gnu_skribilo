@@ -418,14 +418,18 @@
 		     (t (cond
 			   ((null? ie)
 			    "")
+			   ;; FIXME: Since we don't support
+			   ;; `:&skribe-eval-location', we could set up a
+			   ;; `parameterize' thing around `skribe-eval' to
+			   ;; provide it with the right location information.
 			   ((or (not (integer? nc)) (= nc 1))
 			    (table :width 100.
-			       :&skribe-eval-location loc
+			       ;;:&skribe-eval-location loc
 			       :class "index-table"
 			       (make-column ie pref)))
 			   (else
 			    (table :width 100.
-			       :&skribe-eval-location loc
+			       ;;:&skribe-eval-location loc
 			       :class "index-table"
 			       (make-sub-tables ie nc pref))))))
 		 (output (skribe-eval t e) e))))

@@ -21,6 +21,7 @@
                          inclusion of chapters in the table of contents.])
 	      (:section [A boolean controlling sections.])
 	      (:subsection [A boolean controlling subsections.])
+	      (:subsubsection [A boolean controlling subsubsections.])
 	      (#!rest handle [An optional handle pointing to the node from 
                               which the table of contents if computed.]))
 	    :see-also '(document chapter section resolve handle))

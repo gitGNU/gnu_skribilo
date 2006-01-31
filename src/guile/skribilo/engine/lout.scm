@@ -876,7 +876,7 @@
 ;*    lout-width ...                                                   */
 ;*---------------------------------------------------------------------*/
 (define (lout-width width)
-   (cond ((flonum? width) ;; a relative size
+   (cond ((inexact? width) ;; a relative size (XXX: was `flonum?')
 	  ;; FIXME: Hack ahead: assuming A4 with a 2.5cm margin
 	  ;; on both sides
 	  (let* ((orientation (let ((lout (find-engine 'lout)))

@@ -121,16 +121,21 @@
 ;*    make-engine? ...                                                 */
 ;*---------------------------------------------------------------------*/
 (define (make-engine? id o)
+   ;(format #t "make-engine? ~a ~a~%" id o)
    (match o
-      (((or 'make-engine 'copy-engine)
-	(quote (? (lambda (x) (eq? x id)))) _)
-       o)
-      ((`_)
-       #f)
-      ((_)
-       #f)
-      ((a d)
-       (or (make-engine? id a) (make-engine? id d)))
+      (((or 'make-engine 'copy-engine) ('quote sym) . rest)
+       (if (eq? sym id)
+	   o
+	   #f))
+      ((exp ___)
+       (let loop ((exp exp))
+	 (cond ((null? exp)
+		#f)
+	       ((pair? exp)
+		(or (make-engine? id (car exp))
+		    (make-engine? id (cdr exp))))
+	       (else
+		(make-engine? id exp)))))
       (else
        #f)))
 
@@ -138,13 +143,14 @@
 ;*    make-engine-custom ...                                           */
 ;*---------------------------------------------------------------------*/
 (define (make-engine-custom def)
-   (match (memq :custom def)
-      ((:custom `custom _)
+  (let ((customs (memq :custom def)))
+    (match (if customs (cdr customs) #f)
+      ((((or 'quote 'quasiquote) custom) _ ___)
        custom)
-      ((:custom custom _)
-       (eval custom))
+      (((custom) _ ___)
+       (primitive-eval custom))
       (else
-       '())))
+       '()))))
 
 (define (sym/kw? x)
   (or (symbol? x) (keyword? x)))

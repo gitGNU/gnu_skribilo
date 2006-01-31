@@ -92,7 +92,7 @@ specifications."
    (skribe-bib-path-set! (cons path (skribe-bib-path))))
   (("source-path" :alternate "S" :arg path :help "adds <path> to source path")
    (skribe-source-path-set! (cons path (skribe-source-path))))
-  (("P" :arg path :help "adds <path> to image path")
+  (("image-path" :alternate "P" :arg path :help "adds <path> to image path")
    (skribe-image-path-set! (cons path (skribe-image-path))))
   (("split-chapters" :alternate "C" :arg chapter
     :help "emit chapter's sections in separate files")
@@ -396,6 +396,7 @@ Processes a Skribilo/Skribe source file and produces its output.
 	 (load-path         (option-ref options 'load-path "."))
 	 (bib-path          (option-ref options 'bib-path "."))
 	 (source-path       (option-ref options 'source-path "."))
+	 (image-path        (option-ref options 'image-path "."))
 	 (preload           '())
 	 (variants          '())
 
@@ -426,6 +427,7 @@ Processes a Skribilo/Skribe source file and produces its output.
 		   (*source-path*    (cons source-path
 					   (append %load-path
 						   (*source-path*))))
+		   (*image-path*     (cons image-path (*image-path*)))
 		   (*warning*        (string->number warning-level))
 		   (*verbose*        (let ((v (option-ref options
 							  'verbose 0)))

@@ -118,7 +118,8 @@
 ;; List of the names of files already loaded.
 (define *loaded-files* (make-parameter '()))
 
-(define* (load-document file :key (engine #f) (path #f) :rest opt)
+(define* (load-document file :key (engine #f) (path #f) :allow-other-keys
+			:rest opt)
   (with-debug 4 'skribe-load
      (debug-item "  engine=" engine)
      (debug-item "  path=" path)

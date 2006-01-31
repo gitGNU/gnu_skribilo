@@ -65,6 +65,9 @@ the document.])
 	   (title-background "The title background color.")
 	   (title-foreground "The title foreground color.")
 	   (file-title-separator "A text to be inserted in between the document title and the chapter or section title when the chapter or section is rendered in a separate file.")
+           (file-name-proc "A two-argument procedure that should return
+a string.  This procedure is to be passed a node and an engine and
+should return a file name for the HTML page corresponding to this node.")
 	   ;; index configuration
 	   (index-header-font-size "The index header font size.")
 	   ;; chapter configuration

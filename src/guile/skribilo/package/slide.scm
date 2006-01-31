@@ -9,7 +9,9 @@
 ;*    Skribe style for slides                                          */
 ;*=====================================================================*/
 
-(define-skribe-module (skribilo package slide))
+(define-skribe-module (skribilo package slide)
+  :autoload (skribilo engine html) (html-width html-title-authors))
+
 
 ;*---------------------------------------------------------------------*/
 ;*    slide-options                                                    */

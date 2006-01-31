@@ -43,10 +43,10 @@ its possible targets which one to choose. These suffixes are:
 	      (item :key (it ".tex") [a ,(it "TeX") target file.])
 	      (item :key (it ".sui") [a ,(it "Skribe url index") file.]))])
 
-;; Options
-(section :title "OPTIONS" :number #f [
-,(mark "skribe compiler option")
-,(compiler-options *skribe-bin*)])
+;; Options (FIXME)
+;;(section :title "OPTIONS" :number #f [
+;;,(mark "skribe compiler option")
+;;,(compiler-options *skribe-bin*)])
 
 ;; Environment variables
 (section :title "ENVIRONMENT VARIABLES" :number #f [

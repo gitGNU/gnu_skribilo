@@ -24,7 +24,7 @@
   :autoload (skribilo location) (location?)
   :use-module (skribilo utils syntax)
   :export (<ast> ast? ast-loc ast-loc-set!
-		 ast-parent ast->string
+		 ast-parent ast->string ast->file-location
 
 	   <command> command? command-fmt command-body
 	   <unresolved> unresolved? unresolved-proc
