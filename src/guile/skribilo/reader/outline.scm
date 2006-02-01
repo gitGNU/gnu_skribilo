@@ -204,26 +204,27 @@ header, then the rest of the node is read from @var{port}."
 	  (let ((title (line-proc (title-proc match))))
 	    (let loop ((line (read-line port))
 		       (body '()))
-	      (cond ((or (eof-object? line)
-			 (regexp-exec rx line)
-			 (and (procedure? end-of-node?)
-			      (end-of-node? line)))
-		     (values line
-			     `(,node-type :title ,title ,@(reverse! body))))
 
-		    ((empty-line? line)
-		     (loop (read-line port) body))
+	      (let ((subnode (and (not (eof-object? line)) subnode-proc
+				  (apply subnode-proc (list line port)))))
+		(cond (subnode
+		       (let-values (((line node) subnode))
+			 (loop line (cons node body))))
 
-		    (else
-		     (let ((subnode (and subnode-proc
-					 (apply subnode-proc
-						(list line port)))))
-		       (if subnode
-			   (let-values (((line node) subnode))
-			     (loop line (cons node body)))
+		      ((or (eof-object? line)
+			   (regexp-exec rx line)
+			   (and (procedure? end-of-node?)
+				(end-of-node? line)))
+		       (values line
+			       `(,node-type :title ,title ,@(reverse! body))))
+
+		      ((empty-line? line)
+		       (loop (read-line port) body))
+
+		      (else
 			   (let ((par (process-paragraph line line-proc port)))
 			     (loop (read-line port)
-				   (cons par body)))))))))))))
+				   (cons par body))))))))))))
 
 
 (define (node-markup-line? line)
@@ -231,13 +232,29 @@ header, then the rest of the node is read from @var{port}."
   (regexp-exec node-rx line))
 
 (define %node-processors
-  (let ((section-proc
-	 (make-node-processor (make-regexp "^\\*\\* (.+)$" regexp/extended)
-			      'section
-			      (lambda (m) (match:substring m 1))
-			      %line-processor
-			      #f
-			      node-markup-line?)))
+  (let* ((subsubsection-proc
+	  (make-node-processor (make-regexp "^\\*\\*\\*\\* (.+)$"
+					    regexp/extended)
+			       'subsection
+			       (lambda (m) (match:substring m 1))
+			       %line-processor
+			       #f ;; no further subnodes
+			       node-markup-line?))
+	 (subsection-proc
+	  (make-node-processor (make-regexp "^\\*\\*\\* (.+)$"
+					    regexp/extended)
+			       'subsection
+			       (lambda (m) (match:substring m 1))
+			       %line-processor
+			       subsubsection-proc
+			       node-markup-line?))
+	 (section-proc
+	  (make-node-processor (make-regexp "^\\*\\* (.+)$" regexp/extended)
+			       'section
+			       (lambda (m) (match:substring m 1))
+			       %line-processor
+			       subsection-proc
+			       node-markup-line?)))
     (list (make-node-processor (make-regexp "^\\* (.+)$" regexp/extended)
 			       'chapter
 			       (lambda (m) (match:substring m 1))
