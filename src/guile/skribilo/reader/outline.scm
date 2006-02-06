@@ -43,7 +43,8 @@
 ;;; TODO:
 ;;;
 ;;; - add source position information;
-;;; - handle `itemize' and/or `enumerate';
+;;; - handle `blockquote' (indented paragraph);
+;;; - handle sublists (indented lists) --- optional;
 ;;; - handle inline Skribe code: `\n{skribe\n(table (tr ... ))\n}\n'
 
 
@@ -61,6 +62,16 @@ procedure returns true."
 	#f
 	(let ((result (apply (car procs) args)))
 	  (if result result (loop (cdr procs)))))))
+
+(define (make-markup name body)
+  "Return a clean markup form, i.e., an s-exp whose @code{car} is a symbol
+equal to @var{name}, a markup name."
+  (cond ((list? body)
+	 (cond ((null? body) `(,name))
+	       ((symbol? (car body)) `(,name ,body))
+	       (else `(,name ,@body))))
+	(else
+	 (list name body))))
 
 
 (define (append-trees . trees)
@@ -192,11 +203,70 @@ takes a string and returns a list."
 	      (let ((line (line-proc line)))
 		(append-trees result line "\n"))))))
 
+(define (make-list-processor rx node-type extract-line-proc line-proc
+			     end-of-node?)
+  "Return a procedure (a @dfn{list processor}) that takes a line and a port
+and returns an AST node of type @var{node-type} (a symbol, typically
+@code{itemize} or @code{enumerate}) along with a line.  If the processor is
+not triggered, i.e., it is passed a line that does not match @var{rx}, then
+it returns @code{#f}."
+  (lambda (line port)
+    (let ((match (regexp-exec rx line)))
+      (if (not match)
+	  #f
+	  (let loop ((line line)
+		     (contiguous-empty-lines 0)
+		     (item '())
+		     (body '()))
+	      (if (eof-object? line)
+		  (let ((body (if (null? item)
+				  body
+				  (cons `(item ,@(reverse! item)) body))))
+		    (values line `(,node-type ,@(reverse! body))))
+		  (let ((match (regexp-exec rx line)))
+		    (cond (match
+			   ;; reading the first line of an item
+			   (loop (read-line port) 0
+				 (append-trees
+				  (line-proc (extract-line-proc match)))
+				 body))
+
+			  ((and (procedure? end-of-node?)
+				(end-of-node? line))
+			   (values line
+				   `(,node-type ,@(reverse! body))))
+
+			  ((empty-line? line)
+			   (cond ((>= contiguous-empty-lines 1)
+				  ;; end of list
+				  (values line
+					  `(,node-type ,@(reverse! body))))
+
+				 ((= contiguous-empty-lines 0)
+				  ;; end of item: add ITEM to BODY
+				  (loop (read-line port) 1 '()
+					(cons (make-markup 'item item)
+					      body)))
+
+				 (else
+				  ;; skipping empty line
+				  (loop (read-line port)
+					(+ 1 contiguous-empty-lines)
+					item body))))
+
+			  (else
+			   ;; reading an item: add LINE to ITEM
+			   (loop (read-line port) 0
+				 (append-trees item (line-proc line))
+				 body))))))))))
+
 (define (make-node-processor rx node-type title-proc line-proc
-			     subnode-proc end-of-node?)
+			     subnode-procs end-of-node?)
   "Return a procedure that reads the given string and return an AST node of
 type @var{node-type} or @code{#f}.  When the original string matches the node
-header, then the rest of the node is read from @var{port}."
+header, then the rest of the node is read from @var{port}.
+@var{subnode-procs} is a list of node processors for node types subordinate
+to @var{node-type}."
   (lambda (line port)
     (let ((match (regexp-exec rx line)))
       (if (not match)
@@ -205,8 +275,9 @@ header, then the rest of the node is read from @var{port}."
 	    (let loop ((line (read-line port))
 		       (body '()))
 
-	      (let ((subnode (and (not (eof-object? line)) subnode-proc
-				  (apply subnode-proc (list line port)))))
+	      (let ((subnode (and (not (eof-object? line))
+				  (apply-any subnode-procs
+					     (list line port)))))
 		(cond (subnode
 		       (let-values (((line node) subnode))
 			 (loop line (cons node body))))
@@ -231,6 +302,19 @@ header, then the rest of the node is read from @var{port}."
   (define node-rx (make-regexp "^\\*+ (.+)$" regexp/extended))
   (regexp-exec node-rx line))
 
+(define %list-processors
+  (list (make-list-processor (make-regexp "^[-~o] (.+)$" regexp/extended)
+			     'itemize
+			     (lambda (m) (match:substring m 1))
+			     %line-processor
+			     node-markup-line?)
+	(make-list-processor (make-regexp "^([0-9]+)\\.? (.+)$"
+					  regexp/extended)
+			     'enumerate
+			     (lambda (m) (match:substring m 2))
+			     %line-processor
+			     node-markup-line?)))
+
 (define %node-processors
   (let* ((subsubsection-proc
 	  (make-node-processor (make-regexp "^\\*\\*\\*\\* (.+)$"
@@ -238,7 +322,7 @@ header, then the rest of the node is read from @var{port}."
 			       'subsection
 			       (lambda (m) (match:substring m 1))
 			       %line-processor
-			       #f ;; no further subnodes
+			       %list-processors ;; no further subnodes
 			       node-markup-line?))
 	 (subsection-proc
 	  (make-node-processor (make-regexp "^\\*\\*\\* (.+)$"
@@ -246,20 +330,23 @@ header, then the rest of the node is read from @var{port}."
 			       'subsection
 			       (lambda (m) (match:substring m 1))
 			       %line-processor
-			       subsubsection-proc
+			       (append %list-processors
+				       (list subsubsection-proc))
 			       node-markup-line?))
 	 (section-proc
 	  (make-node-processor (make-regexp "^\\*\\* (.+)$" regexp/extended)
 			       'section
 			       (lambda (m) (match:substring m 1))
 			       %line-processor
-			       subsection-proc
+			       (append %list-processors
+				       (list subsection-proc))
 			       node-markup-line?)))
     (list (make-node-processor (make-regexp "^\\* (.+)$" regexp/extended)
 			       'chapter
 			       (lambda (m) (match:substring m 1))
 			       %line-processor
-			       section-proc
+			       (append %list-processors
+				       (list section-proc))
 			       #f))))
 
 
