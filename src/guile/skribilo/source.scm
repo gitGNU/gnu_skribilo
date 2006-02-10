@@ -1,7 +1,7 @@
 ;;;; source.scm	-- Highlighting source files.
 ;;;;
-;;;; Copyright © 2003-2004 Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
-;;;; Copyright © 2005      Ludovic Courtès  <ludovic.courtes@laas.fr>
+;;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
+;;;; Copyright 2005, 2006  Ludovic Courtès  <ludovic.courtes@laas.fr>
 ;;;;
 ;;;;
 ;;;; This program is free software; you can redistribute it and/or modify
@@ -26,6 +26,7 @@
 
   :use-module (srfi srfi-35)
   :autoload   (srfi srfi-34) (raise)
+  :autoload   (srfi srfi-13) (string-prefix-length)
   :autoload   (skribilo condition) (&file-search-error &file-open-error)
 
   :use-module (skribilo utils syntax)
@@ -75,7 +76,8 @@
 		(cond
 		 ((or (eof-object? s)
 		      (and (integer? stop) (> l stop))
-		      (and (string? stop) (substring=? stop s stopl)))
+		      (and (string? stop)
+			   (= (string-prefix-length stop s) stopl)))
 		  (apply string-append (reverse! r)))
 		 (armedp
 		  (loop (+ l 1)
@@ -87,7 +89,8 @@
 			#t
 			(read-line)
 			(cons* "\n" (untabify s tab) r)))
-		 ((and (string? start) (substring=? start s startl))
+		 ((and (string? start)
+		       (= (string-prefix-length start s) startl))
 		  (loop (+ l 1) #t (read-line) r))
 		 (else
 		  (loop (+ l 1) #f (read-line) r))))))))))

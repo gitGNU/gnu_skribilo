@@ -23,7 +23,7 @@
   :use-module (ice-9 regex)
   :autoload   (ice-9 receive) (receive)
   :use-module (skribilo lib)  ;; `new'
-  :autoload   (skribilo ast) (node?)
+  :autoload   (skribilo ast) (node? node-body)
   :export (make-prog-body resolve-line))
 
 ;;; ======================================================================
@@ -57,14 +57,14 @@
 (define (make-line-mark m lnum b)
    (let* ((ls (number->string lnum))
 	  (n (list (mark ls) b)))
-      (hashtable-put! *lines* m n)
+      (hash-set! *lines* m n)
       n))
 
 ;*---------------------------------------------------------------------*/
 ;*    resolve-line ...                                                 */
 ;*---------------------------------------------------------------------*/
 (define (resolve-line id)
-   (hashtable-get *lines* id))
+   (hash-ref *lines* id))
 
 ;*---------------------------------------------------------------------*/
 ;*    extract-string-mark ...                                          */

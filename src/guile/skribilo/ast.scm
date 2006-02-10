@@ -29,7 +29,7 @@
 	   <command> command? command-fmt command-body
 	   <unresolved> unresolved? unresolved-proc
 	   <handle> handle? handle-ast handle-body
-	   <node> node? node-options node-loc
+	   <node> node? node-options node-loc node-body
 	   <processor> processor? processor-combinator processor-engine
 
 	   <markup> markup? bind-markup! markup-options is-markup?

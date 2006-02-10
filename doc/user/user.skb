@@ -115,7 +115,7 @@ as HTML, Info pages, man pages, Postscript, etc.]))))
 (include "bib.skb")
 
 ;;; Computer programs
-;;(include "prgm.skb")
+(include "prgm.skb")
 
 ;;; Standard Library
 (include "lib.skb")
