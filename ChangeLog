@@ -2,6 +2,58 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-02-10 17:19:34 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-33
+
+    Summary:
+      Fixed syntax highlighting thanks to SILex.
+    Revision:
+      skribilo--devel--1.2--patch-33
+
+    * arch-config: New file.
+    
+    * src/guile/skribilo/coloring/c-lex.l.scm: New.
+    
+    * src/guile/skribilo/coloring/lisp-lex.l.scm: New.
+    
+    * src/guile/skribilo/coloring/xml-lex.l.scm: New.
+    
+    * doc/user/user.skb: Include `prgm.skb' (works now).
+    
+    * src/guile/skribilo/ast.scm: Export `node-body'.
+    
+    * src/guile/skribilo/coloring/Makefile.am (dist_guilemodule_DATA): Added
+      the SILex-generated files.
+      (%.l.scm): New rule.
+    
+    * src/guile/skribilo/coloring/lisp-lex.l: Use the SRFI-39 parameters.
+    
+    * src/guile/skribilo/coloring/lisp.scm: Use SRFI-39 parameters instead of
+      fluids.  Load `lisp-lex.l.scm'.
+    
+    * src/guile/skribilo/prog.scm: Autoload `ast' upon `node-body' too.
+      (make-line-mark): Use `hash-set!'.
+      (resolve-line): Use `hash-ref'.
+    
+    * src/guile/skribilo/source.scm (source-read-lines): Use
+      `string-prefix-length' instead of `substring=?'.
+
+    new files:
+     arch-config
+     src/guile/skribilo/coloring/.arch-ids/c-lex.l.scm.id
+     src/guile/skribilo/coloring/.arch-ids/lisp-lex.l.scm.id
+     src/guile/skribilo/coloring/.arch-ids/xml-lex.l.scm.id
+     src/guile/skribilo/coloring/c-lex.l.scm
+     src/guile/skribilo/coloring/lisp-lex.l.scm
+     src/guile/skribilo/coloring/xml-lex.l.scm
+
+    modified files:
+     ChangeLog doc/user/user.skb src/guile/skribilo/ast.scm
+     src/guile/skribilo/coloring/Makefile.am
+     src/guile/skribilo/coloring/lisp-lex.l
+     src/guile/skribilo/coloring/lisp.scm
+     src/guile/skribilo/prog.scm src/guile/skribilo/source.scm
+
+
 2006-02-10 14:44:59 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-32
 
     Summary:
