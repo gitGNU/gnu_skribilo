@@ -2,6 +2,32 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-02-10 14:44:59 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-32
+
+    Summary:
+      Merge from lcourtes@laas.fr--2004-libre
+    Revision:
+      skribilo--devel--1.2--patch-32
+
+    Patches applied:
+    
+     * lcourtes@laas.fr--2004-libre/skribilo--devel--1.2  (patch 37-40)
+    
+       - Merge from lcourtes@laas.fr--2005-mobile
+       - First time the user manual is compiled to HTML.
+       - Added support for subsections and subsubsections in the outline reader.
+       - Outline reader: added support to parse lists.
+
+    modified files:
+     ChangeLog src/guile/skribilo/reader/outline.scm
+
+    new patches:
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-37
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-38
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-39
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-40
+
+
 2006-01-31 23:23:15 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-31
 
     Summary:
