@@ -554,7 +554,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    html-markup-class ...                                            */
 ;*---------------------------------------------------------------------*/
-(define (html-markup-class m)
+(define-public (html-markup-class m)
    (lambda (n e)
       (printf "<~a" m)
       (html-class n)
