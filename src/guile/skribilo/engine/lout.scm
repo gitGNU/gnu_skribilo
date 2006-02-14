@@ -1,6 +1,6 @@
 ;;; lout.scm  --  A Lout engine.
 ;;;
-;;; Copyright 2004, 2005  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2004, 2005, 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -24,6 +24,7 @@
 
 
 (define-skribe-module (skribilo engine lout)
+  :autoload (ice-9 popen)   (open-output-pipe)
   :autoload (ice-9 rdelim)  (read-line))
 
 
@@ -2780,6 +2781,8 @@
 ;*    Illustrations                                                    */
 ;*---------------------------------------------------------------------*/
 (define-public (lout-illustration . args)
+  ;; FIXME: This should be a markup.
+
   ;; Introduce a Lout illustration (such as a diagram) whose code is either
   ;; the body of `lout-illustration' or the contents of `file'.  For engines
   ;; other than Lout, an EPS file is produced and then converted if needed.
@@ -2833,46 +2836,41 @@
 			(file-contents file))))
       (if (engine-format? "lout")
 	  (! contents) ;; simply inline the illustration
-	  (cond-expand
-	   (bigloo
-	    (let* ((lout (find-engine 'lout))
-		   (output (string-append (or ident
-					      (symbol->string
-					       (gensym 'lout-illustration)))
-					  ".eps"))
-		   (proc (run-process (or (engine-custom lout
-							 'lout-program-name)
-					  "lout")
-				      "-o" output
-				      "-EPS"
-				      input: pipe:))
-		   (port (process-input-port proc)))
+	  (let* ((lout (find-engine 'lout))
+		 (output (string-append (or ident
+					    (symbol->string
+					     (gensym 'lout-illustration)))
+					".eps"))
+		 (port (open-output-pipe
+			(string-append (or (engine-custom lout
+							  'lout-program-name)
+					   "lout")
+				       " -o " output
+				       " -EPS"))))
 
-	      ;; send the illustration to Lout's standard input
-	      (display (illustration-header) port)
-	      (display contents port)
-	      (display (illustration-ending) port)
-	      (close-output-port port)
+	    ;; send the illustration to Lout's standard input
+	    (display (illustration-header) port)
+	    (display contents port)
+	    (display (illustration-ending) port)
 
-	      (process-wait proc)
-	      (if (not (= 0 (process-exit-status proc)))
+	    (let ((exit-val (status:exit-val (close-pipe port))))
+	      (if (not (eqv? 0 exit-val))
 		  (skribe-error 'lout-illustration
-				"lout exited with error code"
-				(process-exit-status proc)))
-	      (if (not (file-exists? output))
-		  (skribe-error 'lout-illustration "file not created"
-				output))
-	      (if (= 0 (file-size output))
+				"lout exited with error code" exit-val)))
+
+	    (if (not (file-exists? output))
+		(skribe-error 'lout-illustration "file not created"
+			      output))
+
+	    (let ((file-info (false-if-exception (stat output))))
+	      (if (or (not file-info)
+		      (= 0 (stat:size file-info)))
 		  (skribe-error 'lout-illustration
-				"empty output file" output))
+				"empty output file" output)))
 
-	      ;; the image
-	      (image :file output alt)))
+	    ;; the image (FIXME: Should set its location)
+	    (image :file output alt))))))
 
-	   (else ;; Unfortunately, chances are low that STklos has the same
-	         ;; process API as the one Bigloo has.
-	    (skribe-error 'lout
-			  "lout-illustration: Not implemented" file)))))))
 
 
 ;*---------------------------------------------------------------------*/
