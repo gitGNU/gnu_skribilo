@@ -366,7 +366,7 @@
 			      (tr (th :align 'left
 				     (list
 				      (if nb
-					  (format "~a / ~a -- " nb
+					  (format #f "~a / ~a -- " nb
 						  (slide-number)))
 				      t)))
 			      (tr (td (hrule)))
@@ -662,7 +662,7 @@
       (let* ((cap (engine-custom le 'slide-caption))
 	     (o (engine-custom le 'predocument))
 	     (n (if (string? cap)
-		    (format "~a\\slideCaption{~a}\n"
+		    (format #f "~a\\slideCaption{~a}\n"
 			    &slide-prosper-predocument
 			    cap)
 		    &slide-prosper-predocument)))

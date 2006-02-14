@@ -21,6 +21,7 @@
 
 (define-module (skribilo utils compat)
   :use-module (skribilo utils syntax)
+  :use-module (skribilo utils files)
   :use-module (skribilo parameters)
   :use-module (skribilo evaluator)
   :use-module (srfi srfi-1)
@@ -30,6 +31,7 @@
   :use-module (ice-9 optargs)
   :autoload   (skribilo ast) (ast?)
   :autoload   (skribilo condition) (file-search-error? &file-search-error)
+  :re-export (file-size)
   :replace (gensym))
 
 ;;; Author:  Ludovic Courtès
@@ -197,19 +199,6 @@
 	  (for-each display args)
 	  (display "\n")))))
 
-(define-public (file-prefix fn)
-  (if fn
-      (let ((dot (string-rindex fn #\.)))
-	(if dot (substring fn 0 dot) fn))
-      "./SKRIBILO-OUTPUT"))
-
-(define-public (file-suffix fn)
-  (if fn
-      (let ((dot (string-rindex fn #\.)))
-	(if dot
-	    (substring fn (+ dot 1) (string-length fn))
-	    ""))
-      #f))
 
 
 (define-public prefix			file-prefix)

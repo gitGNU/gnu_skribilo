@@ -1,8 +1,7 @@
-;;;
 ;;; runtime.scm	-- Skribilo runtime system
 ;;;
-;;; Copyright © 2003-2004 Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
-;;; Copyright © 2005 Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
+;;; Copyright 2005, 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
 ;;; it under the terms of the GNU General Public License as published by
@@ -35,15 +34,11 @@
   :use-module (skribilo lib)
   :use-module (srfi srfi-13)
   :use-module (srfi srfi-35)
+  :autoload   (skribilo utils files) (file-prefix file-suffix)
   :autoload   (skribilo condition) (&file-search-error)
   :autoload   (srfi srfi-34) (raise))
 
 
-(define (suffix path)
-  (let ((dot (string-rindex path #\.)))
-    (if (not dot)
-	path
-	(substring path (+ dot 1) (string-length path)))))
 
 ;;; ======================================================================
 ;;;
@@ -108,8 +103,8 @@
 ;;;
 ;;; ======================================================================
 (define (builtin-convert-image from fmt dir)
-  (let* ((s  (suffix from))
-	 (f  (string-append (prefix (basename from)) "." fmt))
+  (let* ((s  (file-suffix from))
+	 (f  (string-append (file-prefix (basename from)) "." fmt))
 	 (to (string-append dir "/" f)))   ;; FIXME:
     (cond
       ((string=? s fmt)
@@ -133,7 +128,7 @@
     (if (not path)
 	(raise (condition (&file-search-error (file-name file)
 					      (path (*image-path*)))))
-	(let ((suf (suffix file)))
+	(let ((suf (file-suffix file)))
 	  (if (member suf formats)
 	      (let* ((dir (if (string? (*destination-file*))
 			      (dirname (*destination-file*))
