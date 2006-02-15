@@ -65,25 +65,18 @@ the Skribe syntax."
   (let ((colon-keywords ;; keywords à la `:key' fashion
 	 (r:make-token-reader #\:
 			      (r:token-reader-procedure
-			       (r:standard-token-reader 'keyword))))
-	(square-bracket-free-symbol-misc-chars
-	 (let* ((tr (r:standard-token-reader 'guile-symbol-misc-chars))
-		(tr-spec (r:token-reader-specification tr))
-		(tr-proc (r:token-reader-procedure tr)))
-	   (r:make-token-reader (filter (lambda (chr)
-					  (not (or (eq? chr #\[)
-						   (eq? chr #\]))))
-					tr-spec)
-				tr-proc))))
+			       (r:standard-token-reader 'keyword)))))
 
+    ;; Note: we use the `r6rs-symbol-*' and `r6rs-number' token readers since
+    ;; they consider square brackets as delimiters.
     (r:make-reader (cons* (r:make-token-reader #\# &sharp-reader)
 			  colon-keywords
-			  square-bracket-free-symbol-misc-chars
 			  (map r:standard-token-reader
 			       `(whitespace
-				 sexp string guile-number
-				 guile-symbol-lower-case
-				 guile-symbol-upper-case
+				 sexp string r6rs-number
+				 r6rs-symbol-lower-case
+				 r6rs-symbol-upper-case
+				 r6rs-symbol-misc-chars
 				 quote-quasiquote-unquote
 				 semicolon-comment
 				 skribe-exp)))
