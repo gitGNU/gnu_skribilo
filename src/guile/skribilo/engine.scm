@@ -195,15 +195,30 @@
   `(skribilo engine ,id))
 
 (define (engine-loaded? id)
-  (nested-ref the-root-module (engine-id->module-name id)))
+  "Check whether engine @var{id} is already loaded."
+  ;; Trick taken from `resolve-module' in `boot-9.scm'.
+  (nested-ref the-root-module
+	      `(%app modules ,@(engine-id->module-name id))))
 
 ;; A mapping of engine names to hooks.
 (define %engine-load-hook (make-hash-table))
 
+(define (consume-load-hook! id)
+  (with-debug 5 'consume-load-hook!
+    (let ((hook (hashq-ref %engine-load-hook id)))
+      (if hook
+	  (begin
+	    (debug-item "running hook " hook " for engine " id)
+	    (hashq-remove! %engine-load-hook id)
+	    (run-hook hook))))))
+
 (define (when-engine-is-loaded id thunk)
   "Run @var{thunk} only when engine with identifier @var{id} is loaded."
   (if (engine-loaded? id)
-      (thunk)
+      (begin
+	;; Maybe the engine had already been loaded via `use-modules'.
+	(consume-load-hook! id)
+	(thunk))
       (let ((hook (or (hashq-ref %engine-load-hook id)
 		      (let ((hook (make-hook)))
 			(hashq-set! %engine-load-hook id hook)
@@ -219,15 +234,10 @@ otherwise the requested engine is returned."
      (debug-item "id=" id " version=" version)
 
      (let* ((engine (symbol-append id '-engine))
-	    (m (resolve-module (engine-id->module-name id)))
-	    (hook (hashq-ref %engine-load-hook id)))
+	    (m (resolve-module (engine-id->module-name id))))
        (if (module-bound? m engine)
 	   (let ((e (module-ref m engine)))
-	     (if (and e hook)
-		 (begin
-		   ;; consume the hook
-		   (run-hook hook)
-		   (hashq-remove! %engine-load-hook id)))
+	     (if e (consume-load-hook! id))
 	     e)
 	   (error "no such engine" id)))))
 
