@@ -50,7 +50,7 @@
 ;;;
 
 (define %operators
-  '(/ * + - = != ~= < > <= >= sqrt expt sum product))
+  '(/ * + - = != ~= < > <= >= sqrt expt sum product script))
 
 (define %rebindings
   (map (lambda (sym)
@@ -126,6 +126,14 @@
   (new markup
        (markup 'eq:product)
        (ident (or ident (symbol->string (gensym "eq:product"))))
+       (options (the-options opts))
+       (body (the-body opts))))
+
+(define-markup (eq:script :rest opts :key (ident #f) (class "eq:script")
+			                  (sub #f) (sup #f))
+  (new markup
+       (markup 'eq:script)
+       (ident (or ident (symbol->string (gensym "eq:script"))))
        (options (the-options opts))
        (body (the-body opts))))
 
@@ -216,11 +224,14 @@
    :action (lambda (node engine)
 	     (let ((body (markup-body node)))
 	       (if (= (length body) 2)
-		   (begin
+		   (let ((base (car body))
+			 (expt (cadr body)))
 		     (display " { { ")
-		     (output (car body) engine)
+		     (if (markup? base) (display "("))
+		     (output base engine)
+		     (if (markup? base) (display ")"))
 		     (display " } sup { ")
-		     (output (cadr body) engine)
+		     (output expt engine)
 		     (display " } } "))
 		   (skribe-error 'eq:expt "wrong number of arguments"
 				 body)))))
@@ -243,11 +254,30 @@
 		  (output to engine)
 		  (display " } { ")
 		  (output body engine)
-		  (display " } ")))))
+		  (display " } } ")))))
 
 (range-lout-markup-writer sum "sum")
 (range-lout-markup-writer product "prod")
 
+(markup-writer 'eq:script (find-engine 'lout)
+   :action (lambda (node engine)
+	     (let ((body (markup-body node))
+		   (sup (markup-option node :sup))
+		   (sub (markup-option node :sub)))
+	       (display " { { ")
+	       (output body engine)
+	       (display " } ")
+	       (if sup
+		   (begin
+		     (display (if sub " supp { " " sup { "))
+		     (output sup engine)
+		     (display " } ")))
+	       (if sub
+		   (begin
+		     (display " on { ")
+		     (output sub engine)
+		     (display " } ")))
+	       (display " } "))))
 
 
 ;;;
