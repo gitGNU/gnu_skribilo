@@ -41,7 +41,9 @@
 	   engine-custom engine-custom-set!
 	   engine-format? engine-add-writer!
 	   processor-get-engine
-	   push-default-engine pop-default-engine))
+	   push-default-engine pop-default-engine
+
+	   engine-loaded? when-engine-is-loaded))
 
 
 (fluid-set! current-reader %skribilo-module-reader)
@@ -180,9 +182,34 @@
     new))
 
 
+
 ;;;
-;;;	FIND-ENGINE
+;;; Engine loading.
 ;;;
+
+;; Each engine is to be stored in its own module with the `(skribilo engine)'
+;; hierarchy.  The `engine-id->module-name' procedure returns this module
+;; name based on the engine name.
+
+(define (engine-id->module-name id)
+  `(skribilo engine ,id))
+
+(define (engine-loaded? id)
+  (nested-ref the-root-module (engine-id->module-name id)))
+
+;; A mapping of engine names to hooks.
+(define %engine-load-hook (make-hash-table))
+
+(define (when-engine-is-loaded id thunk)
+  "Run @var{thunk} only when engine with identifier @var{id} is loaded."
+  (if (engine-loaded? id)
+      (thunk)
+      (let ((hook (or (hashq-ref %engine-load-hook id)
+		      (let ((hook (make-hook)))
+			(hashq-set! %engine-load-hook id hook)
+			hook))))
+	(add-hook! hook thunk))))
+
 
 (define* (lookup-engine id :key (version 'unspecified))
   "Look for an engine named @var{name} (a symbol) in the @code{(skribilo
@@ -192,13 +219,22 @@ otherwise the requested engine is returned."
      (debug-item "id=" id " version=" version)
 
      (let* ((engine (symbol-append id '-engine))
-	    (m (resolve-module `(skribilo engine ,id))))
+	    (m (resolve-module (engine-id->module-name id)))
+	    (hook (hashq-ref %engine-load-hook id)))
        (if (module-bound? m engine)
-	   (module-ref m engine)
+	   (let ((e (module-ref m engine)))
+	     (if (and e hook)
+		 (begin
+		   ;; consume the hook
+		   (run-hook hook)
+		   (hashq-remove! %engine-load-hook id)))
+	     e)
 	   (error "no such engine" id)))))
 
 (define* (find-engine id :key (version 'unspecified))
   (false-if-exception (apply lookup-engine (list id version))))
+
+
 
 
 
