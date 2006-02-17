@@ -28,10 +28,11 @@
   :autoload (ice-9 rdelim)  (read-line))
 
 
+
 ;*---------------------------------------------------------------------*/
 ;*    lout-verbatim-encoding ...                                       */
 ;*---------------------------------------------------------------------*/
-(define lout-verbatim-encoding
+(define-public lout-verbatim-encoding
    '((#\/ "\"/\"")
      (#\\ "\"\\\\\"")
      (#\| "\"|\"")
@@ -48,7 +49,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    lout-encoding ...                                                */
 ;*---------------------------------------------------------------------*/
-(define lout-encoding
+(define-public lout-encoding
   `(,@lout-verbatim-encoding
     (#\ç "{ @Char ccedilla }")
     (#\Ç "{ @Char Ccdeilla }")
@@ -349,7 +350,7 @@
 		     (current-error-port))))
        #t))
 
-(define (lout-tagify ident)
+(define-public (lout-tagify ident)
   ;; Return an "clean" identifier (a string) based on `ident' (a string),
   ;; suitable for Lout as an `@Tag' value.
   (let ((tag-encoding '((#\, "-")
@@ -776,7 +777,7 @@
 					     `(,node ,engine ,@children)))))
 		nodes))))
 
-(define (lout-embedded-postscript-code postscript)
+(define-public (lout-embedded-postscript-code postscript)
   ;; Return a string embedding PostScript code `postscript' into Lout code.
   (string-append "\n"
 		 "{ @BackEnd @Case {\n"
@@ -785,7 +786,7 @@
 		 "        }\n"
 		 "} } @Graphic { }\n"))
 
-(define (lout-pdf-docinfo doc engine)
+(define-public (lout-pdf-docinfo doc engine)
   ;; Produce PostScript code that will produce PDF document information once
   ;; converted to PDF.
   (let* ((filter-string (make-string-replace `(,@lout-verbatim-encoding
@@ -845,7 +846,7 @@
 				   extra-fields)))
 		   "\"/\"DOCINFO pdfmark\n")))
 
-(define (lout-output-pdf-meta-info doc engine)
+(define-public (lout-output-pdf-meta-info doc engine)
   ;; Produce PDF bookmarks (aka. "outline") for document `doc', as well as
   ;; document meta-information (or "docinfo").  This function makes sure that
   ;; both are only produced once, and only if the relevant customs ask for
@@ -2871,98 +2872,6 @@
 	    ;; the image (FIXME: Should set its location)
 	    (image :file output alt))))))
 
-
-
-;*---------------------------------------------------------------------*/
-;*    Slides                                                           */
-;*                                                                     */
-;* At some point, we might want to move this to `slide.scm'.           */
-;*---------------------------------------------------------------------*/
-
-(use-modules (skribilo package slide))
-
-(markup-writer 'slide
-   :options '(:title :number :toc :ident) ;; '(:bg :vspace :image)
-
-   :validate (lambda (n e)
-		(eq? (engine-custom e 'document-type) 'slides))
-
-   :before (lambda (n e)
-	      (display "\n@Overhead\n")
-	      (display "  @Title { ")
-	      (output (markup-option n :title) e)
-	      (display " }\n")
-	      (if (markup-ident n)
-		  (begin
-		     (display "  @Tag { ")
-		     (display (lout-tagify (markup-ident n)))
-		     (display " }\n")))
-	      (if (markup-option n :number)
-		  (begin
-		     (display "  @BypassNumber { ")
-		     (output (markup-option n :number) e)
-		     (display " }\n")))
-	      (display "@Begin\n")
-
-	      ;; `doc' documents produce their PDF outline right after
-	      ;; `@Text @Begin'; other types of documents must produce it
-	      ;; as part of their first chapter.
-	      (lout-output-pdf-meta-info (ast-document n) e))
-
-   :after "@End @Overhead\n")
-
-(markup-writer 'slide-vspace
-   :options '(:unit)
-   :validate (lambda (n e)
-		(and (pair? (markup-body n))
-		     (number? (car (markup-body n)))))
-   :action (lambda (n e)
-	      (printf "\n//~a~a # slide-vspace\n"
-		      (car (markup-body n))
-		      (case (markup-option n :unit)
-			 ((cm)              "c")
-			 ((point points pt) "p")
-			 ((inch inches)     "i")
-			 (else
-			  (skribe-error 'lout
-					"Unknown vspace unit"
-					(markup-option n :unit)))))))
-
-(markup-writer 'slide-pause
-   ;; FIXME:  Use a `pdfmark' custom action and a PDF transition action.
-   ;; << /Type /Action
-   ;; << /S /Trans
-   ;; entry in the trans dict
-   ;; << /Type /Trans  /S /Dissolve >>
-   :action (lambda (n e)
-	     (let ((filter (make-string-replace lout-verbatim-encoding))
-		   (pdfmark "
-[ {ThisPage} << /Trans << /S /Wipe /Dm /V /D 3 /M /O >> >> /PUT pdfmark"))
-               (display (lout-embedded-postscript-code
-                         (filter pdfmark))))))
-
-;; For movies, see
-;; http://www.tug.org/tex-archive/macros/latex/contrib/movie15/movie15.sty .
-(markup-writer 'slide-embed
-   :options '(:alt :geometry :rgeometry :geometry-opt :command)
-   ;; FIXME:  `pdfmark'.
-   ;; << /Type /Action   /S /Launch
-   :action (lambda (n e)
-	     (let ((command (markup-option n :command))
-		   (filter (make-string-replace lout-verbatim-encoding))
-		   (pdfmark "[ /Rect [ 0 ysize xsize 0 ]
-  /Name /Comment
-  /Contents (This is an embedded application)
-  /ANN pdfmark
-
-[ /Type /Action
-  /S    /Launch
-  /F    (~a)
-  /OBJ pdfmark"))
-	     (display (string-append
-		       "4c @Wide 3c @High "
-		       (lout-embedded-postscript-code
-			(filter (format #f pdfmark command))))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    Restore the base engine                                          */

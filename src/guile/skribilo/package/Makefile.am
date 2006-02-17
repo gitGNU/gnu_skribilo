@@ -4,3 +4,4 @@ dist_guilemodule_DATA = acmproc.scm french.scm jfp.scm letter.scm	\
 			slide.scm web-article.scm web-book.scm		\
 			eq.scm
 
+SUBDIRS = slide eq

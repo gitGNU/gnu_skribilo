@@ -136,30 +136,28 @@
     ("acmproc.skr"      . (skribilo package acmproc))))
 
 (define*-public (skribe-load file :rest args)
-  (call/cc
-   (lambda (return)
-     (guard (c ((file-search-error? c)
-		;; Regular file loading failed.  Try built-ins.
-		(let ((mod-name (assoc-ref %skribe-known-files file)))
-		  (if mod-name
-		      (begin
-			(if (> (*verbose*) 1)
-			    (format (current-error-port)
-				    "  skribe-load: `~a' -> `~a'~%"
-				    file mod-name))
-			(let ((mod (false-if-exception
-				    (resolve-module mod-name))))
-			  (if (not mod)
-			      (raise c)
-			      (begin
-				(set-module-uses!
-				 (current-module)
-				 (cons mod (module-uses (current-module))))
-				(return #t)))))
-		      (raise c)))))
+  (guard (c ((file-search-error? c)
+	     ;; Regular file loading failed.  Try built-ins.
+	     (let ((mod-name (assoc-ref %skribe-known-files file)))
+	       (if mod-name
+		   (begin
+		     (if (> (*verbose*) 1)
+			 (format (current-error-port)
+				 "  skribe-load: `~a' -> `~a'~%"
+				 file mod-name))
+		     (let ((mod (false-if-exception
+				 (resolve-module mod-name))))
+		       (if (not mod)
+			   (raise c)
+			   (begin
+			     (set-module-uses!
+			      (current-module)
+			      (cons mod (module-uses (current-module))))
+			     #t))))
+		   (raise c)))))
 
-	    ;; Try a regular `load-document'.
-	    (apply load-document file args)))))
+	 ;; Try a regular `load-document'.
+	 (apply load-document file args)))
 
 
 (define-public skribe-include      include-document)

@@ -44,6 +44,7 @@
 
 (fluid-set! current-reader %skribilo-module-reader)
 
+
 
 ;;;
 ;;; Utilities.
@@ -140,147 +141,6 @@
 
 
 ;;;
-;;; Lout implementation
-;;;
-
-(let ((lout (find-engine 'lout)))
-  (if (not lout)
-      (skribe-error 'eq "Lout engine not found" lout)
-      (let ((includes (engine-custom lout 'includes)))
-	;; Append the `eq' include file
-	(engine-custom-set! lout 'includes
-			    (string-append includes "\n"
-					   "@SysInclude { eq }\n")))))
-
-;; FIXME:  Reimplement the `symbol' writer so that `@Sym' is not used within
-;; equations (e.g. output `alpha' instead of `{ @Sym alpha }').
-
-(markup-writer 'eq (find-engine 'lout)
-   :before "\n@Eq { "
-   :action (lambda (node engine)
-	      (let ((eq (markup-body node)))
-		 ;(fprint (current-error-port) "eq=" eq)
-		 (output eq engine)))
-   :after  " }\n")
-
-
-;;
-;; `+' and `-' have lower precedence than `*', `/', `=', etc., so their
-;; operands do not need to be enclosed in braces.
-;;
-
-(markup-writer 'eq:+ (find-engine 'lout)
-   :action (lambda (node engine)
-	      (let loop ((operands (markup-body node)))
-		 (if (null? operands)
-		     #t
-		     (begin
-		       ;; no braces
-		       (output (car operands) engine)
-		       (if (pair? (cdr operands))
-			   (display " + "))
-		       (loop (cdr operands)))))))
-
-(markup-writer 'eq:- (find-engine 'lout)
-   :action (lambda (node engine)
-	      (let loop ((operands (markup-body node)))
-		 (if (null? operands)
-		     #t
-		     (begin
-		       ;; no braces
-		       (output (car operands) engine)
-		       (if (pair? (cdr operands))
-			   (display " - "))
-		       (loop (cdr operands)))))))
-
-(define-macro (simple-lout-markup-writer sym . lout-name)
-  `(markup-writer ',(symbol-append 'eq: sym)
-		  (find-engine 'lout)
-      :action (lambda (node engine)
-		(let loop ((operands (markup-body node)))
-		  (if (null? operands)
-		      #t
-		      (begin
-			(display " { ")
-			(output (car operands) engine)
-			(display " }")
-			(if (pair? (cdr operands))
-			    (display ,(string-append " "
-						     (if (null? lout-name)
-							 (symbol->string sym)
-							 (car lout-name))
-						     " ")))
-			(loop (cdr operands))))))))
-
-(simple-lout-markup-writer * "times")
-(simple-lout-markup-writer / "over")
-(simple-lout-markup-writer =)
-(simple-lout-markup-writer <)
-(simple-lout-markup-writer >)
-(simple-lout-markup-writer <=)
-(simple-lout-markup-writer >=)
-
-(markup-writer 'eq:expt (find-engine 'lout)
-   :action (lambda (node engine)
-	     (let ((body (markup-body node)))
-	       (if (= (length body) 2)
-		   (let ((base (car body))
-			 (expt (cadr body)))
-		     (display " { { ")
-		     (if (markup? base) (display "("))
-		     (output base engine)
-		     (if (markup? base) (display ")"))
-		     (display " } sup { ")
-		     (output expt engine)
-		     (display " } } "))
-		   (skribe-error 'eq:expt "wrong number of arguments"
-				 body)))))
-
-
-;;;
-;;; Sums, products, integrals, etc.
-;;;
-
-(define-macro (range-lout-markup-writer sym lout-name)
-  `(markup-writer ',(symbol-append 'eq: sym) (find-engine 'lout)
-      :action (lambda (node engine)
-		(let ((from (markup-option node :from))
-		      (to (markup-option node :to))
-		      (body (markup-body node)))
-		  (display ,(string-append " { big " lout-name
-					   " from { "))
-		  (output from engine)
-		  (display " } to { ")
-		  (output to engine)
-		  (display " } { ")
-		  (output body engine)
-		  (display " } } ")))))
-
-(range-lout-markup-writer sum "sum")
-(range-lout-markup-writer product "prod")
-
-(markup-writer 'eq:script (find-engine 'lout)
-   :action (lambda (node engine)
-	     (let ((body (markup-body node))
-		   (sup (markup-option node :sup))
-		   (sub (markup-option node :sub)))
-	       (display " { { ")
-	       (output body engine)
-	       (display " } ")
-	       (if sup
-		   (begin
-		     (display (if sub " supp { " " sup { "))
-		     (output sup engine)
-		     (display " } ")))
-	       (if sub
-		   (begin
-		     (display " on { ")
-		     (output sub engine)
-		     (display " } ")))
-	       (display " } "))))
-
-
-;;;
 ;;; Text-only implementation.
 ;;;
 
@@ -300,6 +160,16 @@
 		     (if (pair? (cdr operands))
 			 (display " / "))
 		     (loop (cdr operands)))))))
+
+
+;;;
+;;; Initialization.
+;;;
+
+(when-engine-is-loaded 'lout
+  (lambda ()
+    (resolve-module '(skribilo package eq lout))))
+
 
 ;;; arch-tag: 58764650-2684-47a6-8cc7-6288f2b474da
 
