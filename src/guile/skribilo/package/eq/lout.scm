@@ -120,21 +120,29 @@
 (simple-lout-markup-writer <=)
 (simple-lout-markup-writer >=)
 
-(markup-writer 'eq:expt (find-engine 'lout)
-   :action (lambda (node engine)
-	     (let ((body (markup-body node)))
-	       (if (= (length body) 2)
-		   (let ((base (car body))
-			 (expt (cadr body)))
-		     (display " { { ")
-		     (if (markup? base) (display "("))
-		     (output base engine)
-		     (if (markup? base) (display ")"))
-		     (display " } sup { ")
-		     (output expt engine)
-		     (display " } } "))
-		   (skribe-error 'eq:expt "wrong number of arguments"
-				 body)))))
+(define-macro (binary-lout-markup-writer sym lout-name)
+  `(markup-writer ',(symbol-append 'eq: sym) (find-engine 'lout)
+     :action (lambda (node engine)
+	       (let ((body (markup-body node)))
+		 (if (= (length body) 2)
+		     (let* ((first (car body))
+			    (second (cadr body))
+			    (parentheses? (equation-markup? first)))
+		       (display " { { ")
+		       (if parentheses? (display "("))
+		       (output first engine)
+		       (if parentheses? (display ")"))
+		       (display ,(string-append " } " lout-name " { "))
+		       (output second engine)
+		       (display " } } "))
+		     (skribe-error ,(symbol-append 'eq: sym)
+				   "wrong number of arguments"
+				   body))))))
+
+(binary-lout-markup-writer expt "sup")
+(binary-lout-markup-writer in "element")
+(binary-lout-markup-writer notin "notelement")
+
 
 
 

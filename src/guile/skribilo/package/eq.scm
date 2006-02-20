@@ -51,12 +51,53 @@
 ;;;
 
 (define %operators
-  '(/ * + - = != ~= < > <= >= sqrt expt sum product script))
+  '(/ * + - = != ~= < > <= >= sqrt expt sum product script in notin))
+
+(define %symbols
+  ;; A set of symbols that are automatically recognized within an `eq' quoted
+  ;; list.
+  '(;; lower-case Greek
+    alpha beta gamma delta epsilon zeta eta theta iota kappa
+    lambda mu nu xi omicron pi rho sigma tau upsilon phi chi omega
+
+    ;; upper-case Greek
+    Alpha Beta Gamma Delta Epsilon Zeta Eta Theta Iota Kappa
+    Lambda Mu Nu Xi Omicron Pi Rho Sigma Tau Upsilon Phi Chi Omega
+
+    ;; Hebrew
+    alef
+
+    ;; mathematics
+    ellipsis weierp image real forall partial exists
+    emptyset infinity in notin nabla nipropto angle and or cap cup
+    sim cong approx neq equiv le ge subset supset subseteq supseteq
+    oplus otimes perp mid lceil rceil lfloor rfloor langle rangle))
 
 (define %rebindings
   (map (lambda (sym)
 	 (list sym (symbol-append 'eq: sym)))
        %operators))
+
+(define (make-fast-member-predicate lst)
+  (let ((h (make-hash-table)))
+    ;; initialize a hash table equivalent to LST
+    (for-each (lambda (s) (hashq-set! h s #t)) lst)
+
+    ;; the run-time, fast, definition
+    (lambda (sym)
+      (hashq-ref h sym #f))))
+
+(define-public known-operator? (make-fast-member-predicate %operators))
+(define-public known-symbol? (make-fast-member-predicate %symbols))
+
+(define-public (equation-markup? m)
+  "Return true if @var{m} is an instance of one of the equation sub-markups."
+  (define eq-sym?
+    (make-fast-member-predicate (map (lambda (s)
+				       (symbol-append 'eq: s))
+				     %operators)))
+  (and (markup? m)
+       (eq-sym? (markup-markup m))))
 
 
 (define (eq:symbols->strings equation)
@@ -67,7 +108,9 @@
 	     (cons (car equation) ;; XXX: not tail-recursive
 		   (map eq:symbols->strings (cdr equation)))))
 	((symbol? equation)
-	 (symbol->string equation))
+	 (if (known-symbol? equation)
+	     `(symbol ,(symbol->string equation))
+	     (symbol->string equation)))
 	(else equation)))
 
 (define-public (eq-evaluate equation)
@@ -138,6 +181,8 @@
        (options (the-options opts))
        (body (the-body opts))))
 
+(define-simple-markup eq:in)
+(define-simple-markup eq:notin)
 
 
 ;;;
