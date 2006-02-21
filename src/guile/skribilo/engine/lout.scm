@@ -1,6 +1,6 @@
 ;;; lout.scm  --  A Lout engine.
 ;;;
-;;; Copyright 2004, 2005  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2004, 2005, 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -24,13 +24,15 @@
 
 
 (define-skribe-module (skribilo engine lout)
+  :autoload (ice-9 popen)   (open-output-pipe)
   :autoload (ice-9 rdelim)  (read-line))
+
 
 
 ;*---------------------------------------------------------------------*/
 ;*    lout-verbatim-encoding ...                                       */
 ;*---------------------------------------------------------------------*/
-(define lout-verbatim-encoding
+(define-public lout-verbatim-encoding
    '((#\/ "\"/\"")
      (#\\ "\"\\\\\"")
      (#\| "\"|\"")
@@ -47,7 +49,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    lout-encoding ...                                                */
 ;*---------------------------------------------------------------------*/
-(define lout-encoding
+(define-public lout-encoding
   `(,@lout-verbatim-encoding
     (#\ç "{ @Char ccedilla }")
     (#\Ç "{ @Char Ccdeilla }")
@@ -111,7 +113,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    lout-symbol-table ...                                            */
 ;*---------------------------------------------------------------------*/
-(define (lout-symbol-table math)
+(define (lout-symbol-table sym math)
    `(("iexcl" "{ @Char exclamdown }")
      ("cent" "{ @Char cent }")
      ("pound" "{ @Char sterling }")
@@ -155,7 +157,7 @@
      ("Ocircumflex" "{ @Char Ocircumflex }")
      ("Otilde" "{ @Char Otilde }")
      ("Ouml" "{ @Char Odieresis }")
-     ("times" "{ @Sym multiply }")
+     ("times" ,(sym "multiply"))
      ("Oslash" "{ @Char oslash }")
      ("Ugrave" "{ @Char Ugrave }")
      ("Uacute" "{ @Char Uacute }")
@@ -195,100 +197,100 @@
      ("yacute" "{ @Char yacute }")
      ("ymul" "{ @Char ydieresis }")  ;; FIXME: `yUMl'
      ;; Greek
-     ("Alpha" "{ @Sym Alpha }")
-     ("Beta" "{ @Sym Beta }")
-     ("Gamma" "{ @Sym Gamma }")
-     ("Delta" "{ @Sym Delta }")
-     ("Epsilon" "{ @Sym Epsilon }")
-     ("Zeta" "{ @Sym Zeta }")
-     ("Eta" "{ @Sym Eta }")
-     ("Theta" "{ @Sym Theta }")
-     ("Iota" "{ @Sym Iota }")
-     ("Kappa" "{ @Sym Kappa }")
-     ("Lambda" "{ @Sym Lambda }")
-     ("Mu" "{ @Sym Mu }")
-     ("Nu" "{ @Sym Nu }")
-     ("Xi" "{ @Sym Xi }")
-     ("Omicron" "{ @Sym Omicron }")
-     ("Pi" "{ @Sym Pi }")
-     ("Rho" "{ @Sym Rho }")
-     ("Sigma" "{ @Sym Sigma }")
-     ("Tau" "{ @Sym Tau }")
-     ("Upsilon" "{ @Sym Upsilon }")
-     ("Phi" "{ @Sym Phi }")
-     ("Chi" "{ @Sym Chi }")
-     ("Psi" "{ @Sym Psi }")
-     ("Omega" "{ @Sym Omega }")
-     ("alpha" "{ @Sym alpha }")
-     ("beta" "{ @Sym beta }")
-     ("gamma" "{ @Sym gamma }")
-     ("delta" "{ @Sym delta }")
-     ("epsilon" "{ @Sym epsilon }")
-     ("zeta" "{ @Sym zeta }")
-     ("eta" "{ @Sym eta }")
-     ("theta" "{ @Sym theta }")
-     ("iota" "{ @Sym iota }")
-     ("kappa" "{ @Sym kappa }")
-     ("lambda" "{ @Sym lambda }")
-     ("mu" "{ @Sym mu }")
-     ("nu" "{ @Sym nu }")
-     ("xi" "{ @Sym xi }")
-     ("omicron" "{ @Sym omicron }")
-     ("pi" "{ @Sym pi }")
-     ("rho" "{ @Sym rho }")
-     ("sigmaf" "{ @Sym sigmaf }") ;; FIXME!
-     ("sigma" "{ @Sym sigma }")
-     ("tau" "{ @Sym tau }")
-     ("upsilon" "{ @Sym upsilon }")
-     ("phi" "{ @Sym phi }")
-     ("chi" "{ @Sym chi }")
-     ("psi" "{ @Sym psi }")
-     ("omega" "{ @Sym omega }")
-     ("thetasym" "{ @Sym thetasym }")
-     ("piv" "{ @Sym piv }") ;; FIXME!
+     ("Alpha" ,(sym "Alpha"))
+     ("Beta" ,(sym "Beta"))
+     ("Gamma" ,(sym "Gamma"))
+     ("Delta" ,(sym "Delta"))
+     ("Epsilon" ,(sym "Epsilon"))
+     ("Zeta" ,(sym "Zeta"))
+     ("Eta" ,(sym "Eta"))
+     ("Theta" ,(sym "Theta"))
+     ("Iota" ,(sym "Iota"))
+     ("Kappa" ,(sym "Kappa"))
+     ("Lambda" ,(sym "Lambda"))
+     ("Mu" ,(sym "Mu"))
+     ("Nu" ,(sym "Nu"))
+     ("Xi" ,(sym "Xi"))
+     ("Omicron" ,(sym "Omicron"))
+     ("Pi" ,(sym "Pi"))
+     ("Rho" ,(sym "Rho"))
+     ("Sigma" ,(sym "Sigma"))
+     ("Tau" ,(sym "Tau"))
+     ("Upsilon" ,(sym "Upsilon"))
+     ("Phi" ,(sym "Phi"))
+     ("Chi" ,(sym "Chi"))
+     ("Psi" ,(sym "Psi"))
+     ("Omega" ,(sym "Omega"))
+     ("alpha" ,(sym "alpha"))
+     ("beta" ,(sym "beta"))
+     ("gamma" ,(sym "gamma"))
+     ("delta" ,(sym "delta"))
+     ("epsilon" ,(sym "epsilon"))
+     ("zeta" ,(sym "zeta"))
+     ("eta" ,(sym "eta"))
+     ("theta" ,(sym "theta"))
+     ("iota" ,(sym "iota"))
+     ("kappa" ,(sym "kappa"))
+     ("lambda" ,(sym "lambda"))
+     ("mu" ,(sym "mu"))
+     ("nu" ,(sym "nu"))
+     ("xi" ,(sym "xi"))
+     ("omicron" ,(sym "omicron"))
+     ("pi" ,(sym "pi"))
+     ("rho" ,(sym "rho"))
+     ("sigmaf" ,(sym "sigmaf")) ;; FIXME!
+     ("sigma" ,(sym "sigma"))
+     ("tau" ,(sym "tau"))
+     ("upsilon" ,(sym "upsilon"))
+     ("phi" ,(sym "phi"))
+     ("chi" ,(sym "chi"))
+     ("psi" ,(sym "psi"))
+     ("omega" ,(sym "omega"))
+     ("thetasym" ,(sym "thetasym"))
+     ("piv" ,(sym "piv")) ;; FIXME!
      ;; punctuation
-     ("bullet" "{ @Sym bullet }")
-     ("ellipsis" "{ @Sym ellipsis }")
+     ("bullet" ,(sym "bullet"))
+     ("ellipsis" ,(sym "ellipsis"))
      ("weierp" "{ @Sym  weierstrass }")
-     ("image" "{ @Sym Ifraktur }")
-     ("real" "{ @Sym Rfraktur }")
-     ("tm" "{ @Sym trademarksans }") ;; alt: @Sym trademarkserif
-     ("alef" "{ @Sym aleph }")
-     ("<-" "{ @Sym arrowleft }")
+     ("image" ,(sym "Ifraktur"))
+     ("real" ,(sym "Rfraktur"))
+     ("tm" ,(sym "trademarksans")) ;; alt: @Sym trademarkserif
+     ("alef" ,(sym "aleph"))
+     ("<-" ,(sym "arrowleft"))
      ("<--" "{ { 1.6 1 } @Scale { @Sym arrowleft } }") ;; copied from `eqf'
-     ("uparrow" "{ @Sym arrowup }")
-     ("->" "{ @Sym arrowright }")
+     ("uparrow" ,(sym "arrowup"))
+     ("->" ,(sym "arrowright"))
      ("-->" "{ { 1.6 1 } @Scale { @Sym arrowright } }")
-     ("downarrow" "{ @Sym arrowdown }")
-     ("<->" "{ @Sym arrowboth }")
+     ("downarrow" ,(sym "arrowdown"))
+     ("<->" ,(sym "arrowboth"))
      ("<-->" "{ { 1.6 1 } @Scale { @Sym arrowboth } }")
-     ("<+" "{ @Sym carriagereturn }")
-     ("<=" "{ @Sym arrowdblleft }")
+     ("<+" ,(sym "carriagereturn"))
+     ("<=" ,(sym "arrowdblleft"))
      ("<==" "{ { 1.6 1 } @Scale { @Sym arrowdblleft } }")
-     ("Uparrow" "{ @Sym arrowdblup }")
-     ("=>" "{ @Sym arrowdblright }")
+     ("Uparrow" ,(sym "arrowdblup"))
+     ("=>" ,(sym "arrowdblright"))
      ("==>" "{ { 1.6 1 } @Scale { @Sym arrowdblright } }")
-     ("Downarrow" "{ @Sym arrowdbldown }")
-     ("<=>" "{ @Sym arrowdblboth }")
+     ("Downarrow" ,(sym "arrowdbldown"))
+     ("<=>" ,(sym "arrowdblboth"))
      ("<==>" "{ { 1.6 1 } @Scale { @Sym arrowdblboth } }")
      ;; Mathematical operators (we try to avoid `@Eq' since it
      ;; requires to `@SysInclude { eq }' -- one solution consists in copying
      ;; the symbol definition from `eqf')
      ("forall" "{ { Symbol Base } @Font \"\\042\" }")
-     ("partial" "{ @Sym partialdiff }")
+     ("partial" ,(sym "partialdiff"))
      ("exists" "{ { Symbol Base } @Font \"\\044\" }")
      ("emptyset" "{ { Symbol Base } @Font \"\\306\" }")
-     ("infinity" "{ @Sym infinity }")
+     ("infinity" ,(sym "infinity"))
      ("nabla" "{ { Symbol Base } @Font \"\\321\" }")
-     ("in" "{ @Sym element }")
-     ("notin" "{ @Sym notelement }")
+     ("in" ,(sym "element"))
+     ("notin" ,(sym "notelement"))
      ("ni" "{ 180d @Rotate @Sym element }")
-     ("prod" "{ @Sym product }")
-     ("sum" "{ @Sym summation }")
-     ("asterisk" "{ @Sym asteriskmath }")
-     ("sqrt" "{ @Sym radical }")
+     ("prod" ,(sym "product"))
+     ("sum" ,(sym "summation"))
+     ("asterisk" ,(sym "asteriskmath"))
+     ("sqrt" ,(sym "radical"))
      ("propto" ,(math "propto"))
-     ("angle" "{ @Sym angle }")
+     ("angle" ,(sym "angle"))
      ("and" ,(math "bwedge"))
      ("or" ,(math "bvee"))
      ("cap" ,(math "bcap"))
@@ -297,33 +299,33 @@
      ("models" ,(math "models"))
      ("vdash" ,(math "vdash"))
      ("dashv" ,(math "dashv"))
-     ("sim" "{ @Sym similar }")
-     ("cong" "{ @Sym congruent }")
-     ("approx" "{ @Sym approxequal }")
-     ("neq" "{ @Sym notequal }")
-     ("equiv" "{ @Sym equivalence }")
-     ("le" "{ @Sym lessequal }")
-     ("ge" "{ @Sym greaterequal }")
-     ("subset" "{ @Sym propersubset }")
-     ("supset" "{ @Sym propersuperset }")
-     ("subseteq" "{ @Sym reflexsubset }")
-     ("supseteq" "{ @Sym reflexsuperset }")
-     ("oplus" "{ @Sym circleplus }")
-     ("otimes" "{ @Sym circlemultiply }")
-     ("perp" "{ @Sym perpendicular }")
-     ("mid" "{ @Sym bar }")
-     ("lceil" "{ @Sym bracketlefttp }")
-     ("rceil" "{ @Sym bracketrighttp }")
-     ("lfloor" "{ @Sym bracketleftbt }")
-     ("rfloor" "{ @Sym bracketrightbt }")
-     ("langle" "{ @Sym angleleft }")
-     ("rangle" "{ @Sym angleright }")
+     ("sim" ,(sym "similar"))
+     ("cong" ,(sym "congruent"))
+     ("approx" ,(sym "approxequal"))
+     ("neq" ,(sym "notequal"))
+     ("equiv" ,(sym "equivalence"))
+     ("le" ,(sym "lessequal"))
+     ("ge" ,(sym "greaterequal"))
+     ("subset" ,(sym "propersubset"))
+     ("supset" ,(sym "propersuperset"))
+     ("subseteq" ,(sym "reflexsubset"))
+     ("supseteq" ,(sym "reflexsuperset"))
+     ("oplus" ,(sym "circleplus"))
+     ("otimes" ,(sym "circlemultiply"))
+     ("perp" ,(sym "perpendicular"))
+     ("mid" ,(sym "bar"))
+     ("lceil" ,(sym "bracketlefttp"))
+     ("rceil" ,(sym "bracketrighttp"))
+     ("lfloor" ,(sym "bracketleftbt"))
+     ("rfloor" ,(sym "bracketrightbt"))
+     ("langle" ,(sym "angleleft"))
+     ("rangle" ,(sym "angleright"))
      ;; Misc
      ("loz" "{ @Lozenge }")
-     ("spades" "{ @Sym spade }")
-     ("clubs" "{ @Sym club }")
-     ("hearts" "{ @Sym heart }")
-     ("diams" "{ @Sym diamond }")
+     ("spades" ,(sym "spade"))
+     ("clubs" ,(sym "club"))
+     ("hearts" ,(sym "heart"))
+     ("diams" ,(sym "diamond"))
      ("euro" "{ @Euro }")
      ;; Lout
      ("dag" "{ @Dagger }")
@@ -348,7 +350,7 @@
 		     (current-error-port))))
        #t))
 
-(define (lout-tagify ident)
+(define-public (lout-tagify ident)
   ;; Return an "clean" identifier (a string) based on `ident' (a string),
   ;; suitable for Lout as an `@Tag' value.
   (let ((tag-encoding '((#\, "-")
@@ -691,6 +693,11 @@
 
 	       :symbol-table (lout-symbol-table
 			      (lambda (m)
+				;; We don't use `@Sym' because it doesn't
+				;; work within `@Eq'.
+				(string-append "{ { Symbol Base } @Font "
+					       "@Char \"" m "\" }"))
+			      (lambda (m)
 				(format #f "@Eq { ~a }\n" m)))))
 
 
@@ -775,7 +782,7 @@
 					     `(,node ,engine ,@children)))))
 		nodes))))
 
-(define (lout-embedded-postscript-code postscript)
+(define-public (lout-embedded-postscript-code postscript)
   ;; Return a string embedding PostScript code `postscript' into Lout code.
   (string-append "\n"
 		 "{ @BackEnd @Case {\n"
@@ -784,7 +791,7 @@
 		 "        }\n"
 		 "} } @Graphic { }\n"))
 
-(define (lout-pdf-docinfo doc engine)
+(define-public (lout-pdf-docinfo doc engine)
   ;; Produce PostScript code that will produce PDF document information once
   ;; converted to PDF.
   (let* ((filter-string (make-string-replace `(,@lout-verbatim-encoding
@@ -844,7 +851,7 @@
 				   extra-fields)))
 		   "\"/\"DOCINFO pdfmark\n")))
 
-(define (lout-output-pdf-meta-info doc engine)
+(define-public (lout-output-pdf-meta-info doc engine)
   ;; Produce PDF bookmarks (aka. "outline") for document `doc', as well as
   ;; document meta-information (or "docinfo").  This function makes sure that
   ;; both are only produced once, and only if the relevant customs ask for
@@ -2313,6 +2320,8 @@
 ;; option trick.   FIXME:  This would be much more efficient if
 ;; `ast-parent' would work as expected.
 
+;; FIXME: See whether `@II' can be useful.  Use SRFI-39 parameters.
+
 (markup-writer 'it
    :before (lambda (node engine)
 	      (let ((bold-children (search-down (lambda (n)
@@ -2780,6 +2789,8 @@
 ;*    Illustrations                                                    */
 ;*---------------------------------------------------------------------*/
 (define-public (lout-illustration . args)
+  ;; FIXME: This should be a markup.
+
   ;; Introduce a Lout illustration (such as a diagram) whose code is either
   ;; the body of `lout-illustration' or the contents of `file'.  For engines
   ;; other than Lout, an EPS file is produced and then converted if needed.
@@ -2833,138 +2844,41 @@
 			(file-contents file))))
       (if (engine-format? "lout")
 	  (! contents) ;; simply inline the illustration
-	  (cond-expand
-	   (bigloo
-	    (let* ((lout (find-engine 'lout))
-		   (output (string-append (or ident
-					      (symbol->string
-					       (gensym 'lout-illustration)))
-					  ".eps"))
-		   (proc (run-process (or (engine-custom lout
-							 'lout-program-name)
-					  "lout")
-				      "-o" output
-				      "-EPS"
-				      input: pipe:))
-		   (port (process-input-port proc)))
+	  (let* ((lout (find-engine 'lout))
+		 (output (string-append (or ident
+					    (symbol->string
+					     (gensym 'lout-illustration)))
+					".eps"))
+		 (port (open-output-pipe
+			(string-append (or (engine-custom lout
+							  'lout-program-name)
+					   "lout")
+				       " -o " output
+				       " -EPS"))))
 
-	      ;; send the illustration to Lout's standard input
-	      (display (illustration-header) port)
-	      (display contents port)
-	      (display (illustration-ending) port)
-	      (close-output-port port)
+	    ;; send the illustration to Lout's standard input
+	    (display (illustration-header) port)
+	    (display contents port)
+	    (display (illustration-ending) port)
 
-	      (process-wait proc)
-	      (if (not (= 0 (process-exit-status proc)))
+	    (let ((exit-val (status:exit-val (close-pipe port))))
+	      (if (not (eqv? 0 exit-val))
 		  (skribe-error 'lout-illustration
-				"lout exited with error code"
-				(process-exit-status proc)))
-	      (if (not (file-exists? output))
-		  (skribe-error 'lout-illustration "file not created"
-				output))
-	      (if (= 0 (file-size output))
+				"lout exited with error code" exit-val)))
+
+	    (if (not (file-exists? output))
+		(skribe-error 'lout-illustration "file not created"
+			      output))
+
+	    (let ((file-info (false-if-exception (stat output))))
+	      (if (or (not file-info)
+		      (= 0 (stat:size file-info)))
 		  (skribe-error 'lout-illustration
-				"empty output file" output))
+				"empty output file" output)))
 
-	      ;; the image
-	      (image :file output alt)))
+	    ;; the image (FIXME: Should set its location)
+	    (image :file output alt))))))
 
-	   (else ;; Unfortunately, chances are low that STklos has the same
-	         ;; process API as the one Bigloo has.
-	    (skribe-error 'lout
-			  "lout-illustration: Not implemented" file)))))))
-
-
-;*---------------------------------------------------------------------*/
-;*    Slides                                                           */
-;*                                                                     */
-;* At some point, we might want to move this to `slide.scm'.           */
-;*---------------------------------------------------------------------*/
-
-(use-modules (skribilo package slide))
-
-(markup-writer 'slide
-   :options '(:title :number :toc :ident) ;; '(:bg :vspace :image)
-
-   :validate (lambda (n e)
-		(eq? (engine-custom e 'document-type) 'slides))
-
-   :before (lambda (n e)
-	      (display "\n@Overhead\n")
-	      (display "  @Title { ")
-	      (output (markup-option n :title) e)
-	      (display " }\n")
-	      (if (markup-ident n)
-		  (begin
-		     (display "  @Tag { ")
-		     (display (lout-tagify (markup-ident n)))
-		     (display " }\n")))
-	      (if (markup-option n :number)
-		  (begin
-		     (display "  @BypassNumber { ")
-		     (output (markup-option n :number) e)
-		     (display " }\n")))
-	      (display "@Begin\n")
-
-	      ;; `doc' documents produce their PDF outline right after
-	      ;; `@Text @Begin'; other types of documents must produce it
-	      ;; as part of their first chapter.
-	      (lout-output-pdf-meta-info (ast-document n) e))
-
-   :after "@End @Overhead\n")
-
-(markup-writer 'slide-vspace
-   :options '(:unit)
-   :validate (lambda (n e)
-		(and (pair? (markup-body n))
-		     (number? (car (markup-body n)))))
-   :action (lambda (n e)
-	      (printf "\n//~a~a # slide-vspace\n"
-		      (car (markup-body n))
-		      (case (markup-option n :unit)
-			 ((cm)              "c")
-			 ((point points pt) "p")
-			 ((inch inches)     "i")
-			 (else
-			  (skribe-error 'lout
-					"Unknown vspace unit"
-					(markup-option n :unit)))))))
-
-(markup-writer 'slide-pause
-   ;; FIXME:  Use a `pdfmark' custom action and a PDF transition action.
-   ;; << /Type /Action
-   ;; << /S /Trans
-   ;; entry in the trans dict
-   ;; << /Type /Trans  /S /Dissolve >>
-   :action (lambda (n e)
-	     (let ((filter (make-string-replace lout-verbatim-encoding))
-		   (pdfmark "
-[ {ThisPage} << /Trans << /S /Wipe /Dm /V /D 3 /M /O >> >> /PUT pdfmark"))
-               (display (lout-embedded-postscript-code
-                         (filter pdfmark))))))
-
-;; For movies, see
-;; http://www.tug.org/tex-archive/macros/latex/contrib/movie15/movie15.sty .
-(markup-writer 'slide-embed
-   :options '(:alt :geometry :rgeometry :geometry-opt :command)
-   ;; FIXME:  `pdfmark'.
-   ;; << /Type /Action   /S /Launch
-   :action (lambda (n e)
-	     (let ((command (markup-option n :command))
-		   (filter (make-string-replace lout-verbatim-encoding))
-		   (pdfmark "[ /Rect [ 0 ysize xsize 0 ]
-  /Name /Comment
-  /Contents (This is an embedded application)
-  /ANN pdfmark
-
-[ /Type /Action
-  /S    /Launch
-  /F    (~a)
-  /OBJ pdfmark"))
-	     (display (string-append
-		       "4c @Wide 3c @High "
-		       (lout-embedded-postscript-code
-			(filter (format #f pdfmark command))))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    Restore the base engine                                          */

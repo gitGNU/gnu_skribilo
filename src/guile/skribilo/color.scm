@@ -1,32 +1,33 @@
-;;;;
-;;;; color.scm	-- Skribe Color Management
-;;;; 
-;;;; Copyright © 2003-2004 Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
-;;;; 
-;;;; 
-;;;; This program is free software; you can redistribute it and/or modify
-;;;; it under the terms of the GNU General Public License as published by
-;;;; the Free Software Foundation; either version 2 of the License, or
-;;;; (at your option) any later version.
-;;;; 
-;;;; This program is distributed in the hope that it will be useful,
-;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;;;; GNU General Public License for more details.
-;;;; 
-;;;; You should have received a copy of the GNU General Public License
-;;;; along with this program; if not, write to the Free Software
-;;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, 
-;;;; USA.
-;;;; 
-;;;;           Author: Erick Gallesio [eg@essi.fr]
-;;;;    Creation date: 25-Oct-2003 00:10 (eg)
-;;;; Last file update: 12-Feb-2004 18:24 (eg)
-;;;;
+;;; color.scm -- Color management.
+;;;
+;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
+;;; Copyright 2006  Ludovic Courtès  <ludovic.courtes@laas.fr>
+;;;
+;;;
+;;; This program is free software; you can redistribute it and/or modify
+;;; it under the terms of the GNU General Public License as published by
+;;; the Free Software Foundation; either version 2 of the License, or
+;;; (at your option) any later version.
+;;;
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;;
+;;; You should have received a copy of the GNU General Public License
+;;; along with this program; if not, write to the Free Software
+;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+;;; USA.
+
 
 (define-module (skribilo color)
-   :export (skribe-color->rgb skribe-get-used-colors skribe-use-color!))
+  :autoload (srfi srfi-60) (bitwise-and arithmetic-shift)
+  :export (skribe-color->rgb skribe-get-used-colors skribe-use-color!))
 
+;; FIXME: This module should be generalized and the `skribe-' procedures
+;; moved to `compat.scm'.
+
+;; FIXME: Use a fluid?  Or remove it?
 (define *used-colors* '())
 
 (define *skribe-rgb-alist* '(
@@ -571,7 +572,7 @@
    ("darkmagenta"		. "139 0 139")
    ("darkred"			. "139 0 0")
    ("lightgreen"		. "144 238 144")))
-    
+
 
 (define (%convert-color str)
   (let ((col (assoc str *skribe-rgb-alist*)))
@@ -590,7 +591,7 @@
        (values (string->number (substring str 1 5) 16)
 	       (string->number (substring str 5 9) 16)
 	       (string->number (substring str 9 13) 16)))
-      (else        
+      (else
        (values 0 0 0)))))
 
 ;;;
@@ -600,9 +601,9 @@
   (cond
     ((string? spec) (%convert-color spec))
     ((integer? spec)
-       (values (bit-and #xff (bit-shift spec -16))
-	       (bit-and #xff (bit-shift spec -8))
-	       (bit-and #xff spec)))
+       (values (bitwise-and #xff (arithmetic-shift spec -16))
+	       (bitwise-and #xff (arithmetic-shift spec -8))
+	       (bitwise-and #xff spec)))
     (else
      (values 0 0 0))))
 
@@ -618,4 +619,3 @@
 (define (skribe-use-color! color)
   (set! *used-colors* (cons color *used-colors*))
   color)
-

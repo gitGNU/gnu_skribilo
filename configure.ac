@@ -35,6 +35,8 @@ AC_OUTPUT([Makefile
 	   src/guile/skribilo/engine/Makefile
 	   src/guile/skribilo/reader/Makefile
 	   src/guile/skribilo/package/Makefile
+	   src/guile/skribilo/package/slide/Makefile
+	   src/guile/skribilo/package/eq/Makefile
 	   src/guile/skribilo/skribe/Makefile
 	   src/guile/skribilo/coloring/Makefile
 	   doc/Makefile

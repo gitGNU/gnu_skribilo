@@ -2,6 +2,81 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-02-21 20:55:41 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-34
+
+    Summary:
+      Merge from lcourtes@laas.fr--2004-libre
+    Revision:
+      skribilo--devel--1.2--patch-34
+
+    Patches applied:
+    
+     * lcourtes@laas.fr--2004-libre/skribilo--devel--1.2  (patch 41-54)
+    
+       - Merge from lcourtes@laas.fr--2005-mobile
+       - More Skribe compatibility fixes (more exported bindings).
+       - Implemented `lout-illustration' for non-Lout engines.
+       - Created the `(skribilo utils files)' module.
+       - Skribe reader: consider square brackets as delimiters.
+       - `skribilo': do not catch all exceptions, let a stack trace be output
+         intead.
+       - Added the equation formatting package (unfinished, undocumented).
+       - `eq' package: added the `script' markup.
+       - Implemented `when-engine-is-loaded'.
+       - Fixes for `when-engine-is-loaded'.
+       - `slide' and `eq': moved engine-specific code in separate modules.
+       - Lout engine: fixed use of `@Sym' so that it works fine within `@Eq'.
+       - `eq': Added `eq:in', `eq:notin' and their Lout writers.
+       - `eq': added the `apply' markup.
+
+    new files:
+     src/guile/skribilo/package/eq.scm
+     src/guile/skribilo/package/eq/.arch-ids/=id
+     src/guile/skribilo/package/eq/Makefile.am
+     src/guile/skribilo/package/eq/lout.scm
+     src/guile/skribilo/package/slide/.arch-ids/=id
+     src/guile/skribilo/package/slide/Makefile.am
+     src/guile/skribilo/package/slide/html.scm
+     src/guile/skribilo/package/slide/latex.scm
+     src/guile/skribilo/package/slide/lout.scm
+     src/guile/skribilo/utils/files.scm
+
+    modified files:
+     ChangeLog NEWS configure.ac src/guile/skribilo/color.scm
+     src/guile/skribilo/engine.scm
+     src/guile/skribilo/engine/html.scm
+     src/guile/skribilo/engine/lout.scm
+     src/guile/skribilo/module.scm
+     src/guile/skribilo/package/Makefile.am
+     src/guile/skribilo/package/slide.scm
+     src/guile/skribilo/reader/skribe.scm
+     src/guile/skribilo/runtime.scm
+     src/guile/skribilo/utils/Makefile.am
+     src/guile/skribilo/utils/compat.scm src/skribilo.in
+
+    new directories:
+     src/guile/skribilo/package/eq
+     src/guile/skribilo/package/eq/.arch-ids
+     src/guile/skribilo/package/slide
+     src/guile/skribilo/package/slide/.arch-ids
+
+    new patches:
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-41
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-42
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-43
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-44
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-45
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-46
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-47
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-48
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-49
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-50
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-51
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-52
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-53
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-54
+
+
 2006-02-10 17:19:34 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-33
 
     Summary:

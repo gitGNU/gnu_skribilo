@@ -63,10 +63,14 @@
 
 (define %skribilo-user-autoloads
   ;; List of auxiliary modules that may be lazily autoloaded.
-  '(((skribilo engine lout)   . (lout-illustration
+  '(((skribilo engine lout)   . (!lout
+				 lout-illustration
 				 ;; FIXME: The following should eventually be
 				 ;;        removed from here.
 				 lout-structure-number-string))
+    ((skribilo engine latex)  . (!latex LaTeX TeX))
+    ((skribilo engine html)   . (html-markup-class html-class
+				 html-width))
     ((skribilo source)        . (source-read-lines source-fontify
 				 language? language-extractor
 				 language-fontifier source-fontify))
