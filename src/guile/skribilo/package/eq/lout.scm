@@ -143,6 +143,20 @@
 (binary-lout-markup-writer in "element")
 (binary-lout-markup-writer notin "notelement")
 
+(markup-writer 'eq:apply (find-engine 'lout)
+   :action (lambda (node engine)
+	     (let ((func (car (markup-body node))))
+	       (output func engine)
+	       (display "(")
+	       (let loop ((operands (cdr (markup-body node))))
+		 (if (null? operands)
+		     #t
+		     (begin
+		       (output (car operands) engine)
+		       (if (not (null? (cdr operands)))
+			   (display ", "))
+		       (loop (cdr operands)))))
+	       (display ")"))))
 
 
 

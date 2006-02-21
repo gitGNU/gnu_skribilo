@@ -51,7 +51,8 @@
 ;;;
 
 (define %operators
-  '(/ * + - = != ~= < > <= >= sqrt expt sum product script in notin))
+  '(/ * + - = != ~= < > <= >= sqrt expt sum product script
+    in notin apply))
 
 (define %symbols
   ;; A set of symbols that are automatically recognized within an `eq' quoted
@@ -183,6 +184,27 @@
 
 (define-simple-markup eq:in)
 (define-simple-markup eq:notin)
+
+(define-markup (eq:apply :rest opts :key (ident #f) (class "eq:apply"))
+  ;; This markup may receive either a list of arguments or arguments
+  ;; compatible with the real `apply'.  Note: the real `apply' can take N
+  ;; non-list arguments but the last one has to be a list.
+  (new markup
+       (markup 'eq:apply)
+       (ident (or ident (symbol->string (gensym "eq:apply"))))
+       (options (the-options opts))
+       (body (let loop ((body (the-body opts))
+			(result '()))
+	       (if (null? body)
+		   (reverse! result)
+		   (let ((first (car body)))
+		     (if (list? first)
+			 (if (null? (cdr body))
+			     (append (reverse! result) first)
+			     (skribe-error 'eq:apply
+					   "wrong argument type"
+					   body))
+			 (loop (cdr body) (cons first result)))))))))
 
 
 ;;;
