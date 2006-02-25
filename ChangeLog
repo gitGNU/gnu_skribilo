@@ -2,6 +2,20 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-02-25 13:02:20 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-35
+
+    Summary:
+      Made `make-string-replace' faster.
+    Revision:
+      skribilo--devel--1.2--patch-35
+
+    * src/guile/skribilo/runtime.scm (%make-general-string-replace): Use a
+      hash table rather than a list.
+
+    modified files:
+     ChangeLog src/guile/skribilo/runtime.scm
+
+
 2006-02-21 20:55:41 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-34
 
     Summary:

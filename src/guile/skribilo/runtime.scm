@@ -180,13 +180,23 @@
 
 (define (%make-general-string-replace lst)
   ;; The general version
-  (lambda (str)
-    (let ((out (open-output-string)))
-      (string-for-each (lambda (ch)
-			 (let ((res (assq ch lst)))
-			   (display (if res (cadr res) ch) out)))
-		       str)
-      (get-output-string out))))
+  (let ((chars (make-hash-table)))
+
+    ;; Setup a hash table equivalent to LST.
+    (for-each (lambda (chr)
+		(hashq-set! chars (car chr) (cadr chr)))
+	      lst)
+
+    ;; Help the GC.
+    (set! lst #f)
+
+    (lambda (str)
+      (let ((out (open-output-string)))
+	(string-for-each (lambda (ch)
+			   (let ((res (hashq-ref chars ch #f)))
+			     (display (if res res ch) out)))
+			 str)
+	(get-output-string out)))))
 
 (define string->html
   (%make-general-string-replace '((#\" "&quot;") (#\& "&amp;") (#\< "&lt;")
