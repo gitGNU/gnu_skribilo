@@ -28,6 +28,7 @@
   :use-module (skribilo module)
   :use-module (skribilo skribe utils) ;; `the-options', etc.
   :autoload   (skribilo skribe api) (it symbol sub sup)
+  :autoload   (skribilo engine lout) (lout-illustration)
   :use-module (ice-9 optargs))
 
 ;;; Author: Ludovic Courtès
@@ -126,7 +127,7 @@
 ;;; Markup.
 ;;;
 
-(define-markup (eq :rest opts :key (ident #f) (class "eq"))
+(define-markup (eq :rest opts :key (ident #f) (renderer #f) (class "eq"))
   (new markup
        (markup 'eq)
        (ident (or ident (symbol->string (gensym "eq"))))
@@ -209,12 +210,40 @@
 
 
 ;;;
-;;; Text-only implementation.
+;;; Base and text-only implementation.
 ;;;
+
+
 
 (markup-writer 'eq (find-engine 'base)
    :action (lambda (node engine)
-	      (output (it (markup-body node)) engine)))
+	     ;; The `:renderer' option should be a symbol (naming an engine
+	     ;; class) or an engine or engine class.  This allows the use of
+	     ;; another engine to render equations.  For instance, equations
+	     ;; may be rendered using the Lout engine within an HTML
+	     ;; document.
+	     (let ((renderer (markup-option node :renderer)))
+	       (cond ((not renderer) ;; default: use the current engine
+		      (output (it (markup-body node)) engine))
+		     ((symbol? renderer)
+		      (case renderer
+			;; FIXME: We should have an `embed' slot for each
+			;; engine class similar to `lout-illustration'.
+			((lout)
+			 (let ((lout-code
+				(with-output-to-string
+				  (lambda ()
+				    (output node (find-engine 'lout))))))
+			   (output (lout-illustration
+				    :ident (markup-ident node)
+				    lout-code)
+				   engine)))
+			(else
+			 (skribe-error 'eq "invalid renderer" renderer))))
+		     ;; FIXME: `engine?' and `engine-class?'
+		     (else
+		      (skribe-error 'eq "`:renderer' -- wrong argument type"
+				    renderer))))))
 
 (define-macro (simple-markup-writer op . obj)
   `(markup-writer ',(symbol-append 'eq: op) (find-engine 'base)
@@ -242,12 +271,12 @@
 (simple-markup-writer * (symbol "times"))
 
 (simple-markup-writer =)
-(simple-markup-writer !=)
-(simple-markup-writer ~=)
+(simple-markup-writer != (symbol "neq"))
+(simple-markup-writer ~= (symbol "approx"))
 (simple-markup-writer <)
 (simple-markup-writer >)
-(simple-markup-writer >=)
-(simple-markup-writer <=)
+(simple-markup-writer >= (symbol "ge"))
+(simple-markup-writer <= (symbol "le"))
 
 (markup-writer 'eq:sqrt (find-engine 'base)
    :action (lambda (node engine)
@@ -336,6 +365,8 @@
 	       (output body engine)
 	       (output (sup sup*) engine)
 	       (output (sub sub*) engine))))
+
+
 
 
 ;;;
