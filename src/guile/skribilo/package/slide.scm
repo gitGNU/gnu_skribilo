@@ -21,10 +21,7 @@
 
 
 (define-skribe-module (skribilo package slide)
-  :autoload (skribilo engine html) (html-width html-title-authors)
-  :autoload (skribilo package slide html) (%slide-html-initialize!)
-  :autoload (skribilo package slide lout) (%slide-lout-initialize!)
-  :autoload (skribilo package slide latex) (%slide-latex-initialize!))
+  :autoload (skribilo engine html) (html-width html-title-authors))
 
 
 ;*---------------------------------------------------------------------*/
@@ -47,13 +44,13 @@
 ;; Register specific implementations for lazy loading.
 (when-engine-is-loaded 'latex
   (lambda ()
-    (%slide-latex-initialize!)))
+    (resolve-module '(skribilo package slide latex))))
 (when-engine-is-loaded 'html
   (lambda ()
-    (%slide-html-initialize!)))
+    (resolve-module '(skribilo package slide html))))
 (when-engine-is-loaded 'lout
   (lambda ()
-    (%slide-lout-initialize!)))
+    (resolve-module '(skribilo package slide lout))))
 
 
 ;*---------------------------------------------------------------------*/

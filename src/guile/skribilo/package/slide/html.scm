@@ -59,6 +59,7 @@
     (markup-writer 'slide-vspace he
        :action (lambda (n e) (display "<br>")))))
 
+
 ;*---------------------------------------------------------------------*/
 ;*    slide-body-width ...                                             */
 ;*---------------------------------------------------------------------*/
@@ -101,6 +102,14 @@
       (if (string? tfg)
 	  (display "</font>"))
       (display "</td></tr></tbody></table></center>\n")))
+
+
+
+;;;
+;;; Initialization.
+;;;
+
+(%slide-html-initialize!)
 
 
 ;;; arch-tag: 8be0cdf2-b755-4baa-baf6-739cdd00e193
