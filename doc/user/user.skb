@@ -18,6 +18,11 @@
 (skribe-load "skr/api.skr")
 
 ;*---------------------------------------------------------------------*/
+;*    Packages							       */
+;*---------------------------------------------------------------------*/
+(use-modules (skribilo package eq))
+
+;*---------------------------------------------------------------------*/
 ;*    HTML custom                                                      */
 ;*---------------------------------------------------------------------*/
 ;; since we load slides (for documenting it), we have to use a
@@ -116,6 +121,9 @@ as HTML, Info pages, man pages, Postscript, etc.]))))
 
 ;;; Computer programs
 (include "prgm.skb")
+
+;;; Equations
+(include "eq.skb")
 
 ;;; Standard Library
 (include "lib.skb")
