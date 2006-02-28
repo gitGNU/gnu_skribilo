@@ -2,6 +2,24 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-02-28 21:40:26 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-37
+
+    Summary:
+      Slightly optimized the resolution process (added `ast-resolved?').
+    Revision:
+      skribilo--devel--1.2--patch-37
+
+    * src/guile/skribilo/ast.scm (<ast>): Added a `resolved?' slot, with
+      accessor `ast-resolved?'.
+    
+    * src/guile/skribilo/resolve.scm (do-resolve!)[<node>]: Check whether
+      `ast-resolved?' is true and set it once it's resolved.
+
+    modified files:
+     ChangeLog src/guile/skribilo/ast.scm
+     src/guile/skribilo/resolve.scm
+
+
 2006-02-28 20:08:45 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-36
 
     Summary:
