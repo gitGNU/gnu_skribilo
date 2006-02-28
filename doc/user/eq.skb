@@ -1,0 +1,77 @@
+;;; Copyright 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;;
+;;;
+;;; This program is free software; you can redistribute it and/or modify
+;;; it under the terms of the GNU General Public License as published by
+;;; the Free Software Foundation; either version 2 of the License, or
+;;; (at your option) any later version.
+;;;
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;;
+;;; You should have received a copy of the GNU General Public License
+;;; along with this program; if not, write to the Free Software
+;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+;;; USA.
+
+;;; FIXME: This is a stub and must be completed!
+
+(chapter :title [Equation Formatting]
+   
+   (p [Skribilo comes with an equation formatting package.  This package
+may be loaded by adding the following form at the top of your document:]
+
+	(disp (prog (source :language scheme
+		       [(use-modules (skribilo package eq))])))
+	
+      [It allows the inclusion of (complex) equations in your documents,
+such as, for example, the following:]
+	
+	(disp (eq :renderer (if (engine-format? "html") 'lout #f)
+                  :ident "eq-disponibilite"
+		  `(= (apply A D)
+		      (sum :from (= i b) :to (* S b)
+			   (* (script :sup (* S b) :sub i C)
+			      (* (expt mu i)
+				 (expt (- 1 mu)
+				       (- (* S b) i))))))))
+	
+      [This chapter will describe the syntactic facilities available to
+describe equations, as well as the rendering options.])
+   
+   (section :title [Syntax]
+      
+      (p [To start with, let's have a look at a concrete example. ]
+	
+        (example-produce
+	  (example :legend "Example of a simple equation using the verbose syntax"
+	     (prgm :file "src/eq1.skb"))
+	  (disp (include "src/eq1.skb")))
+
+  	[In this example, the ,(tt [eq:]) sub-markups are used pretty
+much like any other kind of markup.  However, the resulting syntax
+is very verbose and hard to read.])
+      
+      (p [Fortunately, the ,(tt [eq]) package allows for the use of a
+much simple syntax.  ]
+
+	(example-produce
+	  (example :legend "Example of a simple equation"
+	     (prgm :file "src/eq2.skb"))
+	  (disp (include "src/eq2.skb")))
+	
+	[Readers familiar with the Lisp family of programming languages
+may have already recognized its ,(emph [prefix notation]).  Note that,
+unlike in the previous example, the equation itself if ,(emph [quoted]),
+that is, preceded by the ,(tt [']) sign.  Additionally, when referring
+to a symbol (such as the Greek letter ,(symbol "phi")), you no longer
+need to use the ,(tt [symbol]) markup (,(ref :text [see subsection]
+:subsection "Symbols")).]))
+   
+   (section :title [Rendering])
+
+   )
+
+;;; arch-tag: e9c83c13-205f-4f68-9100-b445c21b959c

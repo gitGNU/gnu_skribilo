@@ -27,6 +27,8 @@
   :use-module (skribilo utils syntax)
   :use-module (skribilo module)
   :use-module (skribilo skribe utils) ;; `the-options', etc.
+  :autoload   (skribilo skribe api) (it symbol sub sup)
+  :autoload   (skribilo engine lout) (lout-illustration)
   :use-module (ice-9 optargs))
 
 ;;; Author: Ludovic Courtès
@@ -125,7 +127,7 @@
 ;;; Markup.
 ;;;
 
-(define-markup (eq :rest opts :key (ident #f) (class "eq"))
+(define-markup (eq :rest opts :key (ident #f) (renderer #f) (class "eq"))
   (new markup
        (markup 'eq)
        (ident (or ident (symbol->string (gensym "eq"))))
@@ -208,25 +210,163 @@
 
 
 ;;;
-;;; Text-only implementation.
+;;; Base and text-only implementation.
 ;;;
+
+
 
 (markup-writer 'eq (find-engine 'base)
    :action (lambda (node engine)
-	      (output (apply it (markup-body node)) engine)))
+	     ;; The `:renderer' option should be a symbol (naming an engine
+	     ;; class) or an engine or engine class.  This allows the use of
+	     ;; another engine to render equations.  For instance, equations
+	     ;; may be rendered using the Lout engine within an HTML
+	     ;; document.
+	     (let ((renderer (markup-option node :renderer)))
+	       (cond ((not renderer) ;; default: use the current engine
+		      (output (it (markup-body node)) engine))
+		     ((symbol? renderer)
+		      (case renderer
+			;; FIXME: We should have an `embed' slot for each
+			;; engine class similar to `lout-illustration'.
+			((lout)
+			 (let ((lout-code
+				(with-output-to-string
+				  (lambda ()
+				    (output node (find-engine 'lout))))))
+			   (output (lout-illustration
+				    :ident (markup-ident node)
+				    lout-code)
+				   engine)))
+			(else
+			 (skribe-error 'eq "invalid renderer" renderer))))
+		     ;; FIXME: `engine?' and `engine-class?'
+		     (else
+		      (skribe-error 'eq "`:renderer' -- wrong argument type"
+				    renderer))))))
 
-(markup-writer 'eq:/ (find-engine 'base)
+(define-macro (simple-markup-writer op . obj)
+  `(markup-writer ',(symbol-append 'eq: op) (find-engine 'base)
+     :action (lambda (node engine)
+		(let loop ((operands (markup-body node)))
+		 (if (null? operands)
+		     #t
+		     (let ((o (car operands)))
+		       (display (if (equation-markup? o) "(" ""))
+		       (output o engine)
+		       (display (if (equation-markup? o) ")" ""))
+		       (if (pair? (cdr operands))
+			   (begin
+			     (display " ")
+			     (output ,(if (null? obj)
+					  (symbol->string op)
+					  (car obj))
+				     engine)
+			     (display " ")))
+		       (loop (cdr operands))))))))
+
+(simple-markup-writer +)
+(simple-markup-writer -)
+(simple-markup-writer /)
+(simple-markup-writer * (symbol "times"))
+
+(simple-markup-writer =)
+(simple-markup-writer != (symbol "neq"))
+(simple-markup-writer ~= (symbol "approx"))
+(simple-markup-writer <)
+(simple-markup-writer >)
+(simple-markup-writer >= (symbol "ge"))
+(simple-markup-writer <= (symbol "le"))
+
+(markup-writer 'eq:sqrt (find-engine 'base)
    :action (lambda (node engine)
-	      (let loop ((operands (markup-body node)))
-	       (if (null? operands)
-		   #t
-		   (begin
-		     (display " ")
-		     (output (car operands) engine)
-		     (display " ")
-		     (if (pair? (cdr operands))
-			 (display " / "))
-		     (loop (cdr operands)))))))
+	     (display "sqrt(")
+	     (output (markup-body node) engine)
+	     (display ")")))
+
+(define-macro (simple-binary-markup-writer op obj)
+  `(markup-writer ',(symbol-append 'eq: op) (find-engine 'base)
+     :action (lambda (node engine)
+	       (let ((body (markup-body node)))
+		 (if (= (length body) 2)
+		     (let ((first (car body))
+			   (second (cadr body)))
+		       (display (if (equation-markup? first) "(" " "))
+		       (output first engine)
+		       (display (if (equation-markup? first) ")" " "))
+		       (output ,obj engine)
+		       (display (if (equation-markup? second) "(" ""))
+		       (output second engine)
+		       (display (if (equation-markup? second) ")" "")))
+		     (skribe-error ',(symbol-append 'eq: op)
+				   "wrong argument type"
+				   body))))))
+
+(markup-writer 'eq:expt (find-engine 'base)
+   :action (lambda (node engine)
+	     (let ((body (markup-body node)))
+		 (if (= (length body) 2)
+		     (let ((first (car body))
+			   (second (cadr body)))
+		       (display (if (equation-markup? first) "(" ""))
+		       (output first engine)
+		       (display (if (equation-markup? first) ")" ""))
+		       (output (sup second) engine))))))
+
+(simple-binary-markup-writer in    (symbol "in"))
+(simple-binary-markup-writer notin (symbol "notin"))
+
+(markup-writer 'eq:apply (find-engine 'base)
+   :action (lambda (node engine)
+	     (let ((func (car (markup-body node))))
+	       (output func engine)
+	       (display "(")
+	       (let loop ((operands (cdr (markup-body node))))
+		 (if (null? operands)
+		     #t
+		     (begin
+		       (output (car operands) engine)
+		       (if (not (null? (cdr operands)))
+			   (display ", "))
+		       (loop (cdr operands)))))
+	       (display ")"))))
+
+(markup-writer 'eq:sum (find-engine 'base)
+   :action (lambda (node engine)
+	     (let ((from (markup-option node :from))
+		   (to (markup-option node :to)))
+	       (output (symbol "Sigma") engine)
+	       (display "(")
+	       (output from engine)
+	       (display ", ")
+	       (output to engine)
+	       (display ", ")
+	       (output (markup-body node) engine)
+	       (display ")"))))
+
+(markup-writer 'eq:prod (find-engine 'base)
+   :action (lambda (node engine)
+	     (let ((from (markup-option node :from))
+		   (to (markup-option node :to)))
+	       (output (symbol "Pi") engine)
+	       (display "(")
+	       (output from engine)
+	       (display ", ")
+	       (output to engine)
+	       (display ", ")
+	       (output (markup-body node) engine)
+	       (display ")"))))
+
+(markup-writer 'eq:script (find-engine 'base)
+   :action (lambda (node engine)
+	     (let ((body (markup-body node))
+		   (sup* (markup-option node :sup))
+		   (sub* (markup-option node :sub)))
+	       (output body engine)
+	       (output (sup sup*) engine)
+	       (output (sub sub*) engine))))
+
+
 
 
 ;;;

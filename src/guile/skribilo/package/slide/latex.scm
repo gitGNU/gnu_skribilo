@@ -25,6 +25,7 @@
 (define-public %slide-latex-mode 'seminar)
 
 (define-public (%slide-latex-initialize!)
+  (skribe-message "LaTeX slides setup...\n")
   (case %slide-latex-mode
     ((seminar)
      (%slide-seminar-setup!))
@@ -34,6 +35,7 @@
      (%slide-prosper-setup!))
     (else
      (skribe-error 'slide "Illegal latex mode" %slide-latex-mode))))
+
 
 ;*---------------------------------------------------------------------*/
 ;*    &slide-seminar-predocument ...                                   */
@@ -381,5 +383,12 @@
 	      ;; advi
 	      (set! %slide-latex-mode 'advi)))))
 
+
+
+;;;
+;;; Initialization.
+;;;
+
+(%slide-latex-initialize!)
 
 ;;; arch-tag: b99e2c65-55f7-462c-8482-f47c7e223538
