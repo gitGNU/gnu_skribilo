@@ -85,24 +85,31 @@
 
 
 (define-method (do-resolve! (node <node>) engine env)
-  (let ((body    (slot-ref node 'body))
-	(options (slot-ref node 'options))
-	(parent  (slot-ref node 'parent)))
-    (with-debug 5 'do-resolve<body>
-       (debug-item "body=" body)
-       (when (eq? parent 'unspecified)
-	 (let ((p (assq 'parent env)))
-	   (slot-set! node 'parent (and (pair? p) (pair? (cdr p)) (cadr p)))
-	   (when (pair? options)
-	     (debug-item "unresolved options=" options)
-	     (for-each (lambda (o)
-			 (set-car! (cdr o)
-				   (do-resolve! (cadr o) engine env)))
-		       options)
-	     (debug-item "resolved options=" options))))
-       (slot-set! node 'body (do-resolve! body engine env))
-       node)))
+  (if (ast-resolved? node)
+      node
+      (let ((body    (slot-ref node 'body))
+	    (options (slot-ref node 'options))
+	    (parent  (slot-ref node 'parent))
+	    (unresolved? (*unresolved*)))
+	(with-debug 5 'do-resolve<body>
+	   (debug-item "body=" body)
+	   (parameterize ((*unresolved* #f))
+	     (when (eq? parent 'unspecified)
+	       (let ((p (assq 'parent env)))
+		 (slot-set! node 'parent
+			    (and (pair? p) (pair? (cdr p)) (cadr p)))
+		 (when (pair? options)
+		   (debug-item "unresolved options=" options)
+		   (for-each (lambda (o)
+			       (set-car! (cdr o)
+					 (do-resolve! (cadr o) engine env)))
+			     options)
+		   (debug-item "resolved options=" options))))
+	     (slot-set! node 'body (do-resolve! body engine env))
+	     (slot-set! node 'resolved? (not (*unresolved*))))
 
+	   (*unresolved* (or unresolved? (not (ast-resolved? node))))
+	   node))))
 
 
 (define-method (do-resolve! (node <container>) engine env0)

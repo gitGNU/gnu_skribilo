@@ -25,6 +25,7 @@
   :use-module (skribilo utils syntax)
   :export (<ast> ast? ast-loc ast-loc-set!
 		 ast-parent ast->string ast->file-location
+		 ast-resolved?
 
 	   <command> command? command-fmt command-body
 	   <unresolved> unresolved? unresolved-proc
@@ -71,8 +72,16 @@
 ;;; ======================================================================
 ;;FIXME: set! location in <ast>
 (define-class <ast> ()
-  (parent :accessor ast-parent :init-keyword :parent :init-value 'unspecified)
-  (loc    :init-value #f))
+  ;; Parent of this guy.
+  (parent  :accessor ast-parent :init-keyword :parent :init-value 'unspecified)
+
+  ;; Its source location.
+  (loc     :init-value #f)
+
+  ;; This slot is used as an optimization when resolving an AST: sub-parts of
+  ;; the tree are marked as resolved as soon as they are and don't need to be
+  ;; traversed again.
+  (resolved? :accessor ast-resolved? :init-value #f))
 
 
 (define (ast? obj)		(is-a? obj <ast>))

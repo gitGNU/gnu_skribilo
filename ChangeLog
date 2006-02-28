@@ -2,6 +2,61 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-02-28 21:40:26 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-37
+
+    Summary:
+      Slightly optimized the resolution process (added `ast-resolved?').
+    Revision:
+      skribilo--devel--1.2--patch-37
+
+    * src/guile/skribilo/ast.scm (<ast>): Added a `resolved?' slot, with
+      accessor `ast-resolved?'.
+    
+    * src/guile/skribilo/resolve.scm (do-resolve!)[<node>]: Check whether
+      `ast-resolved?' is true and set it once it's resolved.
+
+    modified files:
+     ChangeLog src/guile/skribilo/ast.scm
+     src/guile/skribilo/resolve.scm
+
+
+2006-02-28 20:08:45 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-36
+
+    Summary:
+      Merge from lcourtes@laas.fr--2004-libre
+    Revision:
+      skribilo--devel--1.2--patch-36
+
+    Patches applied:
+    
+     * lcourtes@laas.fr--2004-libre/skribilo--devel--1.2  (patch 55-59)
+    
+       - Made `make-string-replace' faster.
+       - `eq': Implemented the text-based markup writers.
+       - `eq': Added the `:renderer' option to `eq'.  Support `lout'.
+       - Changed the way `slide' implementations are loaded.  Doc is buildable now.
+       - Doc: Added a chapter (stub) about the `eq' package.
+
+    new files:
+     doc/user/eq.skb doc/user/src/.arch-ids/eq1.skb.id
+     doc/user/src/.arch-ids/eq2.skb.id doc/user/src/eq1.skb
+     doc/user/src/eq2.skb
+
+    modified files:
+     ChangeLog doc/user/user.skb src/guile/skribilo/package/eq.scm
+     src/guile/skribilo/package/slide.scm
+     src/guile/skribilo/package/slide/html.scm
+     src/guile/skribilo/package/slide/latex.scm
+     src/guile/skribilo/package/slide/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-55
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-56
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-57
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-58
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-59
+
+
 2006-02-25 13:02:20 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-35
 
     Summary:
