@@ -67,8 +67,9 @@ calls are legal ,(tt "section") calls:])
 ;*---------------------------------------------------------------------*/
 ;*    Markups                                                          */
 ;*---------------------------------------------------------------------*/
-(include "document.skb")
-(include "sectioning.skb")
+;; FIXME: Processors (used by the following files) are broken!
+;;(include "document.skb")
+;;(include "sectioning.skb")
 (include "toc.skb")
 (include "ornament.skb")
 (include "line.skb")
