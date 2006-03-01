@@ -53,14 +53,43 @@
 ;;; Class definition.
 ;;;
 
+;; Note on writers
+;; ---------------
+;;
+;; `writers' here is an `eq?' hash table where keys are markup names
+;; (symbols) and values are lists of markup writers (most of the time, the
+;; list will only contain one writer).  Each of these writer may define a
+;; predicate or class that may further restrict its applicability.
+;;
+;; `free-writers' is a list of writers that may apply to *any* kind of
+;; markup.  These are typically define by passing `#t' to `markup-writer'
+;; instead of a symbol:
+;;
+;;   (markup-writer #f (find-engine 'xml)
+;;     :before ...
+;;     ...)
+;;
+;; The XML engine contains an example of such free writers.  Again, these
+;; writers may define a predicate or a class restricting their applicability.
+;;
+;; The distinction between these two kinds of writers is mostly performance:
+;; "free writers" are rarely used and markup-specific are the most common
+;; case which we want to be fast.  Therefore, for the latter case, we can't
+;; afford traversing a list of markups, evaluating each and every markup
+;; predicate.
+;;
+;; For more details, see `markup-writer-get' and `lookup-markup-writer' in
+;; `(skribilo writer)'.
+
 (define-class <engine> ()
   (ident		:init-keyword :ident		:init-value '???)
   (format		:init-keyword :format		:init-value "raw")
-  (info		:init-keyword :info		:init-value '())
+  (info		        :init-keyword :info		:init-value '())
   (version		:init-keyword :version
 			:init-value 'unspecified)
   (delegate		:init-keyword :delegate		:init-value #f)
-  (writers		:init-keyword :writers		:init-value '())
+  (writers              :init-thunk make-hash-table)
+  (free-writers         :init-value '())
   (filter		:init-keyword :filter		:init-value #f)
   (customs		:init-keyword :custom		:init-value '())
   (symbol-table	:init-keyword :symbol-table	:init-value '()))
@@ -268,7 +297,13 @@ otherwise the requested engine is returned."
 	(slot-set! e 'customs (cons (list id val) customs)))))
 
 
-(define (engine-add-writer! e ident pred upred opt before action after class valid)
+(define (engine-add-writer! e ident pred upred opt before action
+			    after class valid)
+  ;; Add a writer to engine E.  If IDENT is a symbol, then it should denote
+  ;; a markup name and the writer being added is specific to that markup.  If
+  ;; IDENT is `#t' (for instance), then it is assumed to be a ``free writer''
+  ;; that may apply to any kind of markup for which PRED returns true.
+
   (define (check-procedure name proc arity)
     (cond
       ((not (procedure? proc))
@@ -309,7 +344,12 @@ otherwise the requested engine is returned."
 	     :class class :pred pred :upred upred :options opt
 	     :before before :action action :after after
 	     :validate valid)))
-    (slot-set! e 'writers (cons n (slot-ref e 'writers)))
+    (if (symbol? ident)
+	(let ((writers (slot-ref e 'writers)))
+	  (hashq-set! writers ident
+		      (cons n (hashq-ref writers ident '()))))
+	(slot-set! e 'free-writers
+		   (cons n (slot-ref e 'free-writers))))
     n))
 
 
