@@ -22,7 +22,7 @@
 
 (define-module (skribilo output)
   :export (output)
-  :autoload   (skribilo engine) (engine-ident)
+  :autoload   (skribilo engine) (engine-ident processor-get-engine)
   :autoload   (skribilo writer) (writer? writer-ident lookup-markup-writer)
   :use-module (skribilo lib)
   :use-module (skribilo ast)
