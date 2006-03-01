@@ -19,7 +19,7 @@
 	     (b (markup-body n))
 	     (ta (table (tr (map (lambda (n) 
 				    (td :valign 'top :align 'center n))
-				 a)))))
+	                         (if (list? a) a (list a)))))))
 	 (skribe-eval (center (bold t)) e)
 	 (skribe-eval (center ta) e)
 	 (output b e))))

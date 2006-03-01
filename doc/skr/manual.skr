@@ -22,7 +22,8 @@
 		    (skribe-eval (mark ident) e)
 		    (skribe-eval (center
 				  (markup-body n)
-				  (if number (bold (format "Ex. ~a: " number)))
+				  (if number
+				      (bold (format #f "Ex. ~a: " number)))
 				  legend)
 				 e)))))
 
@@ -279,7 +280,7 @@
 ;*---------------------------------------------------------------------*/
 (define-markup (compiler-options bin)
    (skribe-message "  [executing: ~a --options]\n" bin)
-   (let ((port (open-input-file (format "| ~a --options" bin))))
+   (let ((port (open-input-file (format #f "| ~a --options" bin))))
       (let ((opts (read port)))
 	 (close-input-port port)
 	 (apply description (map (lambda (opt) (item :key (bold (car opt))

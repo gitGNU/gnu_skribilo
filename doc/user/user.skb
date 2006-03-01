@@ -38,6 +38,7 @@
 (define *function-index* (make-index "function"))
 (define *package-index* (make-index "package"))
 
+
 ;*---------------------------------------------------------------------*/
 ;*    The document                                                     */
 ;*---------------------------------------------------------------------*/
@@ -59,7 +60,7 @@ This is the documentation for Skribe version
    (linebreak 1)
 
 ;;; Introduction
-(chapter :title "Introduction" :number #f :toc #f [
+(chapter :title "Introduction" :number #f :toc #f :file #f [
 Skribe is a programming language designed for implementing electronic
 documents. It is mainly designed for the writing of technical documents
 such as the documentation of computer programs. With Skribe these
