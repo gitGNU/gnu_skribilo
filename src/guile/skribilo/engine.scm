@@ -207,6 +207,17 @@
     (slot-set! new 'symbol-table (or symbol-table (slot-ref e 'symbol-table)))
     (slot-set! new 'customs	 (or custom (slot-ref e 'customs)))
 
+    ;; XXX: We don't use `list-copy' here because writer lists are only
+    ;; consed, never mutated.
+
+    ;(slot-set! new 'free-writers (list-copy (slot-ref e 'free-writers)))
+
+    (let ((new-writers (make-hash-table)))
+      (hash-for-each (lambda (m w*)
+		       (hashq-set! new-writers m w*))
+		     (slot-ref e 'writers))
+      (slot-set! new 'writers new-writers))
+
     (set! *engines* (cons new *engines*))
     new))
 
