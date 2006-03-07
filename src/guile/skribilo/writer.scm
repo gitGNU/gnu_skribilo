@@ -1,29 +1,23 @@
-;;;;
-;;;; writer.stk	-- Skribe Writer Stuff
-;;;;
-;;;; Copyright © 2003-2004 Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
-;;;;
-;;;;
-;;;; This program is free software; you can redistribute it and/or modify
-;;;; it under the terms of the GNU General Public License as published by
-;;;; the Free Software Foundation; either version 2 of the License, or
-;;;; (at your option) any later version.
-;;;;
-;;;; This program is distributed in the hope that it will be useful,
-;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;;;; GNU General Public License for more details.
-;;;;
-;;;; You should have received a copy of the GNU General Public License
-;;;; along with this program; if not, write to the Free Software
-;;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
-;;;; USA.
-;;;;
-;;;;           Author: Erick Gallesio [eg@essi.fr]
-;;;;    Creation date: 15-Sep-2003 22:21 (eg)
-;;;; Last file update:  4-Mar-2004 10:48 (eg)
-;;;;
-
+;;; writer.scm  --  Markup writers.
+;;;
+;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
+;;; Copyright 2005, 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;;
+;;;
+;;; This program is free software; you can redistribute it and/or modify
+;;; it under the terms of the GNU General Public License as published by
+;;; the Free Software Foundation; either version 2 of the License, or
+;;; (at your option) any later version.
+;;;
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;;
+;;; You should have received a copy of the GNU General Public License
+;;; along with this program; if not, write to the Free Software
+;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+;;; USA.
 
 (define-module (skribilo writer)
   :export (<writer> writer? write-object writer-options writer-ident
@@ -33,6 +27,7 @@
 	   lookup-markup-writer copy-markup-writer)
 
   :use-module (skribilo utils syntax)
+  :autoload (srfi srfi-1)     (find filter)
   :autoload (skribilo engine) (engine? engine-ident? default-engine))
 
 
@@ -69,11 +64,11 @@
 (define (writer? obj)
   (is-a? obj <writer>))
 
-(define-method (write-object (obj <writer>) port)
+(define-method (write (obj <writer>) port)
   (format port "#[~A (~A) ~A]"
 	  (class-name (class-of obj))
 	  (slot-ref obj 'ident)
-	  (address-of obj)))
+	  (object-address obj)))
 
 
 
@@ -92,20 +87,6 @@
 	     (proc node e)))))
 
 
-(define (lookup-markup-writer node e)
-  (let ((writers (slot-ref e 'writers))
-	(delegate (slot-ref e 'delegate)))
-    (let loop ((w* writers))
-      (cond
-	((pair? w*)
-	   (let ((pred (slot-ref (car w*) 'pred)))
-	     (if (pred node e)
-		 (car w*)
-		 (loop (cdr w*)))))
-	((engine? delegate)
-	   (lookup-markup-writer node delegate))
-	(else
-	   #f)))))
 
 (define (make-writer-predicate markup predicate class)
   (let* ((t1 (if (symbol? markup)
@@ -130,27 +111,10 @@
 	       (and (t2 n e) (predicate n e)))))
 	t2)))
 
-;;;; ======================================================================
-;;;;
-;;;;				MARKUP-WRITER
-;;;;
-;;;; ======================================================================
-; (define-macro (lambda** arglist . body)
-;   (let ((parse-arglist (module-ref (resolve-module '(ice-9 optargs))
-; 				   'parse-arglist)))
-;     (parse-arglist
-;      arglist
-;      (lambda (mandatory-args optionals keys aok? rest-arg)
-;        (let ((l**-rest-arg (gensym "L**-rest"))
-; 	     (l**-loop (gensym "L**-loop")))
-; 	 `(lambda (,@mandatory-args . ,l**-rest-arg)
-; 	    `(let ,l**-loop ((,l**-rest-arg ,l**-rest-arg)
-; 			     (,rest-arg '())
-; 			     ,@optionals
-; 			     ,@keys)
-; 		  (if (null? ,l**-rest-arg)
-; 		      (begin
-; 			,@body)
+
+;;;
+;;; `markup-writer'
+;;;
 
 (define* (markup-writer markup ;; #:optional (engine #f)
 			#:key (predicate #f) (class #f) (options '())
@@ -191,53 +155,86 @@
 			     options before ac after class validate))))))
 
 
+
+;;;
+;;; Finding a markup writer.
+;;;
+
+(define (lookup-markup-writer node e)
+  ;; Find the writer that applies best to NODE.  See also `markup-writer-get'
+  ;; and `markup-writer-get*'.
+
+  (define (matching-writer writers)
+    (find (lambda (w)
+	    (let ((pred (slot-ref w 'pred)))
+	      (pred node e)))
+	  writers))
+
+  (let* ((writers (slot-ref e 'writers))
+	 (node-writers (hashq-ref writers (markup-markup node) '()))
+	 (delegate (slot-ref e 'delegate)))
+
+    (or (matching-writer node-writers)
+	(matching-writer (slot-ref e 'free-writers))
+	(and (engine? delegate)
+	     (lookup-markup-writer node delegate)))))
+
+
 (define* (markup-writer-get markup :optional engine :key (class #f) (pred #f))
+  ;; Get a markup writer for MARKUP (a symbol) in ENGINE, with class CLASS
+  ;; and user predicate PRED.  [FIXME: Useless since PRED is a procedure and
+  ;; therefore not comparable?]
+
+  (define (matching-writer writers)
+    (find (lambda (w)
+	    (and (if class (equal? (writer-class w) class) #t)
+		 (or (unspecified? pred)
+		     (eq? (slot-ref w 'upred) pred))))
+	  writers))
+
   (let ((e (or engine (default-engine))))
     (cond
       ((not (symbol? markup))
-	 (skribe-error 'markup-writer-get "Illegal symbol" markup))
+       (skribe-error 'markup-writer-get "illegal symbol" markup))
       ((not (engine? e))
-	 (skribe-error 'markup-writer-get "Illegal engine" e))
+       (skribe-error 'markup-writer-get "illegal engine" e))
       (else
-       (let liip ((e e))
-	 (let loop ((w* (slot-ref e 'writers)))
-	   (cond
-	     ((pair? w*)
-		(if (and (eq? (writer-ident (car w*)) markup)
-			 (equal? (writer-class (car w*)) class)
-			 (or (unspecified? pred)
-			     (eq? (slot-ref (car w*) 'upred) pred)))
-		    (car w*)
-		    (loop (cdr w*))))
-	     ((engine? (slot-ref e 'delegate))
-		(liip (slot-ref e 'delegate)))
-	     (else
-		#f))))))))
+       (let* ((writers (slot-ref e 'writers))
+	      (markup-writers (hashq-ref writers markup '()))
+	      (delegate (slot-ref e 'delegate)))
+
+	 (or (matching-writer markup-writers)
+	     (and (engine? delegate)
+		  (markup-writer-get markup delegate
+				     :class class :pred pred))))))))
 
 
-;; Finds all writers that matches MARKUP with optional CLASS attribute.
 (define* (markup-writer-get* markup #:optional engine #:key (class #f))
+  ;; Finds all writers, recursively going through the engine hierarchy, that
+  ;; match MARKUP with optional CLASS attribute.
+
+  (define (matching-writers writers)
+    (filter (lambda (w)
+	      (or (not class)
+		  (equal? (writer-class w) class)))
+	    writers))
+
   (let ((e (or engine (default-engine))))
     (cond
       ((not (symbol? markup))
-       (skribe-error 'markup-writer "Illegal symbol" markup))
+       (skribe-error 'markup-writer "illegal symbol" markup))
       ((not (engine? e))
-       (skribe-error 'markup-writer "Illegal engine" e))
+       (skribe-error 'markup-writer "illegal engine" e))
       (else
-       (let liip ((e e)
-		  (res '()))
-	 (let loop ((w* (slot-ref e 'writers))
-		    (res res))
-	   (cond
-	     ((pair? w*)
-	      (if (and (eq? (slot-ref (car w*) 'ident) markup)
-		       (equal? (slot-ref (car w*) 'class) class))
-		  (loop (cdr w*) (cons (car w*) res))
-		  (loop (cdr w*) res)))
-	     ((engine? (slot-ref e 'delegate))
-	      (liip (slot-ref e 'delegate) res))
-	     (else
-	      (reverse! res)))))))))
+       (let* ((writers (slot-ref e 'writers))
+	      (markup-writers (hashq-ref writers markup '()))
+	      (delegate (slot-ref e 'delegate)))
+
+	 (append (matching-writers writers)
+		 (if (engine? delegate)
+		     (markup-writer-get* markup delegate :class class)
+		     '())))))))
+
 
 (define* (copy-markup-writer markup old-engine :optional new-engine
 			      :key (predicate 'unspecified)

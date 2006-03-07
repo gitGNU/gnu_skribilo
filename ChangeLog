@@ -2,6 +2,27 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-03-07 21:27:01 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-39
+
+    Summary:
+      Significantly optimized lookup of markup writers.
+    Revision:
+      skribilo--devel--1.2--patch-39
+
+    Patches applied:
+    
+     * lcourtes@laas.fr--2004-libre/skribilo--devel--1.2  (patch 63)
+    
+       - Significantly optimized lookup of markup writers.
+
+    modified files:
+     ChangeLog src/guile/skribilo/engine.scm
+     src/guile/skribilo/writer.scm
+
+    new patches:
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-63
+
+
 2006-03-07 21:25:37 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-38
 
     Summary:
