@@ -1,7 +1,7 @@
-;;; debug.scm  --  Debug facilities.
+;;; debug.scm  --  Debugging facilities.
 ;;;
-;;; Copyright 2003-2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
-;;; Copyright 2005  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
+;;; Copyright 2005, 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
 ;;; it under the terms of the GNU General Public License as published by
@@ -20,41 +20,50 @@
 
 
 (define-module (skribilo debug)
-  :export (with-debug %with-debug
-	   debug-item skribe-debug set-skribe-debug! add-skribe-debug-symbol
-	   no-debug-color)
   :use-module (skribilo utils syntax)
-  :use-module (srfi srfi-17))
+  :use-module (srfi srfi-17)
+  :use-module (srfi srfi-39))
 
 (fluid-set! current-reader %skribilo-module-reader)
 
+
+;;;
+;;; Parameters.
+;;;
 
-;;; FIXME: Use SRFI-39 fluids.
-;;; FIXME: Move this to `parameters.scm'?
+;; Current debugging level.
+(define-public *debug*
+  (make-parameter 0 (lambda (val)
+		      (cond ((number? val) val)
+			    ((string? val)
+			     (string->number val))
+			    (else
+			     (error "*debug*: wrong argument type"
+				    val))))))
 
-(define *skribe-debug*			0)
-(define *skribe-debug-symbols*		'())
-(define *skribe-debug-color*		#t)
-(define *skribe-debug-item*		#f)
-(define *debug-port*			(current-error-port))
-(define *debug-depth*			0)
-(define *debug-margin*			"")
-(define *skribe-margin-debug-level*	0)
+;; Whether to use colors.
+(define-public *debug-use-colors?* (make-parameter #t))
+
+;; Where to spit debugging output.
+(define-public *debug-port* (make-parameter (current-output-port)))
+
+;; Whether to debug individual items.
+(define-public *debug-item?* (make-parameter #f))
+
+;; Watched (debugged) symbols (procedure names).
+(define-public *watched-symbols* (make-parameter '()))
 
 
-(define (set-skribe-debug! val)
-  (set! *skribe-debug* val))
+
+;;;
+;;; Implementation.
+;;;
 
-(define (add-skribe-debug-symbol s)
-  (set! *skribe-debug-symbols* (cons s *skribe-debug-symbols*)))
+(define *debug-depth*   (make-parameter 0))
+(define *debug-margin*	(make-parameter ""))
+(define *margin-level*  (make-parameter 0))
 
 
-(define (no-debug-color)
-  (set! *skribe-debug-color* #f))
-
-(define-public skribe-debug
-  (getter-with-setter (lambda () *skribe-debug*)
-		      (lambda (val) (set! *skribe-debug* val))))
 
 ;;
 ;;   debug-port
@@ -75,7 +84,7 @@
 ;;;
 (define (debug-color col . o)
   (with-output-to-string
-    (if (and *skribe-debug-color*
+    (if (and (*debug-use-colors?*)
 	     (equal? (getenv "TERM") "xterm"))
 	(lambda ()
 	  (format #t "[0m[1;~Am" (+ 31 col))
@@ -93,60 +102,53 @@
 ;;;
 ;;; debug-item
 ;;;
-(define (debug-item . args)
-  (if (or (>= *skribe-debug* *skribe-margin-debug-level*)
-          *skribe-debug-item*)
+(define-public (debug-item . args)
+  (if (or (>= (*debug*) (*margin-level*))
+          (*debug-item?*))
       (begin
-        (display *debug-margin* *debug-port*)
-        (display (debug-color (- *debug-depth* 1) "- ") *debug-port*)
-        (for-each (lambda (a) (display a *debug-port*)) args)
-        (newline *debug-port*))))
+        (display (*debug-margin*) (*debug-port*))
+        (display (debug-color (- (*debug-depth*) 1) "- ") (*debug-port*))
+        (for-each (lambda (a) (display a (*debug-port*))) args)
+        (newline (*debug-port*)))))
 
 ;;(define-macro (debug-item  . args)
 ;;  `())
 
+
 ;;;
 ;;; %with-debug-margin
 ;;;
 (define (%with-debug-margin margin thunk)
-  (let ((om *debug-margin*))
-    (set! *debug-depth* (+ *debug-depth* 1))
-    (set! *debug-margin* (string-append om margin))
-    (let ((res (thunk)))
-      (set! *debug-depth* (- *debug-depth* 1))
-      (set! *debug-margin* om)
-      res)))
+  (parameterize ((*debug-depth*   (+ (*debug-depth*) 1))
+		 (*debug-margin*  (string-append (*debug-margin*) margin)))
+    (thunk)))
 
 ;;;
 ;;; %with-debug
 ;;
-(define (%with-debug lvl lbl thunk)
-  (let ((ol *skribe-margin-debug-level*)
-	(oi *skribe-debug-item*))
-    (set! *skribe-margin-debug-level* lvl)
-    (let ((r (if (or (and (number? lvl) (>= *skribe-debug* lvl))
-		     (and (symbol? lbl)
-			  (memq lbl *skribe-debug-symbols*)
-			  (set! *skribe-debug-item* #t)))
-		 (begin
-		   (display *debug-margin* *debug-port*)
-		   (display (if (= *debug-depth* 0)
-				(debug-color *debug-depth* "+ " lbl)
-				(debug-color *debug-depth* "--+ " lbl))
-			    *debug-port*)
-		   (newline *debug-port*)
-		   (%with-debug-margin (debug-color *debug-depth* "  |")
-				       thunk))
-		 (thunk))))
-      (set! *skribe-debug-item* oi)
-      (set! *skribe-margin-debug-level* ol)
-      r)))
+(define-public (%with-debug lvl lbl thunk)
+  (parameterize ((*margin-level* lvl))
+    (if (or (and (number? lvl) (>= (*debug*) lvl))
+	    (and (symbol? lbl)
+		 (memq lbl (*watched-symbols*))))
+	(parameterize ((*debug-item?* #t))
+	  (display (*debug-margin*) (*debug-port*))
+	  (display (if (= (*debug-depth*) 0)
+		       (debug-color (*debug-depth*) "+ " lbl)
+		       (debug-color (*debug-depth*) "--+ " lbl))
+		   (*debug-port*))
+	  (newline (*debug-port*))
+	  (%with-debug-margin (debug-color (*debug-depth*) "  |")
+			      thunk))
+	(thunk))))
 
 (define-macro (with-debug  level label . body)
   `(%with-debug ,level ,label (lambda () ,@body)))
 
 ;;(define-macro (with-debug  level label . body)
 ;;  `(begin ,@body))
+
+(export with-debug)
 
 
 ; Example:

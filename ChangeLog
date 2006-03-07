@@ -2,6 +2,28 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-03-07 22:58:58 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-44
+
+    Summary:
+      Partial rewrite of the debugging facilities (slightly slower).
+    Revision:
+      skribilo--devel--1.2--patch-44
+
+    * src/guile/skribilo.scm (skribilo): Use the new debugging API.
+    
+    * src/guile/skribilo/debug.scm: Use SRFI-39 parameter objects.
+      Moved legacy procedures to `compat.scm'.
+    
+    * src/guile/skribilo/utils/compat.scm (set-skribe-debug!): New.
+      (no-debug-color): New.
+      (skribe-debug): New.
+      (add-skribe-debug-symbol): New.
+
+    modified files:
+     ChangeLog src/guile/skribilo.scm src/guile/skribilo/debug.scm
+     src/guile/skribilo/utils/compat.scm
+
+
 2006-03-07 22:56:07 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-43
 
     Summary:

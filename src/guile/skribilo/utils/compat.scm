@@ -31,6 +31,7 @@
   :use-module (ice-9 optargs)
   :autoload   (skribilo ast) (ast?)
   :autoload   (skribilo condition) (file-search-error? &file-search-error)
+  :use-module (skribilo debug)
   :re-export (file-size)
   :replace (gensym))
 
@@ -165,6 +166,22 @@
 
 (define-public skribe-eval         evaluate-document)
 (define-public skribe-eval-port    evaluate-document-from-port)
+
+
+;;;
+;;; Debugging facilities.
+;;;
+
+(define-public (set-skribe-debug! val)
+  (*debug* val))
+
+(define-public (no-debug-color)
+  (*debug-use-colors?* #f))
+
+(define-public skribe-debug *debug*)
+
+(define-public (add-skribe-debug-symbol s)
+  (*watched-symbols* (cons s *watched-symbols*)))
 
 
 
