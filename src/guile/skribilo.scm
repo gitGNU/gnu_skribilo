@@ -413,9 +413,7 @@ Processes a Skribilo/Skribe source file and produces its output.
 
     ;; Parse the most important options.
 
-    (set-skribe-debug! (string->number debugging-level))
-
-    (if (> (skribe-debug) 4)
+    (if (> (*debug*) 4)
 	(set! %load-hook
 	      (lambda (file)
 		(format #t "~~ loading `~a'...~%" file))))
@@ -428,6 +426,7 @@ Processes a Skribilo/Skribe source file and produces its output.
 					   (append %load-path
 						   (*source-path*))))
 		   (*image-path*     (cons image-path (*image-path*)))
+		   (*debug*          (string->number debugging-level))
 		   (*warning*        (string->number warning-level))
 		   (*verbose*        (let ((v (option-ref options
 							  'verbose 0)))
