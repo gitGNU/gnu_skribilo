@@ -333,11 +333,12 @@ otherwise the requested engine is returned."
       (skribe-error ident "Illegal options" opt))
 
   ;; check the correctness of the predicate
-  (check-procedure "predicate" pred 2)
+  (if pred
+      (check-procedure "predicate" pred 2))
 
   ;; check the correctness of the validation proc
   (if valid
-    (check-procedure "validate" valid 2))
+      (check-procedure "validate" valid 2))
 
   ;; check the correctness of the three actions
   (check-output "before" before)

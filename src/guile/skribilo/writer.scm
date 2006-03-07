@@ -89,13 +89,12 @@
 
 
 (define (make-writer-predicate markup predicate class)
-  (let* ((t1 (if (symbol? markup)
-		 (lambda (n e) (is-markup? n markup))
-		 (lambda (n e) #t)))
-	 (t2 (if class
+  (define (%always-true n e) #t)
+
+  (let* ((t2 (if class
 		 (lambda (n e)
-		   (and (t1 n e) (equal? (markup-class n) class)))
-		 t1)))
+		   (and (equal? (markup-class n) class)))
+		 #f)))
     (if predicate
 	(cond
 	  ((not (procedure? predicate))
@@ -107,8 +106,10 @@
 			   "Illegal predicate arity (2 arguments expected)"
 			   predicate))
 	  (else
-	     (lambda (n e)
-	       (and (t2 n e) (predicate n e)))))
+	   (if (procedure? t2)
+	       (lambda (n e)
+		 (and (t2 n e) (predicate n e)))
+	       predicate)))
 	t2)))
 
 
@@ -167,7 +168,9 @@
   (define (matching-writer writers)
     (find (lambda (w)
 	    (let ((pred (slot-ref w 'pred)))
-	      (pred node e)))
+	      (if (procedure? pred)
+		  (pred node e)
+		  #t)))
 	  writers))
 
   (let* ((writers (slot-ref e 'writers))

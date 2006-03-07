@@ -2,6 +2,24 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-03-07 22:56:07 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-43
+
+    Summary:
+      Slight optimization: allow for non-proc predicated for markup writers.
+    Revision:
+      skribilo--devel--1.2--patch-43
+
+    * src/guile/skribilo/engine.scm (engine-add-writer!): Allow PRED to be
+      `#f'.
+    
+    * src/guile/skribilo/writer.scm (make-writer-predicate): Likewise.
+      (lookup-markup-writer)[matching-writer]: Likewise.
+
+    modified files:
+     ChangeLog src/guile/skribilo/engine.scm
+     src/guile/skribilo/writer.scm
+
+
 2006-03-07 21:29:32 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-42
 
     Summary:
