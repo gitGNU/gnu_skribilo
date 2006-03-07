@@ -701,6 +701,10 @@
 				(format #f "@Eq { ~a }\n" m)))))
 
 
+;; So that calls to `markup-writer' automatically use `lout-engine'...
+(push-default-engine lout-engine)
+
+
 
 ;; User-level implementation of PDF bookmarks.
 ;;
@@ -2883,7 +2887,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    Restore the base engine                                          */
 ;*---------------------------------------------------------------------*/
-(default-engine-set! (find-engine 'base))
+(pop-default-engine)
 
 
 ;; Local Variables: --

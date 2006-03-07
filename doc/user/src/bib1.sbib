@@ -12,6 +12,8 @@
    (year "1991"))
 
 (misc bigloo
+   (author "Manuel Serrano")
+   (year "2006")
    (url "http://www.inria.fr/mimosa/fp/Bigloo"))
 
 (misc scheme:r4rs
