@@ -1,4 +1,4 @@
 # Skribilo-generated files.
-precious ^user\.(html|ps)$
+precious ^user(-[0-9]+)?\.(html|ps)$
 
 # arch-tag: 827d1e94-1b36-474e-bcdb-a4235b4af848

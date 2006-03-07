@@ -119,7 +119,6 @@
 ;;; Default engines.
 ;;;
 
-(define *engines*		'())
 (define *default-engine*	#f)
 (define *default-engines*	'())
 
@@ -185,9 +184,6 @@
 			  :filter filter :delegate delegate
 			  :symbol-table symbol-table
 			  :custom custom :info info)))
-    ;; store the engine in the global table
-    (set! *engines* (cons e *engines*))
-    ;; return it
     e))
 
 
@@ -218,7 +214,6 @@
 		     (slot-ref e 'writers))
       (slot-set! new 'writers new-writers))
 
-    (set! *engines* (cons new *engines*))
     new))
 
 
