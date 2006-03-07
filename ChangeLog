@@ -2,6 +2,121 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-03-07 21:29:32 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-42
+
+    Summary:
+      Merge from lcourtes@laas.fr--2004-libre
+    Revision:
+      skribilo--devel--1.2--patch-42
+
+    Patches applied:
+    
+     * lcourtes@laas.fr--2004-libre/skribilo--devel--1.2  (patch 67-69)
+    
+       - Doc: undoed `patch-65'.
+       - Removed the global engine table.
+       - Inventory fix.
+
+    modified files:
+     ChangeLog doc/user/.arch-inventory doc/user/markup.skb
+     src/guile/skribilo/engine.scm
+
+    new patches:
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-67
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-68
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-69
+
+
+2006-03-07 21:28:47 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-41
+
+    Summary:
+      Fixed `copy-engine' with respect to the writers optimization.
+    Revision:
+      skribilo--devel--1.2--patch-41
+
+    Patches applied:
+    
+     * lcourtes@laas.fr--2004-libre/skribilo--devel--1.2  (patch 66)
+    
+       - Fixed `copy-engine' with respect to the writers optimization.
+
+    modified files:
+     ChangeLog src/guile/skribilo/engine.scm
+
+    new patches:
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-66
+
+
+2006-03-07 21:28:02 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-40
+
+    Summary:
+      Merge from lcourtes@laas.fr--2004-libre
+    Revision:
+      skribilo--devel--1.2--patch-40
+
+    Patches applied:
+    
+     * lcourtes@laas.fr--2004-libre/skribilo--devel--1.2  (patch 64-65)
+    
+       - Fixed tiny module loading/autoloading mistakes.
+       - Doc: commented out code that uses processors to work around bug.
+
+    modified files:
+     ChangeLog doc/user/markup.skb src/guile/skribilo/module.scm
+     src/guile/skribilo/output.scm
+
+    new patches:
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-64
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-65
+
+
+2006-03-07 21:27:01 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-39
+
+    Summary:
+      Significantly optimized lookup of markup writers.
+    Revision:
+      skribilo--devel--1.2--patch-39
+
+    Patches applied:
+    
+     * lcourtes@laas.fr--2004-libre/skribilo--devel--1.2  (patch 63)
+    
+       - Significantly optimized lookup of markup writers.
+
+    modified files:
+     ChangeLog src/guile/skribilo/engine.scm
+     src/guile/skribilo/writer.scm
+
+    new patches:
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-63
+
+
+2006-03-07 21:25:37 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-38
+
+    Summary:
+      Merge from lcourtes@laas.fr--2004-libre
+    Revision:
+      skribilo--devel--1.2--patch-38
+
+    Patches applied:
+    
+     * lcourtes@laas.fr--2004-libre/skribilo--devel--1.2  (patch 60-62)
+    
+       - Slightly optimized the resolution process (added `ast-resolved?').
+       - Various fixes in the documentation code.
+       - Lout engine: use `push-default-engine' and `pop-default-engine'.
+
+    modified files:
+     ChangeLog doc/skr/manual.skr doc/user/document.skb
+     doc/user/src/api2.skb doc/user/src/bib1.sbib doc/user/user.skb
+     src/guile/skribilo/engine/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-60
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-61
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-62
+
+
 2006-02-28 21:40:26 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-37
 
     Summary:
