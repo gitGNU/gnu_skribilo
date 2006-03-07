@@ -59,6 +59,7 @@
     (skribilo output)
     (skribilo evaluator)
     (skribilo debug)
+    (skribilo location)
     ))
 
 (define %skribilo-user-autoloads
