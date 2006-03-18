@@ -2,6 +2,20 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-03-18 18:09:34 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-46
+
+    Summary:
+      Lout engine: better handling of the `slides' document type.
+    Revision:
+      skribilo--devel--1.2--patch-46
+
+    * src/guile/skribilo/engine/lout.scm (lout-slides-markup-alist): New.
+      (lout-structure-markup): Handle `slides'.
+
+    modified files:
+     ChangeLog src/guile/skribilo/engine/lout.scm
+
+
 2006-03-18 17:25:58 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-45
 
     Summary:

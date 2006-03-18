@@ -1008,7 +1008,7 @@
 		     ((slides)  (display "@SysInclude { slides }\n"))
 		     (else     (skribe-error
 				'lout
-				"`document-type' should be one of `book', `report' or `doc'"
+				"`document-type' should be one of `book', `report', `doc' or `slides'"
 				doc-type)))
 		   (printf "# Custom document includes\n~a\n" doc-include))
 
@@ -1271,6 +1271,9 @@
     (subsection . "SubSubSection")
     (subsubsection . #f)))
 
+(define lout-slides-markup-alist
+  '((slide . "Overhead")))
+
 (define lout-doc-markup-alist lout-report-markup-alist)
 
 (define (lout-structure-markup skribe-markup engine)
@@ -1283,9 +1286,10 @@
       ((book)    (assoc-ref lout-book-markup-alist skribe-markup))
       ((report)  (assoc-ref lout-report-markup-alist skribe-markup))
       ((doc)     (assoc-ref lout-doc-markup-alist skribe-markup))
+      ((slides)  (assoc-ref lout-slides-markup-alist skribe-markup))
       (else
        (skribe-error 'lout
-		     "`document-type' should be one of `book', `report' or `doc'"
+		     "`document-type' should be one of `book', `report', `doc' or `slides'"
 		     doc-type)))))
 
 (define-public (lout-structure-number-string markup)
