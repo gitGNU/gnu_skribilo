@@ -72,6 +72,7 @@
     ((skribilo engine latex)  . (!latex LaTeX TeX))
     ((skribilo engine html)   . (html-markup-class html-class
 				 html-width))
+    ((skribilo utils images)  . (convert-image))
     ((skribilo source)        . (source-read-lines source-fontify
 				 language? language-extractor
 				 language-fontifier source-fontify))

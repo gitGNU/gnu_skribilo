@@ -2,6 +2,31 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-03-18 18:12:00 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-47
+
+    Summary:
+      Moved `convert-image' et al. to `utils/images.scm'.
+    Revision:
+      skribilo--devel--1.2--patch-47
+
+    * src/guile/skribilo/runtime.scm: Moved image-related code to...
+    
+    * src/guile/skribilo/utils/images.scm: ... here (new file).
+    
+    * src/guile/skribilo/utils/Makefile.am (dist_guilemodule_DATA): Updated.
+    
+    * src/guile/skribilo/module.scm (%skribilo-user-autoloads): Added
+      `(skribilo utils images)'.
+
+    new files:
+     src/guile/skribilo/utils/images.scm
+
+    modified files:
+     ChangeLog src/guile/skribilo/module.scm
+     src/guile/skribilo/runtime.scm
+     src/guile/skribilo/utils/Makefile.am
+
+
 2006-03-18 18:09:34 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-46
 
     Summary:
