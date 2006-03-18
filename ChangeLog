@@ -2,6 +2,30 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-03-18 17:25:58 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-45
+
+    Summary:
+      Merge from lcourtes@laas.fr--2004-libre
+    Revision:
+      skribilo--devel--1.2--patch-45
+
+    Patches applied:
+    
+     * lcourtes@laas.fr--2004-libre/skribilo--devel--1.2  (patch 70-72)
+    
+       - Merge from lcourtes@laas.fr--2005-mobile
+       - Slight optimization: allow for non-proc predicates for markup writers.
+       - Partial rewrite of the debugging facilities (slightly slower).
+
+    modified files:
+     ChangeLog
+
+    new patches:
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-70
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-71
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-72
+
+
 2006-03-07 22:58:58 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-44
 
     Summary:
