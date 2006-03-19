@@ -24,20 +24,11 @@
   :export (;; Utilities
 	   strip-ref-base string-canonicalize
 
-
-	   ;; Images
-	   convert-image
-
 	   ;; String writing
 	   make-string-replace)
-  :use-module (skribilo parameters)
+  :autoload   (skribilo parameters) (*ref-base*)
   :use-module (skribilo lib)
-  :use-module (srfi srfi-13)
-  :use-module (srfi srfi-35)
-  :autoload   (skribilo utils files) (file-prefix file-suffix)
-  :autoload   (skribilo condition) (&file-search-error)
-  :autoload   (srfi srfi-34) (raise))
-
+  :use-module (srfi srfi-13))
 
 
 ;;; ======================================================================
@@ -95,59 +86,6 @@
 	     (string-set! new w (string-ref old r))
 	     (loop (+ r 1) (+ w 1) #f))))))
 
-
-
-;;; ======================================================================
-;;;
-;;;				I M A G E S
-;;;
-;;; ======================================================================
-(define (builtin-convert-image from fmt dir)
-  (let* ((s  (file-suffix from))
-	 (f  (string-append (file-prefix (basename from)) "." fmt))
-	 (to (string-append dir "/" f)))   ;; FIXME:
-    (cond
-      ((string=? s fmt)
-       to)
-      ((file-exists? to)
-       to)
-      (else
-       (let ((c (if (string=? s "fig")
-		    (string-append "fig2dev -L " fmt " " from " > " to)
-		    (string-append "convert " from " " to))))
-	 (cond
-	   ((> (*verbose*) 1)
-	    (format (current-error-port) "  [converting image: ~S (~S)]" from c))
-	   ((> (*verbose*) 0)
-	    (format (current-error-port) "  [converting image: ~S]" from)))
-	 (and (zero? (system c))
-	      to))))))
-
-(define (convert-image file formats)
-  (let ((path (search-path (*image-path*) file)))
-    (if (not path)
-	(raise (condition (&file-search-error (file-name file)
-					      (path (*image-path*)))))
-	(let ((suf (file-suffix file)))
-	  (if (member suf formats)
-	      (let* ((dir (if (string? (*destination-file*))
-			      (dirname (*destination-file*))
-			      #f)))
-		(if dir
-		    (let ((dest (basename path)))
-		      (copy-file path (string-append dir "/" dest))
-		      dest)
-		    path))
-	      (let loop ((fmts formats))
-		(if (null? fmts)
-		    #f
-		     (let* ((dir (if (string? (*destination-file*))
-				     (dirname (*destination-file*))
-				     "."))
-			    (p (builtin-convert-image path (car fmts) dir)))
-		       (if (string? p)
-			   p
-			   (loop (cdr fmts)))))))))))
 
 
 ;;; ======================================================================
