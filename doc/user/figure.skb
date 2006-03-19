@@ -32,9 +32,10 @@
 	    
 	    :see-also '(ref document))
 
-(example-produce
+ ;; Note: We can't use `example-produce' because the Lout engine, for
+ ;; instance, forbids the occurrence of `figure' within a table.
  (example :legend "The figure markup" (prgm :file "src/api14.skb"))
- (disp (include "src/api14.skb")))
+ (include "src/api14.skb")
 
 ;*--- List of figures -------------------------------------------------*/
 (subsection :title "List of figures"
@@ -50,9 +51,4 @@ shows how to display the list of figures of a document.])
 (example-produce
  (example :legend "The figure markup" (prgm :file "src/api15.skb"))
  (disp (include "src/api15.skb")))))
-
-
-
-
-	      
 

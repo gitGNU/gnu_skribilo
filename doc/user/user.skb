@@ -31,6 +31,12 @@
    (engine-custom-set! he 'body-width 100.))
 
 ;*---------------------------------------------------------------------*/
+;*    Lout custom                                                      */
+;*---------------------------------------------------------------------*/
+(let ((le (find-engine 'lout)))
+   (engine-custom-set! le 'document-type 'doc))
+
+;*---------------------------------------------------------------------*/
 ;*    The various indexes                                              */
 ;*---------------------------------------------------------------------*/
 (define *markup-index* (make-index "markup"))
@@ -155,7 +161,7 @@ as HTML, Info pages, man pages, Postscript, etc.]))))
     (begin
        (chapter :title "Table of contents"
 	  (toc :chapter #t :section #t :subsection #t))
-       (section :title "Index" :number #f :ident "Index"
+       (chapter :title "Index" :number #f :ident "Index"
 	  (mark "global index")
 	  (the-index :column (if (engine-format? "latex") 2 3)
 	     *markup-index* *custom-index* *function-index* *package-index*

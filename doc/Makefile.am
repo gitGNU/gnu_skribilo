@@ -1,1 +1,1 @@
-SUBDIRS = user
+SUBDIRS = user skr img dir
