@@ -1740,7 +1740,10 @@
 		 (display "  @Tag { ")
 		 (display (lout-tagify ident))
 		 (display " }\n")
-		 (printf  "  @BypassNumber { ~a }\n" number)
+		 (printf  "  @BypassNumber { ~a }\n"
+			  (cond ((number? number) number)
+				((not number)     "")
+				(else             number)))
 		 (display "  @InitialLanguage { ")
 		 (display (engine-custom e 'initial-language))
 		 (display " }\n")

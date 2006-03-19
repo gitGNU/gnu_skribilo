@@ -21,11 +21,15 @@
 (define-skribe-module (skribilo package slide lout)
   :use-module (skribilo utils syntax)
 
-  ;; FIXME: For some reason, changing the following `autoload' in
-  ;; `use-modules' doesn't work.
+  ;; XXX: If changing the following `autoload' to `use-module' doesn't work,
+  ;; then you need to fix your Guile.  See this thread about
+  ;; `make-autoload-interface':
+  ;;
+  ;;   http://article.gmane.org/gmane.lisp.guile.devel/5748
+  ;;   http://lists.gnu.org/archive/html/guile-devel/2006-03/msg00004.html .
 
-  :autoload (skribilo engine lout) (lout-tagify lout-output-pdf-meta-info)
-  )
+  :autoload (skribilo engine lout) (lout-tagify lout-output-pdf-meta-info
+				    lout-verbatim-encoding))
 
 
 (fluid-set! current-reader %skribilo-module-reader)
@@ -38,8 +42,10 @@
 
 (let ((le (find-engine 'lout)))
 
-  ;; Automatically switch to the `slides' document type.
-  (engine-custom-set! le 'document-type 'slides)
+  ;; FIXME: Automatically switching to `slides' is problematic, e.g., for the
+  ;; user manual which embeds slides.
+;  ;; Automatically switch to the `slides' document type.
+;  (engine-custom-set! le 'document-type 'slides))
 
   (markup-writer 'slide le
      :options '(:title :number :toc :ident) ;; '(:bg :vspace :image)
