@@ -31,8 +31,9 @@
   :use-module (ice-9 optargs)
   :autoload   (skribilo ast) (ast?)
   :autoload   (skribilo condition) (file-search-error? &file-search-error)
+  :autoload   (skribilo reader) (make-reader)
   :use-module (skribilo debug)
-  :re-export (file-size)
+  :re-export (file-size)  ;; re-exported from `(skribilo utils files)'
   :replace (gensym))
 
 ;;; Author:  Ludovic Courtès
@@ -167,6 +168,13 @@
 (define-public skribe-eval         evaluate-document)
 (define-public skribe-eval-port    evaluate-document-from-port)
 
+(set! %skribe-reader #f)
+(define* (skribe-read #:optional (port (current-input-port)))
+  (if (not %skribe-reader)
+      (set! %skribe-reader (make-reader 'skribe)))
+  (%skribe-reader port))
+
+
 
 ;;;
 ;;; Debugging facilities.
@@ -264,7 +272,5 @@
 
 (define (date)
   (s19:date->string (s19:current-date) "~c"))
-
-
 
 ;;; compat.scm ends here
