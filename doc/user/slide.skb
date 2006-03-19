@@ -11,9 +11,44 @@
 (skribe-load "slide.skr")
 
 ;*---------------------------------------------------------------------*/
+;*    dummy-slide-set-output ...                                       */
+;*---------------------------------------------------------------------*/
+(define dummy-slide-set-output
+   (lambda (n e)
+      (let* ((a (markup-option n :author))
+	     (t (markup-option n :title))
+	     (b (markup-body n))
+	     (ta (table (tr (map (lambda (n)
+				    (td :valign 'top :align 'center n))
+	                         (if (list? a) a (list a)))))))
+	 (skribe-eval (center (bold t)) e)
+	 (skribe-eval (center ta) e)
+	 (output b e))))
+
+(define dummy-slide-output
+   (lambda (n e)
+      (let* ((t (markup-option n :title))
+	     (b (markup-body n)))
+	 (skribe-eval (bold t) e)
+	 (output b e))))
+
+(define dummy-slide-vspace-output
+   (lambda (n e)
+     (skribe-eval (linebreak) e)
+     (skribe-eval (center (tt "[vspace]")) e)
+     (skribe-eval (linebreak) e)))
+
+(define dummy-slide-embed-output
+   (lambda (n e)
+     (skribe-eval (linebreak) e)
+     (skribe-eval (tt (or (markup-option n :alt)
+			  (markup-option n :command)))
+		  e)))
+
+;*---------------------------------------------------------------------*/
 ;*    Computer programs                                                */
 ;*---------------------------------------------------------------------*/
-(chapter :title "Slide Package" 
+(chapter :title "Slide Package"
 
    (p [
 This chapter describes the facilities Skribe offers authoring slides.
@@ -105,11 +140,25 @@ output format does not support embedded application.]))
 	         "html4")))
        ;; Show the example and its result
        (example-produce
-         (example :legend "Example of Skribe slides"
+         (example :legend "Example of Skribilo slides"
 		  (prgm :file "src/slides.skb"))
-	 (disp (include "src/slides.skb")))
+	 (disp
+	  (processor :combinator
+		     (lambda (e1 e2)
+		       (let ((e (copy-engine 'document-engine e2)))
+			 (markup-writer 'document e
+					:options '(:title :author :ending)
+					:action dummy-slide-set-output)
+			 (markup-writer 'slide e
+					:options '(:title :ident
+						   :number :toc :vspace)
+					:action dummy-slide-output)
+			 (markup-writer 'slide-vspace
+					:action dummy-slide-vspace-output)
+			 (markup-writer 'slide-embed
+					:action dummy-slide-embed-output)
+			 e))
+		     (include "src/slides.skb"))))
        ;; Show only the example (i.e. don't produce a document in a document)
        (example :legend "Example of Skribe slides"
 	       (prgm :file "src/slides.skb")))))
-   
-		 

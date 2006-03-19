@@ -49,9 +49,12 @@ without any transformation from the engine.])
 (p [The sequences ,(code "$1"), ,(code "$2"), ... in the ,(param 'format)
 are replaced with the actual values of the arguments ,(param 'node).])
 
-(example-produce
- (example :legend "Some characters" (prgm :file "src/api20.skb"))
- (disp (include "src/api20.skb"))))
+(let ((file (if (engine-format? "lout")
+	        "src/api20-lout.skb"
+	        "src/api20-html.skb")))
+  (example-produce
+   (example :legend "Some characters" (prgm :file file))
+   (disp (include file)))))
 
 ;*--- Symbols ---------------------------------------------------------*/
 (subsection :title "Symbols"

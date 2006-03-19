@@ -2,6 +2,52 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-03-19 20:08:40 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-50
+
+    Summary:
+      Various documentation fixes + completed the doc automake stuff.
+    Revision:
+      skribilo--devel--1.2--patch-50
+
+    * doc/user/Makefile.am (%.html): Added `-P ../img'.
+      (%.lout): Likewise.
+      (SUBDIRS): New.
+    
+    * doc/user/char.skb (Some characters): Use the Lout-specific example for
+      `!' when relevant.
+    
+    * doc/user/figure.skb (The figure markup): Avoid using `example-produce'.
+    
+    * doc/user/slide.skb (dummy-slide-set-output): New.
+      (dummy-slide-output): New.
+      (dummy-slide-vspace-output): New.
+      (dummy-slide-embed-output): New.
+      (Example of Skribilo Slides): Use a processor, as in `document.skb', in
+      order to use the dummy output functions.
+
+    new files:
+     doc/dir/Makefile.am doc/img/Makefile.am doc/skr/Makefile.am
+     doc/user/src/.arch-ids/api20-lout.skb.id
+     doc/user/src/Makefile.am doc/user/src/api20-lout.skb
+
+    removed files:
+     doc/html/.arch-ids/=id
+
+    modified files:
+     ChangeLog configure.ac doc/Makefile.am doc/user/Makefile.am
+     doc/user/char.skb doc/user/figure.skb doc/user/slide.skb
+     doc/user/user.skb
+
+    renamed files:
+     doc/user/src/.arch-ids/api20.skb.id
+       ==> doc/user/src/.arch-ids/api20-html.skb.id
+     doc/user/src/api20.skb
+       ==> doc/user/src/api20-html.skb
+
+    removed directories:
+     doc/html doc/html/.arch-ids
+
+
 2006-03-19 19:55:24 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-49
 
     Summary:

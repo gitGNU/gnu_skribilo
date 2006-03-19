@@ -40,4 +40,8 @@ AC_OUTPUT([Makefile
 	   src/guile/skribilo/skribe/Makefile
 	   src/guile/skribilo/coloring/Makefile
 	   doc/Makefile
-	   doc/user/Makefile])
+	   doc/user/Makefile
+	   doc/user/src/Makefile
+	   doc/img/Makefile
+	   doc/dir/Makefile
+	   doc/skr/Makefile])
