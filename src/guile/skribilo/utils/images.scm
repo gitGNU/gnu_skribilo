@@ -24,7 +24,7 @@
 	   *fig-convert-program* *bitmap-convert-program*)
 
   :autoload (skribilo utils files) (file-suffix file-prefix)
-  :autoload (skribilo parameters)  (*image-path*)
+  :autoload (skribilo parameters)  (*image-path* *verbose*)
   :autoload   (skribilo condition) (&file-search-error)
   :autoload   (srfi srfi-34) (raise)
   :use-module (srfi srfi-35)

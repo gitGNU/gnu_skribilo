@@ -2,6 +2,26 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-03-19 15:13:13 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-48
+
+    Summary:
+      Image- and compat-related fixes.
+    Revision:
+      skribilo--devel--1.2--patch-48
+
+    * src/guile/skribilo/utils/images.scm: Autoload `parameters' on
+      `*verbose*' too.
+    
+    * src/guile/skribilo/lib.scm (skribe-read): Moved to...
+    
+    * src/guile/skribilo/utils/compat.scm: ... here.
+
+    modified files:
+     ChangeLog src/guile/skribilo/lib.scm
+     src/guile/skribilo/utils/compat.scm
+     src/guile/skribilo/utils/images.scm
+
+
 2006-03-18 18:12:00 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-47
 
     Summary:

@@ -26,7 +26,6 @@
            skribe-type-error
            skribe-warning skribe-warning/ast
            skribe-message
-	   skribe-read
 
 	   %procedure-arity)
 
@@ -248,16 +247,7 @@
 	(Loop (cdr l))))))
 
 
-;;;
-;;; Various things.
-;;;
-
-
-(define* (skribe-read #:optional (port (current-input-port)))
-  (%skribe-reader port))
-
 (define (%procedure-arity proc)
-    (car (procedure-property proc 'arity)))
-
+  (car (procedure-property proc 'arity)))
 
 ;;; lib.scm ends here
