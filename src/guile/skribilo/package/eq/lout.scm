@@ -52,16 +52,13 @@
 ;;;
 
 
-;; FIXME:  Reimplement the `symbol' writer so that `@Sym' is not used within
-;; equations (e.g. output `alpha' instead of `{ @Sym alpha }').
-
 (markup-writer 'eq (find-engine 'lout)
-   :before "\n@Eq { "
+   :before "{ @Eq { "
    :action (lambda (node engine)
 	      (let ((eq (markup-body node)))
 		 ;(fprint (current-error-port) "eq=" eq)
 		 (output eq engine)))
-   :after  " }\n")
+   :after  " } }")
 
 
 ;;

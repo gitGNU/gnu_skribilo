@@ -2,6 +2,37 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-04-08 10:26:51 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-51
+
+    Summary:
+      Merge from lcourtes@laas.fr--2004-libre
+    Revision:
+      skribilo--devel--1.2--patch-51
+
+    Patches applied:
+    
+     * lcourtes@laas.fr--2004-libre/skribilo--devel--1.2  (patch 73-78)
+    
+       - Merge from lcourtes@laas.fr--2005-mobile
+       - Moved `convert-image' et al. to `utils/images.scm'.
+       - Image- and compat-related fixes.
+       - Lout engine: small fixes.
+       - Various documentation fixes + completed the doc automake stuff.
+       - Small aesthetic changes in the Lout engine.
+
+    modified files:
+     ChangeLog src/guile/skribilo/engine/lout.scm
+     src/guile/skribilo/package/eq/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-73
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-74
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-75
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-76
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-77
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-78
+
+
 2006-03-19 20:08:40 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-50
 
     Summary:

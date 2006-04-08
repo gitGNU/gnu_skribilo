@@ -405,7 +405,7 @@
 	;; In single-column document, `@FullWidth' yields a blank page.
 	(display "\n@FullWidth {"))
     (display "\n//3.0fx\n")
-    (display "\n@Center 1.4f @Font @B { ")
+    (display "\n@Center 1.4f @Font @B { cragged nohyphen 1.4fx } @Break { ")
     (if title
        (output title engine)
        (display "The Lout Document"))
@@ -698,7 +698,7 @@
 				(string-append "{ { Symbol Base } @Font "
 					       "@Char \"" m "\" }"))
 			      (lambda (m)
-				(format #f "@Eq { ~a }\n" m)))))
+				(format #f "{ @Eq { ~a } }" m)))))
 
 
 ;; So that calls to `markup-writer' automatically use `lout-engine'...
