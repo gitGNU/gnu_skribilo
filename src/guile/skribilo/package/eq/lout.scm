@@ -53,63 +53,61 @@
 
 
 (markup-writer 'eq (find-engine 'lout)
-   :before "{ @Eq { "
+   :options '(:inline?)
+   :before "{ "
    :action (lambda (node engine)
-	      (let ((eq (markup-body node)))
-		 ;(fprint (current-error-port) "eq=" eq)
-		 (output eq engine)))
+	     (display (if (markup-option node :inline?)
+			  "@E { "
+			  "@Eq { "))
+	     (let ((eq (markup-body node)))
+	       ;;(fprint (current-error-port) "eq=" eq)
+	       (output eq engine)))
    :after  " } }")
 
 
-;;
-;; `+' and `-' have lower precedence than `*', `/', `=', etc., so their
-;; operands do not need to be enclosed in braces.
-;;
 
-(markup-writer 'eq:+ (find-engine 'lout)
-   :action (lambda (node engine)
-	      (let loop ((operands (markup-body node)))
-		 (if (null? operands)
-		     #t
-		     (begin
-		       ;; no braces
-		       (output (car operands) engine)
-		       (if (pair? (cdr operands))
-			   (display " + "))
-		       (loop (cdr operands)))))))
+(define-macro (simple-lout-markup-writer sym . args)
+  (let ((lout-name (if (null? args)
+		       (symbol->string sym)
+		       (car args)))
+	(parentheses? (if (or (null? args) (null? (cdr args)))
+			  #f
+			  (cadr args)))
+	(open-par '(if eq-op? "(" ""))
+	(close-par '(if eq-op? ")" "")))
 
-(markup-writer 'eq:- (find-engine 'lout)
-   :action (lambda (node engine)
-	      (let loop ((operands (markup-body node)))
-		 (if (null? operands)
-		     #t
-		     (begin
-		       ;; no braces
-		       (output (car operands) engine)
-		       (if (pair? (cdr operands))
-			   (display " - "))
-		       (loop (cdr operands)))))))
+    `(markup-writer ',(symbol-append 'eq: sym)
+		    (find-engine 'lout)
+		    :action (lambda (node engine)
+			      (let loop ((operands (markup-body node)))
+				(if (null? operands)
+				    #t
+				    (let* ((op (car operands))
+					   (eq-op? (equation-markup? op)))
+				      (display (string-append " { "
+							      ,(if parentheses?
+								   open-par
+								   "")))
+				      (output op engine)
+				      (display (string-append ,(if parentheses?
+								   close-par
+								   "")
+							      " }"))
+				      (if (pair? (cdr operands))
+					  (display ,(string-append " "
+								   lout-name
+								   " ")))
+				      (loop (cdr operands)))))))))
 
-(define-macro (simple-lout-markup-writer sym . lout-name)
-  `(markup-writer ',(symbol-append 'eq: sym)
-		  (find-engine 'lout)
-      :action (lambda (node engine)
-		(let loop ((operands (markup-body node)))
-		  (if (null? operands)
-		      #t
-		      (begin
-			(display " { ")
-			(output (car operands) engine)
-			(display " }")
-			(if (pair? (cdr operands))
-			    (display ,(string-append " "
-						     (if (null? lout-name)
-							 (symbol->string sym)
-							 (car lout-name))
-						     " ")))
-			(loop (cdr operands))))))))
 
-(simple-lout-markup-writer * "times")
+;; `+' and `*' have higher precedence than `-', `/', `=', etc., so their
+;; operands do not need to be enclosed in parentheses.  OTOH, since we use a
+;; horizontal bar of `/', we don't need to parenthesize its arguments.
+
+
+(simple-lout-markup-writer +)
+(simple-lout-markup-writer *)
+(simple-lout-markup-writer - "-" #t)
 (simple-lout-markup-writer / "over")
 (simple-lout-markup-writer =)
 (simple-lout-markup-writer <)

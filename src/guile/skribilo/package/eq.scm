@@ -127,7 +127,8 @@
 ;;; Markup.
 ;;;
 
-(define-markup (eq :rest opts :key (ident #f) (renderer #f) (class "eq"))
+(define-markup (eq :rest opts :key (ident #f) (inline? #f)
+		                   (renderer #f) (class "eq"))
   (new markup
        (markup 'eq)
        (ident (or ident (symbol->string (gensym "eq"))))
