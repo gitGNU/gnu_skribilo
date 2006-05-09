@@ -1136,7 +1136,7 @@
 			 (lout-make-doc-cover-sheet n e))))
 
 	       (if doc-style?
-		   ;; Putting it here will only works with `doc' documents.
+		   ;; Putting it here will only work with `doc' documents.
 		   (lout-output-pdf-meta-info n e))))
 
    :after (lambda (n e)
@@ -1363,21 +1363,6 @@
 	 (printf "\n\n@End @~a\n\n" lout-markup))))
 
 
-(define (markup-option-set! m opt val)
-  ;; Sets the value of markup option `opt' of markup `m' to `val'.
-  (let ((o (assoc opt (markup-options m))))
-    (if o
-	(begin
-;	  (set-cdr! o val)
-	  (markup-option-add! m opt val) ;; FIXME: the above method fails
-	  (if (not (eq? (markup-option m opt) val))
-	      (skribe-error 'markup-option-set!
-			    "Doesn't work!" (markup-option m opt))))
-	(begin
-	  (lout-debug "markup-option-set!: markup ~a doesn't have option ~a"
-		      m opt)
-	  #f))))
-
 (define (lout-markup-child-type skribe-markup)
   ;; Return the child markup type of `skribe-markup' (e.g. for `chapter',
   ;; return `section').
@@ -1413,8 +1398,15 @@
 	      ;; first section while other styles don't.
 	      (printf "\n@Begin~as\n" lout-markup-name))
 
-	  ;; update the `&substructs-started?' option of the parent
-	  (markup-option-set! parent '&substructs-started? #t)
+	  ;; FIXME: We need to make sure that PARENT is a large-scale
+	  ;; structure, otherwise it won't have the `&substructs-started?'
+	  ;; option (e.g., if PARENT is a `color' markup).  I need to clarify
+	  ;; this.
+	  (if (memq (markup-markup parent)
+		    '(document chapter section subsection subsubsection))
+	      ;; update the `&substructs-started?' option of the parent
+	      (markup-option-set! parent '&substructs-started? #t))
+
 	  (lout-debug "start-struct: updated parent: ~a"
 		      (markup-option parent '&substructs-started?))))
 

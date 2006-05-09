@@ -22,6 +22,7 @@
 (define-module (skribilo ast)
   :use-module (oop goops)
   :autoload (skribilo location) (location?)
+  :autoload (skribilo lib) (skribe-type-error skribe-error)
   :use-module (skribilo utils syntax)
   :export (<ast> ast? ast-loc ast-loc-set!
 		 ast-parent ast->string ast->file-location
@@ -36,7 +37,8 @@
 	   <markup> markup? bind-markup! markup-options is-markup?
 		    markup-markup markup-body markup-ident markup-class
 		    find-markups
-		    markup-option markup-option-add! markup-output
+		    markup-option markup-option-set!
+		    markup-option-add! markup-output
 		    markup-parent markup-document markup-chapter
 
 	   <container> container? container-options
@@ -222,6 +224,14 @@
 	     (cadr c)))
       (skribe-type-error 'markup-option "Illegal markup: " m "markup")))
 
+(define (markup-option-set! m opt val)
+  (if (markup? m)
+      (let ((c (assq opt (slot-ref m 'options))))
+	(if (and (pair? c) (pair? (cdr c)))
+	    (set-cdr! c (list val))
+	    (skribe-error 'markup-option-set! "unknown option: "
+			  m)))
+      (skribe-type-error 'markup-option-set! "Illegal markup: " m "markup")))
 
 (define (markup-option-add! m opt val)
   (if (markup? m)
