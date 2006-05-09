@@ -106,7 +106,7 @@
 
 
 (simple-lout-markup-writer +)
-(simple-lout-markup-writer *)
+(simple-lout-markup-writer * "times")
 (simple-lout-markup-writer - "-" #t)
 (simple-lout-markup-writer / "over")
 (simple-lout-markup-writer =)
