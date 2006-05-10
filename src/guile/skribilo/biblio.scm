@@ -33,8 +33,10 @@
   :autoload   (skribilo reader)      (%default-reader)
   :autoload   (skribilo parameters)  (*bib-path*)
   :autoload   (ice-9 format)         (format)
+  :use-module (ice-9 optargs)
+
   :export (bib-table? make-bib-table default-bib-table
-	   bib-add! bib-duplicate
+	   bib-add! bib-duplicate bib-for-each
 	   skribe-open-bib-file parse-bib))
 
 (fluid-set! current-reader %skribilo-module-reader)
@@ -66,14 +68,17 @@
     (set! *bib-table* (make-bib-table "default-bib-table")))
   *bib-table*)
 
-;;
-;; Utilities
-;;
 (define (%bib-error who entry)
   (let ((msg "bibliography syntax error on entry"))
     (if (%epair? entry)
 	(skribe-line-error (%epair-file entry) (%epair-line entry) who msg entry)
 	(skribe-error who msg entry))))
+
+(define* (bib-for-each proc :optional (table (default-bib-table)))
+  (hash-for-each (lambda (ident entry)
+		   (proc entry))
+		 table))
+
 
 ;;; ======================================================================
 ;;;

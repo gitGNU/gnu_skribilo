@@ -169,7 +169,7 @@
 (define-public skribe-eval-port    evaluate-document-from-port)
 
 (set! %skribe-reader #f)
-(define* (skribe-read #:optional (port (current-input-port)))
+(define*-public (skribe-read #:optional (port (current-input-port)))
   (if (not %skribe-reader)
       (set! %skribe-reader (make-reader 'skribe)))
   (%skribe-reader port))

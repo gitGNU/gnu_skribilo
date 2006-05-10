@@ -26,7 +26,8 @@
   :autoload (skribilo parameters) (*verbose* *document-path*)
   :autoload (skribilo location)   (<location>)
   :autoload (skribilo ast)        (ast? markup?)
-  :autoload (skribilo engine)     (engine? find-engine engine-ident)
+  :autoload (skribilo engine)     (*current-engine*
+				   engine? find-engine engine-ident)
   :autoload (skribilo reader)     (*document-reader*)
 
   :autoload (skribilo verify)     (verify)
