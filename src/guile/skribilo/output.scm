@@ -1,7 +1,7 @@
 ;;; output.scm  --  Skribilo output stage.
 ;;;
 ;;; Copyright 2003-2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
-;;; Copyright 2005  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2005, 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -21,18 +21,70 @@
 
 
 (define-module (skribilo output)
-  :export (output)
   :autoload   (skribilo engine) (engine-ident processor-get-engine)
   :autoload   (skribilo writer) (writer? writer-ident lookup-markup-writer)
-  :use-module (skribilo lib)
+  :autoload   (skribilo location) (location?)
   :use-module (skribilo ast)
   :use-module (skribilo debug)
   :use-module (skribilo utils syntax)
-  :use-module (oop goops))
+  :use-module (oop goops)
+
+  :use-module (skribilo condition)
+  :use-module (srfi srfi-35)
+  :use-module (srfi srfi-34)
+
+  :export     (output
+	       &output-error &output-unresolved-error &output-writer-error
+	       output-error? output-unresolved-error? output-writer-error?))
+
 
 (fluid-set! current-reader %skribilo-module-reader)
 
 
+;;;
+;;; Error conditions.
+;;;
+
+(define-condition-type &output-error &skribilo-error
+  output-error?)
+
+(define-condition-type &output-unresolved-error &output-error
+  output-unresolved-error?
+  (ast output-unresolved-error:ast))
+
+(define-condition-type &output-writer-error &output-error
+  output-writer-error?
+  (writer output-writer-error:writer))
+
+
+(define (handle-output-error c)
+  ;; Issue a user-friendly error message for error condition C.
+  (cond ((output-unresolved-error? c)
+	 (let* ((node (output-unresolved-error:ast c))
+		(location (and (ast? node) (ast-loc node))))
+	   (format (current-error-port) "unresolved node: ~a~a~%"
+		   node
+		   (if (location? location)
+		       (string-append " "
+				      (location-file location) ":"
+				      (location-line location))
+		       ""))))
+	((output-writer-error? c)
+	 (format (current-error-port) "invalid writer: ~a~%"
+		 (output-writer-error:writer c)))
+	(else
+	 (format (current-error-port) "undefined output error: ~a~%"
+		 c))))
+
+(register-error-condition-handler! output-error?
+				   handle-output-error)
+
+
+
+;;;
+;;; Output method.
+;;;
+
 (define-generic out)
 
 (define (%out/writer n e w)
@@ -58,11 +110,10 @@
 	  ((is-a? (car writer) <writer>)
 	   (%out/writer node e (car writer)))
 	  ((not (car writer))
-	   (skribe-error 'output
-			 (format #f "illegal ~A user writer" (engine-ident e))
-			 (if (markup? node) (markup-markup node) node)))
+	   (raise (condition (&output-writer-error (writer writer)))))
 	  (else
-	   (skribe-error 'output "illegal user writer" (car writer)))))))
+	   (raise (condition (&output-writer-error (writer writer)))))))))
+
 
 
 ;;;
@@ -79,7 +130,9 @@
        (out (car n*) e)
        (loop (cdr n*)))
       ((not (null? n*))
-       (skribe-error 'out "Illegal argument" n*)))))
+       (raise (condition (&invalid-argument-error
+			  (proc-name output)
+			  (argument  n*))))))))
 
 
 (define-method (out (node <string>) e)
@@ -113,7 +166,9 @@
 	    (if (> n 0)
 		(if (<= n lb)
 		    (output (list-ref body (- n 1)) e)
-		    (skribe-error '! "Too few arguments provided" n)))
+		    (raise (condition (&too-few-arguments-error
+				       (proc-name "output<command>")
+				       (arguments n))))))
 	    lf)
 	  (let ((c (string-ref fmt i)))
 	    (cond
@@ -128,7 +183,9 @@
 		    (output (list-ref body (- n 1)) e)
 		    i)
 		 (else
-		    (skribe-error '! "Too few arguments provided" n))))
+		  (raise (condition (&too-few-arguments-error
+				       (proc-name "output<command>")
+				       (arguments n)))))))
 	      (else
 	       (loops (+ i 1)
 		      (+ (- (char->integer c)
@@ -151,7 +208,7 @@
 
 
 (define-method (out (n <unresolved>) e)
-  (skribe-error 'output "orphan unresolved" n))
+  (raise (condition (&output-unresolved-error (ast n)))))
 
 
 (define-method (out (node <markup>) e)
