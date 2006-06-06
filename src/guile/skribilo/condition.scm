@@ -19,15 +19,21 @@
 ;;; USA.
 
 (define-module (skribilo condition)
+  :autoload   (srfi srfi-1)  (find)
   :autoload   (srfi srfi-34) (guard)
   :use-module (srfi srfi-35)
   :use-module (srfi srfi-39)
   :export     (&skribilo-error skribilo-error?
 	       &invalid-argument-error invalid-argument-error?
+	       &too-few-arguments-error too-few-arguments-error?
+
 	       &file-error file-error?
 	       &file-search-error file-search-error?
 	       &file-open-error file-open-error?
 	       &file-write-error file-write-error?
+
+	       register-error-condition-handler!
+	       lookup-error-condition-handler
 
 	       %call-with-skribilo-error-catch
 	       call-with-skribilo-error-catch))
@@ -58,6 +64,11 @@
   (proc-name invalid-argument-error:proc-name)
   (argument  invalid-argument-error:argument))
 
+(define-condition-type &too-few-arguments-error &skribilo-error
+  too-few-arguments-error?
+  (proc-name too-few-arguments-error:proc-name)
+  (arguments too-few-arguments-error:arguments))
+
 
 ;;;
 ;;; File errors.
@@ -80,6 +91,28 @@
 
 
 ;;;
+;;; Adding new error conditions from other modules.
+;;;
+
+(define %external-error-condition-alist '())
+
+(define (register-error-condition-handler! pred handler)
+  (set! %external-error-condition-alist
+	(cons (cons pred handler)
+	      %external-error-condition-alist)))
+
+(define (lookup-error-condition-handler c)
+  (let ((pair (find (lambda (pair)
+		      (let ((pred (car pair)))
+			(pred c)))
+		    %external-error-condition-alist)))
+    (if (pair? pair)
+	(cdr pair)
+	#f)))
+
+
+
+;;;
 ;;; Convenience functions.
 ;;;
 
@@ -89,6 +122,11 @@
 		     (invalid-argument-error:proc-name c)
 		     (invalid-argument-error:argument c))
 	     (exit exit-val))
+
+	    ((too-few-arguments-error? c)
+	     (format (current-error-port) "in `~a': too few arguments: ~S~%"
+		     (too-few-arguments-error:proc-name c)
+		     (too-few-arguments-error:arguments c)))
 
 	    ((file-search-error? c)
 	     (format (current-error-port) "~a: not found in path `~S'~%"
@@ -111,9 +149,15 @@
 		     (file-error:file-name c))
 	     (exit exit-val))
 
-	    ((skribilo-error? c)
-	     (format (current-error-port) "undefined skribilo error: ~S~%"
-		     c)
+	    (;;(skribilo-error? c)
+	     #t ;; XXX: The SRFI-35 currently in `guile-lib' doesn't work
+ 	        ;; properly with non-direct super-types.
+	     (let ((handler (lookup-error-condition-handler c)))
+	       (if (procedure? handler)
+		   (handler c)
+		   (format (current-error-port)
+			   "undefined skribilo error: ~S~%"
+			   c)))
 	     (exit exit-val)))
 
 	 (thunk)))
