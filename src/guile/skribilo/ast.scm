@@ -273,12 +273,31 @@
   (hash-ref *node-table* ident #f))
 
 
-(define-method (write-object (obj <markup>) port)
-  (format port "#[~A (~A/~A) ~A]"
+(define-method (write (obj <markup>) port)
+  (format port "#<~A (~A/~A) ~A>"
 	  (class-name (class-of obj))
 	  (slot-ref obj 'markup)
 	  (slot-ref obj 'ident)
-	  (address-of obj)))
+	  (object-address obj)))
+
+(define-method (write (node <unresolved>) port)
+  (let ((proc (slot-ref node 'proc)))
+    (format port "#<<unresolved> (~A~A) ~A>"
+	    proc
+	    (let* ((name (or (procedure-name proc) ""))
+		   (source (procedure-source proc))
+		   (file (and source (source-property source 'filename)))
+		   (line (and source (source-property source 'line))))
+	      (format (current-error-port) "src=~a~%" source)
+	      (string-append name
+			     (if file
+				 (string-append " " file
+						(if line
+						    (number->string line)
+						    ""))
+				 "")))
+	    (object-address node))))
+
 
 
 ;;; XXX: This was already commented out in the original Skribe source.
