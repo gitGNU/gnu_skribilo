@@ -36,7 +36,7 @@
   :use-module (ice-9 optargs)
 
   :export (bib-table? make-bib-table default-bib-table
-	   bib-add! bib-duplicate bib-for-each
+	   bib-add! bib-duplicate bib-for-each bib-map
 	   skribe-open-bib-file parse-bib))
 
 (fluid-set! current-reader %skribilo-module-reader)
@@ -76,8 +76,13 @@
 
 (define* (bib-for-each proc :optional (table (default-bib-table)))
   (hash-for-each (lambda (ident entry)
-		   (proc entry))
+		   (proc ident entry))
 		 table))
+
+(define* (bib-map proc :optional (table (default-bib-table)))
+  (hash-map->list (lambda (ident entry)
+		    (proc ident entry))
+		  table))
 
 
 ;;; ======================================================================
