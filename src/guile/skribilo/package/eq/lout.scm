@@ -67,14 +67,18 @@
 
 
 (define-macro (simple-lout-markup-writer sym . args)
-  (let ((lout-name (if (null? args)
-		       (symbol->string sym)
-		       (car args)))
-	(parentheses? (if (or (null? args) (null? (cdr args)))
-			  #f
-			  (cadr args)))
-	(open-par '(if eq-op? "(" ""))
-	(close-par '(if eq-op? ")" "")))
+  (let* ((lout-name (if (null? args)
+			(symbol->string sym)
+			(car args)))
+	 (parentheses? (if (or (null? args) (null? (cdr args)))
+			   #t
+			   (cadr args)))
+	 (precedence (operator-precedence sym))
+
+	 ;; Note: We could use `pmatrix' here but it precludes line-breaking
+	 ;; within equations.
+	 (open-par `(if need-paren? "{ @VScale ( }" ""))
+	 (close-par `(if need-paren? "{ @VScale ) }" "")))
 
     `(markup-writer ',(symbol-append 'eq: sym)
 		    (find-engine 'lout)
@@ -83,7 +87,19 @@
 				(if (null? operands)
 				    #t
 				    (let* ((op (car operands))
-					   (eq-op? (equation-markup? op)))
+					   (eq-op? (equation-markup? op))
+					   (need-paren?
+					    (and eq-op?
+						 (< (operator-precedence
+						     (equation-markup-name->operator
+						      (markup-markup op)))
+						    ,precedence)))
+					   (column (port-column
+						    (current-output-port))))
+
+				      ;; Work around Lout's limitations...
+				      (if (> column 1000) (display "\n"))
+
 				      (display (string-append " { "
 							      ,(if parentheses?
 								   open-par
@@ -107,8 +123,8 @@
 
 (simple-lout-markup-writer +)
 (simple-lout-markup-writer * "times")
-(simple-lout-markup-writer - "-" #t)
-(simple-lout-markup-writer / "over")
+(simple-lout-markup-writer - "-")
+(simple-lout-markup-writer / "over" #f)
 (simple-lout-markup-writer =)
 (simple-lout-markup-writer <)
 (simple-lout-markup-writer >)

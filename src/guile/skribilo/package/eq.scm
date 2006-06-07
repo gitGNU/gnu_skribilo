@@ -76,10 +76,6 @@
     sim cong approx neq equiv le ge subset supset subseteq supseteq
     oplus otimes perp mid lceil rceil lfloor rfloor langle rangle))
 
-(define %rebindings
-  (map (lambda (sym)
-	 (list sym (symbol-append 'eq: sym)))
-       %operators))
 
 (define (make-fast-member-predicate lst)
   (let ((h (make-hash-table)))
@@ -93,15 +89,60 @@
 (define-public known-operator? (make-fast-member-predicate %operators))
 (define-public known-symbol? (make-fast-member-predicate %symbols))
 
+(define-public equation-markup-name?
+  (make-fast-member-predicate (map (lambda (s)
+				     (symbol-append 'eq: s))
+				   %operators)))
+
 (define-public (equation-markup? m)
   "Return true if @var{m} is an instance of one of the equation sub-markups."
-  (define eq-sym?
-    (make-fast-member-predicate (map (lambda (s)
-				       (symbol-append 'eq: s))
-				     %operators)))
   (and (markup? m)
-       (eq-sym? (markup-markup m))))
+       (equation-markup-name? (markup-markup m))))
 
+(define-public (equation-markup-name->operator m)
+  "Given symbol @var{m} (an equation markup name, e.g., @code{eq:+}), return
+a symbol representing the mathematical operator denoted by @var{m} (e.g.,
+@code{+})."
+  (if (equation-markup-name? m)
+      (string->symbol (let ((str (symbol->string m)))
+			(substring str
+				   (+ 1 (string-index str #\:))
+				   (string-length str))))
+      #f))
+
+
+;;;
+;;; Operator precedence.
+;;;
+
+(define %operator-precedence
+  ;; FIXME: This needs to be augmented.
+  '((+ . 1)
+    (- . 1)
+    (* . 2)
+    (/ . 2)
+    (sum . 3)
+    (product . 3)
+    (= . 0)
+    (< . 0)
+    (> . 0)
+    (<= . 0)
+    (>= . 0)))
+
+(define-public (operator-precedence op)
+  (let ((p (assq op %operator-precedence)))
+    (if (pair? p) (cdr p) 0)))
+
+
+
+;;;
+;;; Turning an S-exp into an `eq' markup.
+;;;
+
+(define %rebindings
+  (map (lambda (sym)
+	 (list sym (symbol-append 'eq: sym)))
+       %operators))
 
 (define (eq:symbols->strings equation)
   "Turn symbols located in non-@code{car} positions into strings."
@@ -121,6 +162,7 @@
 @code{'(+ a (/ b 3))}."
   (eval `(let ,%rebindings ,(eq:symbols->strings equation))
 	(current-module)))
+
 
 
 ;;;
@@ -209,11 +251,11 @@
 					   body))
 			 (loop (cdr body) (cons first result)))))))))
 
+
 
 ;;;
-;;; Base and text-only implementation.
+;;; Text-based rendering.
 ;;;
-
 
 
 (markup-writer 'eq (find-engine 'base)
@@ -247,24 +289,37 @@
 				    renderer))))))
 
 (define-macro (simple-markup-writer op . obj)
-  `(markup-writer ',(symbol-append 'eq: op) (find-engine 'base)
-     :action (lambda (node engine)
-		(let loop ((operands (markup-body node)))
-		 (if (null? operands)
-		     #t
-		     (let ((o (car operands)))
-		       (display (if (equation-markup? o) "(" ""))
-		       (output o engine)
-		       (display (if (equation-markup? o) ")" ""))
-		       (if (pair? (cdr operands))
-			   (begin
-			     (display " ")
-			     (output ,(if (null? obj)
-					  (symbol->string op)
-					  (car obj))
-				     engine)
-			     (display " ")))
-		       (loop (cdr operands))))))))
+  ;; Note: The text-only rendering is less ambiguous if we parenthesize
+  ;; without taking operator precedence into account.
+  (let ((precedence (operator-precedence op)))
+    `(markup-writer ',(symbol-append 'eq: op) (find-engine 'base)
+       :action (lambda (node engine)
+		  (let loop ((operands (markup-body node)))
+		   (if (null? operands)
+		       #t
+		       (let* ((o (car operands))
+			      (nested-eq? (equation-markup? o))
+			      (need-paren?
+			       (and nested-eq?
+; 				    (< (operator-precedence
+; 					(equation-markup-name->operator
+; 					 (markup-markup o)))
+; 				       ,precedence)
+				    )
+			       ))
+
+			 (display (if need-paren? "(" ""))
+			 (output o engine)
+			 (display (if need-paren? ")" ""))
+			 (if (pair? (cdr operands))
+			     (begin
+			       (display " ")
+			       (output ,(if (null? obj)
+					    (symbol->string op)
+					    (car obj))
+				       engine)
+			       (display " ")))
+			 (loop (cdr operands)))))))))
 
 (simple-markup-writer +)
 (simple-markup-writer -)
