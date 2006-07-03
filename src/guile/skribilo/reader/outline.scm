@@ -133,13 +133,13 @@ line or a line comment."
 		(match:substring m 1)
 		(match:suffix m)
 		(lambda (body) `(bold ,body)))))
-    ("``(([^`]|[^'])+)''" .
+    ("``(([^`^'])+)''" .
      ,(lambda (m)
 	(values (match:prefix m)
 		(match:substring m 1)
 		(match:suffix m)
 		(lambda (body) `(q ,body)))))
-    ("`(([^`]|[^'])+)'" .
+    ("`(([^`^'])+)'" .
      ,(lambda (m)
 	(values (match:prefix m)
 		(match:substring m 1)
