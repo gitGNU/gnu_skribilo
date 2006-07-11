@@ -1,6 +1,6 @@
 ;;; syntax.scm  --  Syntactic candy for Skribilo modules.
 ;;;
-;;; Copyright 2005  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2005, 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -30,21 +30,26 @@
 ;;;
 ;;; Commentary:
 ;;;
-;;; A reader for the Skribe syntax, i.e. roughly R5RS Scheme plus DSSSL-style
-;;; keywords and sk-exps (expressions introduced using a square bracket).
+;;; This module provides syntactic candy for Skribilo modules, i.e., a syntax
+;;; similar to Guile's default syntax with a few extensions, plus various
+;;; convenience macros.
 ;;;
 ;;; Code:
 
 (define %skribilo-module-reader
   ;; The syntax used to read Skribilo modules.
-  (make-alternate-guile-reader '(colon-keywords
-				 no-scsh-block-comments
-				 srfi30-block-comments
-				 srfi62-sexp-comments)
-			       (lambda (chr port read)
-				 (error "unexpected character in Skribilo module"
-					chr))
-			       'reader/record-positions))
+  (apply make-alternate-guile-reader
+         '(colon-keywords no-scsh-block-comments
+           srfi30-block-comments srfi62-sexp-comments)
+         (lambda (chr port read)
+           (error "unexpected character in Skribilo module"
+                  chr))
+
+         ;; By default, don't record positions: this yields a nice read
+         ;; performance improvement.
+         (if (memq 'debug (debug-options))
+             (list 'reader/record-positions)
+             '())))
 
 (define %skribe-reader
   ;; The Skribe syntax reader.

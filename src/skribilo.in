@@ -26,10 +26,13 @@
 # `--debug' had not been passed, not displaying a stack trace.  See
 # http://lists.gnu.org/archive/html/guile-devel/2006-01/msg00022.html
 # for details.
+#
+# In any case, don't pass `--debug' by default (for performance
+# reason).  When needed, the use should explicitly set the `GUILE'
+# environment variable to, e.g., "guile --debug".
 
 main='(module-ref (resolve-module '\''(skribilo)) '\'main')'
-exec ${GUILE-@GUILE@} --debug \
-                      -c "
+exec ${GUILE-@GUILE@} -c "
 (use-modules (skribilo condition))
 
 (call-with-skribilo-error-catch
