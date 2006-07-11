@@ -21,18 +21,64 @@
 
 (define-module (skribilo resolve)
   :use-module (skribilo debug)
-  :use-module (skribilo runtime)
   :use-module (skribilo ast)
   :use-module (skribilo utils syntax)
 
   :use-module (oop goops)
   :use-module (srfi srfi-39)
 
+  :use-module (skribilo condition)
+  :use-module (srfi srfi-34)
+  :use-module (srfi srfi-35)
+
   :export (resolve! resolve-search-parent resolve-children resolve-children*
-	   find1 resolve-counter resolve-parent resolve-ident))
+	   find1 resolve-counter resolve-parent resolve-ident
+
+           &resolution-error resolution-error?
+           &resolution-orphan-error resolution-orphan-error?
+           resolution-orphan-error:ast))
 
 (fluid-set! current-reader %skribilo-module-reader)
 
+
+
+;;;
+;;; Error conditions.
+;;;
+
+(define-condition-type &resolution-error &skribilo-error
+  resolution-error?)
+
+(define-condition-type &resolution-orphan-error &resolution-error
+  resolution-orphan-error?
+  (ast resolution-orphan-error:ast))
+
+
+(define (handle-resolution-error c)
+  ;; Issue a user-friendly error message for error condition C.
+  (cond ((resolution-orphan-error? c)
+	 (let* ((node (resolution-orphan-error:ast c))
+		(location (and (ast? node) (ast-loc node))))
+	   (format (current-error-port) "orphan node: ~a~a~%"
+		   node
+		   (if (location? location)
+		       (string-append " "
+				      (location-file location) ":"
+				      (location-line location))
+		       ""))))
+
+	(else
+	 (format (current-error-port) "undefined resolution error: ~a~%"
+		 c))))
+
+(register-error-condition-handler! resolution-error?
+				   handle-resolution-error)
+
+
+
+;;;
+;;; Resolving nodes.
+;;;
 
 (define *unresolved* (make-parameter #f))
 (define-generic do-resolve!)
@@ -81,7 +127,9 @@
        (set-car! n* (do-resolve! (car n*) engine env))
        (set-cdr! n* (do-resolve! (cdr n*) engine env)))
       (else
-       (error 'do-resolve "illegal argument" n*)))))
+       (raise (condition (&invalid-argument-error
+			  (proc-name "do-resolve!<pair>")
+			  (argument n*))))))))
 
 
 (define-method (do-resolve! (node <node>) engine env)
@@ -186,7 +234,7 @@
 	      (cadr c)
 	      n)))
        ((eq? (slot-ref n 'parent) 'unspecified)
-	(skribe-error 'resolve-parent "orphan node" n))
+        (raise (condition (&resolution-orphan-error (ast n)))))
        (else
 	(slot-ref n 'parent)))))
 
@@ -219,7 +267,7 @@
   (let ((c (assq (symbol-append cnt '-counter) e)))
     (if (not (pair? c))
 	(if (or (null? opt) (not (car opt)) (null? e))
-	    (skribe-error cnt "orphan node" n)
+            (raise (condition (&resolution-orphan-error (ast n))))
 	    (begin
 	      (set-cdr! (last-pair e)
 			(list (list (symbol-append cnt '-counter) 0)
@@ -252,10 +300,9 @@
      (debug-item "markup=" markup)
      (debug-item "n=" (if (markup? n) (markup-markup n) n))
      (if (not (string? ident))
-	 (skribe-type-error 'resolve-ident
-			    "Illegal ident"
-			    ident
-			    "string")
+         (raise (condition (&invalid-argument-error ;; type error
+                            (proc-name "resolve-ident")
+                            (argument  ident))))
 	 (let ((mks (find-markups ident)))
 	   (and mks
 		(if (not markup)
