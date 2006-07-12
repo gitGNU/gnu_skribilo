@@ -369,7 +369,7 @@ otherwise the requested engine is returned."
 (use-modules (skribilo module))
 
 ;; At this point, we're almost done with the bootstrap process.
-(format #t "base engine: ~a~%" (lookup-engine 'base))
+;(format #t "base engine: ~a~%" (lookup-engine 'base))
 
 (define *current-engine*
   ;; By default, use the HTML engine.

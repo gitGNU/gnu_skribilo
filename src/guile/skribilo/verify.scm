@@ -20,7 +20,7 @@
 ;;; USA.
 
 (define-module (skribilo verify)
-  :autoload (skribilo engine) (engine-ident)
+  :autoload (skribilo engine) (engine-ident processor-get-engine)
   :autoload (skribilo writer) (writer? writer-options lookup-markup-writer)
   :autoload (skribilo lib)    (skribe-warning/ast skribe-warning
 			       skribe-error)
