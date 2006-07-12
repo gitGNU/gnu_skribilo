@@ -22,7 +22,8 @@
 (define-module (skribilo debug)
   :use-module (skribilo utils syntax)
   :use-module (srfi srfi-17)
-  :use-module (srfi srfi-39))
+  :use-module (srfi srfi-39)
+  :export-syntax (debug-item with-debug))
 
 (fluid-set! current-reader %skribilo-module-reader)
 
@@ -102,14 +103,15 @@
 ;;;
 ;;; debug-item
 ;;;
-(define-public (debug-item . args)
-  (if (or (>= (*debug*) (*margin-level*))
-          (*debug-item?*))
-      (begin
-        (display (*debug-margin*) (*debug-port*))
-        (display (debug-color (- (*debug-depth*) 1) "- ") (*debug-port*))
-        (for-each (lambda (a) (display a (*debug-port*))) args)
-        (newline (*debug-port*)))))
+(define-macro (debug-item . args)
+  `(if (*debug-item?*) (%do-debug-item ,@args)))
+
+(define-public (%do-debug-item . args)
+  (begin
+    (display (*debug-margin*) (*debug-port*))
+    (display (debug-color (- (*debug-depth*) 1) "- ") (*debug-port*))
+    (for-each (lambda (a) (display a (*debug-port*))) args)
+    (newline (*debug-port*))))
 
 ;;(define-macro (debug-item  . args)
 ;;  `())
@@ -125,30 +127,29 @@
 
 ;;;
 ;;; %with-debug
-;;
+;;;
 (define-public (%with-debug lvl lbl thunk)
-  (parameterize ((*margin-level* lvl))
-    (if (or (and (number? lvl) (>= (*debug*) lvl))
-	    (and (symbol? lbl)
-		 (memq lbl (*watched-symbols*))))
-	(parameterize ((*debug-item?* #t))
-	  (display (*debug-margin*) (*debug-port*))
-	  (display (if (= (*debug-depth*) 0)
-		       (debug-color (*debug-depth*) "+ " lbl)
-		       (debug-color (*debug-depth*) "--+ " lbl))
-		   (*debug-port*))
-	  (newline (*debug-port*))
-	  (%with-debug-margin (debug-color (*debug-depth*) "  |")
-			      thunk))
-	(thunk))))
+  (if (or (and (number? lvl) (>= (*debug*) lvl))
+          (and (symbol? lbl)
+               (memq lbl (*watched-symbols*))))
+      (parameterize ((*margin-level* lvl)
+                     (*debug-item?* #t))
+        (display (*debug-margin*) (*debug-port*))
+        (display (if (= (*debug-depth*) 0)
+                     (debug-color (*debug-depth*) "+ " lbl)
+                     (debug-color (*debug-depth*) "--+ " lbl))
+                 (*debug-port*))
+        (newline (*debug-port*))
+        (%with-debug-margin (debug-color (*debug-depth*) "  |")
+                            thunk))
+      (thunk)))
 
-(define-macro (with-debug  level label . body)
+(define-macro (with-debug level label . body)
   `(%with-debug ,level ,label (lambda () ,@body)))
 
 ;;(define-macro (with-debug  level label . body)
 ;;  `(begin ,@body))
 
-(export with-debug)
 
 
 ; Example:

@@ -32,7 +32,6 @@
 
   :autoload   (skribilo reader)      (%default-reader)
   :autoload   (skribilo parameters)  (*bib-path*)
-  :autoload   (ice-9 format)         (format)
   :use-module (ice-9 optargs)
 
   :export (bib-table? make-bib-table default-bib-table
