@@ -2,6 +2,21 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-07-12 16:28:29 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-58
+
+    Summary:
+      Made `parse-list-of' tail-recursive.
+    Revision:
+      skribilo--devel--1.2--patch-58
+
+    * src/guile/skribilo/skribe/api.scm (parse-list-of): Made tail-recursive,
+      thereby fixing potential stack overflows (e.g., when building the user
+      manual) and perhaps slightly improving performance.
+
+    modified files:
+     ChangeLog src/guile/skribilo/skribe/api.scm
+
+
 2006-04-23 17:28:14 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-52
 
     Summary:

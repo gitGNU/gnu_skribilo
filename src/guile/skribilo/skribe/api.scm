@@ -551,12 +551,13 @@
 	    (null? (cdr lst)))
        (parse-list-of for markup (car lst)))
       (else
-       (let loop ((lst lst))
+       (let loop ((lst lst)
+		  (result '()))
 	  (cond
 	     ((null? lst)
-	      '())
+	      (reverse! result))
 	     ((pair? (car lst))
-	      (loop (car lst)))
+	      (loop (car lst) result))
 	     (else
 	      (let ((r (car lst)))
 		 (if (not (is-markup? r markup))
@@ -567,7 +568,7 @@
 						 (markup-markup r)
 						 (find-runtime-type r))
 					     markup)))
-		 (cons r (loop (cdr lst))))))))))
+		 (loop (cdr lst) (cons r result)))))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    itemize ...                                                      */
