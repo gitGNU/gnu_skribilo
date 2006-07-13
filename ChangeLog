@@ -2,6 +2,20 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-04-23 17:28:14 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-52
+
+    Summary:
+      Use `setvbuf' on the Skribilo output port.
+    Revision:
+      skribilo--devel--1.2--patch-52
+
+    * src/guile/skribilo.scm (skribilo): Call `setvbuf'.
+    
+
+    modified files:
+     ChangeLog src/guile/skribilo.scm
+
+
 2006-03-19 20:08:40 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-50
 
     Summary:
