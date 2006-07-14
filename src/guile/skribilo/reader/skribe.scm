@@ -1,6 +1,6 @@
 ;;; skribe.scm  --  A reader for the Skribe syntax.
 ;;;
-;;; Copyright 2005  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2005, 2006 Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -21,6 +21,7 @@
 (define-module (skribilo reader skribe)
   :use-module (skribilo reader)
   :use-module (ice-9 optargs)
+  :use-module (srfi srfi-1)
 
   ;; the Scheme reader composition framework
   :use-module ((system reader) #:renamer (symbol-prefix-proc 'r:))
@@ -46,6 +47,17 @@ the Skribe syntax."
       (error "make-skribe-reader: unsupported version" version)
       %skribe-reader))
 
+(define (make-colon-free-token-reader tr)
+  ;; Stolen from `guile-reader' 0.3.
+  "If token reader @var{tr} handles the @code{:} (colon) character, remove it
+from its specification and return the new token reader."
+  (let* ((spec (r:token-reader-specification tr))
+	 (proc (r:token-reader-procedure tr)))
+    (r:make-token-reader (filter (lambda (chr)
+				   (not (char=? chr #\:)))
+				 spec)
+			 proc)))
+
 (define &sharp-reader
   ;; The reader for what comes after a `#' character.
   (let* ((dsssl-keyword-reader  ;; keywords à la `#!key'
@@ -65,18 +77,23 @@ the Skribe syntax."
   (let ((colon-keywords ;; keywords à la `:key' fashion
 	 (r:make-token-reader #\:
 			      (r:token-reader-procedure
-			       (r:standard-token-reader 'keyword)))))
+			       (r:standard-token-reader 'keyword))))
+	(symbol-misc-chars-tr
+	 ;; Make sure `:' is handled only by the keyword token reader.
+	 (make-colon-free-token-reader
+	  (r:standard-token-reader 'r6rs-symbol-misc-chars))))
+
 
     ;; Note: we use the `r6rs-symbol-*' and `r6rs-number' token readers since
     ;; they consider square brackets as delimiters.
     (r:make-reader (cons* (r:make-token-reader #\# &sharp-reader)
 			  colon-keywords
+			  symbol-misc-chars-tr
 			  (map r:standard-token-reader
 			       `(whitespace
 				 sexp string r6rs-number
 				 r6rs-symbol-lower-case
 				 r6rs-symbol-upper-case
-				 r6rs-symbol-misc-chars
 				 quote-quasiquote-unquote
 				 semicolon-comment
 				 skribe-exp)))

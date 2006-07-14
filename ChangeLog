@@ -2,6 +2,22 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-07-14 14:42:40 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-59
+
+    Summary:
+      Fixed the handling of `:' by the Skribe reader.
+    Revision:
+      skribilo--devel--1.2--patch-59
+
+    * src/guile/skribilo/reader/skribe.scm (make-colon-free-token-reader):
+      New.
+      (%make-skribe-reader): Make sure `:' is handled only by the keyword
+      reader.
+
+    modified files:
+     ChangeLog src/guile/skribilo/reader/skribe.scm
+
+
 2006-07-12 16:28:29 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-58
 
     Summary:
