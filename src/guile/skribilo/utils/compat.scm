@@ -248,8 +248,8 @@
 	(hash-set! table key init-value)
 	(set-cdr! handle (update-proc (cdr handle))))))
 
-(define-public hashtable->list	(lambda (h)
-                          (map cdr (hash-map->list cons h))))
+(define-public (hashtable->list h)
+  (hash-map->list (lambda (key val) val) h))
 
 (define-public (find-runtime-type obj)
   (cond ((string? obj)  "string")
