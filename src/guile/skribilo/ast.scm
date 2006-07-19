@@ -1,7 +1,7 @@
 ;;; ast.scm  --  Skribilo abstract syntax trees.
 ;;;
-;;; Copyright 2003-2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
-;;; Copyright 2005  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
+;;; Copyright 2005, 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -35,7 +35,8 @@
 	   <processor> processor? processor-combinator processor-engine
 
 	   <markup> markup? bind-markup! markup-options is-markup?
-		    markup-markup markup-body markup-ident markup-class
+		    markup-markup markup-body markup-body-set!
+                    markup-ident markup-class
 		    find-markups
 		    markup-option markup-option-set!
 		    markup-option-add! markup-output
@@ -216,6 +217,9 @@
 (define (markup? obj)		(is-a? obj <markup>))
 (define (markup-options obj)	(slot-ref obj 'options))
 (define markup-body    node-body)
+(define (markup-body-set! m body)
+  (slot-set! m 'resolved? #f)
+  (slot-set! m 'body      body))
 
 (define (markup-option m opt)
   (if (markup? m)
