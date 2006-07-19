@@ -86,7 +86,7 @@
     ((ice-9 receive)          . (receive))))
 
 (define %skribe-core-modules
-  '("utils" "api" "bib" "index" "param" "sui"))
+  '("utils" "api" "index" "param" "sui"))
 
 
 
