@@ -20,14 +20,22 @@
 
 (define-module (skribilo biblio abbrev)
   :use-module (srfi srfi-13)
-  :autoload   (ice-9 regex) (regexp-substitute/global)
-  :export (is-abbreviation? is-acronym? abbreviate-word))
+  :autoload   (skribilo ast)     (markup? markup-body-set!)
+  :autoload   (skribilo runtime) (make-string-replace)
+  :autoload   (ice-9 regex)      (regexp-substitute/global)
+  :export (is-abbreviation? is-acronym? abbreviate-word
+           abbreviate-string abbreviate-markup
+
+           %cs-conference-abbreviations
+           %ordinal-number-abbreviations
+           %common-booktitle-abbreviations))
 
 ;;; Author:  Ludovic Courtès
 ;;;
 ;;; Commentary:
 ;;;
-;;; Heuristics to identify or generate abbreviations.
+;;; Heuristics to identify or generate abbreviations.  This module
+;;; particularly targets booktitle abbreviations (in bibliography entries).
 ;;;
 ;;; Code:
 
@@ -56,9 +64,9 @@
 
 (define (abbreviate-string subst title)
   ;; Abbreviate common conference names within TITLE based on the SUBST list
-  ;; of regexp-substitution pairs.  This function also removes the
-  ;; abbreviation if it appears in parentheses right after the substitution
-  ;; regexp.  Example:
+  ;; of regexp-substitution pairs (see examples below).  This function also
+  ;; removes the abbreviation if it appears in parentheses right after the
+  ;; substitution regexp.  Example:
   ;;
   ;;   "Symposium on Operating Systems Principles (SOSP 2004)"
   ;;
@@ -76,6 +84,73 @@
 	  (loop (regexp-substitute/global #f to-replace title
 					  'pre abbr 'post)
 		(cdr subst))))))
+
+(define (abbreviate-markup subst markup)
+  ;; A version of `abbreviate-string' generalized to arbitrary markup
+  ;; objects.
+  (let loop ((markup markup))
+    (cond ((string? markup)
+           (let ((purify (make-string-replace '((#\newline " ")
+                                                (#\tab     " ")))))
+             (abbreviate-string subst (purify markup))))
+          ((list? markup)
+           (map loop markup))
+          ((markup? markup)
+           (markup-body-set! markup (loop (markup-body title)))
+           markup)
+          (else markup))))
+
+
+;;;
+;;; Common English abbreviations.
+;;;
+
+;; The following abbreviation alists may be passed to `abbreviate-string'
+;; and `abbreviate-markup'.
+
+(define %cs-conference-abbreviations
+  ;; Common computer science conferences and their acronym.
+  '(("(Symposium [oO]n )?Operating Systems? Design and [iI]mplementation"
+     . "OSDI")
+    ("(Symposium [oO]n )?Operating Systems? Principles"
+     . "SOSP")
+    ("([wW]orkshop [oO]n )?Hot Topics [iI]n Operating Systems"
+     . "HotOS")
+    ("([cC]onference [oO]n )?[fF]ile [aA]nd [sS]torage [tT]echnologies"
+     . "FAST")
+    ("([tT]he )?([iI]nternational )?[cC]onference [oO]n [aA]rchitectural Support [fF]or Programming Languages [aA]nd Operating Systems"
+     . "ASPLOS")
+    ("([tT]he )?([iI]nternational )?[cC]onference [oO]n Peer-[tT]o-[pP]eer Computing"
+     . "P2P")
+    ("([iI]nternational )?[cC]onference [oO]n [dD]ata [eE]ngineering"
+     . "ICDE")
+    ("([cC]onference [oOn]) [mM]ass [sS]torage [sS]ystems( [aA]nd [tT]echnologies)?"
+     . "MSS")))
+
+
+(define %ordinal-number-abbreviations
+  ;; The poor man's abbreviation system.
+  ;; FIXME:  This doesn't work with things like "twenty-first"!
+  '(("[Ff]irst"    . "1st")
+    ("[sS]econd"   . "2nd")
+    ("[Tt]hird"    . "3rd")
+    ("[Ff]ourth"   . "4th")
+    ("[Ff]ifth"    . "5th")
+    ("[Ss]ixth"    . "6th")
+    ("[Ss]eventh"  . "7th")
+    ("[eE]ighth"   . "8th")
+    ("[Nn]inth"    . "9th")
+    ("[Tt]enth"    . "10th")
+    ("[Ee]leventh" . "11th")
+    ("[Tt]welfth"  . "12th")))
+
+(define %common-booktitle-abbreviations
+  ;; Common book title abbreviations.  This is used by
+  ;; `abbreviate-booktitle'.
+  '(("[pP]roceedings?"  . "Proc.")
+    ("[iI]nternational" . "Int.")
+    ("[sS]ymposium"     . "Symp.")
+    ("[cC]onference"    . "Conf.")))
 
 
 ;;; arch-tag: 34e0c5bb-592f-467b-b59a-d6f7d130ae4e

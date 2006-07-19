@@ -22,7 +22,9 @@
   :use-module (srfi srfi-13)
   :use-module (srfi srfi-14)
   :use-module (skribilo biblio abbrev)
-  :autoload   (skribilo utils compat) (skribe-error)
+  :autoload   (skribilo ast)     (markup-option markup-body markup-ident)
+  :autoload   (skribilo lib)     (skribe-error)
+  :autoload   (skribilo runtime) (make-string-replace)
   :export (comma-separated->author-list
 	   comma-separated->and-separated-authors
 
