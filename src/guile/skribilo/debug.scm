@@ -128,28 +128,28 @@
 ;;;
 ;;; %with-debug
 ;;;
-(define-public (%with-debug lvl lbl thunk)
-  (if (or (and (number? lvl) (>= (*debug*) lvl))
-          (and (symbol? lbl)
-               (memq lbl (*watched-symbols*))))
-      (parameterize ((*margin-level* lvl)
-                     (*debug-item?* #t))
-        (display (*debug-margin*) (*debug-port*))
-        (display (if (= (*debug-depth*) 0)
-                     (debug-color (*debug-depth*) "+ " lbl)
-                     (debug-color (*debug-depth*) "--+ " lbl))
-                 (*debug-port*))
-        (newline (*debug-port*))
-        (%with-debug-margin (debug-color (*debug-depth*) "  |")
-                            thunk))
-      (thunk)))
+(define-public (%do-with-debug lvl lbl thunk)
+  (parameterize ((*margin-level* lvl)
+                 (*debug-item?* #t))
+    (display (*debug-margin*) (*debug-port*))
+    (display (if (= (*debug-depth*) 0)
+                 (debug-color (*debug-depth*) "+ " lbl)
+                 (debug-color (*debug-depth*) "--+ " lbl))
+             (*debug-port*))
+    (newline (*debug-port*))
+    (%with-debug-margin (debug-color (*debug-depth*) "  |")
+                        thunk)))
 
 (define-macro (with-debug level label . body)
-  `(%with-debug ,level ,label (lambda () ,@body)))
-
-;;(define-macro (with-debug  level label . body)
-;;  `(begin ,@body))
-
+  ;; We have this as a macro in order to avoid procedure calls in the
+  ;; non-debugging case.  Unfortunately, the macro below duplicates BODY,
+  ;; which has a negative impact on memory usage and startup time (XXX).
+  (if (number? level)
+      `(if (or (>= (*debug*) ,level)
+               (memq ,label (*watched-symbols*)))
+           (%do-with-debug ,level ,label (lambda () ,@body))
+           (begin ,@body))
+      (error "with-debug: syntax error")))
 
 
 ; Example:
