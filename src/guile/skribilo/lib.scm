@@ -215,38 +215,9 @@
     (apply format (current-error-port) fmt obj)))
 
 
-
 ;;;
-;;; KEY-GET
+;;; %PROCEDURE-ARITY
 ;;;
-;;; We need to redefine the standard key-get to be more permissive. In
-;;; STklos key-get accepts a list which is formed only of keywords. In
-;;; Skribe, parameter lists are of the form
-;;;      (:title "..." :option "...." body1 body2 body3)
-;;; So is we find an element which is not a keyword, we skip it (unless it
-;;; follows a keyword of course). Since the compiler of extended lambda
-;;; uses the function key-get, it will now accept Skribe markups
-(define* (key-get lst key #:optional (default #f) default?)
-  (define (not-found)
-    (if default?
-	default
-	(error 'key-get "value ~S not found in list ~S" key lst)))
-  (let Loop ((l lst))
-    (cond
-      ((null? l)
-       (not-found))
-      ((not (pair? l))
-       (error 'key-get "bad list ~S" lst))
-      ((keyword? (car l))
-       (if (null? (cdr l))
-	   (error 'key-get "bad keyword list ~S" lst)
-	   (if (eq? (car l) key)
-	       (cadr l)
-	       (Loop (cddr l)))))
-       (else
-	(Loop (cdr l))))))
-
-
 (define (%procedure-arity proc)
   (car (procedure-property proc 'arity)))
 
