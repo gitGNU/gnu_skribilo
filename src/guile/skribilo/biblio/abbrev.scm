@@ -124,25 +124,37 @@
      . "P2P")
     ("([iI]nternational )?[cC]onference [oO]n [dD]ata [eE]ngineering"
      . "ICDE")
-    ("([cC]onference [oOn]) [mM]ass [sS]torage [sS]ystems( [aA]nd [tT]echnologies)?"
-     . "MSS")))
+    ("([cC]onference [oO]n )?[mM]ass [sS]torage [sS]ystems( [aA]nd [tT]echnologies)?"
+     . "MSS")
+    ("([sS]ymposium [oO]n )?[nN]etworked [sS]ystems [dD]esign [aA]nd [Ii]mplementation"
+     . "NSDI")))
 
 
 (define %ordinal-number-abbreviations
   ;; The poor man's abbreviation system.
-  ;; FIXME:  This doesn't work with things like "twenty-first"!
-  '(("[Ff]irst"    . "1st")
-    ("[sS]econd"   . "2nd")
-    ("[Tt]hird"    . "3rd")
-    ("[Ff]ourth"   . "4th")
-    ("[Ff]ifth"    . "5th")
-    ("[Ss]ixth"    . "6th")
-    ("[Ss]eventh"  . "7th")
-    ("[eE]ighth"   . "8th")
-    ("[Nn]inth"    . "9th")
-    ("[Tt]enth"    . "10th")
-    ("[Ee]leventh" . "11th")
-    ("[Tt]welfth"  . "12th")))
+
+  ;; FIXME: Given the current `abbreviate-string', there is no clean way to
+  ;; make it ignore things like "twenty-first" (instead of yielding an awful
+  ;; "twenty-1st").
+  '(("[Ff]irst"       . "1st")
+    ("[sS]econd"      . "2nd")
+    ("[Tt]hird"       . "3rd")
+    ("[Ff]ourth"      . "4th")
+    ("[Ff]ifth"       . "5th")
+    ("[Ss]ixth"       . "6th")
+    ("[Ss]eventh"     . "7th")
+    ("[eE]ighth"      . "8th")
+    ("[Nn]inth"       . "9th")
+    ("[Tt]enth"       . "10th")
+    ("[Ee]leventh"    . "11th")
+    ("[Tt]welfth"     . "12th")
+    ("[Tt]hirteenth"  . "13th")
+    ("[Ff]ourteenth"  . "14th")
+    ("[Ff]ifteenth"   . "15th")
+    ("[Ss]ixteenth"   . "16th")
+    ("[Ss]eventeenth" . "17th")
+    ("[Ee]ighteenth"  . "18th")
+    ("[Nn]ineteenth"  . "19th")))
 
 (define %common-booktitle-abbreviations
   ;; Common book title abbreviations.  This is used by
