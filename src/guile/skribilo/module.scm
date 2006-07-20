@@ -1,6 +1,6 @@
 ;;; module.scm  --  Integration of Skribe code as Guile modules.
 ;;;
-;;; Copyright 2005  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2005, 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -47,10 +47,11 @@
 
     (skribilo utils syntax) ;; `unless', `when', etc.
     (skribilo utils compat) ;; `skribe-load-path', etc.
+    (skribilo utils keywords) ;; `the-body', `the-options'
     (skribilo module)
     (skribilo ast)        ;; `<document>', `document?', etc.
     (skribilo config)
-    (skribilo runtime)    ;; `the-options', `the-body', `make-string-replace'
+    (skribilo runtime)    ;; `make-string-replace', etc.
     (skribilo biblio)
     (skribilo lib)        ;; `define-markup', `unwind-protect', etc.
     (skribilo resolve)
@@ -86,7 +87,7 @@
     ((ice-9 receive)          . (receive))))
 
 (define %skribe-core-modules
-  '("utils" "api" "index" "param" "sui"))
+  '("api" "index" "param" "sui"))
 
 
 

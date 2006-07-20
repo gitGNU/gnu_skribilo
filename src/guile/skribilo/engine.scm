@@ -38,7 +38,7 @@
 	   *current-engine*
 	   default-engine default-engine-set!
 	   make-engine copy-engine find-engine lookup-engine
-	   engine-custom engine-custom-set!
+	   engine-custom engine-custom-set! engine-custom-add!
 	   engine-format? engine-add-writer!
 	   processor-get-engine
 	   push-default-engine pop-default-engine
@@ -302,6 +302,11 @@ otherwise the requested engine is returned."
 	(set-car! (cdr c) val)
 	(slot-set! e 'customs (cons (list id val) customs)))))
 
+(define (engine-custom-add! e id val)
+   (let ((old (engine-custom e id)))
+      (if (unspecified? old)
+	  (engine-custom-set! e id (list val))
+	  (engine-custom-set! e id (cons val old)))))
 
 (define (engine-add-writer! e ident pred upred opt before action
 			    after class valid)

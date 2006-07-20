@@ -26,7 +26,7 @@
   :use-module (skribilo engine)
   :use-module (skribilo lib)
   :use-module (skribilo utils syntax)
-  :use-module (skribilo skribe utils) ;; `the-options', etc.
+  :use-module (skribilo utils keywords) ;; `the-options', etc.
   :use-module (ice-9 optargs))
 
 (fluid-set! current-reader %skribilo-module-reader)

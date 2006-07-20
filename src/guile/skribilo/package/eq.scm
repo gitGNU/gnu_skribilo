@@ -26,7 +26,7 @@
   :use-module (skribilo lib)
   :use-module (skribilo utils syntax)
   :use-module (skribilo module)
-  :use-module (skribilo skribe utils) ;; `the-options', etc.
+  :use-module (skribilo utils keywords) ;; `the-options', etc.
   :autoload   (skribilo skribe api) (it symbol sub sup)
   :autoload   (skribilo engine lout) (lout-illustration)
   :use-module (ice-9 optargs))

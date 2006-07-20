@@ -1,6 +1,7 @@
 ;;; ast.scm  --  Skribilo abstract syntax trees.
 ;;;
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
+;;; Copyright 2003, 2004  Manuel Serrano
 ;;; Copyright 2005, 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
@@ -47,9 +48,15 @@
 		       container-env-get
 
 	   <document> document? document-ident document-body
-		      document-options document-end))
+		      document-options document-end
 
-;;; Author:  Ludovic Courtès
+           ;; traversal
+           find-markup-ident
+           container-search-down search-down find-down find1-down
+           find-up find1-up
+           ast-document ast-chapter ast-section))
+
+;;; Author:  Erick Gallesio, Manuel Serrano, Ludovic Courtès
 ;;;
 ;;; Commentary:
 ;;;
@@ -363,6 +370,119 @@
 (define (document-body obj)  (slot-ref obj 'body))
 (define document-options     markup-options)
 (define document-env         container-env)
+
+
+
+;;;
+;;; AST traversal utilities.
+;;;
+
+
+;; The procedures below are almost unchanged compared to Skribe 1.2d's
+;; `lib.scm' file found in the `common' directory, written by Manuel Serrano
+;; (I removed uses of `with-debug' et al., though).
+
+
+(define (find-markup-ident ident)
+  (let ((r (find-markups ident)))
+    (if (or (pair? r) (null? r))
+        r
+        '())))
+
+(define (container-search-down pred obj)
+  (let loop ((obj (markup-body obj)))
+    (cond
+     ((pair? obj)
+      (apply append (map (lambda (o) (loop o)) obj)))
+     ((container? obj)
+      (let ((rest (loop (markup-body obj))))
+        (if (pred obj)
+            (cons obj rest)
+            rest)))
+     ((pred obj)
+      (list obj))
+     (else
+      '()))))
+
+(define (search-down pred obj)
+  (let loop ((obj (markup-body obj)))
+    (cond
+     ((pair? obj)
+      (apply append (map (lambda (o) (loop o)) obj)))
+     ((markup? obj)
+      (let ((rest (loop (markup-body obj))))
+        (if (pred obj)
+            (cons obj rest)
+            rest)))
+     ((pred obj)
+      (list obj))
+     (else
+      '()))))
+
+(define (find-down pred obj)
+  (let loop ((obj obj))
+    (cond
+     ((pair? obj)
+      (apply append (map (lambda (o) (loop o)) obj)))
+     ((markup? obj)
+      (if (pred obj)
+          (list (cons obj (loop (markup-body obj))))
+          '()))
+     (else
+      (if (pred obj)
+          (list obj)
+          '())))))
+
+(define (find1-down pred obj)
+  (let loop ((obj obj)
+             (stack '()))
+    (cond
+     ((memq obj stack)
+      (skribe-error 'find1-down "Illegal cyclic object" obj))
+     ((pair? obj)
+      (let liip ((obj obj))
+        (cond
+         ((null? obj)
+          #f)
+         (else
+          (or (loop (car obj) (cons obj stack))
+              (liip (cdr obj)))))))
+     ((pred obj)
+      obj)
+     ((markup? obj)
+      (loop (markup-body obj) (cons obj stack)))
+     (else
+      #f))))
+
+(define (find-up pred obj)
+  (let loop ((obj obj)
+             (res '()))
+    (cond
+     ((not (ast? obj))
+      res)
+     ((pred obj)
+      (loop (ast-parent obj) (cons obj res)))
+     (else
+      (loop (ast-parent obj) (cons obj res))))))
+
+(define (find1-up pred obj)
+  (let loop ((obj obj))
+    (cond
+     ((not (ast? obj))
+      #f)
+     ((pred obj)
+      obj)
+     (else
+      (loop (ast-parent obj))))))
+
+(define (ast-document m)
+  (find1-up document? m))
+
+(define (ast-chapter m)
+  (find1-up (lambda (n) (is-markup? n 'chapter)) m))
+
+(define (ast-section m)
+  (find1-up (lambda (n) (is-markup? n 'section)) m))
 
 
 ;;; arch-tag: e2489bd6-1b6d-4b03-bdfb-83cffd2f7ce7
