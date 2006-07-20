@@ -1,4 +1,4 @@
-;;; runtime.scm	-- Skribilo runtime system
+;;; strings.scm	-- Convenience functions to manipulate strings.
 ;;;
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
 ;;; Copyright 2005, 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
@@ -18,28 +18,21 @@
 ;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ;;; USA.
 
-(define-module (skribilo runtime)
-  ;; FIXME:  Useful procedures are scattered between here and
-  ;;         `(skribilo skribe utils)'.
-  :export (;; Utilities
-	   strip-ref-base string-canonicalize
-
-	   ;; String writing
+(define-module (skribilo utils strings)
+  :export (strip-ref-base string-canonicalize
 	   make-string-replace)
   :autoload   (skribilo parameters) (*ref-base*)
   :use-module (skribilo lib)
   :use-module (srfi srfi-13))
 
-
-;;; ======================================================================
+
 ;;;
-;;;				U T I L I T I E S
+;;; Utilities.
 ;;;
-;;; ======================================================================
 
-
-;;FIXME:  Remonter cette fonction
 (define (strip-ref-base file)
+  ;; Given FILE, a file path (a string), remove `(*ref-base*)'  from it.
+  ;; This is useful, e.g., for hyperlinks.
   (if (not (string? (*ref-base*)))
       file
       (let ((l (string-length (*ref-base*))))
@@ -54,8 +47,9 @@
 	   (substring file (+ l 1) (string-length file)))))))
 
 
-;; FIXME: Remonter cette fonction
 (define (string-canonicalize old)
+   ;; Return a string that is a canonical summarized representation of string
+   ;; OLD.  This is a one-way function.
    (let* ((l (string-length old))
 	  (new (make-string l)))
       (let loop ((r 0)
@@ -88,11 +82,10 @@
 
 
 
-;;; ======================================================================
+
 ;;;
-;;;			S T R I N G - W R I T I N G
+;;; String writing.
 ;;;
-;;; ======================================================================
 
 ;;
 ;; (define (%make-html-replace)
@@ -136,17 +129,17 @@
 			 str)
 	(get-output-string out)))))
 
-(define string->html
-  (%make-general-string-replace '((#\" "&quot;") (#\& "&amp;") (#\< "&lt;")
-				  (#\> "&gt;"))))
+(define %html-replacements
+  '((#\" "&quot;") (#\& "&amp;") (#\< "&lt;") (#\> "&gt;")))
+
+(define %string->html
+  (%make-general-string-replace %html-replacements))
 
 (define (make-string-replace lst)
   (let ((l (sort lst (lambda (r1 r2) (char<? (car r1) (car r2))))))
     (cond
-      ((equal? l '((#\" "&quot;") (#\& "&amp;") (#\< "&lt;") (#\> "&gt;")))
-       string->html)
+      ((equal? l %html-replacements)
+       %string->html)
       (else
        (%make-general-string-replace lst)))))
-
-
 

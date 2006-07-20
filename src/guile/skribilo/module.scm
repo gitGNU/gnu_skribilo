@@ -48,10 +48,10 @@
     (skribilo utils syntax) ;; `unless', `when', etc.
     (skribilo utils compat) ;; `skribe-load-path', etc.
     (skribilo utils keywords) ;; `the-body', `the-options'
+    (skribilo utils strings)  ;; `make-string-replace', etc.
     (skribilo module)
     (skribilo ast)        ;; `<document>', `document?', etc.
     (skribilo config)
-    (skribilo runtime)    ;; `make-string-replace', etc.
     (skribilo biblio)
     (skribilo lib)        ;; `define-markup', `unwind-protect', etc.
     (skribilo resolve)

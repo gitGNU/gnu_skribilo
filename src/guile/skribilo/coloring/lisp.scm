@@ -24,7 +24,7 @@
   :use-module (skribilo utils syntax)
   :use-module (skribilo source)
   :use-module (skribilo lib)
-  :use-module (skribilo runtime)
+  :use-module (skribilo utils strings)
   :use-module (srfi srfi-39)
   :use-module (ice-9 match)
   :autoload   (ice-9 regex)      (make-regexp)

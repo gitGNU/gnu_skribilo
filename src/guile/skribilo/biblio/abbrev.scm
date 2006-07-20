@@ -20,8 +20,8 @@
 
 (define-module (skribilo biblio abbrev)
   :use-module (srfi srfi-13)
-  :autoload   (skribilo ast)     (markup? markup-body-set!)
-  :autoload   (skribilo runtime) (make-string-replace)
+  :autoload   (skribilo ast)           (markup? markup-body-set!)
+  :autoload   (skribilo utils strings) (make-string-replace)
   :autoload   (ice-9 regex)      (regexp-substitute/global)
   :export (is-abbreviation? is-acronym? abbreviate-word
            abbreviate-string abbreviate-markup

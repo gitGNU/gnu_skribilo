@@ -27,7 +27,6 @@
   :export (verify))
 
 (use-modules (skribilo debug)
-	     (skribilo runtime)
 	     (skribilo ast)
 	     (skribilo utils syntax)
 	     (oop goops))

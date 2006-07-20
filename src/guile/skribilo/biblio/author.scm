@@ -24,7 +24,7 @@
   :use-module (skribilo biblio abbrev)
   :autoload   (skribilo ast)     (markup-option markup-body markup-ident)
   :autoload   (skribilo lib)     (skribe-error)
-  :autoload   (skribilo runtime) (make-string-replace)
+  :autoload   (skribilo utils strings) (make-string-replace)
   :export (comma-separated->author-list
 	   comma-separated->and-separated-authors
 

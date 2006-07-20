@@ -21,7 +21,7 @@
 
 
 (define-module (skribilo biblio)
-  :use-module (skribilo runtime)
+  :use-module (skribilo utils strings)
   :use-module (skribilo utils syntax) ;; `when', `unless'
 
   :autoload   (srfi srfi-34)         (raise)
