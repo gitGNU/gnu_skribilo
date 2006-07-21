@@ -6,4 +6,7 @@ New in Skribilo 1.2 (compared to Skribe 1.2d)
 
   * New markups: `~', `numref', `!lout', `lout-illustration'.
 
-  * Extended markups: `footnote' now takes a `:label' option.
+  * Extended markups:
+
+     - `footnote' now takes a `:label' option.
+     - `document' now takes a `:keywords' option.

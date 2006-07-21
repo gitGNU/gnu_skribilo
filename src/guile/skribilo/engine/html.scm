@@ -572,7 +572,7 @@
 ;*    document ...                                                     */
 ;*---------------------------------------------------------------------*/
 (markup-writer 'document
-   :options '(:title :author :ending :html-title :env)
+   :options '(:title :author :ending :html-title :env :keywords)
    :action (lambda (n e)
 	      (let* ((id (markup-ident n))
 		     (title (new markup
@@ -601,11 +601,21 @@
 ;*---------------------------------------------------------------------*/
 (markup-writer '&html-head
    :before (lambda (n e)
-	     (printf "<head>\n")
-	     (printf "<meta http-equiv=\"Content-Type\" content=\"text/html;")
-	     (printf "charset=~A\">\n" (engine-custom (find-engine 'html)
-						      'charset)))
+             (printf "<head>\n")
+             (printf "<meta http-equiv=\"Content-Type\" content=\"text/html;")
+             (printf "charset=~A\">\n" (engine-custom (find-engine 'html)
+                                                      'charset)))
    :after "</head>\n\n")
+
+;*---------------------------------------------------------------------*/
+;*    &html-meta ...                                                   */
+;*---------------------------------------------------------------------*/
+(markup-writer '&html-meta
+   :before "<meta name=\"keywords\" content=\""
+   :action (lambda (n e)
+             (let ((kw* (map ast->string (or (markup-body n) '()))))
+               (output (keyword-list->comma-separated kw*) e)))
+   :after  "\">\n")
 
 ;*---------------------------------------------------------------------*/
 ;*    &html-body ...                                                   */
@@ -1190,12 +1200,20 @@
 		     (class (markup-class n))
 		     (parent n)
 		     (body (html-browser-title n))))
+          (meta (new markup
+                   (markup '&html-meta)
+                   (ident (string-append id "-meta"))
+                   (class (markup-class n))
+                   (parent n)
+                   (body (markup-option n :keywords))))
 	  (head (new markup
 		   (markup '&html-head)
 		   (ident (string-append id "-head"))
 		   (class (markup-class n))
+                   (options (the-options (list :keywords
+                                               (markup-option n :keywords))))
 		   (parent n)
-		   (body header)))
+		   (body (list header meta))))
 	  (ftnote (new markup
 		     (markup '&html-footnotes)
 		     (ident (string-append id "-footnote"))

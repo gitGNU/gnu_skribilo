@@ -39,6 +39,10 @@
 	      (:html-title "The title of window of the HTML browser.")
 	      (:author "The authors of the document.")
 	      (:ending "An ending text.")
+	      (:keywords "A list of keywords which may be plain strings
+or markups.  The keywords will not appear in the final document but only
+as meta-information (e.g., using the HTML `meta' tag) if the engine used
+supports it.")
 	      (:env "A counter environment.")
 	      (#!rest node... "The document nodes."))
 	    :see-also '(author chapter toc))

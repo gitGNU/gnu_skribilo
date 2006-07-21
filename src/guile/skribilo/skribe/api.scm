@@ -51,7 +51,7 @@
 			 #!key
 			 (ident #f) (class "document")
 			 (title #f) (html-title #f) (author #f)
-			 (ending #f) (env '()))
+			 (ending #f) (keywords '()) (env '()))
    (new document
       (markup 'document)
       (ident (or ident
@@ -66,6 +66,20 @@
 			 (list 'section-counter 0) (list 'section-env '())
 			 (list 'footnote-counter 0) (list 'footnote-env '())
 			 (list 'figure-counter 0) (list 'figure-env '()))))))
+
+;*---------------------------------------------------------------------*/
+;*    keyword-list->comma-separated ...                                */
+;*---------------------------------------------------------------------*/
+(define-public (keyword-list->comma-separated kw*)
+  ;; Turn the the list of keywords (which may be strings or other markups)
+  ;; KW* into a markup where the elements of KW* are comma-separated.  This
+  ;; may commonly be used in handling the `:keywords' option of `document'.
+  (let loop ((kw* kw*) (result '()))
+    (if (null? kw*)
+        (reverse! result)
+        (loop (cdr kw*)
+              (cons* (if (pair? (cdr kw*)) ", " "")
+                     (car kw*) result)))))
 
 ;*---------------------------------------------------------------------*/
 ;*    author ...                                                       */

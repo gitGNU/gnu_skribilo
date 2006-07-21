@@ -49,6 +49,8 @@
 ;*    The document                                                     */
 ;*---------------------------------------------------------------------*/
 (document :title "Skribilo User Manual"
+   :keywords '("Skribilo" "Skribe" "User Manual" "text processing"
+	       "HTML" "LaTeX" "Lout" "PostScript" "PDF")
    :env '((example-counter 0) (example-env ()))
    :author (list (author :name "Erick Gallesio"
 		    :affiliation "Université de Nice - Sophia Antipolis"
@@ -79,7 +81,9 @@ produce a high-quality printed document, and so on.]
 Everyone needing to design web pages, info documents, man pages or
 Postscript files can use Skribe. In particular, there is ,(bold "no need")
 for programming skills in order to use Skribe. Skribe can be used as
-any text description languages such as TeX, LaTeX or HTML.])
+any text description languages such as ,(ref :text [LaTeX] :url
+"http://latex-project.org/"), ,(ref :text [Lout] :url
+"http://lout.sf.net/") or HTML.])
    
    (section :title "Why using Skribe?" :number #f [
 There are three main reasons for using Skribe:]

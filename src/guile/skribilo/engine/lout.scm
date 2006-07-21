@@ -642,7 +642,8 @@
 			 (pdf-author #t)
 
 			 ;; Keywords (a list of string) in the PDF
-			 ;; document information.
+			 ;; document information.  This custom is deprecated,
+                         ;; use the `:keywords' option of `document' instead.
 			 (pdf-keywords #f)
 
 			 ;; Extra PDF information, an alist of key-value
@@ -812,15 +813,10 @@
 		   (if (or (string? t) (ast? t))
 		       t
 		       (markup-option doc :title))))
-	 (keywords (engine-custom engine 'pdf-keywords))
-	 (extra-fields (engine-custom engine 'pdf-extra-info))
-	 (stringify-kw (lambda (kws)
-			 (let loop ((kws kws) (s ""))
-			   (if (null? kws) s
-			       (loop (cdr kws)
-				     (string-append s (car kws)
-						    (if (pair? (cdr kws))
-							", " ""))))))))
+	 (keywords (or (engine-custom engine 'pdf-keywords)
+                       (map ast->string (markup-option doc :keywords))))
+	 (extra-fields (engine-custom engine 'pdf-extra-info)))
+
     (string-append "[ "
 		   (if title
 		       (docinfo-field "Title" (ast->string title))
@@ -837,13 +833,11 @@
 						(else (ast->string author)))
 					  ""))
 		       "")
-		   (if keywords
+		   (if (pair? keywords)
 		       (docinfo-field "Keywords"
-				      (cond ((string? keywords)
-					     keywords)
-					    ((pair? keywords)
-					     (stringify-kw keywords))
-					    (else "")))
+                                      (apply string-append
+                                             (keyword-list->comma-separated
+                                              keywords)))
 		       "")
 		   ;; arbitrary key-value pairs, see sect. 4.7, "Info
 		   ;; dictionary" of the `pdfmark' reference.
@@ -975,7 +969,7 @@
 ;*    document ...                                                     */
 ;*---------------------------------------------------------------------*/
 (markup-writer 'document
-   :options '(:title :author :ending :env)
+   :options '(:title :author :ending :keywords :env)
    :before (lambda (n e) ;; `e' is the engine
 	     (let* ((doc-type (let ((d (engine-custom e 'document-type)))
 				(if (string? d)
