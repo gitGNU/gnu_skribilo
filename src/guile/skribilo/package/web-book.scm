@@ -35,10 +35,11 @@
 		(center
 		 (table :width 97. :border 1 :frame 'box
 		    :cellpadding 0 :cellspacing 0
-		    (tr :bg (engine-custom e 'title-background) 
-		       (th (color :fg (engine-custom e 'background) 
-			      (bold "main page"))))
-		    (tr :bg (engine-custom e 'background) 
+		    (tr :bg (engine-custom e 'title-background)
+		       (th (let ((text (bold "main page"))
+                                 (bg   (engine-custom e 'background)))
+                             (if bg (color :fg bg text) text))))
+		    (tr :bg (engine-custom e 'background)
 		       (td (apply table :width 100. :border 0
 				  (tr (td :align 'left 
 					 :valign 'top 
@@ -60,12 +61,13 @@
 (define chapter-browsing
    (lambda (n e)
       (center
-       (table :width 97. :border 1 :frame 'box 
+       (table :width 97. :border 1 :frame 'box
 	  :cellpadding 0 :cellspacing 0
-	      (tr :bg (engine-custom e 'title-background) 
-		  (th (color :fg (engine-custom e 'background) 
-			     (bold (markup-option n :title)))))
-	      (tr :bg (engine-custom e 'background) 
+	      (tr :bg (engine-custom e 'title-background)
+		  (th (let ((title (bold (markup-option n :title)))
+                            (bg    (engine-custom e 'background)))
+                        (if bg (color :fg title) title))))
+	      (tr :bg (engine-custom e 'background)
 		  (td (toc (handle n) :chapter #t :section #t :subsection #t)))))))
 
 ;*---------------------------------------------------------------------*/
@@ -79,10 +81,11 @@
 	 (center
 	    (table :width 97. :border 1 :frame 'box
 	       :cellpadding 0 :cellspacing 0
-	       (tr :bg (engine-custom e 'title-background) 
-		  (th (color :fg (engine-custom e 'background)
-			 (bold (if chap "Chapters" "Sections")))))
-	       (tr :bg (engine-custom e 'background) 
+	       (tr :bg (engine-custom e 'title-background)
+		  (th (let ((text (bold (if chap "Chapters" "Sections")))
+                            (bg   (engine-custom e 'background)))
+                        (if bg (color :fg bg text) text))))
+	       (tr :bg (engine-custom e 'background)
 		  (td (if chap
 			  (toc (handle n) :chapter #t :section #f)
 			  (toc (handle n) :section #t :subsection #t)))))))))

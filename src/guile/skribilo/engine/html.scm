@@ -115,7 +115,7 @@
 		   ;; emit-sui
 		   (emit-sui #f)
 		   ;; the body
-		   (background "#ffffff")
+		   (background #f)
 		   (foreground #f)
 		   ;; the margins
 		   (margin-padding 3)
@@ -124,42 +124,42 @@
 		   (section-left-margin #f)
 		   (left-margin-font #f)
 		   (left-margin-size 17.)
-		   (left-margin-background "#dedeff")
+		   (left-margin-background #f)
 		   (left-margin-foreground #f)
 		   (right-margin #f)
 		   (chapter-right-margin #f)
 		   (section-right-margin #f)
 		   (right-margin-font #f)
 		   (right-margin-size 17.)
-		   (right-margin-background "#dedeff")
+		   (right-margin-background #f)
 		   (right-margin-foreground #f)
 		   ;; author configuration
 		   (author-font #f)
 		   ;; title configuration
 		   (title-font #f)
-		   (title-background "#8381de")
+		   (title-background #f)
 		   (title-foreground #f)
 		   (file-title-separator " -- ")
 		   ;; html file naming
 		   (file-name-proc ,html-file-default)
 		   ;; index configuration
-		   (index-header-font-size +2.)
+		   (index-header-font-size #f) ;; +2.
 		   ;; chapter configuration
 		   (chapter-number->string number->string)
 		   (chapter-file #f)
 		   ;; section configuration
 		   (section-title-start "<h3>")
 		   (section-title-stop "</h3>")
-		   (section-title-background "#dedeff")
-		   (section-title-foreground "black")
+		   (section-title-background #f)
+		   (section-title-foreground #f)
 		   (section-title-number-separator " ")
 		   (section-number->string number->string)
 		   (section-file #f)
 		   ;; subsection configuration
 		   (subsection-title-start "<h3>")
 		   (subsection-title-stop "</h3>")
-		   (subsection-title-background "#ffffff")
-		   (subsection-title-foreground "#8381de")
+		   (subsection-title-background #f)
+		   (subsection-title-foreground #f)
 		   (subsection-title-number-separator " ")
 		   (subsection-number->string number->string)
 		   (subsection-file #f)
@@ -167,7 +167,7 @@
 		   (subsubsection-title-start "<h4>")
 		   (subsubsection-title-stop "</h4>")
 		   (subsubsection-title-background #f)
-		   (subsubsection-title-foreground "#8381de")
+		   (subsubsection-title-foreground #f)
 		   (subsubsection-title-number-separator " ")
 		   (subsubsection-number->string number->string)
 		   (subsubsection-file #f)
@@ -877,7 +877,10 @@
       (when title
 	 (display "<table width=\"100%\" class=\"skribetitle\" cellspacing=\"0\" cellpadding=\"0\"><tbody>\n<tr>")
 	 (if (html-color-spec? tbg)
-	     (printf "<td align=\"center\" bgcolor=\"~a\">" tbg)
+	     (printf "<td align=\"center\"~A>"
+                     (if (html-color-spec? tbg)
+                         (string-append "bgcolor=\"" tbg "\"")
+                         ""))
 	     (display "<td align=\"center\">"))
 	 (if (string? tfg)
 	     (printf "<font color=\"~a\">" tfg))
@@ -1068,13 +1071,9 @@
 		    (display "</td></tr>"))
 		 ;; name
 		 (printf "<tr><td align=\"~a\">" align)
-		 (if nfn
-		     (printf "<font ~a>\n" nfn)
-		     (display "<font size=\"+2\"><i>\n"))
+		 (if nfn (printf "<font ~a>\n" nfn))
 		 (output name e)
-		 (if nfn
-		     (printf "</font>\n")
-		     (display "</i></font>\n"))
+		 (if nfn (printf "</font>\n"))
 		 (display "</td></tr>")
 		 ;; title
 		 (if title (row title))
