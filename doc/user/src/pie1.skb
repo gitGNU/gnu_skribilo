@@ -1,0 +1,13 @@
+;; A sad pie chart.
+;;
+
+(pie :title [Casualties in the Israel-Lebanon 2006 Conflict (source:
+English Wikipedia page, 2006-07-23)]
+     :total 450 ;; to show the uncertainty on figures
+     :ident "pie-lebanon-2006"
+     :labels 'outside :fingers? #t
+
+  (slice :weight   8 :color "black" [Hezbollah militants])
+  (slice :weight  42 :color "blue"  [soldiers])
+  (slice :weight 317 :color "red" :detach? #t
+	[civilians (,(sliceweight :percentage? #t)%)]))

@@ -1,0 +1,69 @@
+;;; Copyright 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;;
+;;;
+;;; This program is free software; you can redistribute it and/or modify
+;;; it under the terms of the GNU General Public License as published by
+;;; the Free Software Foundation; either version 2 of the License, or
+;;; (at your option) any later version.
+;;;
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;;
+;;; You should have received a copy of the GNU General Public License
+;;; along with this program; if not, write to the Free Software
+;;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+;;; USA.
+
+;;; FIXME: This is a stub and must be completed!
+
+(chapter :title [Pie Charts] :ident "pie-charts"
+
+   (p [Skribilo contains a pie-chart formatting package, located in the
+,(tt [(skribilo package pie)]) module.  It allows users to produces
+represent numeric data as pie charts as in the following example:]
+
+	(disp (pie :title [Use of Document Formatting Systems]
+	           :fingers? #t :labels 'outside
+	           :initial-angle 90
+	           :ident "pie-skribilo-rulez"
+                 (slice :weight 10 :color "red" :detach? #t
+                   (bold [Skribilo]))
+                 (slice :weight  6 :color "green"     "Skribe")
+                 (slice :weight  6 :color "blue"      "Lout")
+                 (slice :weight  4 :color "lightgrey" "LaTeX")
+                 (slice :weight  2 :color "yellow"    "Docbook")
+                 (slice :weight  1 :color "black"     "others"))))
+
+   (p [A default implementation, which uses ,(ref :text [Ploticus] :url
+"http://ploticus.sf.net") as an external program, is available for all
+engines.  There is also a specific implementation for the Lout engine
+which relies on Lout's own pie-chart package.  In the latter case, you
+don't need to have Ploticus installed, but you need it in the former.])
+   (p [Currently it only supports slice-coloring, but support for
+textures (particularly useful for black & white printouts) could be
+added in the future.])
+   
+   (section :title [Syntax]
+      
+      (p [Let us start with a simple example:]
+	
+	(example-produce
+	  (example :legend "Example of a pie chart"
+	     (prgm :file "src/pie1.skb"))
+	  (disp (include "src/pie1.skb"))))
+      
+      (p [This illustrates the three markups provided by the ,(tt [pie])
+package, namely ,(tt [pie]), ,(tt [slice]), and ,(tt [sliceweight]).
+This last markup returns the weight of the slice it is used in, be it as
+a percentage or an absolute value.  Note that the ,(tt [:total]) option
+of ,(tt [pie]) can be used to create pie charts no entirely filled.])
+      (p [Various options allow the pie layout to be controlled:]
+	
+	(example-produce
+	  (example :legend "Specifying the layout of a pie chart"
+	     (prgm :file "src/pie2.skb"))
+	  (disp (include "src/pie2.skb"))))))
+	
+;;; arch-tag: 60382016-3a63-4466-83e0-46a259cb39ab

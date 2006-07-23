@@ -20,7 +20,8 @@
 ;*---------------------------------------------------------------------*/
 ;*    Packages							       */
 ;*---------------------------------------------------------------------*/
-(use-modules (skribilo package eq))
+(use-modules (skribilo package eq)
+	     (skribilo package pie))
 
 ;*---------------------------------------------------------------------*/
 ;*    HTML custom                                                      */
@@ -135,6 +136,9 @@ as HTML, Info pages, man pages, Postscript, etc.]))))
 
 ;;; Equations
 (include "eq.skb")
+
+;;; Pie charts
+(include "pie.skb")
 
 ;;; Standard Library
 (include "lib.skb")

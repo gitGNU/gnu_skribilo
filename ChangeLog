@@ -2,6 +2,30 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-07-23 20:47:15 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-63
+
+    Summary:
+      Added a pie-chart package that can use either Ploticus or Lout.
+    Revision:
+      skribilo--devel--1.2--patch-63
+
+    * doc/user/user.skb: Use the `pie' package and include `pie.skb'.
+
+    new files:
+     doc/user/pie.skb doc/user/src/.arch-ids/pie1.skb.id
+     doc/user/src/.arch-ids/pie2.skb.id doc/user/src/pie1.skb
+     doc/user/src/pie2.skb src/guile/skribilo/package/pie.scm
+     src/guile/skribilo/package/pie/.arch-ids/=id
+     src/guile/skribilo/package/pie/lout.scm
+
+    modified files:
+     ChangeLog doc/user/user.skb
+
+    new directories:
+     src/guile/skribilo/package/pie
+     src/guile/skribilo/package/pie/.arch-ids
+
+
 2006-07-23 20:36:51 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-62
 
     Summary:
