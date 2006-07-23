@@ -42,8 +42,15 @@
          '(colon-keywords no-scsh-block-comments
            srfi30-block-comments srfi62-sexp-comments)
          (lambda (chr port read)
-           (error "unexpected character in Skribilo module"
-                  chr))
+	   (let ((file (port-filename port))
+		 (line (port-line port))
+		 (column (port-column port)))
+	     (error (string-append
+		     (if (string? file)
+			 (format #f "~a:~a:~a: " file line column)
+			 "")
+		     "unexpected character in Skribilo module")
+		    chr)))
 
          ;; By default, don't record positions: this yields a nice read
          ;; performance improvement.

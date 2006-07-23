@@ -2,6 +2,20 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-07-23 20:36:51 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-62
+
+    Summary:
+      Improved error reporting of the Skribilo module reader.
+    Revision:
+      skribilo--devel--1.2--patch-62
+
+    * src/guile/skribilo/utils/syntax.scm (%skribilo-module-reader): Improved
+      error reporting by showing the location of the unexpected character.
+
+    modified files:
+     ChangeLog src/guile/skribilo/utils/syntax.scm
+
+
 2006-07-23 14:38:34 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-61
 
     Summary:
