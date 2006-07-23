@@ -313,7 +313,9 @@ otherwise the requested engine is returned."
   ;; Add a writer to engine E.  If IDENT is a symbol, then it should denote
   ;; a markup name and the writer being added is specific to that markup.  If
   ;; IDENT is `#t' (for instance), then it is assumed to be a ``free writer''
-  ;; that may apply to any kind of markup for which PRED returns true.
+  ;; that may apply to any kind of markup for which PRED returns true.  The
+  ;; order in which writers are added matters (it should be the same as the
+  ;; lookup order), hence the use of `append' below.
 
   (define (check-procedure name proc arity)
     (cond
@@ -359,9 +361,10 @@ otherwise the requested engine is returned."
     (if (symbol? ident)
 	(let ((writers (slot-ref e 'writers)))
 	  (hashq-set! writers ident
-		      (cons n (hashq-ref writers ident '()))))
+		      (append (hashq-ref writers ident '())
+			      (list n))))
 	(slot-set! e 'free-writers
-		   (cons n (slot-ref e 'free-writers))))
+		   (append (slot-ref e 'free-writers) (list n))))
     n))
 
 

@@ -2,6 +2,27 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-07-23 14:38:34 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-61
+
+    Summary:
+      Fixed `engine-add-writer!' so that the insertion order is kept.
+    Revision:
+      skribilo--devel--1.2--patch-61
+
+    * src/guile/skribilo/engine.scm (engine-add-writer!): Use `append'
+      instead of `cons' when adding a writer, so that the insertion order is
+      honored when lookups are performed.  This fixes a generation bug (e.g.,
+      for the first page of the User Manual) and slightly improves
+      performance.
+    
+    * src/guile/skribilo/writer.scm (lookup-markup-writer): Documented the
+      impact of registration order.
+
+    modified files:
+     ChangeLog src/guile/skribilo/engine.scm
+     src/guile/skribilo/writer.scm
+
+
 2006-07-14 14:42:40 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-59
 
     Summary:
