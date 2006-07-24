@@ -814,7 +814,8 @@
 		       t
 		       (markup-option doc :title))))
 	 (keywords (or (engine-custom engine 'pdf-keywords)
-                       (map ast->string (markup-option doc :keywords))))
+                       (map ast->string
+                            (or (markup-option doc :keywords) '()))))
 	 (extra-fields (engine-custom engine 'pdf-extra-info)))
 
     (string-append "[ "

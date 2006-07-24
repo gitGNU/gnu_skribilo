@@ -1209,8 +1209,6 @@
 		   (markup '&html-head)
 		   (ident (string-append id "-head"))
 		   (class (markup-class n))
-                   (options (the-options (list :keywords
-                                               (markup-option n :keywords))))
 		   (parent n)
 		   (body (list header meta))))
 	  (ftnote (new markup
