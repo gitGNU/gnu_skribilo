@@ -33,7 +33,8 @@
   :autoload   (skribilo engine lout) (lout-illustration)
   :autoload   (ice-9 popen)          (open-output-pipe)
   :use-module (ice-9 optargs)
-  :export     (pie-sliceweight-value pie-remove-markup))
+  :export     (%ploticus-program %ploticus-debug?
+               pie-sliceweight-value pie-remove-markup))
 
 (fluid-set! current-reader %skribilo-module-reader)
 

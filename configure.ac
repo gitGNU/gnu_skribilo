@@ -21,6 +21,11 @@ GUILE_MODULE_REQUIRED([srfi srfi-35])
 AC_PATH_PROG([LOUT], [lout], [not-found])
 AM_CONDITIONAL([HAVE_LOUT], [test "x$LOUT" != "xnot-found"])
 
+# Look for Ploticus.
+AC_PATH_PROGS([PLOTICUS], [ploticus pl], [not-found])
+AM_CONDITIONAL([HAVE_PLOTICUS], [test "x$PLOTICUS" != "xnot-found"])
+
+
 AC_SUBST([SKRIBILO_DOC_DIR], ["$datadir/doc/skribilo"])
 AC_SUBST([SKRIBILO_EXT_DIR], ["$datadir/skribilo/1.2/"])
 AC_SUBST([SKRIBILO_SKR_PATH], ["$GUILE_SITE/"])

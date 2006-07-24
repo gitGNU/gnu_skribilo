@@ -23,6 +23,11 @@
 (use-modules (skribilo package eq)
 	     (skribilo package pie))
 
+;; Load the compile-time configuration file.
+(load "doc-config.scm")
+
+(if %have-ploticus? (set! %ploticus-program %ploticus-path))
+
 ;*---------------------------------------------------------------------*/
 ;*    HTML custom                                                      */
 ;*---------------------------------------------------------------------*/
@@ -138,7 +143,7 @@ as HTML, Info pages, man pages, Postscript, etc.]))))
 (include "eq.skb")
 
 ;;; Pie charts
-(include "pie.skb")
+(if %have-ploticus? (include "pie.skb"))
 
 ;;; Standard Library
 (include "lib.skb")

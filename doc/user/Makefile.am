@@ -8,7 +8,8 @@ EXTRA_DIST = bib.skb char.skb colframe.skb document.skb emacs.skb	\
   skribe-config.skb skribec.skb skribeinfo.skb slide.skb start.skb	\
   syntax.skb table.skb toc.skb user.skb xmle.skb
 
-BUILT_SOURCES = user.html
+BUILT_SOURCES = doc-config.scm
+html_DATA = user.html
 
 skribilo = $(top_srcdir)/src/skribilo
 load_path = $(top_srcdir)/src/guile:$(top_srcdir)/src/guile/skribilo/package
@@ -19,7 +20,7 @@ load_path = $(top_srcdir)/src/guile:$(top_srcdir)/src/guile/skribilo/package
 
 if HAVE_LOUT
 
-BUILT_SOURCES += user.ps
+ps_DATA = user.ps
 
 %.lout: %.skb
 	GUILE_LOAD_PATH=$(load_path):$$GUILE_LOAD_PATH \
@@ -30,3 +31,11 @@ BUILT_SOURCES += user.ps
 
 endif
 
+if HAVE_PLOTICUS
+doc-config.scm:
+	-echo "(define %have-ploticus? #t)" > $@
+	-echo "(define %ploticus-path \"$(PLOTICUS)\")" >> $@
+else
+doc-config.scm:
+	-echo "(define %have-ploticus? #f) (define %ploticus-path #f)" > $@
+endif
