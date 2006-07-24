@@ -163,8 +163,7 @@
 
 (define (lookup-markup-writer node e)
   ;; Find the writer that applies best to NODE.  See also `markup-writer-get'
-  ;; and `markup-writer-get*'.  Writers are looked up in the order in which
-  ;; they were registered.
+  ;; and `markup-writer-get*'.
 
   (define (matching-writer writers)
     (find (lambda (w)
