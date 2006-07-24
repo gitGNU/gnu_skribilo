@@ -19,7 +19,7 @@
 ;;; USA.
 
 (define-module (skribilo package pie)
-  :autoload   (skribilo ast)    (markup? markup-ident)
+  :autoload   (skribilo ast)    (markup? markup-ident ast-parent)
   :autoload   (skribilo output) (output)
   :use-module (skribilo writer)
   :use-module (skribilo engine)

@@ -27,6 +27,7 @@
   :use-module (skribilo lib)
   :use-module (skribilo utils syntax)
   :use-module (skribilo utils keywords) ;; `the-options', etc.
+  :autoload   (skribilo engine lout) (lout-color-specification)
   :use-module (ice-9 optargs))
 
 (fluid-set! current-reader %skribilo-module-reader)
@@ -84,7 +85,7 @@
 
 		 ;; We assume `:radius' to be centimeters
 		 (if (markup-option node :radius)
-		     (printf "  radius { ~ac }\n"
+		     (format #t "  radius { ~ac }\n"
 			     (markup-option node :radius)))
 
 		 (format #t "  labelradius { ~a }\n"

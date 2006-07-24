@@ -921,7 +921,7 @@
 		(if (< size 0) "0.3f" "1.5f")
 		"1.0f"))))
 
-(define (lout-color-specification skribe-color)
+(define-public (lout-color-specification skribe-color)
   ;; Return a Lout color name, ie. a string which is either an English color
   ;; name or something like "rgb 0.5 0.2 0.6".  `skribe-color' is a string
   ;; representing a Skribe color such as "black" or "#ffffff".
