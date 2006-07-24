@@ -67,14 +67,14 @@
 		 (author :name "Ludovic Courtès"
 		    :email (mailto *courtes-mail*)))
    
-   (linebreak 1)
-   (center (frame (bold (font :size 1. [
-This is the documentation for Skribe version
-,(color :fg "red" (skribe-release)).]))))
-   (linebreak 1)
+(p :class "welcome"
+   [Welcome to the User Manual for Skribilo version ,(skribe-release).
+If you are new to Skribilo, please read the ,(ref :ident "intro"
+:text [introduction]) first.])
+
 
 ;;; Introduction
-(chapter :title "Introduction" :number #f :toc #f :file #f [
+(chapter :title "Introduction" :ident "intro" :number #f :toc #t :file #f [
 Skribe is a programming language designed for implementing electronic
 documents. It is mainly designed for the writing of technical documents
 such as the documentation of computer programs. With Skribe these
