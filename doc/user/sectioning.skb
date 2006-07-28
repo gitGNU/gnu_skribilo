@@ -101,7 +101,7 @@ paragraphs.])
 (p [The function ,(code "p") is an alias for ,(code "paragraph").])
 (doc-markup 'p
 	    '((#!rest node... "The nodes of the paragraph."))
-	    :source "skribilo/skribe/api.scm"
+	    :source "skribilo/package/base.scm"
 	    :see-also '(document chapter section paragraph)))
 
 ;*--- blockquote -----------------------------------------------------*/

@@ -330,7 +330,7 @@
 			   (idx *markup-index*)
 			   (idx-note "definition")
 		           (idx-suffix #f)
-			   (source "skribilo/skribe/api.scm")
+			   (source "skribilo/package/base.scm")
 			   (def #f)
 			   (see-also '())
 			   (others '())

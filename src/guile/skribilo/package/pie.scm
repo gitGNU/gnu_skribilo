@@ -28,10 +28,10 @@
   :use-module (skribilo utils keywords) ;; `the-options', etc.
   :use-module (skribilo utils strings)  ;; `make-string-replace'
   :use-module (skribilo module)
-  :autoload   (skribilo color)       (skribe-color->rgb)
-  :autoload   (skribilo skribe api)  (bold)
-  :autoload   (skribilo engine lout) (lout-illustration)
-  :autoload   (ice-9 popen)          (open-output-pipe)
+  :autoload   (skribilo color)        (skribe-color->rgb)
+  :autoload   (skribilo package base) (bold)
+  :autoload   (skribilo engine lout)  (lout-illustration)
+  :autoload   (ice-9 popen)           (open-output-pipe)
   :use-module (ice-9 optargs)
   :export     (%ploticus-program %ploticus-debug?
                pie-sliceweight-value pie-remove-markup))

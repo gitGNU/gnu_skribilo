@@ -1,4 +1,4 @@
-;;; api.scm -- The markup API of Skribe/Skribilo.
+;;; base.scm -- The base markup package of Skribe/Skribilo.
 ;;;
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;; Copyright 2005, 2006  Ludovic Courtès  <ludovic.courtes@laas.fr>
@@ -19,10 +19,33 @@
 ;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 ;;; USA.
 
-(define-skribe-module (skribilo skribe api)
+(define-module (skribilo package base)
+  :use-syntax (skribilo lib)
+  :use-syntax (skribilo reader)
+  :use-syntax (skribilo utils syntax)
+  :use-syntax (ice-9 optargs)
+
+  :use-module (skribilo ast)
+  :use-module (skribilo resolve)
+  :use-module (skribilo utils keywords)
+  :autoload   (srfi srfi-1)        (every any filter)
+  :autoload   (skribilo evaluator) (include-document)
+  :autoload   (skribilo engine)    (engine?)
+
+  ;; optional ``sub-packages''
+  :autoload   (skribilo biblio)    (default-bib-table resolve-bib)
+  :autoload   (skribilo color)     (skribe-use-color!)
+  :autoload   (skribilo source)    (language? source-read-lines source-fontify)
+  :autoload   (skribilo prog)      (make-prog-body resolve-line)
+
+  :use-module (skribilo module) ;; needed before loading the following one
+  :autoload   (skribilo skribe index) (make-index-table)
+
   :replace (symbol))
 
-;;; Author:  Manuel Serrano
+(fluid-set! current-reader (make-reader 'skribe))
+
+;;; Author: Manuel Serrano
 ;;; Commentary:
 ;;;
 ;;; This module contains all the core markups of Skribe/Skribilo.
@@ -30,8 +53,8 @@
 ;;; Code:
 
 
-;;; The contents of the file below are unchanged compared to Skribe 1.2d's
-;;; `api.scm' file found in the `common' directory.
+;;; The contents of the file below are (almost) unchanged compared to Skribe
+;;; 1.2d's `api.scm' file found in the `common' directory.
 
 
 
@@ -41,7 +64,7 @@
 (define-markup (include file)
    (if (not (string? file))
        (skribe-error 'include "Illegal file (string expected)" file)
-       (skribe-include file)))
+       (include-document file)))
 
 ;*---------------------------------------------------------------------*/
 ;*    document ...                                                     */
@@ -56,7 +79,7 @@
       (markup 'document)
       (ident (or ident
 		 (ast->string title)
-		 (symbol->string (gensym 'document))))
+		 (symbol->string (gensym "document"))))
       (class class)
       (required-options '(:title :author :ending))
       (options (the-options opts :ident :class :env))
@@ -101,7 +124,7 @@
        (skribe-error 'author "Illegal align value" align)
        (new container
 	  (markup 'author)
-	  (ident (or ident (symbol->string (gensym 'author))))
+	  (ident (or ident (symbol->string (gensym "author"))))
 	  (class class)
 	  (required-options '(:name :title :affiliation :email :url :address :phone :photo :align))
 	  (options `((:name ,name)
@@ -121,7 +144,7 @@
    (let ((body (the-body opts)))
       (new container
 	 (markup 'toc)
-	 (ident (or ident (symbol->string (gensym 'toc))))
+	 (ident (or ident (symbol->string (gensym "toc"))))
 	 (class class)
 	 (required-options '())
 	 (options `((:chapter ,chapter)
@@ -161,7 +184,7 @@
 			title (html-title #f) (file #f) (toc #t) (number #t))
    (new container
       (markup 'chapter)
-      (ident (or ident (symbol->string (gensym 'chapter))))
+      (ident (or ident (symbol->string (gensym "chapter"))))
       (class class)
       (required-options '(:title :file :toc :number))
       (options `((:toc ,toc)
@@ -201,7 +224,7 @@
 			title (file #f) (toc #t) (number #t))
    (new container
       (markup 'section)
-      (ident (or ident (symbol->string (gensym 'section))))
+      (ident (or ident (symbol->string (gensym "section"))))
       (class class)
       (required-options '(:title :toc :file :toc :number))
       (options `((:number ,(section-number number 'section))
@@ -228,7 +251,7 @@
 			   title (file #f) (toc #t) (number #t))
    (new container
       (markup 'subsection)
-      (ident (or ident (symbol->string (gensym 'subsection))))
+      (ident (or ident (symbol->string (gensym "subsection"))))
       (class class)
       (required-options '(:title :toc :file :number))
       (options `((:number ,(section-number number 'subsection))
@@ -252,7 +275,7 @@
 			      title (file #f) (toc #f) (number #t))
    (new container
       (markup 'subsubsection)
-      (ident (or ident (symbol->string (gensym 'subsubsection))))
+      (ident (or ident (symbol->string (gensym "subsubsection"))))
       (class class)
       (required-options '(:title :toc :number :file))
       (options `((:number ,(section-number number 'subsubsection))
@@ -272,7 +295,7 @@
 (define-markup (~ #!rest opts #!key (class #f))
   (new markup
      (markup '~)
-     (ident (gensym '~))
+     (ident (gensym "~"))
      (class class)
      (required-options '())
      (options (the-options opts :class))
@@ -286,7 +309,7 @@
    ;; The `:label' option used to be called `:number'.
    (new container
       (markup 'footnote)
-      (ident (symbol->string (gensym 'footnote)))
+      (ident (symbol->string (gensym "footnote")))
       (class class)
       (required-options '())
       (options `((:label
@@ -306,7 +329,7 @@
 ;*---------------------------------------------------------------------*/
 (define-markup (linebreak #!rest opts #!key (ident #f) (class #f))
    (let ((ln (new markup
-		(ident (or ident (symbol->string (gensym 'linebreak))))
+		(ident (or ident (symbol->string (gensym "linebreak"))))
 		(class class)
 		(markup 'linebreak)))
 	 (num (the-body opts)))
@@ -330,7 +353,7 @@
 		      (width 100.) (height 1))
    (new markup
       (markup 'hrule)
-      (ident (or ident (symbol->string (gensym 'hrule))))
+      (ident (or ident (symbol->string (gensym "hrule"))))
       (class class)
       (required-options '())
       (options `((:width ,width)
@@ -348,7 +371,7 @@
 		      (bg #f) (fg #f) (width #f) (margin #f))
    (new container
       (markup 'color)
-      (ident (or ident (symbol->string (gensym 'color))))
+      (ident (or ident (symbol->string (gensym "color"))))
       (class class)
       (required-options '(:bg :fg :width))
       (options `((:bg ,(if bg (skribe-use-color! bg) bg))
@@ -366,7 +389,7 @@
 		      (width #f) (margin 2) (border 1))
    (new container
       (markup 'frame)
-      (ident (or ident (symbol->string (gensym 'frame))))
+      (ident (or ident (symbol->string (gensym "frame"))))
       (class class)
       (required-options '(:width :border :margin))
       (options `((:margin ,margin)
@@ -387,7 +410,7 @@
 		     (size #f) (face #f))
    (new container
       (markup 'font)
-      (ident (or ident (symbol->string (gensym 'font))))
+      (ident (or ident (symbol->string (gensym "font"))))
       (class class)
       (required-options '(:size))
       (options (the-options opts :ident :class))
@@ -405,7 +428,7 @@
       ((center left right)
        (new container
 	  (markup 'flush)
-	  (ident (or ident (symbol->string (gensym 'flush))))
+	  (ident (or ident (symbol->string (gensym "flush"))))
 	  (class class)
 	  (required-options '(:side))
 	  (options (the-options opts :ident :class))
@@ -440,7 +463,7 @@
        (skribe-error 'prog "Illegal mark" mark)
        (new container
 	  (markup 'prog)
-	  (ident (or ident (symbol->string (gensym 'prog))))
+	  (ident (or ident (symbol->string (gensym "prog"))))
 	  (class class)
 	  (required-options '(:line :mark))
 	  (options (the-options opts :ident :class :linedigit))
@@ -537,7 +560,7 @@
 		 (let ((s (ast->string legend)))
 		    (if (not (string=? s ""))
 			s
-			(symbol->string (gensym 'figure))))))
+			(symbol->string (gensym "figure"))))))
       (class class)
       (required-options '(:legend :number :multicolumns))
       (options `((:number
@@ -590,7 +613,7 @@
 (define-markup (itemize #!rest opts #!key (ident #f) (class "itemize") symbol)
    (new container
       (markup 'itemize)
-      (ident (or ident (symbol->string (gensym 'itemize))))
+      (ident (or ident (symbol->string (gensym "itemize"))))
       (class class)
       (required-options '(:symbol))
       (options `((:symbol ,symbol) ,@(the-options opts :ident :class)))
@@ -602,7 +625,7 @@
 (define-markup (enumerate #!rest opts #!key (ident #f) (class "enumerate") symbol)
    (new container
       (markup 'enumerate)
-      (ident (or ident (symbol->string (gensym 'enumerate))))
+      (ident (or ident (symbol->string (gensym "enumerate"))))
       (class class)
       (required-options '(:symbol))
       (options `((:symbol ,symbol) ,@(the-options opts :ident :class)))
@@ -614,7 +637,7 @@
 (define-markup (description #!rest opts #!key (ident #f) (class "description") symbol)
    (new container
       (markup 'description)
-      (ident (or ident (symbol->string (gensym 'description))))
+      (ident (or ident (symbol->string (gensym "description"))))
       (class class)
       (required-options '(:symbol))
       (options `((:symbol ,symbol) ,@(the-options opts :ident :class)))
@@ -631,7 +654,7 @@
        (skribe-type-error 'item "Illegal key:" key "node")
        (new container
 	  (markup 'item)
-	  (ident (or ident (symbol->string (gensym 'item))))
+	  (ident (or ident (symbol->string (gensym "item"))))
 	  (class class)
 	  (required-options '(:key))
 	  (options `((:key ,key) ,@(the-options opts :ident :class :key)))
@@ -682,7 +705,7 @@
 	 (else
 	  (new container
 	     (markup 'table)
-	     (ident (or ident (symbol->string (gensym 'table))))
+	     (ident (or ident (symbol->string (gensym "table"))))
 	     (class class)
 	     (required-options '(:width :frame :rules))
 	     (options `((:frame ,frame)
@@ -697,7 +720,7 @@
 (define-markup (tr #!rest opts #!key (ident #f) (class #f) (bg #f))
    (new container
       (markup 'tr)
-      (ident (or ident (symbol->string (gensym 'tr))))
+      (ident (or ident (symbol->string (gensym "tr"))))
       (class class)
       (required-options '())
       (options `(,@(if bg `((:bg ,(if bg (skribe-use-color! bg) bg))) '())
@@ -738,7 +761,7 @@
 	 (else
 	  (new container
 	     (markup 'tc)
-	     (ident (or ident (symbol->string (gensym 'tc))))
+	     (ident (or ident (symbol->string (gensym "tc"))))
 	     (class class)
 	     (required-options '(:width :align :valign :colspan))
 	     (options `((markup ,m)
@@ -795,7 +818,7 @@
       (else
        (new markup
 	  (markup 'image)
-	  (ident (or ident (symbol->string (gensym 'image))))
+	  (ident (or ident (symbol->string (gensym "image"))))
 	  (class class)
 	  (required-options '(:file :url :width :height))
 	  (options (the-options opts :ident :class))
@@ -878,7 +901,13 @@
        (skribe-error 'processor "Illegal engine" engine))
       ((and procedure
 	    (or (not (procedure? procedure))
-		(not (correct-arity? procedure 2))))
+		(not (let ((a (procedure-property procedure 'arity)))
+                       (and (pair? a)
+                            (let ((compulsory (car a))
+                                  (optional   (cadr a))
+                                  (rest?      (caddr a)))
+                              (or rest?
+                                  (>= (+ compulsory optional) 2))))))))
        (skribe-error 'processor "Illegal procedure" procedure))
       (else
        (new processor
@@ -926,7 +955,7 @@
 (define-markup (mailto #!rest opts #!key (ident #f) (class "mailto") text)
    (new markup
       (markup 'mailto)
-      (ident (or ident (symbol->string (gensym 'ident))))
+      (ident (or ident (symbol->string (gensym "ident"))))
       (class class)
       (required-options '(:text))
       (options (the-options opts :ident :class))
@@ -935,7 +964,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    *mark-table* ...                                                 */
 ;*---------------------------------------------------------------------*/
-(define *mark-table* (make-hashtable))
+(define *mark-table* (make-hash-table))
 
 ;*---------------------------------------------------------------------*/
 ;*    mark ...                                                         */
@@ -964,7 +993,7 @@
 		       (class class)
 		       (options (the-options opts :ident :class :text))
 		       (body text))))
-	     (hashtable-put! *mark-table* bs n)
+	     (hash-set! *mark-table* bs n)
 	     n)))))
 
 ;*---------------------------------------------------------------------*/
@@ -1057,7 +1086,7 @@
 	  (skribe-type-error 'mark "Illegal mark, " mark "string")
 	  (new unresolved
 	     (proc (lambda (n e env)
-		      (let ((s (hashtable-get *mark-table* mark)))
+		      (let ((s (hash-ref *mark-table* mark)))
 			 (if s
 			     (new markup
 				(markup 'ref)
@@ -1227,11 +1256,11 @@
 					     "Illegal index table, "
 					     index
 					     "index"))))
-	  (m (mark (symbol->string (gensym))))
+	  (m (mark (symbol->string (gensym "mark"))))
 	  (h (new handle (ast m)))
 	  (new (new markup
 		  (markup '&index-entry)
-		  (ident (or ident (symbol->string (gensym 'index))))
+		  (ident (or ident (symbol->string (gensym "index"))))
 		  (class class)
 		  (options `((name ,ename) ,@(the-options opts :ident :class)))
 		  (body (if url
@@ -1240,10 +1269,12 @@
       ;; New is bound to a dummy option of the mark in order
       ;; to make new options verified.
       (markup-option-add! m 'to-verify new)
-      (hashtable-update! table
-			 ename
-			 (lambda (cur) (cons new cur))
-			 (list new))
+
+      (let ((handle (hash-get-handle table ename)))
+        (if (not handle)
+            (hash-set! table ename (list new))
+            (set-cdr! handle (cons new (cdr handle)))))
+
       m))
 
 ;*---------------------------------------------------------------------*/
@@ -1270,7 +1301,7 @@
 	  (skribe-error 'the-index "Illegal char offset" char-offset))
 	 ((not (integer? column))
 	  (skribe-error 'the-index "Illegal column number" column))
-	 ((not (every? index? bd))
+	 ((not (every index? bd))
 	  (skribe-error 'the-index
 			"Illegal indexes"
 			(filter (lambda (o) (not (index? o))) bd)))

@@ -207,7 +207,7 @@ pre-existing functions for sorting entries:])
 (doc-markup 'bib-sort/authors
 	    '((l [The list of entries.]))
 	    :force-engines *api-engines*
-	    :source "skribilo/skribe/bib.scm"
+	    :source "skribilo/biblio.scm"
 	    :others '(bib-sort/idents bib-sort/dates)
 	    :common-args '())
 
@@ -217,7 +217,7 @@ entries identifier. The last one sorts according to entries date.])
 
 (example-produce 
  (example :legend "Sorting bibliography entries" 
-	  (prgm :file "skribilo/skribe/bib.scm"
+	  (prgm :file "skribilo/biblio.scm"
 	        :definition 'bib-sort/idents)))))
 
 ;*---------------------------------------------------------------------*/

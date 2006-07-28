@@ -45,6 +45,7 @@
     (srfi srfi-13)        ;; strings
     (ice-9 optargs)       ;; `define*'
 
+    (skribilo package base) ;; the core markups
     (skribilo utils syntax) ;; `unless', `when', etc.
     (skribilo utils compat) ;; `skribe-load-path', etc.
     (skribilo utils keywords) ;; `the-body', `the-options'
@@ -87,7 +88,7 @@
     ((ice-9 receive)          . (receive))))
 
 (define %skribe-core-modules
-  '("api" "index" "param" "sui"))
+  '("index" "param" "sui"))
 
 
 

@@ -57,8 +57,8 @@
 ;;;
 (define (%evaluate expr)
   ;; Evaluate EXPR, an arbitrary S-expression that may contain calls to the
-  ;; markup functions defined in `(skribilo skribe api)', e.g., `(bold
-  ;; "hello")'.
+  ;; markup functions defined in a markup package such as
+  ;; `(skribilo package base)', e.g., `(bold "hello")'.
   (let ((result (eval expr (current-module))))
 
     (if (ast? result)

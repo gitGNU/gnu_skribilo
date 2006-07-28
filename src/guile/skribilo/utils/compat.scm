@@ -270,7 +270,17 @@
 
 (use-modules ((srfi srfi-19) #:renamer (symbol-prefix-proc 's19:)))
 
-(define (date)
+(define-public (date)
   (s19:date->string (s19:current-date) "~c"))
+
+(define-public (correct-arity? proc argcount)
+  (let ((a (procedure-property proc 'arity)))
+    (and (pair? a)
+         (let ((compulsory (car a))
+               (optional   (cadr a))
+               (rest?      (caddr a)))
+           (or rest?
+               (>= (+ compulsory optional) argcount))))))
+
 
 ;;; compat.scm ends here
