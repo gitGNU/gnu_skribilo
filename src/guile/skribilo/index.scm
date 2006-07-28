@@ -1,7 +1,7 @@
 ;;; index.scm
 ;;;
 ;;; Copyright 2003, 2004  Manuel Serrano
-;;; Copyright 2005  Ludovic Courtès  <ludovic.courtes@laas.fr>
+;;; Copyright 2005, 2006  Ludovic Courtès  <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -19,49 +19,67 @@
 ;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 ;;; USA.
 
-(define-skribe-module (skribilo skribe index))
+(define-module (skribilo index)
+  :use-syntax (skribilo utils syntax)
+  :use-syntax (skribilo lib)
+
+  :use-module (skribilo lib)
+  :use-module (skribilo ast)
+  :use-module (srfi srfi-39)
+
+  ;; XXX: The use of `mark' here introduces a cross-dependency between
+  ;; `index' and `package base'.  Thus, we require that each of these two
+  ;; modules autoloads the other one.
+  :autoload   (skribilo package base) (mark)
+
+  :export (index? make-index-table *index-table*
+           default-index resolve-the-index))
+
+
+(fluid-set! current-reader %skribilo-module-reader)
 
 ;;; Author:  Manuel Serrano
 ;;; Commentary:
 ;;;
-;;; A library of index-related functions.
+;;; A library of functions dealing with the creation of indices in
+;;; documents.
 ;;;
 ;;; Code:
 
 
-;;; The contents of the file below are unchanged compared to Skribe 1.2d's
-;;; `index.scm' file found in the `common' directory.
+;;; The contents of the file below are (almost) unchanged compared to Skribe
+;;; 1.2d's `index.scm' file found in the `common' directory.
 
 
 ;*---------------------------------------------------------------------*/
 ;*    index? ...                                                       */
 ;*---------------------------------------------------------------------*/
-(define-public (index? obj)
-   (hashtable? obj))
+(define (index? obj)
+   (hash-table? obj))
 
 ;*---------------------------------------------------------------------*/
 ;*    *index-table* ...                                                */
 ;*---------------------------------------------------------------------*/
-(define-public *index-table* #f)
+(define *index-table* (make-parameter #f))
 
 ;*---------------------------------------------------------------------*/
 ;*    make-index-table ...                                             */
 ;*---------------------------------------------------------------------*/
-(define-public (make-index-table ident)
-   (make-hashtable))
+(define (make-index-table ident)
+   (make-hash-table))
 
 ;*---------------------------------------------------------------------*/
 ;*    default-index ...                                                */
 ;*---------------------------------------------------------------------*/
-(define-public (default-index)
-   (if (not *index-table*)
-       (set! *index-table* (make-index-table "default-index")))
-   *index-table*)
+(define (default-index)
+   (if (not (*index-table*))
+       (*index-table* (make-index-table "default-index")))
+   (*index-table*))
 
 ;*---------------------------------------------------------------------*/
 ;*    resolve-the-index ...                                            */
 ;*---------------------------------------------------------------------*/
-(define-public (resolve-the-index loc i c indexes split char-offset header-limit col)
+(define (resolve-the-index loc i c indexes split char-offset header-limit col)
    ;; fetch the descriminating index name letter
    (define (index-ref n)
       (let ((name (markup-option n 'name)))
@@ -101,7 +119,10 @@
 		(else
 		 (loop (cdr buckets)
 		       (cons (car buckets) res)))))))
-   (let* ((entries (apply append (map hashtable->list indexes)))
+   (let* ((entries (apply append (map (lambda (t)
+                                        (hash-map->list
+                                         (lambda (key val) val) t))
+                                      indexes)))
 	  (sorted (map sort-entries-bucket
 		       (merge-buckets
 			(sort entries

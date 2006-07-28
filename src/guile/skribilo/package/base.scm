@@ -37,9 +37,7 @@
   :autoload   (skribilo color)     (skribe-use-color!)
   :autoload   (skribilo source)    (language? source-read-lines source-fontify)
   :autoload   (skribilo prog)      (make-prog-body resolve-line)
-
-  :use-module (skribilo module) ;; needed before loading the following one
-  :autoload   (skribilo skribe index) (make-index-table)
+  :autoload   (skribilo index)     (make-index-table)
 
   :replace (symbol))
 

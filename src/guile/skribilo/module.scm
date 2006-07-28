@@ -75,6 +75,8 @@
     ((skribilo engine html)   . (html-markup-class html-class
 				 html-width))
     ((skribilo utils images)  . (convert-image))
+    ((skribilo index)         . (index? make-index-table default-index
+                                 resolve-the-index))
     ((skribilo source)        . (source-read-lines source-fontify
 				 language? language-extractor
 				 language-fontifier source-fontify))
@@ -88,7 +90,7 @@
     ((ice-9 receive)          . (receive))))
 
 (define %skribe-core-modules
-  '("index" "param" "sui"))
+  '("param" "sui"))
 
 
 
