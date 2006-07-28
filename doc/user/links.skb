@@ -76,13 +76,13 @@ section, to bibliographic entries, to source code line number, etc.])
 	      (:mark [A string that is the name of a mark. That mark has 
                 been introduced by a ,(markup-ref "mark") markup.])
 	      (:handle [A Skribe node ,(markup-ref "handle").])
-	      (:ident [A reference to a node who has been specified 
-                an ,(param :ident) value.])
-	      (:figure [The name of a ,(markup-ref "figure").])
-	      (:chapter [The name of a ,(markup-ref "chapter").])
-	      (:section [The name of a ,(markup-ref "section").])
-	      (:subsection [The name of a ,(markup-ref "subsection").])
-	      (:subsubsection [The name of a ,(markup-ref "subsubsection").])
+	      (:ident [The identifier of a node (which was specified 
+                 as an ,(param :ident) value).])
+	      (:figure [The identifier of a ,(markup-ref "figure").])
+	      (:chapter [The title of a ,(markup-ref "chapter").])
+	      (:section [The title of a ,(markup-ref "section").])
+	      (:subsection [The title of a ,(markup-ref "subsection").])
+	      (:subsubsection [The title of a ,(markup-ref "subsubsection").])
 	      (:page [A boolean enabling/disabling page reference.])
 	      (:bib ,[A name or a list of names of 
                 ,(ref :chapter "Bibliographies" :text "bibliographic") entry.])

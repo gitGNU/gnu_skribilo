@@ -1061,7 +1061,31 @@
 	 (required-options '(:text))
 	 (options `((kind handle) ,@(the-options opts :ident :class)))
 	 (body text)))
-   (define (doref text kind)
+   (define (do-title-ref title kind)
+      (if (not (string? title))
+	  (skribe-type-error 'ref "illegal reference" title "string")
+	  (new unresolved
+	     (proc (lambda (n e env)
+		      (let* ((doc (ast-document n))
+                             (s (find1-down
+                                 (lambda (n)
+                                   (and (is-markup? n kind)
+                                        (equal? (markup-option n :title)
+                                                title)))
+                                 doc)))
+			 (if s
+			     (new markup
+				(markup 'ref)
+				(ident (symbol->string 'title-ref))
+				(class class)
+				(required-options '(:text))
+				(options `((kind ,kind)
+					   (mark ,title)
+					   ,@(the-options opts :ident :class)))
+				(body (new handle
+					 (ast s))))
+			     (unref n title (or kind 'title)))))))))
+   (define (do-ident-ref text kind)
       (if (not (string? text))
 	  (skribe-type-error 'ref "Illegal reference" text "string")
 	  (new unresolved
@@ -1070,7 +1094,7 @@
 			 (if s
 			     (new markup
 				(markup 'ref)
-				(ident (symbol->string 'ref))
+				(ident (symbol->string 'indent-ref))
 				(class class)
 				(required-options '(:text))
 				(options `((kind ,kind)
@@ -1150,17 +1174,17 @@
       (cond
 	 (skribe (skribe-ref skribe))
 	 (handle (handle-ref handle))
-	 (ident (doref ident #f))
-	 (chapter (doref chapter 'chapter))
-	 (section (doref section 'section))
-	 (subsection (doref subsection 'subsection))
-	 (subsubsection (doref subsubsection 'subsubsection))
-	 (figure (doref figure 'figure))
+	 (ident (do-ident-ref ident #f))
+	 (chapter (do-title-ref chapter 'chapter))
+	 (section (do-title-ref section 'section))
+	 (subsection (do-title-ref subsection 'subsection))
+	 (subsubsection (do-title-ref subsubsection 'subsubsection))
+	 (figure (do-ident-ref figure 'figure))
 	 (mark (mark-ref mark))
 	 (bib (bib-ref bib))
 	 (url (url-ref))
 	 (line (line-ref line))
-	 (else (skribe-error 'ref "Illegal reference" opts)))))
+	 (else (skribe-error 'ref "illegal reference" opts)))))
 
 ;*---------------------------------------------------------------------*/
 ;*    resolve ...                                                      */
