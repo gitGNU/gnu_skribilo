@@ -27,7 +27,7 @@
            skribe-warning skribe-warning/ast
            skribe-message
 
-	   %procedure-arity)
+	   type-name %procedure-arity)
 
   :export-syntax (new define-markup define-simple-markup
                   define-simple-container define-processor-markup)
@@ -145,6 +145,21 @@
 	  (body    (the-body opts))
 	  (options (the-options opts)))))
 
+
+
+;;;
+;;; TYPE-NAME
+;;;
+(define (type-name obj)
+  (cond ((string? obj)  "string")
+	((ast? obj)     "ast")
+	((list? obj)    "list")
+	((pair? obj)    "pair")
+	((number? obj)  "number")
+	((char? obj)    "character")
+	((keyword? obj) "keyword")
+	(else           (with-output-to-string
+			  (lambda () (write obj))))))
 
 ;;;
 ;;; SKRIBE-EVAL-LOCATION ...

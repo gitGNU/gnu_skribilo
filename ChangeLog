@@ -2,6 +2,135 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-07-30 11:35:52 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-65
+
+    Summary:
+      Introduced `type-name' as a replacement for `find-runtime-type'.
+    Revision:
+      skribilo--devel--1.2--patch-65
+
+    * src/guile/skribilo/lib.scm (type-name): New (formerly
+      `find-runtime-type').
+    
+    * src/guile/skribilo/utils/compat.scm (find-runtime-type): New.
+
+    modified files:
+     ChangeLog src/guile/skribilo/lib.scm
+     src/guile/skribilo/utils/compat.scm
+
+
+2006-07-28 18:29:50 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-64
+
+    Summary:
+      Merge from lcourtes@laas.fr--2005-libre/skribilo--devo--1.2
+    Revision:
+      skribilo--devel--1.2--patch-64
+
+    Patches applied:
+    
+     * lcourtes@laas.fr--2005-libre/skribilo--devo--1.2  (patch 22-34)
+    
+       - Fixed `engine-add-writer!' so that the insertion order is kept.
+       - Improved error reporting of the Skribilo module reader.
+       - Added a pie-chart package that can use either Ploticus or Lout.
+       - Updated Automake/Autoconf files for the `pie' package.
+       - Detect Ploticus at configuration-time and decide how to build the doc.
+       - Reverted patch-22 (was wrong).
+       - Added before the introduction of the User Manual.
+       - Updated the FSF address.
+       - Lout engine: Fixed handling of `:keywords' for `document'.
+       - pie: Fixed the Lout engine.
+       - Moved `skribe/api.scm' to `(skribilo package base)'.
+       - Moved `(skribilo skribe index)' to `(skribilo index)'.
+       - Fixed `ref' for references by title (`:chapter', `:section', etc.).
+
+    new files:
+     src/guile/skribilo/package/pie/Makefile.am
+
+    modified files:
+     ChangeLog configure.ac doc/skr/api.skr doc/user/Makefile.am
+     doc/user/bib.skb doc/user/eq.skb doc/user/links.skb
+     doc/user/pie.skb doc/user/sectioning.skb
+     doc/user/src/Makefile.am doc/user/user.skb
+     src/guile/skribilo.scm src/guile/skribilo/ast.scm
+     src/guile/skribilo/biblio.scm
+     src/guile/skribilo/biblio/abbrev.scm
+     src/guile/skribilo/biblio/author.scm
+     src/guile/skribilo/biblio/bibtex.scm
+     src/guile/skribilo/color.scm
+     src/guile/skribilo/coloring/c-lex.l
+     src/guile/skribilo/coloring/c-lex.l.scm
+     src/guile/skribilo/coloring/c.scm
+     src/guile/skribilo/coloring/lisp-lex.l
+     src/guile/skribilo/coloring/lisp-lex.l.scm
+     src/guile/skribilo/coloring/lisp.scm
+     src/guile/skribilo/coloring/xml-lex.l
+     src/guile/skribilo/coloring/xml-lex.l.scm
+     src/guile/skribilo/condition.scm src/guile/skribilo/debug.scm
+     src/guile/skribilo/engine.scm
+     src/guile/skribilo/engine/context.scm
+     src/guile/skribilo/engine/html.scm
+     src/guile/skribilo/engine/html4.scm
+     src/guile/skribilo/engine/lout.scm
+     src/guile/skribilo/evaluator.scm src/guile/skribilo/index.scm
+     src/guile/skribilo/lib.scm src/guile/skribilo/location.scm
+     src/guile/skribilo/module.scm src/guile/skribilo/output.scm
+     src/guile/skribilo/package/Makefile.am
+     src/guile/skribilo/package/base.scm
+     src/guile/skribilo/package/eq.scm
+     src/guile/skribilo/package/eq/lout.scm
+     src/guile/skribilo/package/pie.scm
+     src/guile/skribilo/package/pie/lout.scm
+     src/guile/skribilo/package/slide.scm
+     src/guile/skribilo/package/slide/html.scm
+     src/guile/skribilo/package/slide/latex.scm
+     src/guile/skribilo/package/slide/lout.scm
+     src/guile/skribilo/parameters.scm src/guile/skribilo/prog.scm
+     src/guile/skribilo/reader.scm
+     src/guile/skribilo/reader/outline.scm
+     src/guile/skribilo/reader/skribe.scm
+     src/guile/skribilo/resolve.scm
+     src/guile/skribilo/skribe/Makefile.am
+     src/guile/skribilo/skribe/param.scm
+     src/guile/skribilo/skribe/sui.scm
+     src/guile/skribilo/source.scm
+     src/guile/skribilo/utils/compat.scm
+     src/guile/skribilo/utils/files.scm
+     src/guile/skribilo/utils/images.scm
+     src/guile/skribilo/utils/keywords.scm
+     src/guile/skribilo/utils/strings.scm
+     src/guile/skribilo/utils/syntax.scm
+     src/guile/skribilo/verify.scm src/guile/skribilo/writer.scm
+     src/skribilo.in tools/skribebibtex/stklos/bibtex-lex.l
+     tools/skribebibtex/stklos/bibtex-parser.y
+     tools/skribebibtex/stklos/main.stk
+
+    renamed files:
+     src/guile/skribilo/skribe/.arch-ids/api.scm.id
+       ==> src/guile/skribilo/package/.arch-ids/base.scm.id
+     src/guile/skribilo/skribe/.arch-ids/index.scm.id
+       ==> src/guile/skribilo/.arch-ids/index.scm.id
+     src/guile/skribilo/skribe/api.scm
+       ==> src/guile/skribilo/package/base.scm
+     src/guile/skribilo/skribe/index.scm
+       ==> src/guile/skribilo/index.scm
+
+    new patches:
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-22
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-23
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-24
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-25
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-26
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-27
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-28
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-29
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-30
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-31
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-32
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-33
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-34
+
+
 2006-07-23 20:47:15 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-63
 
     Summary:
@@ -61,6 +190,86 @@
      src/guile/skribilo/writer.scm
 
 
+2006-07-23 14:11:06 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-60
+
+    Summary:
+      Merge from lcourtes@laas.fr--2005-libre/skribilo--devo--1.2
+    Revision:
+      skribilo--devel--1.2--patch-60
+
+    Patches applied:
+    
+     * lcourtes@laas.fr--2005-libre/skribilo--devo--1.2  (patch 8-21)
+    
+       - Use `setvbuf' on the Skribilo output port.
+       - Made `parse-list-of' tail-recursive.
+       - Fixed the handling of `:' by the Skribe reader.
+       - compat: Optimized `hashtable->list'.
+       - Merged the two bibliography modules.
+       - Implemented `markup-body-set!'.
+       - Fixed abbreviations and author names handling.
+       - Turned `with-debug' into a more self-sufficient macro.
+       - Removed unused code in `(skribilo lib)'.
+       - Removed the `(skribilo skribe utils)' module.
+       - Renamed `(skribilo runtime)' to `(skribilo utils strings)'.
+       - biblio abbrev: Added a few more abbreviations.
+       - Added support for the `:keywords' option of `document' (Lout + HTML).
+       - Made the HTML engine and `web-book' more style-neutral.
+
+    new files:
+     src/guile/skribilo/utils/keywords.scm
+
+    removed files:
+     src/guile/skribilo/skribe/.arch-ids/bib.scm.id
+     src/guile/skribilo/skribe/.arch-ids/utils.scm.id
+     src/guile/skribilo/skribe/bib.scm
+     src/guile/skribilo/skribe/utils.scm
+
+    modified files:
+     ChangeLog NEWS doc/user/document.skb doc/user/user.skb
+     src/guile/skribilo/Makefile.am src/guile/skribilo/ast.scm
+     src/guile/skribilo/biblio.scm
+     src/guile/skribilo/biblio/abbrev.scm
+     src/guile/skribilo/biblio/author.scm
+     src/guile/skribilo/biblio/bibtex.scm
+     src/guile/skribilo/coloring/lisp.scm
+     src/guile/skribilo/debug.scm src/guile/skribilo/engine.scm
+     src/guile/skribilo/engine/html.scm
+     src/guile/skribilo/engine/lout.scm src/guile/skribilo/lib.scm
+     src/guile/skribilo/module.scm
+     src/guile/skribilo/package/eq.scm
+     src/guile/skribilo/package/eq/lout.scm
+     src/guile/skribilo/package/web-book.scm
+     src/guile/skribilo/skribe/Makefile.am
+     src/guile/skribilo/skribe/api.scm
+     src/guile/skribilo/utils/Makefile.am
+     src/guile/skribilo/utils/compat.scm
+     src/guile/skribilo/utils/strings.scm
+     src/guile/skribilo/verify.scm
+
+    renamed files:
+     src/guile/skribilo/.arch-ids/runtime.scm.id
+       ==> src/guile/skribilo/utils/.arch-ids/strings.scm.id
+     src/guile/skribilo/runtime.scm
+       ==> src/guile/skribilo/utils/strings.scm
+
+    new patches:
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-8
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-9
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-10
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-11
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-12
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-13
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-14
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-15
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-16
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-17
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-18
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-19
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-20
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-21
+
+
 2006-07-14 14:42:40 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-59
 
     Summary:
@@ -92,6 +301,160 @@
      ChangeLog src/guile/skribilo/skribe/api.scm
 
 
+2006-07-12 16:14:24 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-57
+
+    Summary:
+      Merge from lcourtes@laas.fr--2005-libre/skribilo--devo--1.2
+    Revision:
+      skribilo--devel--1.2--patch-57
+
+    Patches applied:
+    
+     * lcourtes@laas.fr--2005-libre/skribilo--devo--1.2  (patch 2-7)
+    
+       - outline: Fixed the regexps of the inline markup for `tt' and `q'.
+       - Tiny configure fix: make `src/skribilo' executable.
+       - By default, use (internally) a reader that does not record positions.
+       - Use SRFI-35 error conditions in `resolve.scm' rather than the `error'
+         procedures.
+       - Noticeable performance improvements (notably in `debug').
+       - Fixed autoloading of `verify', plus tiny cosmetic change.
+
+    modified files:
+     ChangeLog configure.ac src/guile/skribilo/biblio.scm
+     src/guile/skribilo/debug.scm src/guile/skribilo/engine.scm
+     src/guile/skribilo/reader/outline.scm
+     src/guile/skribilo/resolve.scm
+     src/guile/skribilo/utils/syntax.scm
+     src/guile/skribilo/verify.scm src/skribilo.in
+
+    new patches:
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-2
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-3
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-4
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-5
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-6
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-7
+
+
+2006-06-08 20:26:55 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-56
+
+    Summary:
+      Merge from lcourtes@laas.fr--2005-libre/skribilo--devo--1.2
+    Revision:
+      skribilo--devel--1.2--patch-56
+
+    Patches applied:
+    
+     * lcourtes@laas.fr--2005-libre/skribilo--devo--1.2  (base, patch 1)
+    
+       - tag of lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--version-0
+       - eq: Handle operator precedence when parenthesizing.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/eq.scm
+     src/guile/skribilo/package/eq/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--base-0
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-1
+
+
+2006-06-08 20:24:12 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-55
+
+    Summary:
+      Merge from lcourtes@laas.fr--2004-libre
+    Revision:
+      skribilo--devel--1.2--patch-55
+
+    Patches applied:
+    
+     * lcourtes@laas.fr--2004-libre/skribilo--devel--1.2  (patch 84-87)
+    
+       - Added `bib-map'.
+       - Cleaned up the `write' method for `markup' and `unresolved' objects.
+       - Generalized the error condition handling framework.
+       - Fixed exception handling in `output.scm'.
+    
+     * lcourtes@laas.fr--2004-libre/skribilo--devel--1.2-  (version 0)
+    
+       - Sealing and moving to `lcourtes@laas.fr--2005-libre/skribilo--devo--1.2'.
+
+    modified files:
+     ChangeLog src/guile/skribilo/ast.scm
+     src/guile/skribilo/biblio.scm src/guile/skribilo/condition.scm
+     src/guile/skribilo/output.scm
+
+    new patches:
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-84
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-85
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-86
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-87
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--version-0
+
+
+2006-05-10 17:14:10 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-54
+
+    Summary:
+      Merge from lcourtes@laas.fr--2004-libre
+    Revision:
+      skribilo--devel--1.2--patch-54
+
+    Patches applied:
+    
+     * lcourtes@laas.fr--2004-libre/skribilo--devel--1.2  (patch 80-83)
+    
+       - Added `markup-option-set!'.
+       - eq: Fixed the rendering of `*' in the Lout implementation.
+       - Added `bib-for-each'.  Fixed binding issues in the evaluator and compat.
+       - Added biblio helpers (abbrev, author, BibTeX) taken from my `biblib.skr'.
+
+    new files:
+     src/guile/skribilo/biblio/.arch-ids/=id
+     src/guile/skribilo/biblio/Makefile.am
+     src/guile/skribilo/biblio/abbrev.scm
+     src/guile/skribilo/biblio/author.scm
+     src/guile/skribilo/biblio/bibtex.scm
+
+    modified files:
+     ChangeLog configure.ac src/guile/skribilo/Makefile.am
+     src/guile/skribilo/ast.scm src/guile/skribilo/biblio.scm
+     src/guile/skribilo/engine/lout.scm
+     src/guile/skribilo/evaluator.scm
+     src/guile/skribilo/package/eq/lout.scm
+     src/guile/skribilo/utils/compat.scm
+
+    new directories:
+     src/guile/skribilo/biblio src/guile/skribilo/biblio/.arch-ids
+
+    new patches:
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-80
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-81
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-82
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-83
+
+
+2006-04-23 17:28:38 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-53
+
+    Summary:
+      Merge from lcourtes@laas.fr--2004-libre
+    Revision:
+      skribilo--devel--1.2--patch-53
+
+    Patches applied:
+    
+     * lcourtes@laas.fr--2004-libre/skribilo--devel--1.2  (patch 79)
+    
+       - eq: Added the `inline?' keyword; fixed the Lout engine.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/eq.scm
+     src/guile/skribilo/package/eq/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-79
+
+
 2006-04-23 17:28:14 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-52
 
     Summary:
@@ -104,6 +467,37 @@
 
     modified files:
      ChangeLog src/guile/skribilo.scm
+
+
+2006-04-08 10:26:51 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-51
+
+    Summary:
+      Merge from lcourtes@laas.fr--2004-libre
+    Revision:
+      skribilo--devel--1.2--patch-51
+
+    Patches applied:
+    
+     * lcourtes@laas.fr--2004-libre/skribilo--devel--1.2  (patch 73-78)
+    
+       - Merge from lcourtes@laas.fr--2005-mobile
+       - Moved `convert-image' et al. to `utils/images.scm'.
+       - Image- and compat-related fixes.
+       - Lout engine: small fixes.
+       - Various documentation fixes + completed the doc automake stuff.
+       - Small aesthetic changes in the Lout engine.
+
+    modified files:
+     ChangeLog src/guile/skribilo/engine/lout.scm
+     src/guile/skribilo/package/eq/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-73
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-74
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-75
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-76
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-77
+     lcourtes@laas.fr--2004-libre/skribilo--devel--1.2--patch-78
 
 
 2006-03-19 20:08:40 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-50

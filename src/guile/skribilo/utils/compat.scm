@@ -32,6 +32,7 @@
   :autoload   (skribilo ast) (ast?)
   :autoload   (skribilo condition) (file-search-error? &file-search-error)
   :autoload   (skribilo reader) (make-reader)
+  :autoload   (skribilo lib) (type-name)
   :use-module (skribilo debug)
   :re-export (file-size)  ;; re-exported from `(skribilo utils files)'
   :replace (gensym))
@@ -252,16 +253,7 @@
   (hash-map->list (lambda (key val) val) h))
 
 (define-public (find-runtime-type obj)
-  (cond ((string? obj)  "string")
-	((ast? obj)     "ast")
-	((list? obj)    "list")
-	((pair? obj)    "pair")
-	((number? obj)  "number")
-	((char? obj)    "character")
-	((keyword? obj) "keyword")
-	(else           (with-output-to-string
-			  (lambda () (write obj))))))
-
+  (type-name obj))
 
 
 ;;;
