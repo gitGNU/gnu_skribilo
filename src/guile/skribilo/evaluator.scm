@@ -31,7 +31,9 @@
   :autoload (skribilo reader)     (*document-reader*)
 
   :autoload (skribilo verify)     (verify)
-  :autoload (skribilo resolve)    (resolve!))
+  :autoload (skribilo resolve)    (resolve!)
+
+  :autoload (skribilo module)     (*skribilo-user-module*))
 
 
 (use-modules (skribilo utils syntax)
@@ -59,7 +61,7 @@
   ;; Evaluate EXPR, an arbitrary S-expression that may contain calls to the
   ;; markup functions defined in a markup package such as
   ;; `(skribilo package base)', e.g., `(bold "hello")'.
-  (let ((result (eval expr (current-module))))
+  (let ((result (eval expr (*skribilo-user-module*))))
 
     (if (ast? result)
 	(let ((file (source-property expr 'filename))

@@ -1,7 +1,7 @@
 ;;; sui.scm
 ;;;
 ;;; Copyright 2003, 2004  Manuel Serrano
-;;; Copyright 2005  Ludovic Courtès  <ludovic.courtes@laas.fr>
+;;; Copyright 2005, 2006  Ludovic Courtès  <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -19,7 +19,18 @@
 ;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 ;;; USA.
 
-(define-skribe-module (skribilo skribe sui))
+(define-module (skribilo sui)
+  :use-module (skribilo utils syntax)
+  :use-module (skribilo lib)
+  :use-module (ice-9 match)
+  :use-module (srfi srfi-1)
+  :autoload   (skribilo parameters) (*verbose*)
+  :autoload   (skribilo reader)     (make-reader)
+
+  :export (load-sui sui-ref->url sui-title sui-file sui-key
+           sui-find-ref sui-search-ref sui-filter))
+
+(fluid-set! current-reader %skribilo-module-reader)
 
 ;;; Author:  Manuel Serrano
 ;;; Commentary:
@@ -29,14 +40,14 @@
 ;;; Code:
 
 
-;;; The contents of the file below are unchanged compared to Skribe 1.2d's
-;;; `sui.scm' file found in the `common' directory.
+;;; The contents of the file below are (almost) unchanged compared to Skribe
+;;; 1.2d's `sui.scm' file found in the `common' directory.
 
 
 ;*---------------------------------------------------------------------*/
 ;*    *sui-table* ...                                                  */
 ;*---------------------------------------------------------------------*/
-(define *sui-table* (make-hashtable))
+(define *sui-table* (make-hash-table))
 
 ;*---------------------------------------------------------------------*/
 ;*    load-sui ...                                                     */
@@ -45,21 +56,22 @@
 ;*    Raise an error if the file cannot be open.                       */
 ;*---------------------------------------------------------------------*/
 (define (load-sui path)
-   (let ((sexp (hashtable-get *sui-table* path)))
+   (let ((sexp (hash-ref *sui-table* path)))
       (or sexp
 	  (begin
-	     (when (> *skribe-verbose* 0)
-		(fprintf (current-error-port) "  [loading sui: ~a]\n" path))
-	     (let ((p (open-input-file path)))
+	     (when (> (*verbose*) 0)
+		(format (current-error-port) "  [loading sui: ~a]\n" path))
+	     (let ((p (open-input-file path))
+                   (read (make-reader 'skribe)))
 		(if (not (input-port? p))
 		    (skribe-error 'load-sui
 				  "Can't find `Skribe Url Index' file"
 				  path)
 		    (unwind-protect
 		       (let ((sexp (read p)))
-			  (match-case sexp
-			     ((sui (? string?) . ?-)
-			      (hashtable-put! *sui-table* path sexp))
+			  (match sexp
+			     (('sui (? string?) . _)
+			      (hash-set! *sui-table* path sexp))
 			     (else
 			      (skribe-error 'load-sui
 					    "Illegal `Skribe Url Index' file"
@@ -76,14 +88,14 @@
 	   (let ((base (sui-file sui))
 		 (file (car (car refs)))
 		 (mark (cdr (car refs))))
-	      (format "~a/~a#~a" dir (or file base) mark)))))
+	      (format #f "~a/~a#~a" dir (or file base) mark)))))
 
 ;*---------------------------------------------------------------------*/
 ;*    sui-title ...                                                    */
 ;*---------------------------------------------------------------------*/
 (define (sui-title sexp)
-   (match-case sexp
-      ((sui (and ?title (? string?)) . ?-)
+   (match sexp
+      (('sui (and title (? string?)) . _)
        title)
       (else
        (skribe-error 'sui-title "Illegal `sui' format" sexp))))
@@ -98,8 +110,8 @@
 ;*    sui-key ...                                                      */
 ;*---------------------------------------------------------------------*/
 (define (sui-key sexp key)
-   (match-case sexp
-      ((sui ?- . ?rest)
+   (match sexp
+      (('sui _ . rest)
        (let loop ((rest rest))
 	  (and (pair? rest)
 	       (if (eq? (car rest) key)
@@ -121,8 +133,8 @@
 	 (section (assq :section opts))
 	 (subsection (assq :subsection opts))
 	 (subsubsection (assq :subsubsection opts)))
-      (match-case sui
-	 ((sui (? string?) . ?refs)
+      (match sui
+	 (('sui (? string?) . refs)
 	  (cond
 	     (mark (sui-search-ref 'marks refs (cadr mark) class))
 	     (chapter (sui-search-ref 'chapters refs (cadr chapter) class))
@@ -168,13 +180,13 @@
 	      (find-ref (cdar refs) val class)
 	      (loop (cdr refs)))
 	  '())))
-   
+
 ;*---------------------------------------------------------------------*/
 ;*    sui-filter ...                                                   */
 ;*---------------------------------------------------------------------*/
 (define (sui-filter sui pred1 pred2)
-   (match-case sui
-      ((sui (? string?) . ?refs)
+   (match sui
+      (('sui (? string?) . refs)
        (let loop ((refs refs)
 		  (res '()))
 	  (if (pair? refs)

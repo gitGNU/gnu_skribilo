@@ -36,7 +36,7 @@ exec ${GUILE-guile} --debug -l $0 -c "(apply $main (cdr (command-line)))" "$@"
 
 
 (define-module (skribilo)
-  :autoload (skribilo module) (make-run-time-module)
+  :autoload (skribilo module) (make-run-time-module *skribilo-user-module*)
   :autoload (skribilo engine) (*current-engine*)
   :autoload (skribilo reader) (*document-reader*)
   :use-module (skribilo utils syntax))
@@ -367,14 +367,17 @@ Processes a Skribilo/Skribe source file and produces its output.
 	  ;; FIXME: Using this technique, anything written to `stderr' will
 	  ;; also end up in the output file (e.g. Guile warnings).
 	  (set-current-output-port (*skribilo-output-port*))
-	  (set-current-module (make-run-time-module)))
+          (let ((user (make-run-time-module)))
+            (set-current-module user)
+            (*skribilo-user-module* user)))
 	(lambda ()
 	  ;;(format #t "engine is ~a~%" (*current-engine*))
 	  (evaluate-document-from-port (current-input-port)
 				       (*current-engine*)))
 	(lambda ()
 	  (set-current-output-port output-port)
-	  (set-current-module user-module)))))
+	  (set-current-module user-module)
+          (*skribilo-user-module* #f)))))
 
 
 

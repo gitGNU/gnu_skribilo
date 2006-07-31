@@ -23,7 +23,9 @@
   :use-module (skribilo debug)
   :use-module (srfi srfi-1)
   :use-module (ice-9 optargs)
-  :use-module (skribilo utils syntax))
+  :use-module (srfi srfi-39)
+  :use-module (skribilo utils syntax)
+  :export (make-run-time-module *skribilo-user-module*))
 
 (fluid-set! current-reader %skribilo-module-reader)
 
@@ -85,12 +87,10 @@
     ((skribilo prog)          . (make-prog-body resolve-line))
     ((skribilo color) .
      (skribe-color->rgb skribe-get-used-colors skribe-use-color!))
+    ((skribilo sui)           . (load-sui))
 
     ((ice-9 and-let-star)     . (and-let*))
     ((ice-9 receive)          . (receive))))
-
-(define %skribe-core-modules
-  '("sui"))
 
 
 
@@ -110,14 +110,7 @@
      ;; Pull all the bindings that Skribe code may expect, plus those needed
      ;; to actually create and read the module.
      ;; TODO: These should be auto-loaded.
-     ,(cons 'use-modules
-	    (append %skribilo-user-imports
-		    (filter-map (lambda (mod)
-				  (let ((m `(skribilo skribe
-						      ,(string->symbol
-							mod))))
-				    (and (not (equal? m name)) m)))
-				%skribe-core-modules)))
+     ,(cons 'use-modules %skribilo-user-imports)
 
      ;; Change the current reader to a Skribe-compatible reader.  If this
      ;; primitive is not provided by Guile (i.e., version <= 1.7.2), then it
@@ -133,33 +126,28 @@
 
 
 
-(define %skribilo-user-module #f)
-
 ;;;
 ;;; MAKE-RUN-TIME-MODULE
 ;;;
-(define-public (make-run-time-module)
+(define (make-run-time-module)
   "Return a new module that imports all the necessary bindings required for
 execution of Skribilo/Skribe code."
-  (let ((the-module (make-module)))
-        (for-each (lambda (iface)
-                    (module-use! the-module (resolve-module iface)))
-                  (append %skribilo-user-imports
-			  (map (lambda (mod)
-				 `(skribilo skribe
-					    ,(string->symbol mod)))
-			       %skribe-core-modules)))
-        (set-module-name! the-module '(skribilo-user))
-        the-module))
+  (let* ((the-module (make-module))
+         (autoloads (map (lambda (name+bindings)
+                           (make-autoload-interface the-module
+                                                    (car name+bindings)
+                                                    (cdr name+bindings)))
+                         %skribilo-user-autoloads)))
+    (set-module-name! the-module '(skribilo-user))
+    (module-use-interfaces! the-module
+                            (cons the-root-module
+                                  (append (map resolve-interface
+                                               %skribilo-user-imports)
+                                          autoloads)))
+    the-module))
 
-;;;
-;;; RUN-TIME-MODULE
-;;;
-(define-public (run-time-module)
-  "Return the default instance of a Skribilo/Skribe run-time module."
-  (if (not %skribilo-user-module)
-      (set! %skribilo-user-module (make-run-time-module)))
-  %skribilo-user-module)
+;; The current module in which the document is evaluated.
+(define *skribilo-user-module* (make-parameter (make-run-time-module)))
 
 
 ;;; module.scm ends here
