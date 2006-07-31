@@ -90,7 +90,7 @@
     ((ice-9 receive)          . (receive))))
 
 (define %skribe-core-modules
-  '("param" "sui"))
+  '("sui"))
 
 
 
