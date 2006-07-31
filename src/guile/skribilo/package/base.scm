@@ -602,7 +602,7 @@
 				     (format #f "illegal `~a' element, `~a' expected"
 					     (if (markup? r)
 						 (markup-markup r)
-						 (find-runtime-type r))
+						 (type-name r))
 					     markup)))
 		 (loop (cdr lst) (cons r result)))))))))
 

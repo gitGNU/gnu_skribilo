@@ -2,6 +2,70 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-07-31 18:40:57 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-67
+
+    Summary:
+      Base package: use `type-name' instead of `find-runtime-type'.
+    Revision:
+      skribilo--devel--1.2--patch-67
+
+    * src/guile/skribilo/package/base.scm (parse-list-of): Use `type-name'
+      instead of `find-runtime-type'.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/base.scm
+
+
+2006-07-31 16:52:59 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-66
+
+    Summary:
+      Merge from lcourtes@laas.fr--2005-libre/skribilo--devo--1.2
+    Revision:
+      skribilo--devel--1.2--patch-66
+
+    Patches applied:
+    
+     * lcourtes@laas.fr--2005-libre/skribilo--devo--1.2  (patch 35-40)
+    
+       - Introduced `type-name' as a replacement for `find-runtime-type'.
+       - Made the HTML class naming more consistent.
+       - Fixed autoloading in `(skribilo package base)'.
+       - HTML: Repeat document keywords in each file.
+       - Removed `(skribilo skribe param)' (was useless).
+       - Moved the `sui' module; removed the `skribe' subdirectory.
+
+    removed files:
+     src/guile/skribilo/skribe/.arch-ids/=id
+     src/guile/skribilo/skribe/.arch-ids/Makefile.am.id
+     src/guile/skribilo/skribe/.arch-ids/param.scm.id
+     src/guile/skribilo/skribe/Makefile.am
+     src/guile/skribilo/skribe/param.scm
+
+    modified files:
+     ChangeLog configure.ac src/guile/skribilo.scm
+     src/guile/skribilo/Makefile.am
+     src/guile/skribilo/engine/html.scm
+     src/guile/skribilo/evaluator.scm src/guile/skribilo/module.scm
+     src/guile/skribilo/package/base.scm src/guile/skribilo/sui.scm
+
+    renamed files:
+     src/guile/skribilo/skribe/.arch-ids/sui.scm.id
+       ==> src/guile/skribilo/.arch-ids/sui.scm.id
+     src/guile/skribilo/skribe/sui.scm
+       ==> src/guile/skribilo/sui.scm
+
+    removed directories:
+     src/guile/skribilo/skribe src/guile/skribilo/skribe/.arch-ids
+
+    new patches:
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-35
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-36
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-37
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-38
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-39
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-40
+
+
 2006-07-30 11:35:52 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-65
 
     Summary:
