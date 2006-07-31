@@ -33,7 +33,8 @@
   :autoload   (skribilo engine)    (engine?)
 
   ;; optional ``sub-packages''
-  :autoload   (skribilo biblio)    (default-bib-table resolve-bib)
+  :autoload   (skribilo biblio)    (default-bib-table resolve-bib
+                                    bib-load! bib-add!)
   :autoload   (skribilo color)     (skribe-use-color!)
   :autoload   (skribilo source)    (language? source-read-lines source-fontify)
   :autoload   (skribilo prog)      (make-prog-body resolve-line)
