@@ -670,27 +670,27 @@
 		    ((and lm rm)
 		     (let* ((ep (engine-custom e 'margin-padding))
 			    (ac (if (number? ep) ep 0)))
-			(printf "<table cellpadding=\"~a\" cellspacing=\"0\" width=\"100%\" class=\"skribe-margins\"><tr>\n" ac))
-		     (html-margin lm lmfn lms lmbg lmfg "skribe-left-margin")
-		     (html-margin body #f #f #f #f "skribe-body")
-		     (html-margin rm rmfn rms rmbg rmfg "skribe-right-margin")
+			(printf "<table cellpadding=\"~a\" cellspacing=\"0\" width=\"100%\" class=\"skribilo-margins\"><tr>\n" ac))
+		     (html-margin lm lmfn lms lmbg lmfg "skribilo-left-margin")
+		     (html-margin body #f #f #f #f "skribilo-body")
+		     (html-margin rm rmfn rms rmbg rmfg "skribilo-right-margin")
 		     (display "</tr></table>"))
 		    (lm
 		     (let* ((ep (engine-custom e 'margin-padding))
 			    (ac (if (number? ep) ep 0)))
-			(printf "<table cellpadding=\"~a\" cellspacing=\"0\" width=\"100%\" class=\"skribe-margins\"><tr>\n" ac))
-		     (html-margin lm lmfn lms lmbg lmfg "skribe-left-margin")
-		     (html-margin body #f #f #f #f "skribe-body")
+			(printf "<table cellpadding=\"~a\" cellspacing=\"0\" width=\"100%\" class=\"skribilo-margins\"><tr>\n" ac))
+		     (html-margin lm lmfn lms lmbg lmfg "skribilo-left-margin")
+		     (html-margin body #f #f #f #f "skribilo-body")
 		     (display "</tr></table>"))
 		    (rm
 		     (let* ((ep (engine-custom e 'margin-padding))
 			    (ac (if (number? ep) ep 0)))
-			(printf "<table cellpadding=\"~a\" cellspacing=\"0\" width=\"100%\" class=\"skribe-margins\"><tr>\n"))
-		     (html-margin body #f #f #f #f "skribe-body")
-		     (html-margin rm rmfn rms rmbg rmfg "skribe-right-margin")
+			(printf "<table cellpadding=\"~a\" cellspacing=\"0\" width=\"100%\" class=\"skribilo-margins\"><tr>\n"))
+		     (html-margin body #f #f #f #f "skribilo-body")
+		     (html-margin rm rmfn rms rmbg rmfg "skribilo-right-margin")
 		     (display "</tr></table>"))
 		    (else
-		     (display "<div class=\"skribe-body\">\n")
+		     (display "<div class=\"skribilo-body\">\n")
 		     (output body e)
 		     (display "</div>\n"))))))
 
@@ -844,7 +844,7 @@
 ;*    &html-ending ...                                                 */
 ;*---------------------------------------------------------------------*/
 (markup-writer '&html-ending
-   :before "<div class=\"skribe-ending\">"
+   :before "<div class=\"skribilo-ending\">"
    :action (lambda (n e)
 	      (let ((body (markup-body n)))
 		 (if body
@@ -875,7 +875,7 @@
 	  (tfg (engine-custom e 'title-foreground))
 	  (tfont (engine-custom e 'title-font)))
       (when title
-	 (display "<table width=\"100%\" class=\"skribetitle\" cellspacing=\"0\" cellpadding=\"0\"><tbody>\n<tr>")
+	 (display "<table width=\"100%\" class=\"skribilo-title\" cellspacing=\"0\" cellpadding=\"0\"><tbody>\n<tr>")
 	 (if (html-color-spec? tbg)
 	     (printf "<td align=\"center\"~A>"
                      (if (html-color-spec? tbg)
@@ -891,9 +891,9 @@
 		   (output title e)
 		   (display "</strong></font>"))
 		(begin
-		   (printf "<div class=\"skribetitle\"><strong><big><big><big>")
+		   (printf "<div class=\"skribilo-title\"><strong><big>")
 		   (output title e)
-		   (display "</big></big></big></strong></div>"))))
+		   (display "</big></strong></div>"))))
 	 (if (not authors)
 	     (display "\n")
 	     (html-title-authors authors e))
@@ -917,7 +917,7 @@
    :before (lambda (n e)
 	      (let ((footnotes (markup-body n)))
 		 (when (pair? footnotes)
-		    (display "<div class=\"footnote\">")
+		    (display "<div class=\"skribilo-footnote\">")
 		    (display "<br><br>\n")
 		    (display "<hr width='20%' size='2' align='left'>\n"))))
    :action (lambda (n e)
@@ -1341,8 +1341,8 @@
       (display (string-canonicalize ident))
       (display "\"></a>\n")
       (if c
-	  (printf "<div class=\"~a-atitle\">" c)
-	  (printf "<div class=\"skribe~atitle\">" (markup-markup n)))
+	  (printf "<div class=\"~a-title\">" c)
+	  (printf "<div class=\"skribilo-~a-title\">" (markup-markup n)))
       (when (html-color-spec? tbg)
 	 (display "<table width=\"100%\">")
 	 (printf "<tr><td bgcolor=\"~a\">" tbg))
@@ -1935,7 +1935,7 @@
 		     (f (html-file c e))
 		     (class (if (markup-class n)
 				(markup-class n)
-				"inbound")))
+				"skribilo-ref")))
 		 (printf "<a href=\"~a#~a\" class=\"~a\""
 			 (if (and (*destination-file*)
 				  (string=? f (*destination-file*)))
