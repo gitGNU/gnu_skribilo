@@ -1204,7 +1204,7 @@
                    (ident (string-append id "-meta"))
                    (class (markup-class n))
                    (parent n)
-                   (body (markup-option n :keywords))))
+                   (body (markup-option (ast-document n) :keywords))))
 	  (head (new markup
 		   (markup '&html-head)
 		   (ident (string-append id "-head"))
