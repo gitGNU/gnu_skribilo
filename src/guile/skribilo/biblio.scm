@@ -31,7 +31,7 @@
 
   :autoload   (skribilo reader)      (%default-reader)
   :autoload   (skribilo parameters)  (*bib-path*)
-  :autoload   (skribilo ast)         (<markup> <handle>)
+  :autoload   (skribilo ast)         (<markup> <handle> is-markup?)
 
   :use-module (ice-9 optargs)
   :use-module (oop goops)
