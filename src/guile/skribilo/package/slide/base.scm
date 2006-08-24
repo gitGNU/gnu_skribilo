@@ -137,7 +137,7 @@
 ;; Title for the automatically-generated outline slide.
 (define %slide-outline-title "")
 
-;; Circular list of symbols to be passed to `itemize' in pointers.
+;; Circular list of symbols to be passed to `itemize' in outlines.
 (define %slide-outline-itemize-symbols
   (let loop ((names '(#t "-" "bullet" "->" "middot")))
     (if (null? names)
@@ -148,13 +148,14 @@
 	      (loop (cdr names))))))
 
 
-(define (make-topic-slide topic engine)
+(define (make-outline-slide topic engine)
   (let ((parent-topic (if (is-markup? topic 'slide-topic)
                           topic
                           (find1-up (lambda (n)
                                       (is-markup? n 'slide-topic))
                                     topic))))
     (output (slide :title %slide-outline-title :toc #f
+                   :class (markup-option topic :class)
                    ;; The mark below is needed for cross-referencing by PDF
                    ;; bookmarks.
                    (if (markup-ident topic) (mark (markup-ident topic)) "")
@@ -164,9 +165,19 @@
 
 
 (markup-writer 'slide-topic (find-engine 'base)
+   :options '(:title :outline? :class :ident)
    :action (lambda (n e)
 	      (if (markup-option n :outline?)
-		  (make-topic-slide n e))
+		  (make-outline-slide n e))
+
+	      (output (markup-body n) e)))
+
+(markup-writer 'slide-subtopic (find-engine 'base)
+   ;; FIXME: Largely untested.
+   :options '(:title :outline? :class :ident)
+   :action (lambda (n e)
+	      (if (markup-option n :outline?)
+		  (make-outline-slide n e))
 
 	      (output (markup-body n) e)))
 

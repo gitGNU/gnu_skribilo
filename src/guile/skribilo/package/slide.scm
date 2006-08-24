@@ -226,9 +226,11 @@
 ;*    slide-topic ...                                                  */
 ;*---------------------------------------------------------------------*/
 (define-markup (slide-topic #!rest opt
-			    #!key (outline? #t) (title "") (ident #f))
+			    #!key title (outline? #t)
+                            (ident #f) (class "slide-topic"))
    (new container
       (markup 'slide-topic)
+      (required-options '(:title :outline?))
       (ident (or ident (symbol->string (gensym 'slide-topic))))
       (options (the-options opt))
       (body (the-body opt))))
@@ -237,9 +239,11 @@
 ;*    slide-subtopic ...                                               */
 ;*---------------------------------------------------------------------*/
 (define-markup (slide-subtopic #!rest opt
-			       #!key (outline? #f) (title "") (ident #f))
+			       #!key title (outline? #f)
+                               (ident #f) (class "slide-subtopic"))
    (new container
       (markup 'slide-subtopic)
+      (required-options '(:title :outline?))
       (ident (or ident (symbol->string (gensym 'slide-subtopic))))
       (options (the-options opt))
       (body (the-body opt))))

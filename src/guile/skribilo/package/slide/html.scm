@@ -110,6 +110,7 @@
 ;;;
 
 (markup-writer 'slide-topic (find-engine 'html)
+   :options '(:title :outline? :class :ident)
    :action (lambda (n e)
 	      (let ((title (markup-option n :title))
 		    (body (markup-body n)))
