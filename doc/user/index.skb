@@ -50,7 +50,7 @@ that pre-exists to all execution.])
 (doc-markup 'default-index
 	    '()
 	    :common-args '()
-	    :source "skribilo/skribe/index.scm"))
+	    :source "skribilo/index.scm"))
 
 ;*---------------------------------------------------------------------*/
 ;*    Index ... @label index@                                          */
