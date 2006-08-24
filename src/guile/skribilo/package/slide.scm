@@ -20,8 +20,7 @@
 ;;; USA.
 
 
-(define-skribe-module (skribilo package slide)
-  :autoload (skribilo engine html) (html-width html-title-authors))
+(define-skribe-module (skribilo package slide))
 
 
 ;*---------------------------------------------------------------------*/
@@ -35,23 +34,6 @@
 ;*---------------------------------------------------------------------*/
 (define %slide-the-slides '())
 (define %slide-the-counter 0)
-
-;*---------------------------------------------------------------------*/
-;*    %slide-initialize! ...                                           */
-;*---------------------------------------------------------------------*/
-(format (current-error-port) "Slides initializing...~%")
-
-;; Register specific implementations for lazy loading.
-(when-engine-is-loaded 'latex
-  (lambda ()
-    (resolve-module '(skribilo package slide latex))))
-(when-engine-is-loaded 'html
-  (lambda ()
-    (resolve-module '(skribilo package slide html))))
-(when-engine-is-loaded 'lout
-  (lambda ()
-    (resolve-module '(skribilo package slide lout))))
-
 
 ;*---------------------------------------------------------------------*/
 ;*    slide ...                                                        */
@@ -229,38 +211,6 @@
 		    ,@(the-options opt :color :scolor)))
 	 (body body))))
 
-;*---------------------------------------------------------------------*/
-;*    base                                                             */
-;*---------------------------------------------------------------------*/
-(let ((be (find-engine 'base)))
-   (skribe-message "Base slides setup...\n")
-   ;; slide-pause
-   (markup-writer 'slide-pause be
-      :action #f)
-   ;; slide-vspace
-   (markup-writer 'slide-vspace be
-      :options '()
-      :action #f)
-   ;; slide-embed
-   (markup-writer 'slide-embed be
-      :options '(:alt :geometry-opt)
-      :action (lambda (n e)
-		 (output (markup-option n :alt) e)))
-   ;; slide-record
-   (markup-writer 'slide-record be
-      :options '(:tag :play)
-      :action (lambda (n e)
-		 (output (markup-body n) e)))
-   ;; slide-play
-   (markup-writer 'slide-play be
-      :options '(:tag :color)
-      :action (lambda (n e)
-		 (output (markup-option n :alt) e)))
-   ;; slide-play*
-   (markup-writer 'slide-play* be
-      :options '(:tag :color :scolor)
-      :action (lambda (n e)
-		 (output (markup-option n :alt) e))))
 
 
 ;*---------------------------------------------------------------------*/
@@ -271,3 +221,48 @@
 		      (and (is-markup? n 'slide)
 			   (markup-option n :number)))
 		   %slide-the-slides)))
+
+;*---------------------------------------------------------------------*/
+;*    slide-topic ...                                                  */
+;*---------------------------------------------------------------------*/
+(define-markup (slide-topic #!rest opt
+			    #!key (outline? #t) (title "") (ident #f))
+   (new container
+      (markup 'slide-topic)
+      (ident (or ident (symbol->string (gensym 'slide-topic))))
+      (options (the-options opt))
+      (body (the-body opt))))
+
+;*---------------------------------------------------------------------*/
+;*    slide-subtopic ...                                               */
+;*---------------------------------------------------------------------*/
+(define-markup (slide-subtopic #!rest opt
+			       #!key (outline? #f) (title "") (ident #f))
+   (new container
+      (markup 'slide-subtopic)
+      (ident (or ident (symbol->string (gensym 'slide-subtopic))))
+      (options (the-options opt))
+      (body (the-body opt))))
+
+
+
+;;;
+;;; Initialization.
+;;;
+
+(format (current-error-port) "Slides initializing...~%")
+
+;; Register specific implementations for lazy loading.
+(when-engine-is-loaded 'base
+  (lambda ()
+    (resolve-module '(skribilo package slide base))))
+(when-engine-is-loaded 'latex
+  (lambda ()
+    (resolve-module '(skribilo package slide latex))))
+(when-engine-is-loaded 'html
+  (lambda ()
+    (resolve-module '(skribilo package slide html))))
+(when-engine-is-loaded 'lout
+  (lambda ()
+    (resolve-module '(skribilo package slide lout))))
+

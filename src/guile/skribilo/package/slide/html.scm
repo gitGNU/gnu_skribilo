@@ -106,6 +106,34 @@
 
 
 ;;;
+;;; Slide topics/subtopics.
+;;;
+
+(markup-writer 'slide-topic (find-engine 'html)
+   :action (lambda (n e)
+	      (let ((title (markup-option n :title))
+		    (body (markup-body n)))
+		 (display "\n<h2 class=\"slide-topic:title\">")
+		 (if (markup-ident n)
+		     (printf "<a name=\"~a\"></a>" (markup-ident n)))
+		 (output title e)
+		 (display "</h2> <br>\n")
+		 (display "\n<div class=\"slide-topic:slide-list\">")
+		 (for-each (lambda (s)
+			      (output (markup-option s :title) e)
+			      (display "&nbsp;--&nbsp;"))
+			   (filter (lambda (n)
+				      (or (is-markup? n 'slide-subtopic)
+					  (is-markup? n 'slide)))
+				   (markup-body n)))
+		 (display "\n</div> <!-- slide-topic:slide-list -->")
+		 (display "\n<hr><br>\n")
+
+		 ;; the slides
+		 (output (markup-body n) e))))
+
+
+;;;
 ;;; Initialization.
 ;;;
 
