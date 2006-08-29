@@ -6,4 +6,4 @@
 
 (center 
  (figure :legend "The great Penguin" 
-	 (image :file "linux.gif")))
+	 (image :file "linux.png")))
