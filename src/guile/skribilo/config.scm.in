@@ -4,7 +4,7 @@
 (define-module (skribilo config))
 
 (define-public (skribilo-release)             "1.2")
-(define-public (skribilo-url)                 "http://www.laas.fr/~lcourtes/")
+(define-public (skribilo-url)                 "http://www.nongnu.org/skribilo/")
 (define-public (skribilo-doc-directory)       "@SKRIBILO_DOC_DIR@")
 (define-public (skribilo-extension-directory) "@SKRIBILO_EXT_DIR@")
 (define-public (skribilo-default-path)        "@SKRIBILO_SKR_PATH@")
