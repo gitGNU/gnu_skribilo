@@ -1,4 +1,4 @@
-;;; manual.skr  --  Skribe manuals and documentation pages style
+;;; manual.scm  --  Skribe manuals and documentation pages style
 ;;;
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
@@ -17,6 +17,37 @@
 ;;; along with this program; if not, write to the Free Software
 ;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 ;;; USA.
+
+(define-module (skribilo documentation manual)
+  :use-module (skribilo reader)
+  :use-module (skribilo engine)
+  :use-module (skribilo writer)
+  :use-module (skribilo ast)
+  :use-module (skribilo lib) ;; `define-markup'
+  :use-module (skribilo resolve)
+  :use-module (skribilo output)
+  :use-module (skribilo utils keywords)
+  :use-module (skribilo utils compat)
+  :use-module (skribilo utils syntax) ;; `when'
+
+  :use-module (skribilo documentation env)
+  :use-module (skribilo package base)
+  :use-module (skribilo prog)
+  :use-module (skribilo coloring lisp)
+  :use-module (skribilo coloring xml)
+
+  :use-module (ice-9 optargs))
+
+(fluid-set! current-reader (make-reader 'skribe))
+
+
+;*---------------------------------------------------------------------*/
+;*    The various indexes                                              */
+;*---------------------------------------------------------------------*/
+(define-public *markup-index* (make-index "markup"))
+(define-public *custom-index* (make-index "custom"))
+(define-public *function-index* (make-index "function"))
+(define-public *package-index* (make-index "package"))
 
 ;*---------------------------------------------------------------------*/
 ;*    Base configuration                                               */

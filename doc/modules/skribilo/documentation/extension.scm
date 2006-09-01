@@ -1,4 +1,4 @@
-;;; extension.skr  --  The Skribe package for documenting extensions
+;;; extension.scm  --  The Skribe package for documenting extensions
 ;;;
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
@@ -18,6 +18,13 @@
 ;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 ;;; USA.
 
+(define-module (skribilo documentation extension)
+  :use-module (skribilo reader)
+  :use-module (skribilo utils compat))
+
+(fluid-set! current-reader (make-reader 'skribe))
+
+
 ;*---------------------------------------------------------------------*/
 ;*    extension                                                        */
 ;*---------------------------------------------------------------------*/

@@ -12,7 +12,8 @@ BUILT_SOURCES = doc-config.scm
 html_DATA = user.html
 
 skribilo = $(top_srcdir)/src/skribilo
-load_path = $(top_srcdir)/src/guile:$(top_srcdir)/src/guile/skribilo/package
+load_path = $(top_srcdir)/src/guile:$(top_srcdir)/src/guile/skribilo/package:$(top_builddir)/src/guile:$(top_srcdir)/doc/modules
+
 
 %.html: %.skb
 	GUILE_LOAD_PATH=$(load_path):$$GUILE_LOAD_PATH \

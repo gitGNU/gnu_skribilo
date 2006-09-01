@@ -1,1 +1,1 @@
-SUBDIRS = user skr img dir
+SUBDIRS = user modules img dir

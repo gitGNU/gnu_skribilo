@@ -52,4 +52,6 @@ AC_OUTPUT([Makefile
 	   doc/user/src/Makefile
 	   doc/img/Makefile
 	   doc/dir/Makefile
-	   doc/skr/Makefile])
+	   doc/modules/Makefile
+	   doc/modules/skribilo/Makefile
+	   doc/modules/skribilo/documentation/Makefile])

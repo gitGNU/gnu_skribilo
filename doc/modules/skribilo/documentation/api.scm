@@ -1,4 +1,4 @@
-;;; api.skr  --  The style for documenting Scheme APIs.
+;;; api.scm  --  The style for documenting Scheme APIs.
 ;;;
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;; Copyright 2005, 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
@@ -19,10 +19,28 @@
 ;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 ;;; USA.
 
-(use-modules (ice-9 match)
-	     (skribilo reader)        ;; `make-reader'
-	     (skribilo utils syntax)) ;; `%skribilo-module-reader'
+(define-module (skribilo documentation api)
+  :use-module (skribilo reader)
+  :use-module (skribilo engine)
+  :use-module (skribilo writer)
+  :use-module (skribilo ast)
+  :use-module (skribilo output)
+  :use-module (skribilo lib) ;; `define-markup'
+  :use-module (skribilo utils keywords)
+  :use-module (skribilo utils compat)
+  :use-module (skribilo utils syntax) ;; `%skribilo-module-reader'
 
+  :use-module (skribilo package base)
+  :use-module (skribilo documentation manual) ;; `*markup-index*'
+  :use-module (skribilo documentation env) ;; `*api-engines*'
+
+  :use-module (srfi srfi-1)
+  :use-module (ice-9 match)
+  :use-module (ice-9 optargs))
+
+(fluid-set! current-reader (make-reader 'skribe))
+
+
 ;*---------------------------------------------------------------------*/
 ;*    Html configuration                                               */
 ;*---------------------------------------------------------------------*/

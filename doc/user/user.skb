@@ -1,6 +1,7 @@
 ;;; user.skb  --  The Skribilo user manual.
 ;;;
 ;;; Copyright 2001, 2002, 2003, 2004  Manuel Serrano
+;;; Copyright 2005, 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -21,10 +22,11 @@
 ;*---------------------------------------------------------------------*/
 ;*    The Skribe documentation style                                   */
 ;*---------------------------------------------------------------------*/
-(skribe-load "web-book.skr")
-(skribe-load "skr/env.skr")
-(skribe-load "skr/manual.skr")
-(skribe-load "skr/api.skr")
+(use-modules (skribilo package web-book)
+             (skribilo documentation env)
+             (skribilo documentation manual)
+             (skribilo documentation api))
+
 
 ;*---------------------------------------------------------------------*/
 ;*    Packages							       */
@@ -50,14 +52,6 @@
 ;*---------------------------------------------------------------------*/
 (let ((le (find-engine 'lout)))
    (engine-custom-set! le 'document-type 'doc))
-
-;*---------------------------------------------------------------------*/
-;*    The various indexes                                              */
-;*---------------------------------------------------------------------*/
-(define *markup-index* (make-index "markup"))
-(define *custom-index* (make-index "custom"))
-(define *function-index* (make-index "function"))
-(define *package-index* (make-index "package"))
 
 
 ;*---------------------------------------------------------------------*/
