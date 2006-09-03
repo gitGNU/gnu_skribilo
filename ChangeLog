@@ -2,6 +2,33 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-09-03 10:49:42 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-71
+
+    Summary:
+      Doc: Various fixes (non-unique idents, dangling refs).
+    Revision:
+      skribilo--devel--1.2--patch-71
+
+    * doc/modules/skribilo/documentation/api.scm (doc-markup): Added an
+      `ident' argument, use it.
+    
+    * doc/user/package.skb (Articles): Differentiate the identifiers for the
+      various `abstract' markups.
+    
+    * doc/user/Makefile.am (skribilo): Look for it in `$(top_builddir)'
+      rather than `$(top_srcdir)'.
+    
+    * doc/user/markup.skb (Standard Markups): Added an identifier.
+    
+    * doc/user/src/links1.skb: When referring to `Standard Markups' by
+      identifier, use its current identifier (`std-markups').
+
+    modified files:
+     ChangeLog doc/modules/skribilo/documentation/api.scm
+     doc/user/Makefile.am doc/user/markup.skb doc/user/package.skb
+     doc/user/src/links1.skb
+
+
 2006-09-03 10:36:42 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-70
 
     Summary:

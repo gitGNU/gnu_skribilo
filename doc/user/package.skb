@@ -52,6 +52,7 @@ markup ,(code "abstract"):])
       (doc-markup 'abstract
 	 `((:class "The node class.")
 	   (:postscript [The URL of the PostScript version of the paper.]))
+	 :ident "abstract(acmproc)"
 	 :common-args '()
 	 :idx-note "acmproc"
 	 :idx-suffix " (acmproc)"
@@ -66,6 +67,7 @@ This package enables producing LaTeX documents conforming to the
 markup ,(code "abstract"):])
       (doc-markup 'abstract
 	 `((:postscript [The URL of the PostScript version of the paper.]))
+	 :ident "abstract(jfp)"
 	 :common-args '()
 	 :idx-note "jfp"
 	 :idx-suffix " (jfp)"

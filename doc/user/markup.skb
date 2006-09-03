@@ -21,7 +21,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    API                                                              */
 ;*---------------------------------------------------------------------*/
-(chapter :title "Standard Markups" [
+(chapter :title "Standard Markups" :ident "std-markups" [
 
 This chapter describes the forms composing Skribe texts. In XML/HTML
 these forms are called ,(emph "markups"). In LaTeX they are called

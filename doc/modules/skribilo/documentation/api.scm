@@ -347,9 +347,10 @@
 ;*    doc-markup ...                                                   */
 ;*---------------------------------------------------------------------*/
 (define-markup (doc-markup id args
-			   #!rest 
+			   #!rest
 			   opts
-			   #!key 
+			   #!key
+			   (ident #f)
 			   (writer-id #f)
 			   (common-args '((:ident "The node identifier.")
 					  (:class "The node class.")))
@@ -557,7 +558,8 @@
 	  (if (and (pair? drest) (not (define-markup-rest d)))
 	      (skribe-error 'doc-markup "No rest argument for" id)
 	      options)
-	  (list (mark :class "public-definition" (symbol->string id))
+	  (list (mark :class "public-definition"
+		      (or ident (symbol->string id)))
 		(map (lambda (i) (mark (symbol->string i))) others)
 		(map (lambda (i)
 			(let ((is (symbol->string i)))
