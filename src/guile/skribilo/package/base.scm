@@ -988,7 +988,7 @@
 	  (let* ((bs (ast->string bd))
 		 (n (new markup
 		       (markup 'mark)
-		       (ident bs)
+		       (ident (symbol->string (gensym bs)))
 		       (class class)
 		       (options (the-options opts :ident :class :text))
 		       (body text))))
@@ -1095,7 +1095,7 @@
 			 (if s
 			     (new markup
 				(markup 'ref)
-				(ident (symbol->string 'indent-ref))
+				(ident (symbol->string (gensym "ident-ref")))
 				(class class)
 				(required-options '(:text))
 				(options `((kind ,kind)
@@ -1127,7 +1127,7 @@
 	 (if s
 	     (let* ((n (new markup
 			  (markup 'bib-ref)
-			  (ident (symbol->string 'bib-ref))
+			  (ident (symbol->string (gensym "bib-ref")))
 			  (class class)
 			  (required-options '(:text))
 			  (options (the-options opts :ident :class))
@@ -1151,7 +1151,7 @@
    (define (url-ref)
       (new markup
 	 (markup 'url-ref)
-	 (ident (symbol->string 'url-ref))
+	 (ident (symbol->string (gensym "url-ref")))
 	 (class class)
 	 (required-options '(:url :text))
 	 (options (the-options opts :ident :class))))

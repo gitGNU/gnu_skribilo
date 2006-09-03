@@ -2,6 +2,222 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-09-03 10:36:42 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-70
+
+    Summary:
+      Removed sources of non-unique node identifiers.
+    Revision:
+      skribilo--devel--1.2--patch-70
+
+    * src/guile/skribilo/prog.scm (make-prog-body): Use `gensym' to create an
+      identifier instead of `(int->str lnum cs)'.
+      (make-line-mark): Take that identifier.
+    
+    * src/guile/skribilo/package/base.scm (mark): Use `gensym' to create an
+      identifier rather than BS.
+      (ref)[bib-ref]: Likewise.
+      [url-ref]: Likewise.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/base.scm
+     src/guile/skribilo/prog.scm
+
+
+2006-09-01 20:50:54 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-69
+
+    Summary:
+      Merge from lcourtes@laas.fr--2005-libre/skribilo--devo--1.2
+    Revision:
+      skribilo--devel--1.2--patch-69
+
+    Patches applied:
+    
+     * lcourtes@laas.fr--2005-libre/skribilo--devo--1.2  (patch 48-54)
+    
+       - Tiny Arch inventory fix.
+       - Doc: Converted GIF images to PNG.
+       - Added a GPL header to the documentation files (license confirmed by
+         Manuel Serrano).
+       - Removed `tools/skribebibtex/bigloo'.
+       - Removed the `etc' directory, kept `ChangeLog' and `skribe-config.in'.
+       - Updated the project URL.  :-)
+       - Turned `doc/skr' into `doc/modules', `skribe-load' into `use-modules'.
+
+    new files:
+     doc/.arch-ids/COPYING.id doc/COPYING
+     doc/img/.arch-ids/bsd.png.id doc/img/.arch-ids/lambda.png.id
+     doc/img/.arch-ids/linux.png.id doc/img/bsd.png
+     doc/img/lambda.png doc/img/linux.png doc/modules/Makefile.am
+     doc/modules/skribilo/.arch-ids/=id
+     doc/modules/skribilo/Makefile.am
+     doc/modules/skribilo/documentation/.arch-ids/=id
+
+    removed files:
+     doc/img/.arch-ids/bsd.gif.id doc/img/.arch-ids/lambda.gif.id
+     doc/img/.arch-ids/linux.gif.id doc/img/bsd.gif
+     doc/img/lambda.gif doc/img/linux.gif etc/.arch-ids/=id
+     etc/.arch-ids/Makefile.config.id etc/.arch-ids/config.id
+     etc/.arch-ids/skribe-config.id etc/Makefile.config
+     etc/bigloo/.arch-ids/=id etc/bigloo/.arch-ids/Makefile.skb.id
+     etc/bigloo/.arch-ids/Makefile.tpl.id
+     etc/bigloo/.arch-ids/configure.id etc/bigloo/Makefile.skb
+     etc/bigloo/Makefile.tpl etc/bigloo/autoconf/.arch-ids/=id
+     etc/bigloo/autoconf/.arch-ids/bfildir.id
+     etc/bigloo/autoconf/.arch-ids/blibdir.id
+     etc/bigloo/autoconf/.arch-ids/bversion.id
+     etc/bigloo/autoconf/.arch-ids/getbversion.id
+     etc/bigloo/autoconf/.arch-ids/gmaketest.id
+     etc/bigloo/autoconf/bfildir etc/bigloo/autoconf/blibdir
+     etc/bigloo/autoconf/bversion etc/bigloo/autoconf/getbversion
+     etc/bigloo/autoconf/gmaketest etc/bigloo/configure etc/config
+     etc/skribe-config etc/stklos/.arch-ids/=id
+     etc/stklos/.arch-ids/Makefile.config.in.id
+     etc/stklos/.arch-ids/Makefile.skb.in.id
+     etc/stklos/.arch-ids/configure.id
+     etc/stklos/.arch-ids/configure.in.id
+     etc/stklos/Makefile.config.in etc/stklos/Makefile.skb.in
+     etc/stklos/configure etc/stklos/configure.in
+     tools/skribebibtex/bigloo/.arch-ids/=id
+     tools/skribebibtex/bigloo/.arch-ids/main.scm.id
+     tools/skribebibtex/bigloo/.arch-ids/skribebibtex.scm.id
+     tools/skribebibtex/bigloo/main.scm
+     tools/skribebibtex/bigloo/skribebibtex.scm
+
+    modified files:
+     ChangeLog configure.ac doc/Makefile.am doc/dir/dir.skb
+     doc/img/Makefile.am
+     doc/modules/skribilo/documentation/Makefile.am
+     doc/modules/skribilo/documentation/api.scm
+     doc/modules/skribilo/documentation/env.scm
+     doc/modules/skribilo/documentation/extension.scm
+     doc/modules/skribilo/documentation/manual.scm
+     doc/user/.arch-inventory doc/user/Makefile.am doc/user/bib.skb
+     doc/user/char.skb doc/user/colframe.skb doc/user/document.skb
+     doc/user/emacs.skb doc/user/engine.skb
+     doc/user/enumeration.skb doc/user/eq.skb doc/user/examples.skb
+     doc/user/figure.skb doc/user/font.skb doc/user/footnote.skb
+     doc/user/htmle.skb doc/user/image.skb doc/user/index.skb
+     doc/user/justify.skb doc/user/latexe.skb doc/user/lib.skb
+     doc/user/line.skb doc/user/links.skb doc/user/markup.skb
+     doc/user/ornament.skb doc/user/package.skb doc/user/pie.skb
+     doc/user/prgm.skb doc/user/sectioning.skb
+     doc/user/skribe-config.skb doc/user/skribec.skb
+     doc/user/skribeinfo.skb doc/user/slide.skb
+     doc/user/src/api14.skb doc/user/src/api16.skb
+     doc/user/start.skb doc/user/syntax.skb doc/user/table.skb
+     doc/user/toc.skb doc/user/user.skb doc/user/xmle.skb
+     src/guile/skribilo/config.scm.in
+
+    renamed files:
+     doc/skr/.arch-ids/=id
+       ==> doc/modules/.arch-ids/=id
+     doc/skr/.arch-ids/api.skr.id
+       ==> doc/modules/skribilo/documentation/.arch-ids/api.scm.id
+     doc/skr/.arch-ids/env.skr.id
+       ==> doc/modules/skribilo/documentation/.arch-ids/env.scm.id
+     doc/skr/.arch-ids/extension.skr.id
+       ==> doc/modules/skribilo/documentation/.arch-ids/extension.scm.id
+     doc/skr/.arch-ids/manual.skr.id
+       ==> doc/modules/skribilo/documentation/.arch-ids/manual.scm.id
+     doc/skr/Makefile.am
+       ==> doc/modules/skribilo/documentation/Makefile.am
+     doc/skr/api.skr
+       ==> doc/modules/skribilo/documentation/api.scm
+     doc/skr/env.skr
+       ==> doc/modules/skribilo/documentation/env.scm
+     doc/skr/extension.skr
+       ==> doc/modules/skribilo/documentation/extension.scm
+     doc/skr/manual.skr
+       ==> doc/modules/skribilo/documentation/manual.scm
+     etc/.arch-ids/ChangeLog.id
+       ==> .arch-ids/ChangeLog.Skribe.id
+     etc/.arch-ids/skribe-config.in.id
+       ==> src/.arch-ids/skribe-config.in.id
+     etc/ChangeLog
+       ==> ChangeLog.Skribe
+     etc/skribe-config.in
+       ==> src/skribe-config.in
+
+    new directories:
+     doc/modules/.arch-ids doc/modules/skribilo
+     doc/modules/skribilo/.arch-ids
+     doc/modules/skribilo/documentation
+     doc/modules/skribilo/documentation/.arch-ids
+
+    removed directories:
+     doc/skr/.arch-ids etc etc/.arch-ids etc/bigloo
+     etc/bigloo/.arch-ids etc/bigloo/autoconf
+     etc/bigloo/autoconf/.arch-ids etc/stklos etc/stklos/.arch-ids
+     tools/skribebibtex/bigloo tools/skribebibtex/bigloo/.arch-ids
+
+    renamed directories:
+     doc/skr
+       ==> doc/modules
+
+    new patches:
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-48
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-49
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-50
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-51
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-52
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-53
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-54
+
+
+2006-08-26 15:58:53 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-68
+
+    Summary:
+      Merge from lcourtes@laas.fr--2005-libre/skribilo--devo--1.2
+    Revision:
+      skribilo--devel--1.2--patch-68
+
+    Patches applied:
+    
+     * lcourtes@laas.fr--2005-libre/skribilo--devo--1.2  (patch 41-47)
+    
+       - Base package: use `type-name' instead of `find-runtime-type'.
+       - Fixed autoloading issue in `(skribilo biblio)'.
+       - slide: Implemented `slide-topic' and `slide-subtopic'.
+       - doc: Fixed index-related documentation.
+       - slide: Added a `:class' argument to (sub)topics.
+       - doc: Documented `slide-topic' and `slide-subtopic'.
+       - Added a GPL headers to those files that did not already have it.
+
+    new files:
+     src/guile/skribilo/package/slide/base.scm
+
+    modified files:
+     ChangeLog doc/user/index.skb doc/user/slide.skb
+     doc/user/src/slides.skb src/guile/skribilo/biblio.scm
+     src/guile/skribilo/engine/base.scm
+     src/guile/skribilo/engine/html.scm
+     src/guile/skribilo/engine/latex.scm
+     src/guile/skribilo/engine/xml.scm
+     src/guile/skribilo/package/acmproc.scm
+     src/guile/skribilo/package/french.scm
+     src/guile/skribilo/package/jfp.scm
+     src/guile/skribilo/package/letter.scm
+     src/guile/skribilo/package/lncs.scm
+     src/guile/skribilo/package/scribe.scm
+     src/guile/skribilo/package/sigplan.scm
+     src/guile/skribilo/package/skribe.scm
+     src/guile/skribilo/package/slide.scm
+     src/guile/skribilo/package/slide/Makefile.am
+     src/guile/skribilo/package/slide/html.scm
+     src/guile/skribilo/package/slide/lout.scm
+     src/guile/skribilo/package/web-article.scm
+     src/guile/skribilo/package/web-book.scm
+
+    new patches:
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-41
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-42
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-43
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-44
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-45
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-46
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-47
+
+
 2006-07-31 18:40:57 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-67
 
     Summary:

@@ -49,14 +49,14 @@
 ;*---------------------------------------------------------------------*/
 ;*    *lines* ...                                                      */
 ;*---------------------------------------------------------------------*/
+;; FIXME: Removed that global.  Rework the thing.
 (define *lines* (make-hash-table))
 
 ;*---------------------------------------------------------------------*/
 ;*    make-line-mark ...                                               */
 ;*---------------------------------------------------------------------*/
-(define (make-line-mark m lnum b)
-   (let* ((ls (number->string lnum))
-	  (n (list (mark ls) b)))
+(define (make-line-mark m line-ident b)
+   (let* ((n (list (mark line-ident) b)))
       (hash-set! *lines* m n)
       n))
 
@@ -209,10 +209,11 @@
 	     (reverse! res)
 	     (receive (m l)
 		      (extract-mark (car lines) mark regexp)
-		(let ((n (new markup
- 			    (markup '&prog-line)
- 			    (ident (and lnum-init (int->str lnum cs)))
- 			    (body (if m (make-line-mark m lnum l) l)))))
+		(let* ((line-ident (symbol->string (gensym "&prog-line")))
+		       (n (new markup
+			     (markup '&prog-line)
+			     (ident  line-ident)
+			     (body (if m (make-line-mark m line-ident l) l)))))
  		   (loop (cdr lines)
  			 (+ lnum 1)
  			 (cons n res))))))))
