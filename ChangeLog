@@ -2,6 +2,46 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-09-03 11:25:37 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-72
+
+    Summary:
+      Implemented per-document node identifiers.
+    Revision:
+      skribilo--devel--1.2--patch-72
+
+    * src/guile/skribilo/ast.scm: Autoload `srfi-1' on `fold'.
+      (*node-table*): Removed.
+      (bind-markup!): Removed.
+      (initialize<markup>): Removed.
+      (find-markups): Removed.
+      (write<markup>): Commented out debugging `format'.
+      (<document>)[node-table]: New slot.
+      [nodes-bound?]: New slot.
+      (document-lookup-node): New.
+      (document-bind-node!): New.
+      (document-bind-nodes!): New.
+      (ast-fold): New.
+      (find-markup-ident): Removed.
+    
+    * src/guile/skribilo/output.scm (*document-being-output*): New.
+      (out<document>): New.
+    
+    * src/guile/skribilo/resolve.scm (*document-being-resolved*): New.
+      (resolve!): Invoke `document-bind-nodes!' before resolving the
+      document.
+      (do-resolve!<document>): Parameterize `*document-being-resolved*'.
+      (resolve-ident): Use `document-lookup-node' instead of `find-markups'.
+    
+    * src/guile/skribilo/utils/compat.scm (bind-markup!): New.
+      (find-markups): New.
+      (find-markup-ident): New.
+
+    modified files:
+     ChangeLog src/guile/skribilo/ast.scm
+     src/guile/skribilo/output.scm src/guile/skribilo/resolve.scm
+     src/guile/skribilo/utils/compat.scm
+
+
 2006-09-03 10:49:42 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-71
 
     Summary:

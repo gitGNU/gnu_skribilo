@@ -1,6 +1,6 @@
 ;;; output.scm  --  Skribilo output stage.
 ;;;
-;;; Copyright 2003-2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
+;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
 ;;; Copyright 2005, 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
@@ -32,8 +32,10 @@
   :use-module (skribilo condition)
   :use-module (srfi srfi-35)
   :use-module (srfi srfi-34)
+  :use-module (srfi srfi-39)
 
   :export     (output
+	       *document-being-output*
 	       &output-error &output-unresolved-error &output-writer-error
 	       output-error? output-unresolved-error? output-writer-error?))
 
@@ -85,6 +87,10 @@
 ;;; Output method.
 ;;;
 
+;; The document being output.  Note: This is only meant to be used by the
+;; compatibility layer in order to implement things like `find-markups'!
+(define *document-being-output* (make-parameter #f))
+
 (define-generic out)
 
 (define (%out/writer n e w)
@@ -122,6 +128,10 @@
 (define-method (out node e)
   #f)
 
+(define-method (out (node <document>) e)
+  ;; Only needed by the compatibility layer.
+  (parameterize ((*document-being-output* node))
+    (next-method)))
 
 (define-method (out (node <pair>) e)
   (let loop ((n* node))

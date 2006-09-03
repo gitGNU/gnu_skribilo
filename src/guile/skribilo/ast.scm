@@ -24,6 +24,7 @@
   :use-module (oop goops)
   :autoload (skribilo location) (location?)
   :autoload (skribilo lib) (skribe-type-error skribe-error)
+  :autoload (srfi srfi-1)  (fold)
   :use-module (skribilo utils syntax)
   :export (<ast> ast? ast-loc ast-loc-set!
 		 ast-parent ast->string ast->file-location
@@ -35,10 +36,9 @@
 	   <node> node? node-options node-loc node-body
 	   <processor> processor? processor-combinator processor-engine
 
-	   <markup> markup? bind-markup! markup-options is-markup?
+	   <markup> markup? markup-options is-markup?
 		    markup-markup markup-body markup-body-set!
                     markup-ident markup-class
-		    find-markups
 		    markup-option markup-option-set!
 		    markup-option-add! markup-output
 		    markup-parent markup-document markup-chapter
@@ -49,9 +49,11 @@
 
 	   <document> document? document-ident document-body
 		      document-options document-end
+		      document-lookup-node document-bind-node!
+		      document-bind-nodes!
 
            ;; traversal
-           find-markup-ident
+	   ast-fold
            container-search-down search-down find-down find1-down
            find-up find1-up
            ast-document ast-chapter ast-section))
@@ -68,18 +70,13 @@
 
 (fluid-set! current-reader %skribilo-module-reader)
 
-(define *node-table* (make-hash-table))
-					; Used to stores the nodes of  an AST.
-					; It permits to retrieve a node from its
-					; identifier.
 
 
 
-;;; ======================================================================
 ;;;
-;;;				<AST>
+;;; Abstract syntax tree (AST).
 ;;;
-;;; ======================================================================
+
 ;;FIXME: set! location in <ast>
 (define-class <ast> ()
   ;; Parent of this guy.
@@ -198,27 +195,14 @@
 
 
 
-;;; ======================================================================
 ;;;
-;;;				<MARKUP>
+;;; Markup.
 ;;;
-;;; ======================================================================
+
 (define-class <markup> (<node>)
   (ident  :init-keyword :ident  :getter markup-ident :init-value #f)
   (class  :init-keyword :class  :getter markup-class :init-value #f)
   (markup :init-keyword :markup :getter markup-markup))
-
-
-(define (bind-markup! node)
-  (hash-set! *node-table*
-	     (markup-ident node)
-	     ;(lambda (cur) (cons node cur))
-	     (list node)))
-
-
-(define-method (initialize (self <markup>) initargs)
-  (next-method)
-  (bind-markup! self))
 
 
 (define (markup? obj)		(is-a? obj <markup>))
@@ -280,9 +264,6 @@
 
 
 
-(define (find-markups ident)
-  (hash-ref *node-table* ident #f))
-
 
 (define-method (write (obj <markup>) port)
   (format port "#<~A (~A/~A) ~A>"
@@ -299,7 +280,7 @@
 		   (source (procedure-source proc))
 		   (file (and source (source-property source 'filename)))
 		   (line (and source (source-property source 'line))))
-	      (format (current-error-port) "src=~a~%" source)
+	      ;;(format (current-error-port) "src=~a~%" source)
 	      (string-append name
 			     (if file
 				 (string-append " " file
@@ -358,12 +339,15 @@
     (and (pair? c) (cadr c))))
 
 
-;;; ======================================================================
+
 ;;;
-;;;				<DOCUMENT>
+;;; Document.
 ;;;
-;;; ======================================================================
-(define-class <document> (<container>))
+
+(define-class <document> (<container>)
+  (node-table   :init-thunk make-hash-table :getter document-node-table)
+  (nodes-bound? :init-value #f :getter document-nodes-bound?))
+
 
 (define (document? obj)      (is-a? obj <document>))
 (define (document-ident obj) (slot-ref obj 'ident))
@@ -371,23 +355,59 @@
 (define document-options     markup-options)
 (define document-env         container-env)
 
+(define (document-lookup-node doc ident)
+  ;; Lookup the node with identifier IDENT (a string) in document DOC.
+  (hash-ref (document-node-table doc) ident))
+
+(define (document-bind-node! doc node . ident)
+  ;; Bind NODE (a markup object) to DOC (a document object).
+  (let ((ident (if (null? ident) (markup-ident node) (car ident))))
+    (if ident
+	(let ((handle (hash-get-handle (document-node-table doc) ident)))
+	  ;;(format (current-error-port) "binding `~a' in `~a'~%" ident node)
+	  (if (and (pair? handle) (not (eq? (cdr handle) node)))
+	      (error "node identifier already bound"
+		     (cdr handle)) ;; FIXME: use `raise'
+	      (hash-set! (document-node-table doc) ident node))))))
+
+(define (document-bind-nodes! doc)
+  ;; Bind all the nodes contained in DOC if they are not already bound.
+  ;; Once, this is done, `document-lookup-node' can be used to search a node
+  ;; by its identifier.
+
+  ;; We assume that unresolved nodes do not introduce any new identifier,
+  ;; hence this optimization.
+  (if (document-nodes-bound? doc)
+      #t
+      (begin
+	(ast-fold (lambda (node result)
+		    (if (markup? node) (document-bind-node! doc node))
+		    #t)
+		  #t ;; unused
+		  doc)
+	(slot-set! doc 'nodes-bound? #t))))
 
 
 ;;;
 ;;; AST traversal utilities.
 ;;;
 
+(define (ast-fold proc init ast)
+  ;; Apply PROC to each node in AST (per `node?'), in a way similar to `fold'
+  ;; (in SRFI-1).
+  (let loop ((ast ast)
+	     (result init))
+    (cond ((pair? ast)
+	   (fold loop result ast))
+	  ((node? ast)
+	   (loop (node-body ast) (proc ast result)))
+	  (else result))))
+
 
 ;; The procedures below are almost unchanged compared to Skribe 1.2d's
 ;; `lib.scm' file found in the `common' directory, written by Manuel Serrano
 ;; (I removed uses of `with-debug' et al., though).
 
-
-(define (find-markup-ident ident)
-  (let ((r (find-markups ident)))
-    (if (or (pair? r) (null? r))
-        r
-        '())))
 
 (define (container-search-down pred obj)
   (let loop ((obj (markup-body obj)))

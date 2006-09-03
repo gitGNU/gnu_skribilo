@@ -1,7 +1,7 @@
 ;;; resolve.scm  --  Skribilo reference resolution.
 ;;;
-;;; Copyright 2003-2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
-;;; Copyright 2005  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
+;;; Copyright 2005, 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -33,6 +33,7 @@
 
   :export (resolve! resolve-search-parent resolve-children resolve-children*
 	   find1 resolve-counter resolve-parent resolve-ident
+	   *document-being-resolved*
 
            &resolution-error resolution-error?
            &resolution-orphan-error resolution-orphan-error?
@@ -80,6 +81,10 @@
 ;;; Resolving nodes.
 ;;;
 
+;; The document being resolved.  Note: This is only meant to be used by the
+;; compatibility layer in order to implement things like `find-markups'!
+(define *document-being-resolved* (make-parameter #f))
+
 (define *unresolved* (make-parameter #f))
 (define-generic do-resolve!)
 
@@ -95,6 +100,13 @@
 (define (resolve! ast engine env)
   (with-debug 3 'resolve
      (debug-item "ast=" ast)
+
+     (if (document? ast)
+	 ;; Bind nodes prior to resolution so that unresolved nodes can
+	 ;; lookup nodes by identifier using `document-lookup-node' or
+	 ;; `resolve-ident'.
+	 (document-bind-nodes! ast))
+
      (parameterize ((*unresolved* #f))
        (let Loop ((ast ast))
 	 (*unresolved* #f)
@@ -187,16 +199,17 @@
 
 
 (define-method (do-resolve! (node <document>) engine env0)
-  (next-method)
-  ;; resolve the engine custom
-  (let ((env (append `((parent ,node)) env0)))
-    (for-each (lambda (c)
-		(let ((i (car c))
-		      (a (cadr c)))
-		  (debug-item "custom=" i " " a)
-		  (set-car! (cdr c) (do-resolve! a engine env))))
-	      (slot-ref engine 'customs)))
-  node)
+  (parameterize ((*document-being-resolved* node))
+    (next-method)
+    ;; resolve the engine custom
+    (let ((env (append `((parent ,node)) env0)))
+      (for-each (lambda (c)
+		  (let ((i (car c))
+			(a (cadr c)))
+		    (debug-item "custom=" i " " a)
+		    (set-car! (cdr c) (do-resolve! a engine env))))
+		(slot-ref engine 'customs)))
+    node))
 
 
 (define-method (do-resolve! (node <unresolved>) engine env)
@@ -209,7 +222,8 @@
 	    (res  (proc node engine env))
 	    (loc  (ast-loc node)))
        (when (ast? res)
-	 (ast-loc-set! res loc))
+	 (ast-loc-set! res loc)
+	 (slot-set! res 'parent (assq 'parent env)))
        (debug-item "res=" res)
        (*unresolved* #t)
        res)))
@@ -289,12 +303,19 @@
 	     (set-car! (cdr c) (+ 1 num))
 	     (+ 1 num)))))))
 
-;;;; ======================================================================
-;;;;
-;;;; RESOLVE-IDENT
-;;;;
-;;;; ======================================================================
+
+;;;
+;;; `resolve-ident'.
+;;;
+;;; This function kind of sucks because the document where IDENT is to be
+;;; searched is not explictly passed.  Thus, using `document-lookup-node' is
+;;; recommended instead of using this function.
+;;;
+
 (define (resolve-ident ident markup n e)
+  ;; Search for a node with identifier IDENT and markup type MARKUP.  N is
+  ;; typically an `<unresolved>' node and the node lookup should be performed
+  ;; in its parent document.  E is the "environment" (an alist).
   (with-debug 4 'resolve-ident
      (debug-item "ident=" ident)
      (debug-item "markup=" markup)
@@ -303,15 +324,10 @@
          (raise (condition (&invalid-argument-error ;; type error
                             (proc-name "resolve-ident")
                             (argument  ident))))
-	 (let ((mks (find-markups ident)))
-	   (and mks
-		(if (not markup)
-		    (car mks)
-		    (let loop ((mks mks))
-		      (cond
-			((null? mks)
-			 #f)
-			((is-markup? (car mks) markup)
-			 (car mks))
-			(else
-			 (loop (cdr mks)))))))))))
+	 (let* ((doc (ast-document n))
+		(result (and doc (document-lookup-node doc ident))))
+	   (if (or (not markup)
+		   (and (markup? result) (eq? (markup-markup result) markup)))
+	       result
+	       #f)))))
+

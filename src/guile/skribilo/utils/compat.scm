@@ -25,15 +25,18 @@
   :use-module (skribilo parameters)
   :use-module (skribilo evaluator)
   :use-module (srfi srfi-1)
-  :autoload   (srfi srfi-13) (string-rindex)
+  :autoload   (srfi srfi-13)       (string-rindex)
   :use-module (srfi srfi-34)
   :use-module (srfi srfi-35)
   :use-module (ice-9 optargs)
-  :autoload   (skribilo ast) (ast?)
+  :autoload   (skribilo ast)       (ast? document? document-lookup-node)
   :autoload   (skribilo condition) (file-search-error? &file-search-error)
-  :autoload   (skribilo reader) (make-reader)
-  :autoload   (skribilo lib) (type-name)
+  :autoload   (skribilo reader)    (make-reader)
+  :autoload   (skribilo lib)       (type-name)
+  :autoload   (skribilo resolve)   (*document-being-resolved*)
+  :autoload   (skribilo output)    (*document-being-output*)
   :use-module (skribilo debug)
+
   :re-export (file-size)  ;; re-exported from `(skribilo utils files)'
   :replace (gensym))
 
@@ -174,6 +177,34 @@
   (if (not %skribe-reader)
       (set! %skribe-reader (make-reader 'skribe)))
   (%skribe-reader port))
+
+
+
+;;;
+;;; Node lookup (formerly provided by `ast.scm').
+;;;
+
+(define-public (bind-markup! node)
+  (let ((doc (or (*document-being-resolved*)
+		 (*document-being-output*))))
+    (if (document? doc)
+	(document-bind-node! doc node)
+	(error "Sorry, unable to achieve `bind-markup!'.  Use `document-bind-node!' instead."
+	       node))))
+
+(define-public (find-markups ident)
+  (let ((doc (or (*document-being-resolved*)
+		 (*document-being-output*))))
+    (if (document? doc)
+	(let ((result (document-lookup-node doc ident)))
+	  (if result
+	      (list result)
+	      #f))
+	(error "Sorry, unable to achieve `find-markups'.  Use `document-lookup-node' instead."
+	       ident))))
+
+(define-public (find-markup-ident ident)
+  (or (find-markups ident) '()))
 
 
 
