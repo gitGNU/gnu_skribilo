@@ -33,47 +33,10 @@
 
   :export (resolve! resolve-search-parent resolve-children resolve-children*
 	   find1 resolve-counter resolve-parent resolve-ident
-	   *document-being-resolved*
-
-           &resolution-error resolution-error?
-           &resolution-orphan-error resolution-orphan-error?
-           resolution-orphan-error:ast))
+	   *document-being-resolved*))
 
 (fluid-set! current-reader %skribilo-module-reader)
 
-
-
-;;;
-;;; Error conditions.
-;;;
-
-(define-condition-type &resolution-error &skribilo-error
-  resolution-error?)
-
-(define-condition-type &resolution-orphan-error &resolution-error
-  resolution-orphan-error?
-  (ast resolution-orphan-error:ast))
-
-
-(define (handle-resolution-error c)
-  ;; Issue a user-friendly error message for error condition C.
-  (cond ((resolution-orphan-error? c)
-	 (let* ((node (resolution-orphan-error:ast c))
-		(location (and (ast? node) (ast-loc node))))
-	   (format (current-error-port) "orphan node: ~a~a~%"
-		   node
-		   (if (location? location)
-		       (string-append " "
-				      (location-file location) ":"
-				      (location-line location))
-		       ""))))
-
-	(else
-	 (format (current-error-port) "undefined resolution error: ~a~%"
-		 c))))
-
-(register-error-condition-handler! resolution-error?
-				   handle-resolution-error)
 
 
 
@@ -248,7 +211,7 @@
 	      (cadr c)
 	      n)))
        ((eq? (slot-ref n 'parent) 'unspecified)
-        (raise (condition (&resolution-orphan-error (ast n)))))
+        (raise (condition (&ast-orphan-error (ast n)))))
        (else
 	(slot-ref n 'parent)))))
 
@@ -281,7 +244,7 @@
   (let ((c (assq (symbol-append cnt '-counter) e)))
     (if (not (pair? c))
 	(if (or (null? opt) (not (car opt)) (null? e))
-            (raise (condition (&resolution-orphan-error (ast n))))
+            (raise (condition (&ast-orphan-error (ast n))))
 	    (begin
 	      (set-cdr! (last-pair e)
 			(list (list (symbol-append cnt '-counter) 0)

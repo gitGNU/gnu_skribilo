@@ -2,6 +2,37 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-09-03 15:08:10 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-73
+
+    Summary:
+      Added error conditions in `ast.scm'.
+    Revision:
+      skribilo--devel--1.2--patch-73
+
+    * src/guile/skribilo/ast.scm: Use `srfi-3[45]' and `condition' but not
+      `lib'.
+      (&ast-error): New.
+      (&ast-orphan-error): New.
+      (&ast-cycle-error): New.
+      (&markup-unknown-option-error): New.
+      (&markup-already-bound-error): New.
+      (handle-ast-error): New.
+      (markup-option): Use `raise' instead of `skribe-(type-)?error'.
+      (markup-option-set!): Likewise.
+      (markup-option-add!): Likewise.
+      (markup-parent): Likewise.
+      (document-bind-node!): Likewise.
+      (find1-down): Likewise.
+    
+    * src/guile/skribilo/resolve.scm (&resolution-error): Removed.
+      (&resolution-orphan-error): Removed.  Moved as `&ast-orphan-error' in
+      `ast.scm'.  Updated users.
+
+    modified files:
+     ChangeLog src/guile/skribilo/ast.scm
+     src/guile/skribilo/resolve.scm
+
+
 2006-09-03 11:25:37 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-72
 
     Summary:

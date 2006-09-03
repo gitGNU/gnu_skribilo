@@ -22,10 +22,14 @@
 
 (define-module (skribilo ast)
   :use-module (oop goops)
-  :autoload (skribilo location) (location?)
-  :autoload (skribilo lib) (skribe-type-error skribe-error)
-  :autoload (srfi srfi-1)  (fold)
+
+  :use-module (srfi srfi-34)
+  :use-module (srfi srfi-35)
+  :use-module (skribilo condition)
   :use-module (skribilo utils syntax)
+
+  :autoload (skribilo location) (location?)
+  :autoload (srfi srfi-1)  (fold)
   :export (<ast> ast? ast-loc ast-loc-set!
 		 ast-parent ast->string ast->file-location
 		 ast-resolved?
@@ -56,7 +60,19 @@
 	   ast-fold
            container-search-down search-down find-down find1-down
            find-up find1-up
-           ast-document ast-chapter ast-section))
+           ast-document ast-chapter ast-section
+
+	   ;; error conditions
+	   &ast-error &ast-orphan-error &ast-cycle-error
+	   &markup-unknown-option-error &markup-already-bound-error
+	   ast-orphan-error? ast-orphan-error:ast
+	   ast-cycle-error? ast-cycle-error:object
+	   markup-unknown-option-error?
+	   markup-unknown-option-error:markup
+	   markup-unknown-option-error:option
+	   markup-already-bound-error?
+	   markup-already-bound-error:markup
+	   markup-already-bound-error:ident))
 
 ;;; Author:  Erick Gallesio, Manuel Serrano, Ludovic Courtès
 ;;;
@@ -70,6 +86,74 @@
 
 (fluid-set! current-reader %skribilo-module-reader)
 
+
+
+;;;
+;;; Error conditions.
+;;;
+
+(define-condition-type &ast-error &skribilo-error
+  ast-error?)
+
+(define-condition-type &ast-orphan-error &ast-error
+  ast-orphan-error?
+  (ast ast-orphan-error:ast))
+
+(define-condition-type &ast-cycle-error &ast-error
+  ast-cycle-error?
+  (object ast-cycle-error:object))
+
+(define-condition-type &markup-unknown-option-error &ast-error
+  markup-unknown-option-error?
+  (markup markup-unknown-option-error:markup)
+  (option markup-unknown-option-error:option))
+
+(define-condition-type &markup-already-bound-error &ast-error
+  markup-already-bound-error?
+  (markup markup-already-bound-error:markup)
+  (ident  markup-already-bound-error:ident))
+
+
+(define (handle-ast-error c)
+  ;; Issue a user-friendly error message for error condition C.
+  (cond ((ast-orphan-error? c)
+	 (let* ((node (ast-orphan-error:ast c))
+		(location (and (ast? node) (ast-loc node))))
+	   (format (current-error-port) "orphan node: ~a~a~%"
+		   node
+		   (if (location? location)
+		       (string-append " "
+				      (location-file location) ":"
+				      (location-line location))
+		       ""))))
+
+	((ast-cycle-error? c)
+	 (let ((object (ast-cycle-error:object c)))
+	   (format (current-error-port)
+		   "cycle found in AST: ~a~%" object)))
+
+	((markup-unknown-option-error? c)
+	 (let ((markup (markup-unknown-option-error:markup c))
+	       (option (markup-unknown-option-error:option c)))
+	   (format (current-error-port)
+		   "~a: unknown markup option for `~a'~%"
+		   option markup)))
+
+	((markup-already-bound-error? c)
+	 (let ((markup (markup-already-bound-error:markup c))
+	       (ident  (markup-already-bound-error:ident  c)))
+	   (format (current-error-port)
+		   "`~a' (~a): markup identifier already bound~%"
+		   ident
+		   (if (markup? markup)
+		       (markup-markup markup)
+		       markup))))
+
+	(else
+	 (format (current-error-port) "undefined resolution error: ~a~%"
+		 c))))
+
+(register-error-condition-handler! ast-error? handle-ast-error)
 
 
 
@@ -217,22 +301,29 @@
       (let ((c (assq opt (slot-ref m 'options))))
 	(and (pair? c) (pair? (cdr c))
 	     (cadr c)))
-      (skribe-type-error 'markup-option "Illegal markup: " m "markup")))
+      (raise (condition (&invalid-argument-error
+			 (proc-name "markup-option")
+			 (argument  m))))))
 
 (define (markup-option-set! m opt val)
   (if (markup? m)
       (let ((c (assq opt (slot-ref m 'options))))
 	(if (and (pair? c) (pair? (cdr c)))
 	    (set-cdr! c (list val))
-	    (skribe-error 'markup-option-set! "unknown option: "
-			  m)))
-      (skribe-type-error 'markup-option-set! "Illegal markup: " m "markup")))
+	    (raise (condition (&markup-unknown-option-error
+			       (markup m)
+			       (option opt))))))
+      (raise (condition (&invalid-argument-error
+			 (proc-name "markup-option-set!")
+			 (argument  m))))))
 
 (define (markup-option-add! m opt val)
   (if (markup? m)
       (slot-set! m 'options (cons (list opt val)
 				  (slot-ref m 'options)))
-      (skribe-type-error 'markup-option "Illegal markup: " m "markup")))
+      (raise (condition (&invalid-argument-error
+			 (proc-name "markup-option-add!")
+			 (argument  m))))))
 
 
 (define (is-markup? obj markup)
@@ -243,7 +334,7 @@
 (define (markup-parent m)
   (let ((p (slot-ref m 'parent)))
     (if (eq? p 'unspecified)
-	(skribe-error 'markup-parent "Unresolved parent reference" m)
+	(raise (condition (&ast-orphan-error (ast m))))
 	p)))
 
 (define (markup-document m)
@@ -366,8 +457,9 @@
 	(let ((handle (hash-get-handle (document-node-table doc) ident)))
 	  ;;(format (current-error-port) "binding `~a' in `~a'~%" ident node)
 	  (if (and (pair? handle) (not (eq? (cdr handle) node)))
-	      (error "node identifier already bound"
-		     (cdr handle)) ;; FIXME: use `raise'
+	      (raise (condition (&markup-already-bound-error
+				 (ident  ident)
+				 (markup node))))
 	      (hash-set! (document-node-table doc) ident node))))))
 
 (define (document-bind-nodes! doc)
@@ -458,7 +550,7 @@
              (stack '()))
     (cond
      ((memq obj stack)
-      (skribe-error 'find1-down "Illegal cyclic object" obj))
+      (raise (condition (&ast-cycle-error (object obj)))))
      ((pair? obj)
       (let liip ((obj obj))
         (cond
