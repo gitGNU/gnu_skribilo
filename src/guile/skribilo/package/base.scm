@@ -294,7 +294,7 @@
 (define-markup (~ #!rest opts #!key (class #f))
   (new markup
      (markup '~)
-     (ident (gensym "~"))
+     (ident (symbol->string (gensym "~")))
      (class class)
      (required-options '())
      (options (the-options opts :class))
@@ -1030,7 +1030,7 @@
 		(skribe-warning/ast 1 ast 'ref msg text)
 		(new markup
 		   (markup 'unref)
-		   (ident (symbol->string 'unref))
+		   (ident (symbol->string (gensym "unref")))
 		   (class class)
 		   (required-options '(:text))
 		   (options `((kind ,kind) ,@(the-options opts :ident :class)))
@@ -1039,7 +1039,7 @@
 		(skribe-warning 1 'ref msg text)
 		(new markup
 		   (markup 'unref)
-		   (ident (symbol->string 'unref))
+		   (ident (symbol->string (gensym "unref")))
 		   (class class)
 		   (required-options '(:text))
 		   (options `((kind ,kind) ,@(the-options opts :ident :class)))
@@ -1057,7 +1057,7 @@
    (define (handle-ref text)
       (new markup
 	 (markup 'ref)
-	 (ident (symbol->string 'ref))
+	 (ident (symbol->string (gensym "handle-ref")))
 	 (class class)
 	 (required-options '(:text))
 	 (options `((kind handle) ,@(the-options opts :ident :class)))
@@ -1077,7 +1077,7 @@
 			 (if s
 			     (new markup
 				(markup 'ref)
-				(ident (symbol->string 'title-ref))
+				(ident (symbol->string (gensym "title-ref")))
 				(class class)
 				(required-options '(:text))
 				(options `((kind ,kind)
@@ -1113,7 +1113,7 @@
 			 (if s
 			     (new markup
 				(markup 'ref)
-				(ident (symbol->string 'ref))
+				(ident (symbol->string (gensym "mark-ref")))
 				(class class)
 				(required-options '(:text))
 				(options `((kind mark)
@@ -1143,7 +1143,7 @@
       (if (pair? text)
 	  (new markup
 	     (markup 'bib-ref+)
-	     (ident (symbol->string 'bib-ref+))
+	     (ident (symbol->string (gensym "bib-ref+")))
 	     (class class)
 	     (options (the-options opts :ident :class))
 	     (body (map make-bib-ref text)))
@@ -1162,7 +1162,7 @@
 		      (if (pair? l)
 			  (new markup
 			     (markup 'line-ref)
-			     (ident (symbol->string 'line-ref))
+			     (ident (symbol->string (gensym "line-ref")))
 			     (class class)
 			     (options `((:text ,(markup-ident (car l)))
 					,@(the-options opts :ident :class)))

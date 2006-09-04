@@ -2,6 +2,26 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-09-04 09:15:58 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-74
+
+    Summary:
+      `base' package: Removed more sources of duplicate identifiers.
+    Revision:
+      skribilo--devel--1.2--patch-74
+
+    * src/guile/skribilo/package/base.scm (~): Use `gensym' to produce unique
+      identifiers.
+      (ref)[unref]: Likewise.
+      [handle-ref]: Likewise.
+      [do-title-ref]: Likewise.
+      [mark-ref]: Likewise.
+      [make-bib-ref]: Likewise.
+      [line-ref]: Likewise.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/base.scm
+
+
 2006-09-03 15:08:10 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-73
 
     Summary:
