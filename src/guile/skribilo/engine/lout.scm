@@ -1051,23 +1051,25 @@
 				   (output institution e)
 				   (printf " }\n"))))))))
 
+               (if (memq doc-type '(report slides))
+                   (let ((date-line (engine-custom e 'date-line)))
+		     (display "  @DateLine { ")
+		     (if (or (string? date-line) (ast? date-line))
+			 (output date-line e)
+			 (display (if date-line "Yes" "No")))
+		     (display " }\n")))
+
 	       ;; Lout reports make it possible to choose whether to prepend
 	       ;; a cover sheet (books and docs don't).  Same for a date
 	       ;; line.
 	       (if (eq? doc-type 'report)
 		   (let ((cover-sheet?   (engine-custom e 'cover-sheet?))
-			 (date-line      (engine-custom e 'date-line))
 			 (abstract       (engine-custom e 'abstract))
 			 (abstract-title (engine-custom e 'abstract-title)))
 		     (display (string-append "  @CoverSheet { "
 					     (if cover-sheet?
 						 "Yes" "No")
 					     " }\n"))
-		     (display "  @DateLine { ")
-		     (if (string? date-line)
-			 (output date-line e)
-			 (display (if date-line "Yes" "No")))
-		     (display " }\n")
 
 		     (if abstract
 			 (begin
