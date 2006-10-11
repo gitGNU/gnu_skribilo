@@ -1,0 +1,4 @@
+# Skribilo-generated files.
+precious ^(user(-[0-9]+)?\.(html|ps|pdf|li|lout|lout\.ld)|doc-config\.scm|(bsd|linux|lambda|pie-.*|eq-.*)\.(png|eps))$
+
+# arch-tag: 827d1e94-1b36-474e-bcdb-a4235b4af848

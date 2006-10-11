@@ -1,0 +1,63 @@
+Skribilo                                                 -*- Outline -*-
+========
+
+Skribilo is a port of Skribe to GNU Guile.
+
+Here are a few goals.
+
+* Usability
+
+** Integration with Guile's module system
+
+** Better error handling, automatic back-traces, etc.
+
+** Add useful markups
+
+- `document': add `:keywords' and `:language', maybe `:date'
+
+- numbered references
+
+- improved footnotes
+
+** Add an option to continuously watch a file and re-compile it
+
+* Font-ends (readers)
+
+** Implement a new front-end mechanism (see `(skribilo reader)')
+
+** Skribe front-end (read Skribe syntax)
+
+Done.
+
+** Texinfo front-end
+
+Use guile-library's `stexi'.
+
+** Simple markup front-end (à la `txt2tags', Emacs' outline mode, or Wiki)
+
+Almost done (Emacs `outline-mode').
+
+* Back-ends (engines)
+
+** Easier to plug-in new back-ends (no need to modify the source)
+
+** Better HTML (or XHTML?) back-end
+
+** Lout back-end (including automatic `lout' invocation?)
+
+Done, except automatic invocation.
+
+** Info back-end
+
+* Packages
+
+** Pie charts
+
+** Equations
+
+* Toys
+
+** Document browser with guile-gnome
+
+
+;;; arch-tag: 2d0a6235-5c09-4930-998c-56a4de2c0aca

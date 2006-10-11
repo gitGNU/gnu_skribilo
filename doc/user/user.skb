@@ -1,21 +1,43 @@
-;*=====================================================================*/
-;*    serrano/prgm/project/skribe/doc/user/user.skb                    */
-;*    -------------------------------------------------------------    */
-;*    Author      :  Manuel Serrano                                    */
-;*    Creation    :  Wed Nov 28 10:37:39 2001                          */
-;*    Last change :  Thu Feb 26 21:02:00 2004 (eg)                     */
-;*    Copyright   :  2001-04 Manuel Serrano                            */
-;*    -------------------------------------------------------------    */
-;*    The Skribe user manual                                           */
-;*=====================================================================*/
- 
+;;; user.skb  --  The Skribilo user manual.
+;;;
+;;; Copyright 2001, 2002, 2003, 2004  Manuel Serrano
+;;; Copyright 2005, 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;;
+;;;
+;;; This program is free software; you can redistribute it and/or modify
+;;; it under the terms of the GNU General Public License as published by
+;;; the Free Software Foundation; either version 2 of the License, or
+;;; (at your option) any later version.
+;;;
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;;
+;;; You should have received a copy of the GNU General Public License
+;;; along with this program; if not, write to the Free Software
+;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+;;; USA.
+
 ;*---------------------------------------------------------------------*/
 ;*    The Skribe documentation style                                   */
 ;*---------------------------------------------------------------------*/
-(skribe-load "web-book.skr")
-(skribe-load "skr/env.skr")
-(skribe-load "skr/manual.skr")
-(skribe-load "skr/api.skr")
+(use-modules (skribilo package web-book)
+             (skribilo documentation env)
+             (skribilo documentation manual)
+             (skribilo documentation api))
+
+
+;*---------------------------------------------------------------------*/
+;*    Packages							       */
+;*---------------------------------------------------------------------*/
+(use-modules (skribilo package eq)
+	     (skribilo package pie))
+
+;; Load the compile-time configuration file.
+(load "doc-config.scm")
+
+(if %have-ploticus? (set! %ploticus-program %ploticus-path))
 
 ;*---------------------------------------------------------------------*/
 ;*    HTML custom                                                      */
@@ -26,40 +48,36 @@
    (engine-custom-set! he 'body-width 100.))
 
 ;*---------------------------------------------------------------------*/
-;*    The various indexes                                              */
+;*    Lout custom                                                      */
 ;*---------------------------------------------------------------------*/
-(define *markup-index* (make-index "markup"))
-(define *custom-index* (make-index "custom"))
-(define *function-index* (make-index "function"))
-(define *package-index* (make-index "package"))
+(let ((le (find-engine 'lout)))
+   (engine-custom-set! le 'document-type 'doc))
+
 
 ;*---------------------------------------------------------------------*/
 ;*    The document                                                     */
 ;*---------------------------------------------------------------------*/
-(document :title "Skribe User Manual"
+(document :title "Skribilo User Manual"
+   :keywords '("Skribilo" "Skribe" "User Manual" "text processing"
+	       "HTML" "LaTeX" "Lout" "PostScript" "PDF")
    :env '((example-counter 0) (example-env ()))
    :author (list (author :name "Erick Gallesio"
 		    :affiliation "Université de Nice - Sophia Antipolis"
-		    :address '("930 route des Colles, BP 145"
-			       "F-06903 Sophia Antipolis, Cedex"
-			       "France")
 		    :email (mailto "eg@essi.fr"))
 		 (author :name "Manuel Serrano"
 		    :affiliation "Inria Sophia-Antipolis"
-		    :address `("2004 route des Lucioles - BP 93"
-			       "F-06902 Sophia Antipolis, Cedex"
-			       "France")
-		    :url (ref :url *serrano-url*)
-		    :email (mailto *serrano-mail*)))
+		    :email (mailto *serrano-mail*))
+		 (author :name "Ludovic Courtès"
+		    :email (mailto *courtes-mail*)))
    
-   (linebreak 1)
-   (center (frame (bold (font :size 1. [
-This is the documentation for Skribe version
-,(color :fg "red" (skribe-release)).]))))
-   (linebreak 1)
+(p :class "welcome"
+   [Welcome to the User Manual for Skribilo version ,(skribe-release).
+If you are new to Skribilo, please read the ,(ref :ident "intro"
+:text [introduction]) first.])
+
 
 ;;; Introduction
-(section :title "Introduction" :number #f :toc #f [
+(chapter :title "Introduction" :ident "intro" :number #f :toc #t :file #f [
 Skribe is a programming language designed for implementing electronic
 documents. It is mainly designed for the writing of technical documents
 such as the documentation of computer programs. With Skribe these
@@ -68,13 +86,15 @@ instance, a Skribe document can be ,(emph "compiled") to an HTML file
 that suits Web browser, it can be compiled to a TeX file in order to
 produce a high-quality printed document, and so on.]
    
-   (subsection :title "Who may use Skribe?" :number #f [
+   (section :title "Who may use Skribe?" :number #f [
 Everyone needing to design web pages, info documents, man pages or
 Postscript files can use Skribe. In particular, there is ,(bold "no need")
 for programming skills in order to use Skribe. Skribe can be used as
-any text description languages such as TeX, LaTeX or HTML.])
+any text description languages such as ,(ref :text [LaTeX] :url
+"http://latex-project.org/"), ,(ref :text [Lout] :url
+"http://lout.sf.net/") or HTML.])
    
-   (subsection :title "Why using Skribe?" :number #f [
+   (section :title "Why using Skribe?" :number #f [
 There are three main reasons for using Skribe:]
       
       (itemize
@@ -122,6 +142,12 @@ as HTML, Info pages, man pages, Postscript, etc.]))))
 ;;; Computer programs
 (include "prgm.skb")
 
+;;; Equations
+(include "eq.skb")
+
+;;; Pie charts
+(if %have-ploticus? (include "pie.skb"))
+
 ;;; Standard Library
 (include "lib.skb")
 
@@ -151,12 +177,12 @@ as HTML, Info pages, man pages, Postscript, etc.]))))
     (begin
        (chapter :title "Table of contents"
 	  (toc :chapter #t :section #t :subsection #t))
-       (section :title "Index" :number #f
+       (chapter :title "Index" :number #f :ident "Index"
 	  (mark "global index")
 	  (the-index :column (if (engine-format? "latex") 2 3)
 	     *markup-index* *custom-index* *function-index* *package-index*
 	     (default-index))))
-    (chapter :title "Index"
+    (chapter :title "Index" :ident "Index"
        (mark "global index")
        (the-index :column (if (engine-format? "latex") 2 3)
 	  *markup-index* *custom-index* *function-index* *package-index*

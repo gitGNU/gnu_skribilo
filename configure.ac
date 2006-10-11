@@ -1,0 +1,57 @@
+#                                               -*- Autoconf -*-
+# Process this file with autoconf to produce a configure script.
+
+AC_PREREQ(2.59)
+AC_INIT(skribilo, 1.2, ludovic.courtes@laas.fr)
+AM_INIT_AUTOMAKE(skribilo, 1.2)
+
+AC_CONFIG_SRCDIR([src/guile/skribilo/reader.scm])
+
+# Look for Guile.
+GUILE_PROGS
+GUILE_SITE_DIR
+
+# Need guile-reader 0.2.
+GUILE_MODULE_REQUIRED([system reader])
+
+# Need SRFI-35, available in `guile-library'.
+GUILE_MODULE_REQUIRED([srfi srfi-35])
+
+# Look for Lout.
+AC_PATH_PROG([LOUT], [lout], [not-found])
+AM_CONDITIONAL([HAVE_LOUT], [test "x$LOUT" != "xnot-found"])
+
+# Look for Ploticus.
+AC_PATH_PROGS([PLOTICUS], [ploticus pl], [not-found])
+AM_CONDITIONAL([HAVE_PLOTICUS], [test "x$PLOTICUS" != "xnot-found"])
+
+
+AC_SUBST([SKRIBILO_DOC_DIR], ["$datadir/doc/skribilo"])
+AC_SUBST([SKRIBILO_EXT_DIR], ["$datadir/skribilo/1.2/"])
+AC_SUBST([SKRIBILO_SKR_PATH], ["$GUILE_SITE/"])
+
+AC_CONFIG_COMMANDS([skribilo-executable], [chmod a+x src/skribilo])
+
+AC_OUTPUT([Makefile
+	   src/skribilo
+	   src/Makefile
+	   src/guile/Makefile
+	   src/guile/skribilo/Makefile
+	   src/guile/skribilo/config.scm
+	   src/guile/skribilo/utils/Makefile
+	   src/guile/skribilo/engine/Makefile
+	   src/guile/skribilo/reader/Makefile
+	   src/guile/skribilo/package/Makefile
+	   src/guile/skribilo/package/slide/Makefile
+	   src/guile/skribilo/package/eq/Makefile
+	   src/guile/skribilo/package/pie/Makefile
+	   src/guile/skribilo/coloring/Makefile
+	   src/guile/skribilo/biblio/Makefile
+	   doc/Makefile
+	   doc/user/Makefile
+	   doc/user/src/Makefile
+	   doc/img/Makefile
+	   doc/dir/Makefile
+	   doc/modules/Makefile
+	   doc/modules/skribilo/Makefile
+	   doc/modules/skribilo/documentation/Makefile])

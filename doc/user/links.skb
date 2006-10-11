@@ -1,13 +1,22 @@
-;*=====================================================================*/
-;*    serrano/prgm/project/skribe/doc/user/links.skb                   */
-;*    -------------------------------------------------------------    */
-;*    Author      :  Manuel Serrano                                    */
-;*    Creation    :  Thu Sep 11 06:10:44 2003                          */
-;*    Last change :  Thu Feb 26 20:56:48 2004 (eg)                     */
-;*    Copyright   :  2003-04 Manuel Serrano                            */
-;*    -------------------------------------------------------------    */
-;*    Skribe links                                                     */
-;*=====================================================================*/
+;;; links.skb  --  Skribe links
+;;;
+;;; Copyright 2003, 2004  Manuel Serrano
+;;;
+;;;
+;;; This program is free software; you can redistribute it and/or modify
+;;; it under the terms of the GNU General Public License as published by
+;;; the Free Software Foundation; either version 2 of the License, or
+;;; (at your option) any later version.
+;;;
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;;
+;;; You should have received a copy of the GNU General Public License
+;;; along with this program; if not, write to the Free Software
+;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+;;; USA.
 
 ;*---------------------------------------------------------------------*/
 ;*    Links and references                                             */
@@ -76,13 +85,13 @@ section, to bibliographic entries, to source code line number, etc.])
 	      (:mark [A string that is the name of a mark. That mark has 
                 been introduced by a ,(markup-ref "mark") markup.])
 	      (:handle [A Skribe node ,(markup-ref "handle").])
-	      (:ident [A reference to a node who has been specified 
-                an ,(param :ident) value.])
-	      (:figure [The name of a ,(markup-ref "figure").])
-	      (:chapter [The name of a ,(markup-ref "chapter").])
-	      (:section [The name of a ,(markup-ref "section").])
-	      (:subsection [The name of a ,(markup-ref "subsection").])
-	      (:subsubsection [The name of a ,(markup-ref "subsubsection").])
+	      (:ident [The identifier of a node (which was specified 
+                 as an ,(param :ident) value).])
+	      (:figure [The identifier of a ,(markup-ref "figure").])
+	      (:chapter [The title of a ,(markup-ref "chapter").])
+	      (:section [The title of a ,(markup-ref "section").])
+	      (:subsection [The title of a ,(markup-ref "subsection").])
+	      (:subsubsection [The title of a ,(markup-ref "subsubsection").])
 	      (:page [A boolean enabling/disabling page reference.])
 	      (:bib ,[A name or a list of names of 
                 ,(ref :chapter "Bibliographies" :text "bibliographic") entry.])

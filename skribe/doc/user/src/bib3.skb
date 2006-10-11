@@ -1,3 +1,0 @@
-(center 
- (frame :border 1 :margin 2 :width 90. 
-	(the-bibliography :pred (lambda (m n) #t))))

@@ -1,13 +1,22 @@
-;*=====================================================================*/
-;*    serrano/prgm/project/skribe/doc/user/package.skb                 */
-;*    -------------------------------------------------------------    */
-;*    Author      :  Manuel Serrano                                    */
-;*    Creation    :  Sat Feb 21 08:26:44 2004                          */
-;*    Last change :  Fri Jun  3 16:51:30 2005 (serrano)                */
-;*    Copyright   :  2004-05 Manuel Serrano                            */
-;*    -------------------------------------------------------------    */
-;*    Packages                                                         */
-;*=====================================================================*/
+;;; package.skb  --  Packages
+;;;
+;;; Copyright 2004, 2005  Manuel Serrano
+;;;
+;;;
+;;; This program is free software; you can redistribute it and/or modify
+;;; it under the terms of the GNU General Public License as published by
+;;; the Free Software Foundation; either version 2 of the License, or
+;;; (at your option) any later version.
+;;;
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;;
+;;; You should have received a copy of the GNU General Public License
+;;; along with this program; if not, write to the Free Software
+;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+;;; USA.
 
 ;*---------------------------------------------------------------------*/
 ;*    Standard packages                                                */
@@ -25,7 +34,7 @@ Skribe distribution.])
 In order to use the facilities described in the following sections, the 
 Skribe source file must contains expressions such as:])
 
-(prgm [(skribe-load ,(it "package.skr") ...)])
+(prgm "(skribe-load \"package.skr\" ...)")
 
 [where ,(it (tt "package.skr")) is the described package.]
 
@@ -43,11 +52,12 @@ markup ,(code "abstract"):])
       (doc-markup 'abstract
 	 `((:class "The node class.")
 	   (:postscript [The URL of the PostScript version of the paper.]))
+	 :ident "abstract(acmproc)"
 	 :common-args '()
 	 :idx-note "acmproc"
 	 :idx-suffix " (acmproc)"
 	 :force-engines *api-engines*
-	 :source "../skr/acmproc.skr"))
+	 :source "skribilo/package/acmproc.scm"))
 
    (subsection :title (tt "jfp.skr") :ident "jfp"
       (index :index *package-index* "jfp.skr" :note "package")
@@ -57,11 +67,12 @@ This package enables producing LaTeX documents conforming to the
 markup ,(code "abstract"):])
       (doc-markup 'abstract
 	 `((:postscript [The URL of the PostScript version of the paper.]))
+	 :ident "abstract(jfp)"
 	 :common-args '()
 	 :idx-note "jfp"
 	 :idx-suffix " (jfp)"
 	 :force-engines *api-engines*
-	 :source "../skr/jfp.skr"))
+	 :source "skribilo/package/jfp.scm"))
 
    (subsection :title (tt "lncs.skr") :ident "lncs"
       (index :index *package-index* "lncs.skr" :note "package")
@@ -75,7 +86,7 @@ markup ,(code "abstract"):])
 	 :idx-note "lncs"
 	 :idx-suffix " (lncs)"
 	 :force-engines *api-engines*
-	 :source "../skr/lncs.skr")))
+	 :source "skribilo/package/lncs.scm")))
 
 ;*---------------------------------------------------------------------*/
 ;*    french                                                           */
@@ -102,7 +113,7 @@ This package is to be used to authoring simple letters. It redefines the
       :idx-note "letter"
       :idx-suffix " (letter)"
       :force-engines *api-engines*
-      :source "../skr/letter.skr"))
+      :source "skribilo/package/letter.scm"))
 
 ;*---------------------------------------------------------------------*/
 ;*    Web                                                              */

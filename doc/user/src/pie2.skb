@@ -1,0 +1,14 @@
+;; Another sad pie chart.
+;;
+
+(pie :title [Casualties of the Conflict in Iraq since 2003 (source:
+English Wikipedia page, 2006-07-23)]
+     :ident "pie-iraq-2006"
+     :fingers? #f
+     :labels 'inside
+     :initial-angle 45
+     :radius 2
+
+  (slice :weight 100000 :color "red" :detach? #t
+	[civilians (,(sliceweight :percentage? #t)%)])
+  (slice :weight (+ 2555 229) :color #xeeeeee  [soldiers]))

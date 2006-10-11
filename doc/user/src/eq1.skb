@@ -1,0 +1,6 @@
+;; The golden ratio, phi.
+(eq (eq:= (symbol "phi")
+	  (eq:/ (eq:+ 1 (eq:sqrt 5))
+	        2)))
+
+

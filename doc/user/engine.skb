@@ -1,16 +1,28 @@
-;*=====================================================================*/
-;*    serrano/prgm/project/skribe/doc/user/engine.skb                  */
-;*    -------------------------------------------------------------    */
-;*    Author      :  Manuel Serrano                                    */
-;*    Creation    :  Wed Sep  3 11:19:21 2003                          */
-;*    Last change :  Mon Nov  8 15:07:35 2004 (serrano)                */
-;*    Copyright   :  2003-04 Manuel Serrano                            */
-;*    -------------------------------------------------------------    */
-;*    The description of the Skribe engines                            */
-;*=====================================================================*/
-;; @indent: (put 'doc-markup 'skribe-indent 'skribe-indent-function)@
+;;; engine.skb  --  The description of the Skribe engines
+;;;
+;;; Copyright 2003, 2004  Manuel Serrano
+;;;
+;;;
+;;; This program is free software; you can redistribute it and/or modify
+;;; it under the terms of the GNU General Public License as published by
+;;; the Free Software Foundation; either version 2 of the License, or
+;;; (at your option) any later version.
+;;;
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;;
+;;; You should have received a copy of the GNU General Public License
+;;; along with this program; if not, write to the Free Software
+;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+;;; USA.
+
 
 (cond-expand 
+   (guile
+    (define *engine-src*  "skribilo/engine.scm")
+    (define *types-src*   #f))
    (bigloo 
     (define *engine-src*  "../src/bigloo/engine.scm")
     (define *types-src*   "../src/bigloo/types.scm"))
@@ -55,6 +67,7 @@ given below:])
 	      (:custom [The engine custom list.])
 	      (:info [Miscellaneous.]))
 	    :common-args '()
+            :skribe-source? #f
 	    :source *engine-src*
 	    :idx *function-index*)
 	 
@@ -68,6 +81,7 @@ given below:])
 	      (:symbol-table [The engine symbol table.])
 	      (:custom [The engine custom list.]))
 	    :common-args '()
+            :skribe-source? #f
 	    :source *engine-src*
 	    :idx *function-index*))
 	      
@@ -80,6 +94,7 @@ on failure.])
 	    '((id [The name (a symbol) of the engine to be searched.])
 	      (:version [An optional version number for the searched engine.]))
 	    :common-args '()
+            :skribe-source? #f
 	    :source *engine-src*
 	    :idx *function-index*))
       
@@ -91,7 +106,8 @@ argument is an engine. Otherwise, it returns ,(code "#f"). In other words,
 	 (doc-markup 'engine?
 	    '((obj [The checked object.]))
 	    :common-args '()
-	    :source *types-src*
+            :skribe-source? #f
+	    :source *engine-src*
 	    :idx *function-index*)
 	 
 	 (p [The following functions return information about engines.])
@@ -100,7 +116,8 @@ argument is an engine. Otherwise, it returns ,(code "#f"). In other words,
 	    '((obj [The engine.]))
 	    :common-args '()
 	    :others '(engine-format engine-customs engine-filter engine-symbol-table)
-	    :source *types-src*
+            :skribe-source? #f
+	    :source *engine-src*
 	    :idx *function-index*))
       
       (subsection :title "Engine customs"
@@ -117,6 +134,7 @@ a custom.])
 ,(ref :mark "find-engine" :text (code "find-engine"))).])
 	      (id [The name of the custom.]))
 	    :common-args '()
+            :skribe-source? #f
 	    :source *engine-src*
 	    :idx *function-index*)
 	 
@@ -126,6 +144,7 @@ a custom.])
 	      (id [The name of the custom.])
 	      (val [The new value of the custom.]))
 	    :common-args '()
+            :skribe-source? #f
 	    :source *engine-src*
 	    :idx *function-index*)))
 

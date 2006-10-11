@@ -1,0 +1,20 @@
+;;; -*- Scheme -*-
+;;;
+
+(define-module (skribilo config))
+
+(define-public (skribilo-release)             "1.2")
+(define-public (skribilo-url)                 "http://www.nongnu.org/skribilo/")
+(define-public (skribilo-doc-directory)       "@SKRIBILO_DOC_DIR@")
+(define-public (skribilo-extension-directory) "@SKRIBILO_EXT_DIR@")
+(define-public (skribilo-default-path)        "@SKRIBILO_SKR_PATH@")
+(define-public (skribilo-scheme)              "guile")
+
+;; Compatibility.
+
+(define-public skribe-release      skribilo-release)
+(define-public skribe-url          skribilo-url)
+(define-public skribe-doc-dir      skribilo-doc-directory)
+(define-public skribe-ext-dir      skribilo-extension-directory)
+(define-public skribe-default-path skribilo-default-path)
+(define-public skribe-scheme       skribilo-scheme)

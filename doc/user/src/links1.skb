@@ -1,6 +1,6 @@
 [This hyperlink points to the ,(ref :figure "The great Penguin" :text "figure")
 of the chapter ,(ref :chapter "Standard Markups") (or also, the
-,(ref :ident "Standard Markups" :text "chapter") about markups). 
+,(ref :ident "std-markups" :text "chapter") about markups). 
 In the second example of reference, no ,(code ":text") option is specified: 
 ,(ref :figure "The great Penguin"). One may use the ,(param ":ident")
 field when specified such as: ,(ref :ident "fig1") or ,(ref :figure "fig1").

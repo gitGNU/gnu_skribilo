@@ -1,13 +1,22 @@
-;*=====================================================================*/
-;*    serrano/prgm/project/skribe/doc/user/char.skb                    */
-;*    -------------------------------------------------------------    */
-;*    Author      :  Manuel Serrano                                    */
-;*    Creation    :  Sat Sep  6 16:07:08 2003                          */
-;*    Last change :  Mon Feb  2 11:16:57 2004 (serrano)                */
-;*    Copyright   :  2003-04 Manuel Serrano                            */
-;*    -------------------------------------------------------------    */
-;*    Characters, strings and symbols                                  */
-;*=====================================================================*/
+;;; char.skb  --  Characters, strings and symbols
+;;;
+;;; Copyright 2003, 2004  Manuel Serrano
+;;;
+;;;
+;;; This program is free software; you can redistribute it and/or modify
+;;; it under the terms of the GNU General Public License as published by
+;;; the Free Software Foundation; either version 2 of the License, or
+;;; (at your option) any later version.
+;;;
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;;
+;;; You should have received a copy of the GNU General Public License
+;;; along with this program; if not, write to the Free Software
+;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+;;; USA.
 
 ;*---------------------------------------------------------------------*/
 ;*    Footnote ...                                                     */
@@ -49,9 +58,12 @@ without any transformation from the engine.])
 (p [The sequences ,(code "$1"), ,(code "$2"), ... in the ,(param 'format)
 are replaced with the actual values of the arguments ,(param 'node).])
 
-(example-produce
- (example :legend "Some characters" (prgm :file "src/api20.skb"))
- (disp (include "src/api20.skb"))))
+(let ((file (if (engine-format? "lout")
+	        "src/api20-lout.skb"
+	        "src/api20-html.skb")))
+  (example-produce
+   (example :legend "Some characters" (prgm :file file))
+   (disp (include file)))))
 
 ;*--- Symbols ---------------------------------------------------------*/
 (subsection :title "Symbols"

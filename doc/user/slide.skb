@@ -1,19 +1,64 @@
-;*=====================================================================*/
-;*    serrano/prgm/project/skribe/doc/user/slide.skb                   */
-;*    -------------------------------------------------------------    */
-;*    Author      :  Manuel Serrano                                    */
-;*    Creation    :  Fri Jan  9 06:37:47 2004                          */
-;*    Last change :  Thu Feb 26 21:00:04 2004 (eg)                     */
-;*    Copyright   :  2004 Manuel Serrano                               */
-;*    -------------------------------------------------------------    */
-;*    Slides                                                           */
-;*=====================================================================*/
-(skribe-load "slide.skr")
+;;; slide.skb  --  Slides
+;;;
+;;; Copyright 2004  Manuel Serrano
+;;; Copyright 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;;
+;;;
+;;; This program is free software; you can redistribute it and/or modify
+;;; it under the terms of the GNU General Public License as published by
+;;; the Free Software Foundation; either version 2 of the License, or
+;;; (at your option) any later version.
+;;;
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;;
+;;; You should have received a copy of the GNU General Public License
+;;; along with this program; if not, write to the Free Software
+;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+;;; USA.
+
+
+;*---------------------------------------------------------------------*/
+;*    dummy-slide-set-output ...                                       */
+;*---------------------------------------------------------------------*/
+(define dummy-slide-set-output
+   (lambda (n e)
+      (let* ((a (markup-option n :author))
+	     (t (markup-option n :title))
+	     (b (markup-body n))
+	     (ta (table (tr (map (lambda (n)
+				    (td :valign 'top :align 'center n))
+	                         (if (list? a) a (list a)))))))
+	 (skribe-eval (center (bold t)) e)
+	 (skribe-eval (center ta) e)
+	 (output b e))))
+
+(define dummy-slide-output
+   (lambda (n e)
+      (let* ((t (markup-option n :title))
+	     (b (markup-body n)))
+	 (skribe-eval (bold t) e)
+	 (output b e))))
+
+(define dummy-slide-vspace-output
+   (lambda (n e)
+     (skribe-eval (linebreak) e)
+     (skribe-eval (center (tt "[vspace]")) e)
+     (skribe-eval (linebreak) e)))
+
+(define dummy-slide-embed-output
+   (lambda (n e)
+     (skribe-eval (linebreak) e)
+     (skribe-eval (tt (or (markup-option n :alt)
+			  (markup-option n :command)))
+		  e)))
 
 ;*---------------------------------------------------------------------*/
 ;*    Computer programs                                                */
 ;*---------------------------------------------------------------------*/
-(chapter :title "Slide Package" 
+(chapter :title "Slide Package"
 
    (p [
 This chapter describes the facilities Skribe offers authoring slides.
@@ -27,7 +72,7 @@ second one tells Skribe to generate slides for the LaTeX prosper package.])
 ;*---------------------------------------------------------------------*/
 ;*    slide ... @label slide@                                          */
 ;*---------------------------------------------------------------------*/
-(section :title "Slide"
+(section :title "Slides and Slide Topics"
    
    (p [A ,(code "slide") function call creates a slide.])
    
@@ -44,7 +89,33 @@ the vertical space size between the title and the body of the slide.])
 list ,(code "(split blinds box wipe dissolve glitter)").])
 		 (:bg [The background color of the slide.])
 		 (:image [The background image of the slide.]))
-	       :source "../skr/slide.skr"))
+	       :source "skribilo/package/slide.scm")
+   
+    (p [Optionally, one may group slides into ,(emph [topics]) and
+,(emph [subtopics]).  Topics and subtopics are just logical grouping
+under a given title that are meant to provide structure to a set of
+slides.  With their ,(code [:outline?]) option, these two markups can be
+used to automatically produce an outline at the beginning of each new
+(sub)topic, so that the audience knows what the talk is heading to.])
+   
+   (doc-markup 'slide-topic
+	       `((:title [The title of a topic.])
+	         (:outline? [A boolean (i.e., ,(code [#t]) or ,(code
+[#f])) telling whether an outline should be produced at the beginning of
+this topic.  The outline will typically list the titles of the different
+topics, as well as the titles of the slides under the current topic.]))
+	       :source "skribilo/package/slide.scm")
+   
+   (p [The ,(code [slide-subtopic]) markup is similar:])
+
+   (doc-markup 'slide-subtopic
+	       `((:title [The title of a subtopic.])
+	         (:outline? [A boolean (i.e., ,(code [#t]) or ,(code
+[#f])) telling whether an outline should be produced at the beginning of
+this subtopic.  The outline will typically list the titles of the
+different subtopics, as well as the titles of the slides under the
+current subtopic.]))
+	       :source "skribilo/package/slide.scm"))
 
 ;*---------------------------------------------------------------------*/
 ;*    slide-pause                                                      */
@@ -52,12 +123,12 @@ list ,(code "(split blinds box wipe dissolve glitter)").])
 (section :title "Pause"
    
    (p [A ,(code "slide-pause") function call introduces a pause in the slide
-projection.])
+projection.  This may not be supported by all engines.])
    
    (doc-markup 'slide-pause
 	       '()
 	       :common-args '()
-	       :source "../skr/slide.skr"))
+	       :source "skribilo/package/slide.scm"))
 
 ;*---------------------------------------------------------------------*/
 ;*    slide-vspace ...                                                 */
@@ -70,7 +141,7 @@ projection.])
 	       '((:unit [The unit of the space.])
 		 (#!rest val [The size of the vertical space.]))
 	       :common-args '()
-	       :source "../skr/slide.skr"))
+	       :source "skribilo/package/slide.scm"))
 
 ;*---------------------------------------------------------------------*/
 ;*    slide-embed ...                                                  */
@@ -92,7 +163,7 @@ to the embedded application.])
 		 (:alt [An alternative Skribe expression to be used if the
 output format does not support embedded application.]))
 	       :common-args '()
-	       :source "../skr/slide.skr"))
+	       :source "skribilo/package/slide.scm"))
 
 ;*---------------------------------------------------------------------*/
 ;*    Example                                                          */
@@ -101,14 +172,29 @@ output format does not support embedded application.]))
    (p [Here is a complete example of Skribe slides:])
    
    (if (and (engine-format? "html") 
-	    (not (equal? (engine-custom html-engine 'html-variant) "html4")))
+	    (not (equal? (engine-custom (find-engine 'html) 'html-variant)
+	         "html4")))
        ;; Show the example and its result
        (example-produce
-         (example :legend "Example of Skribe slides"
+         (example :legend "Example of Skribilo slides"
 		  (prgm :file "src/slides.skb"))
-	 (disp (include "src/slides.skb")))
+	 (disp
+	  (processor :combinator
+		     (lambda (e1 e2)
+		       (let ((e (copy-engine 'document-engine e2)))
+			 (markup-writer 'document e
+					:options '(:title :author :ending)
+					:action dummy-slide-set-output)
+			 (markup-writer 'slide e
+					:options '(:title :ident
+						   :number :toc :vspace)
+					:action dummy-slide-output)
+			 (markup-writer 'slide-vspace
+					:action dummy-slide-vspace-output)
+			 (markup-writer 'slide-embed
+					:action dummy-slide-embed-output)
+			 e))
+		     (include "src/slides.skb"))))
        ;; Show only the example (i.e. don't produce a document in a document)
        (example :legend "Example of Skribe slides"
 	       (prgm :file "src/slides.skb")))))
-   
-		 

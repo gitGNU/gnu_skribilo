@@ -1,0 +1,40 @@
+#!/bin/sh
+
+# Copyright 2005, 2006  Ludovic Courtès  <ludovic.courtes@laas.fr>
+#
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+# USA.
+
+# The `skribilo' executable.
+
+# Note: In Guile 1.8+ (or 1.9), when Guile is run in batch mode with
+# `--debug', it produces a clean stack trace when an exception is
+# raised and uncaught.  On earlier versions, it behaves as if
+# `--debug' had not been passed, not displaying a stack trace.  See
+# http://lists.gnu.org/archive/html/guile-devel/2006-01/msg00022.html
+# for details.
+#
+# In any case, don't pass `--debug' by default (for performance
+# reason).  When needed, the use should explicitly set the `GUILE'
+# environment variable to, e.g., "guile --debug".
+
+main='(module-ref (resolve-module '\''(skribilo)) '\'main')'
+exec ${GUILE-@GUILE@} -c "
+(use-modules (skribilo condition))
+
+(call-with-skribilo-error-catch
+  (lambda ()
+    (apply $main (cdr (command-line)))))"  "$@"

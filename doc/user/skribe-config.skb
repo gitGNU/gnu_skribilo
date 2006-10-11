@@ -1,13 +1,22 @@
-;*=====================================================================*/
-;*    serrano/prgm/project/skribe/doc/user/skribe-config.skb           */
-;*    -------------------------------------------------------------    */
-;*    Author      :  Manuel Serrano                                    */
-;*    Creation    :  Fri Jan  2 21:12:24 2004                          */
-;*    Last change :  Thu Sep 23 17:11:53 2004 (eg)                     */
-;*    Copyright   :  2004 Manuel Serrano                               */
-;*    -------------------------------------------------------------    */
-;*    The skribe-config tool                                           */
-;*=====================================================================*/
+;;; skribe-config.skb  --  The skribe-config tool
+;;;
+;;; Copyright 2004  Manuel Serrano
+;;;
+;;;
+;;; This program is free software; you can redistribute it and/or modify
+;;; it under the terms of the GNU General Public License as published by
+;;; the Free Software Foundation; either version 2 of the License, or
+;;; (at your option) any later version.
+;;;
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;;
+;;; You should have received a copy of the GNU General Public License
+;;; along with this program; if not, write to the Free Software
+;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+;;; USA.
 
 ;*---------------------------------------------------------------------*/
 ;*    The skribe-config tool                                           */
@@ -29,16 +38,18 @@ The ,(code "skribe-config") gives information about the Skribe configuration.
 This information can be the directories used to install Skribe, the Scheme
 implementation used for compiling Skribe, etc.])
 
-;; Options
-(section :title "OPTIONS" :number #f [
-,(pre (let* ((proc (run-process "../etc/skribe-config" "--help" error: pipe:))
-	     (port (process-error-port proc)))
-	 (let loop ((line (read-line port))
-		    (lines '()))
-	    (if (eof-object? line)
-		(reverse! lines)
-		(begin
-		   (loop (read-line port) (cons* line "\n" lines)))))))]))
+;; Options (FIXME)
+; (section :title "OPTIONS" :number #f [
+; ,(pre (let* ((proc (run-process "../etc/skribe-config" "--help" error: pipe:))
+; 	     (port (process-error-port proc)))
+; 	 (let loop ((line (read-line port))
+; 		    (lines '()))
+; 	    (if (eof-object? line)
+; 		(reverse! lines)
+; 		(begin
+; 		   (loop (read-line port) (cons* line "\n" lines)))))))])
+
+)
 
 
 

@@ -1,9 +1,0 @@
-(center
-   (table :border 1 :width 50. :frame 'hsides :cellstyle 'collapse
-      (tr :bg "#cccccc" (th :align 'center :colspan 3 "A table"))
-      (tr (th "Col 1") (th "Col 2") (th "Col 3"))
-      (tr (td :align 'center "10") (td "-20") (td "30"))
-      (tr (td :align 'right :rowspan 2 :valign 'center "12") (td "21"))
-      (tr (td :align 'center :colspan 2 "1234"))
-      (tr (td :align 'center :colspan 2 "1234") (td :align 'right "5"))
-      (tr (td :align 'center :colspan 1 "1") (td :colspan 2 "2345"))))

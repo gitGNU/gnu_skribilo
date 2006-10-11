@@ -1,5 +1,0 @@
-(image :file "linux.gif" "A first image")
-(image :height 50 :file "linux.gif" "A smaller one")
-(image :file "bsd.gif" "A second image")
-(image :width 50 :file "bsd.gif")
-(image :width 200 :height 40 :file "bsd.gif")

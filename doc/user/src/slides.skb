@@ -6,22 +6,28 @@
 	      :address (ref :url "http://www.inria.fr/mimosa/Manuel.Serrano"))
 
    (if (engine-format? "html")
-       (slide :title "Table of contents" :number #f :toc #f
-	  (toc :chapter #f :section #f :subsection #f :subsubsection #f
-	       :slide #t)))
+       (slide :title "Table of Contents" :number #f :toc #f
+	  (toc :chapter #f :section #f :subsection #f :subsubsection #f)))
+;;;	       :slide #t)))
+  
+   (slide :title "Introduction" :vspace 0.3
+      
+      (p [This is a simple slide, not grouped in any topic.]))
 
-   (slide :title "X11 client" :toc #t :vspace 0.3
+   (slide-topic :title "Interactive Features" :outline? #t
 
-      (itemize
-	 (item "xlock")
-	 (item "xeyes")
-	 (item "xterm")))
+     (slide :title "X11 client" :toc #t :vspace 0.3
 
-   (slide :title "Xclock" :toc #t :vspace 0.3
+	(itemize
+	   (item "xlock")
+	   (item "xeyes")
+	   (item "xterm")))
 
-      (center (sf (underline "The Unix xclock client")))
-      (slide-vspace 0.3)
+     (slide :title "Xclock" :toc #t :vspace 0.3
 
-      (slide-pause)
-      (slide-embed :command "xlock"
-		   :alt (frame "Can't run embedded application"))))
+	(center (sf (underline "The Unix xclock client")))
+	(slide-vspace 0.3)
+
+	(slide-pause)
+	(slide-embed :command "xlock"
+		     :alt (frame "Can't run embedded application")))))
