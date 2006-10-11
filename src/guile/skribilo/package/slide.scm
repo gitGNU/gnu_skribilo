@@ -232,7 +232,8 @@
       (markup 'slide-topic)
       (required-options '(:title :outline?))
       (ident (or ident (symbol->string (gensym 'slide-topic))))
-      (options (the-options opt))
+      (options `((:outline? ,outline?)
+                 ,@(the-options opt :outline?)))
       (body (the-body opt))))
 
 ;*---------------------------------------------------------------------*/
@@ -245,7 +246,8 @@
       (markup 'slide-subtopic)
       (required-options '(:title :outline?))
       (ident (or ident (symbol->string (gensym 'slide-subtopic))))
-      (options (the-options opt))
+      (options `((:outline? ,outline?)
+                 ,@(the-options opt :outline?)))
       (body (the-body opt))))
 
 
