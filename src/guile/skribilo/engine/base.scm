@@ -1,6 +1,7 @@
 ;;; base.scm  --  BASE Skribe engine
 ;;;
 ;;; Copyright 2003, 2004  Manuel Serrano
+;;; Copyright 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -18,7 +19,8 @@
 ;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 ;;; USA.
 
-(define-skribe-module (skribilo engine base))
+(define-skribe-module (skribilo engine base)
+  :use-module (srfi srfi-13))
 
 ;*---------------------------------------------------------------------*/
 ;*    base-engine ...                                                  */
@@ -457,8 +459,12 @@
 ;*---------------------------------------------------------------------*/
 (markup-writer '&prog-line
    :before (lambda (n e)
-	      (let ((n (markup-ident n)))
-		 (if n (skribe-eval (it (list n) ": ") e))))
+             (let ((num (markup-option n :number)))
+               (if (number? num)
+                   (skribe-eval
+                    (it (string-append (string-pad (number->string num) 3)
+                                       ": "))
+                    e))))
    :after "\n")
 
 ;*---------------------------------------------------------------------*/
