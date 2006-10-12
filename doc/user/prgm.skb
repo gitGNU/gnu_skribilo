@@ -29,7 +29,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    Computer programs                                                */
 ;*---------------------------------------------------------------------*/
-(chapter :title "Computer programs" 
+(chapter :title "Computer Programs" 
 
 (p [It is common that some parts of a Skribe text represent other
 texts. For instance, for a document describing a computer programming
