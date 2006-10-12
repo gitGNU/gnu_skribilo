@@ -24,8 +24,13 @@
   :autoload   (ice-9 receive) (receive)
   :use-module (skribilo lib)  ;; `new'
   :autoload   (skribilo ast) (node? node-body)
+  :use-module (skribilo utils syntax)
+
   :export (make-prog-body resolve-line))
 
+(fluid-set! current-reader %skribilo-module-reader)
+
+
 ;;; ======================================================================
 ;;;
 ;;; COMPATIBILITY
@@ -211,8 +216,9 @@
 		      (extract-mark (car lines) mark regexp)
 		(let* ((line-ident (symbol->string (gensym "&prog-line")))
 		       (n (new markup
-			     (markup '&prog-line)
-			     (ident  line-ident)
+			     (markup  '&prog-line)
+			     (ident   line-ident)
+                             (options `((:number ,lnum)))
 			     (body (if m (make-line-mark m line-ident l) l)))))
  		   (loop (cdr lines)
  			 (+ lnum 1)
