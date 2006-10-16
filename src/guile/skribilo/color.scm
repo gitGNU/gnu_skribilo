@@ -571,7 +571,8 @@
    ("darkcyan"			. "0 139 139")
    ("darkmagenta"		. "139 0 139")
    ("darkred"			. "139 0 0")
-   ("lightgreen"		. "144 238 144")))
+   ("lightgreen"		. "144 238 144")
+   ("lightred"			. "255 127 127")))
 
 
 (define (%convert-color str)

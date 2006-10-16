@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-10-16 21:09:47 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-79
+
+    Summary:
+      color.scm: Added support for `lightred'.  :-)
+    Revision:
+      skribilo--devel--1.2--patch-79
+
+    * src/guile/skribilo/color.scm (*skribe-rgb-alist*): Added `lightred'.
+
+    modified files:
+     ChangeLog src/guile/skribilo/color.scm
+
+
 2006-09-04 09:15:58 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-74
 
     Summary:
