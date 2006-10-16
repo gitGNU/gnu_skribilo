@@ -558,7 +558,7 @@
 			 ;; also honor this custom for `doc' documents.
 			 (cover-sheet? #t)
 
-			 ;; For reports, the date line.
+			 ;; For reports and slides, the date line.
 			 (date-line #t)
 
 			 ;; For reports, an abstract.
@@ -604,7 +604,7 @@
 			 (use-skribe-footnote-numbers? #t)
 
 			 ;; A procedure that is passed the engine
-			 ;; and produces Lout definitions.
+			 ;; and returns Lout definitions (a string).
 			 (inline-definitions-proc ,lout-definitions)
 
 			 ;; A procedure that takes a URL `ref' markup and
@@ -1012,7 +1012,7 @@
 		   (display "@SysInclude { tbl }\n"))
 
 	       ;; Write additional Lout definitions
-	       (display (lout-definitions e))
+	       (display ((engine-custom e 'inline-definitions-proc) e))
 
 	       (case doc-type
 		 ((report) (display "@Report\n"))
