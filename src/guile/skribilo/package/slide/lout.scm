@@ -18,8 +18,16 @@
 ;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 ;;; USA.
 
-(define-skribe-module (skribilo package slide lout)
+(define-module (skribilo package slide lout)
   :use-module (skribilo utils syntax)
+
+  :autoload   (skribilo utils strings) (make-string-replace)
+  :use-module (skribilo engine)
+  :use-module (skribilo writer)
+  :autoload   (skribilo output)        (output)
+  :use-module (skribilo ast)
+
+  :use-module (srfi srfi-13) ;; `string-join'
 
   ;; XXX: If changing the following `autoload' to `use-module' doesn't work,
   ;; then you need to fix your Guile.  See this thread about
@@ -34,6 +42,7 @@
 
 (fluid-set! current-reader %skribilo-module-reader)
 
+
 ;;; TODO:
 ;;;
 ;;; Make some more PS/PDF trickery.
@@ -83,7 +92,7 @@
 		  (and (pair? (markup-body n))
 		       (number? (car (markup-body n)))))
      :action (lambda (n e)
-		(printf "\n//~a~a # slide-vspace\n"
+		(format #t "\n//~a~a # slide-vspace\n"
 			(car (markup-body n))
 			(case (markup-option n :unit)
 			   ((cm)              "c")
@@ -93,6 +102,25 @@
 			    (skribe-error 'lout
 					  "Unknown vspace unit"
 					  (markup-option n :unit)))))))
+
+  (markup-writer 'slide-embed le
+     :options '(:command :arguments :alt :geometry :geometry-opt)
+     :action (lambda (n e)
+	       (let ((command       (markup-option n :command))
+                     (args          (markup-option n :arguments))
+                     (alt           (markup-option n :alt))
+                     (geometry      (markup-option n :geometry))
+                     (geometry-opt  (markup-option n :geometry-opt))
+		     (filter (make-string-replace lout-verbatim-encoding)))
+                 (format #t "~%\"~a\" @SkribiloEmbed { "
+                         (string-append command " "
+                                        (if (and geometry-opt geometry)
+                                            (string-append geometry-opt " "
+                                                           geometry " ")
+                                            "")
+                                        (string-join args " ")))
+                 (output alt e)
+                 (format #t " }\n"))))
 
   (markup-writer 'slide-pause le
      ;; FIXME:  Use a `pdfmark' custom action and a PDF transition action.
@@ -109,26 +137,7 @@
 
   ;; For movies, see
   ;; http://www.tug.org/tex-archive/macros/latex/contrib/movie15/movie15.sty .
-  (markup-writer 'slide-embed le
-     :options '(:alt :geometry :rgeometry :geometry-opt :command)
-     ;; FIXME:  `pdfmark'.
-     ;; << /Type /Action   /S /Launch
-     :action (lambda (n e)
-	       (let ((command (markup-option n :command))
-		     (filter (make-string-replace lout-verbatim-encoding))
-		     (pdfmark "[ /Rect [ 0 ysize xsize 0 ]
-/Name /Comment
-/Contents (This is an embedded application)
-/ANN pdfmark
-
-[ /Type /Action
-/S    /Launch
-/F    (~a)
-/OBJ pdfmark"))
-	       (display (string-append
-			 "4c @Wide 3c @High "
-			 (lout-embedded-postscript-code
-			  (filter (format #f pdfmark command)))))))))
+  )
 
 
 

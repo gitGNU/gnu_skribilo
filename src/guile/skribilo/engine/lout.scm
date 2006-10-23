@@ -378,9 +378,9 @@
   (let ((leader (engine-custom engine 'toc-leader))
 	(leader-space (engine-custom engine 'toc-leader-space)))
     (apply string-append
-	   `("# @SkribeMark implements Skribe's marks "
+	   `("# @SkribiloMark implements Skribe's marks "
 	     "(i.e. cross-references)\n"
-	     "def @SkribeMark\n"
+	     "def @SkribiloMark\n"
 	     "    right @Tag\n"
 	     "{\n"
 	     "    @PageMark @Tag\n"
@@ -389,7 +389,29 @@
 	     "# @SkribiloLeaders is used in `toc'\n"
 	     "# (this is mostly copied from the expert's guide)\n"
 	     "def @SkribiloLeaders { "
-	     ,leader " |" ,leader-space " @SkribiloLeaders }\n\n"))))
+	     ,leader " |" ,leader-space " @SkribiloLeaders }\n\n"
+
+             "# Embedding an application in PDF (``Launch'' actions)\n"
+             "# (tested with XPdf 3.1 and Evince 0.4.0)\n"
+             "def @SkribiloEmbed\n"
+             "  left command\n"
+             "  import @PSLengths\n"
+             "    named borderwidth { 1p }\n"
+             "  right body\n"
+             "{\n"
+             "  {\n"
+             "    \"[ /Rect [0 0 xsize ysize]\"\n"
+             "    \"  /Color [0 0 1]\"\n"
+             "    \"  /Border [ 0 0 \" borderwidth \" ]\"\n"
+             "    \"  /Action /Launch\"\n"
+             "    \"  /File  (\" command \")\"\n"
+             "    \"  /Subtype /Link\"\n"
+             "    \"/ANN\"\n"
+             "    \"pdfmark\"\n"
+             "  }\n"
+             "  @Graphic body\n"
+             "}\n\n"))))
+
 
 (define (lout-make-doc-cover-sheet doc engine)
   ;; Create a cover sheet for node `doc' which is a doc-style Lout document.
@@ -1319,7 +1341,7 @@
 	   ;; Lout markup)
 	   (display "\n//1.8vx\n@B { ")
 	   (output title e)
-	   (display " }\n@SkribeMark { ")
+	   (display " }\n@SkribiloMark { ")
 	   (display (lout-tagify ident))
 	   (display " }\n//0.8vx\n\n"))
 	(begin
@@ -2382,7 +2404,7 @@
    :action (lambda (n e)
 	     (if (markup-ident n)
 		 (begin
-		   (display "{ @SkribeMark { ")
+		   (display "{ @SkribiloMark { ")
 		   (display (lout-tagify (markup-ident n)))
 		   (display " } }"))
 		 (skribe-error 'lout "mark: Node has no identifier" n))))
