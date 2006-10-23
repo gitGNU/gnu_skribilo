@@ -146,6 +146,7 @@
 (define-markup (slide-embed #!rest opt
 			    #!key
 			    command
+                            (arguments '())
 			    (geometry-opt "-geometry")
 			    (geometry #f) (rgeometry #f)
 			    (transient #f) (transient-opt #f)

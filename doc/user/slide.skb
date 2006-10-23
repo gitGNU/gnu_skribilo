@@ -153,6 +153,8 @@ projection.  This may not be supported by all engines.])
    (doc-markup 'slide-embed
 	       `((:command [The binary file for running the embedded 
 application.])
+	         (:arguments [Additional arguments to be passed to the
+application (a list of strings).])
 		 (:geometry-opt [The name of the geometry option to be sent
 to the embedded application.])
 		 (:geometry [The geometry value to be sent.])
@@ -192,6 +194,7 @@ output format does not support embedded application.]))
 			 (markup-writer 'slide-vspace
 					:action dummy-slide-vspace-output)
 			 (markup-writer 'slide-embed
+			                :options '(:command :arguments :alt)
 					:action dummy-slide-embed-output)
 			 e))
 		     (include "src/slides.skb"))))
