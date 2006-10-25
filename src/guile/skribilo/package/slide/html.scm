@@ -50,8 +50,8 @@
     (markup-writer 'slide he
        :options '(:title :number :transition :toc :bg)
        :before (lambda (n e)
-		  (format #t "<a name=\"~a\">" (markup-ident n))
-		  (display "<br>\n"))
+                  (display "<br>\n")
+		  (format #t "<a name=\"~a\">" (markup-ident n)))
        :action (lambda (n e)
 		  (let ((nb (markup-option n :number))
 			(t (markup-option n :title))
@@ -61,8 +61,6 @@
                            ;; When a class is specified, let the user play
                            ;; with CSS.
                            (format #t "\n<div class=\"~a\">" class)
-                           (format #t "\n<a name=\"~a\"></a>\n"
-                                   (markup-ident n))
                            (format #t "<div class=\"~a\">" title-class)
                            (format #t "~a / ~a -- " nb (slide-number))
                            (output t e)
