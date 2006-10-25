@@ -155,7 +155,7 @@
                                       (is-markup? n 'slide-topic))
                                     topic))))
     (output (slide :title %slide-outline-title :toc #f
-                   :class (markup-option topic :class)
+                   :class (markup-class topic)
                    ;; The mark below is needed for cross-referencing by PDF
                    ;; bookmarks.
                    (if (markup-ident topic) (mark (markup-ident topic)) "")

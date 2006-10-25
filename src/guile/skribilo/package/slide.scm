@@ -228,13 +228,14 @@
 ;*---------------------------------------------------------------------*/
 (define-markup (slide-topic #!rest opt
 			    #!key title (outline? #t)
-                            (ident #f) (class "slide-topic"))
+                            (ident #f) (class #f))
    (new container
       (markup 'slide-topic)
       (required-options '(:title :outline?))
       (ident (or ident (symbol->string (gensym 'slide-topic))))
+      (class class)
       (options `((:outline? ,outline?)
-                 ,@(the-options opt :outline?)))
+                 ,@(the-options opt :outline? :class)))
       (body (the-body opt))))
 
 ;*---------------------------------------------------------------------*/
@@ -242,13 +243,14 @@
 ;*---------------------------------------------------------------------*/
 (define-markup (slide-subtopic #!rest opt
 			       #!key title (outline? #f)
-                               (ident #f) (class "slide-subtopic"))
+                               (ident #f) (class #f))
    (new container
       (markup 'slide-subtopic)
       (required-options '(:title :outline?))
       (ident (or ident (symbol->string (gensym 'slide-subtopic))))
+      (class class)
       (options `((:outline? ,outline?)
-                 ,@(the-options opt :outline?)))
+                 ,@(the-options opt :outline? :class)))
       (body (the-body opt))))
 
 
