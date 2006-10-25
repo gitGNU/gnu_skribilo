@@ -657,6 +657,10 @@
 			 ;; `lout-illustration' on other back-ends.
 			 (lout-program-name "lout")
 
+                         ;; Additional arguments that should be passed to
+                         ;; Lout, e.g., `("-I foo" "-I bar")'.
+                         (lout-program-arguments '())
+
 			 ;; Title and author information in the PDF
 			 ;; document information.  If `#t', the
 			 ;; document's `:title' and `:author' are used.
@@ -2872,11 +2876,13 @@
 					     (gensym 'lout-illustration)))
 					".eps"))
 		 (port (open-output-pipe
-			(string-append (or (engine-custom lout
-							  'lout-program-name)
-					   "lout")
-				       " -o " output
-				       " -EPS"))))
+			(apply string-append
+                               (or (engine-custom lout 'lout-program-name)
+                                   "lout")
+                               " -o " output
+                               " -EPS "
+                               (engine-custom lout
+                                              'lout-program-arguments)))))
 
 	    ;; send the illustration to Lout's standard input
 	    (display (illustration-header) port)
