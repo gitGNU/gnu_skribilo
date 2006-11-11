@@ -659,7 +659,7 @@
 
                          ;; Additional arguments that should be passed to
                          ;; Lout, e.g., `("-I foo" "-I bar")'.
-                         (lout-program-arguments '())
+                         (lout-program-arguments ())
 
 			 ;; Title and author information in the PDF
 			 ;; document information.  If `#t', the
