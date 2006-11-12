@@ -2,6 +2,24 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-11-11 23:02:57 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-83
+
+    Summary:
+      Lout engine: Make URLs breakable; make bibliography defaults sane.
+    Revision:
+      skribilo--devel--1.2--patch-83
+
+    * src/guile/skribilo/engine/lout.scm (lout-split-external-link): Use
+      `!lout' and `lout-make-url-breakable'.
+      (lout-make-url-breakable): New, taken from `url-ref'.
+      (url-ref): Use it.
+      (&bib-entry-title): Don't issue bold text.
+      (&bib-entry-url): Likewise.
+
+    modified files:
+     ChangeLog src/guile/skribilo/engine/lout.scm
+
+
 2006-11-11 22:59:55 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-82
 
     Summary:
