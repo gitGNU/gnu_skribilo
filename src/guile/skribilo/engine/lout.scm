@@ -432,18 +432,22 @@
        (output title engine)
        (display "The Lout Document"))
     (display " }\n")
-    (display "//1.7fx\n")
-    (if date-line
-	(begin
-	  (display "@Center { ")
-	  (output date-line engine)
-	  (display " }\n//1.4fx\n")))
+    (display "//2.0fx\n")
     (if author
        (begin
          (display "@Center { ")
          (output author engine)
          (display " }\n")
-         (display "//4fx\n")))
+         (display "//4.6fx\n")))
+    (if date-line
+	(begin
+	  (display "@Center { ")
+	  (output (if (eq? #t date-line)
+                      (strftime "%e %B %Y" (localtime (current-time)))
+                      date-line)
+                  engine)
+	  (display " }\n//1.7fx\n")))
+    (display "//0.5fx\n")
     (if multi-column?
 	(display "\n} # @FullWidth\n"))))
 
