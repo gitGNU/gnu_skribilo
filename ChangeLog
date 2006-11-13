@@ -2,6 +2,124 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-11-11 23:02:57 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-83
+
+    Summary:
+      Lout engine: Make URLs breakable; make bibliography defaults sane.
+    Revision:
+      skribilo--devel--1.2--patch-83
+
+    * src/guile/skribilo/engine/lout.scm (lout-split-external-link): Use
+      `!lout' and `lout-make-url-breakable'.
+      (lout-make-url-breakable): New, taken from `url-ref'.
+      (url-ref): Use it.
+      (&bib-entry-title): Don't issue bold text.
+      (&bib-entry-url): Likewise.
+
+    modified files:
+     ChangeLog src/guile/skribilo/engine/lout.scm
+
+
+2006-11-11 22:59:55 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-82
+
+    Summary:
+      Added the `(skribilo biblio template)' module.
+    Revision:
+      skribilo--devel--1.2--patch-82
+
+    * src/guile/skribilo/engine/base.scm: Autoload `(skribilo biblio
+      template)'.
+      (&bib-entry-url): New writer.
+      (&bib-entry-body)[output-fields]: Removed.  Moved to the new module as
+      `output-bib-entry-template'.  Use it, as well as
+      `make-bib-entry-template/default'.
+      (&bib-entry-title): Don't produce bold text.
+      (&bib-entry-booktitle): New writer.
+      (&bib-entry-journal): New writer.
+    
+    * src/guile/skribilo/biblio/Makefile.am (dist_guilemodule_DATA): Added
+      `template.scm'.
+
+    new files:
+     src/guile/skribilo/biblio/template.scm
+
+    modified files:
+     ChangeLog src/guile/skribilo/biblio/Makefile.am
+     src/guile/skribilo/engine/base.scm
+
+
+2006-11-11 17:44:08 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-81
+
+    Summary:
+      Merge from skribilo@sv.gnu.org--2006/skribilo--devo--1.2
+    Revision:
+      skribilo--devel--1.2--patch-81
+
+    Patches applied:
+    
+     * lcourtes@laas.fr--2005-libre/skribilo--devo--1.2  (patch 71)
+     * skribilo@sv.gnu.org--2006/skribilo--devo--1.2  (patch 12)
+    
+       - lout engine: Fixed the default value of `lout-program-arguments'.
+
+    modified files:
+     ChangeLog src/guile/skribilo/engine/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-71
+     skribilo@sv.gnu.org--2006/skribilo--devo--1.2--patch-12
+
+
+2006-11-11 17:03:53 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-80
+
+    Summary:
+      Merge from skribilo@sv.gnu.org--2006/skribilo--devo--1.2
+    Revision:
+      skribilo--devel--1.2--patch-80
+
+    Patches applied:
+    
+     * lcourtes@laas.fr--2005-libre/skribilo--devo--1.2  (patch 65-70)
+    
+       - Merge from skribilo@sv.gnu.org--2006
+       - Added a `:arguments' keyword to `slide-embed'.
+       - Lout engine: Implemented `slide-embed'.
+       - Lout engine: Added a `lout-program-arguments' custom.
+       - slide: Improved HTML output, especially wrt. the use of CSS.
+       - slide/html: Issue only one anchor per slide.
+    
+     * skribilo@sv.gnu.org--2006/skribilo--devo--1.2  (patch 6-11)
+    
+       - color.scm: Added support for `lightred'.  :-)
+       - Added a `:arguments' keyword to `slide-embed'.
+       - Lout engine: Implemented `slide-embed'.
+       - Lout engine: Added a `lout-program-arguments' custom.
+       - slide: Improved HTML output, especially wrt. the use of CSS.
+       - slide/html: Issue only one anchor per slide.
+
+    modified files:
+     ChangeLog doc/user/slide.skb
+     src/guile/skribilo/engine/lout.scm
+     src/guile/skribilo/package/slide.scm
+     src/guile/skribilo/package/slide/base.scm
+     src/guile/skribilo/package/slide/html.scm
+     src/guile/skribilo/package/slide/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-65
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-66
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-67
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-68
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-69
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-70
+     skribilo@sv.gnu.org--2006/skribilo--devo--1.2--patch-6
+     skribilo@sv.gnu.org--2006/skribilo--devo--1.2--patch-7
+     skribilo@sv.gnu.org--2006/skribilo--devo--1.2--patch-8
+     skribilo@sv.gnu.org--2006/skribilo--devo--1.2--patch-9
+     skribilo@sv.gnu.org--2006/skribilo--devo--1.2--patch-10
+     skribilo@sv.gnu.org--2006/skribilo--devo--1.2--patch-11
+
+
 2006-10-16 21:09:47 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-79
 
     Summary:
@@ -13,6 +131,105 @@
 
     modified files:
      ChangeLog src/guile/skribilo/color.scm
+
+
+2006-10-16 18:20:03 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-78
+
+    Summary:
+      Merge from skribilo@sv.gnu.org--2006/skribilo--devo--1.2
+    Revision:
+      skribilo--devel--1.2--patch-78
+
+    Patches applied:
+    
+     * lcourtes@laas.fr--2005-libre/skribilo--devo--1.2  (patch 64)
+     * skribilo@sv.gnu.org--2006/skribilo--devo--1.2  (patch 5)
+    
+       - Lout engine: Honor `inline-definitions-proc'.
+
+    modified files:
+     ChangeLog src/guile/skribilo/engine/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-64
+     skribilo@sv.gnu.org--2006/skribilo--devo--1.2--patch-5
+
+
+2006-10-15 20:46:11 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-77
+
+    Summary:
+      Merge from skribilo@sv.gnu.org--2006/skribilo--devo--1.2
+    Revision:
+      skribilo--devel--1.2--patch-77
+
+    Patches applied:
+    
+     * lcourtes@laas.fr--2005-libre/skribilo--devo--1.2  (patch 62-63)
+     * skribilo@sv.gnu.org--2006/skribilo--devo--1.2  (patch 3-4)
+    
+       - prog: Fixed line number output (`&prog-line').
+       - doc: Fixed the Fibonacci example in ``Computer Programs''.
+
+    modified files:
+     ChangeLog doc/user/prgm.skb doc/user/src/prgm2.skb
+     src/guile/skribilo/engine/base.scm src/guile/skribilo/prog.scm
+
+    new patches:
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-62
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-63
+     skribilo@sv.gnu.org--2006/skribilo--devo--1.2--patch-3
+     skribilo@sv.gnu.org--2006/skribilo--devo--1.2--patch-4
+
+
+2006-10-11 07:55:00 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-76
+
+    Summary:
+      Merge from skribilo@sv.gnu.org--2006/skribilo--devo--1.2
+    Revision:
+      skribilo--devel--1.2--patch-76
+
+    Patches applied:
+    
+     * lcourtes@laas.fr--2005-libre/skribilo--devo--1.2  (patch 60-61)
+    
+       - slide: Propagate the `outline?' parameter in `slide-(sub)?topic'.
+       - Lout engine: Honor `date-line' for slides.
+    
+     * skribilo@sv.gnu.org--2006/skribilo--devo--1.2  (base, patch 1-2)
+    
+       - tag of lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-59
+       - slide: Propagate the `outline?' parameter in `slide-(sub)?topic'.
+       - Lout engine: Honor `date-line' for slides.
+
+    modified files:
+     ChangeLog src/guile/skribilo/engine/lout.scm
+     src/guile/skribilo/package/slide.scm
+
+    new patches:
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-60
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-61
+     skribilo@sv.gnu.org--2006/skribilo--devo--1.2--base-0
+     skribilo@sv.gnu.org--2006/skribilo--devo--1.2--patch-1
+     skribilo@sv.gnu.org--2006/skribilo--devo--1.2--patch-2
+
+
+2006-09-14 17:31:46 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-75
+
+    Summary:
+      Adding missing patch logs from `lcourtes@laas.fr--2005-libre'.
+    Revision:
+      skribilo--devel--1.2--patch-75
+
+
+    modified files:
+     ChangeLog
+
+    new patches:
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-55
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-56
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-57
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-58
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-59
 
 
 2006-09-04 09:15:58 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-74

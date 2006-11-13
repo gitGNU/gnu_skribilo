@@ -472,7 +472,8 @@
 					(loop (- where 1))
 					where)))))
 		   `(,(ref :url url :text (substring text 0 split))
-		     ,(substring text split len)))
+		     ,(!lout (lout-make-url-breakable
+                              (substring text split len)))))
 		 (list markup))))
 
 	  ((markup? text)
@@ -2519,6 +2520,19 @@
    :after "]")
 
 ;*---------------------------------------------------------------------*/
+;*    lout-make-url-breakable ...                                      */
+;*---------------------------------------------------------------------*/
+(define-public lout-make-url-breakable
+  ;; Make the given string (which is assumed to be a URL) breakable.
+  (make-string-replace `((#\/ "\"/\"&0ik{}")
+                         (#\. ".&0ik{}")
+                         (#\- "-&0ik{}")
+                         (#\_ "_&0ik{}")
+                         (#\@ "\"@\"&0ik{}")
+                         ,@lout-verbatim-encoding
+                         (#\newline ""))))
+
+;*---------------------------------------------------------------------*/
 ;*    url-ref ...                                                      */
 ;*---------------------------------------------------------------------*/
 (markup-writer 'url-ref
@@ -2531,19 +2545,9 @@
 		       (markup-option n '&transformed))
 		   (begin
 		     (printf "{ \"~a\" @ExternalLink { " url)
-		     (if text ;; FIXME: Should be (not (string-index text #\space))
-			 (output text e)
-			 (let ((filter-url (make-string-replace
-					    `((#\/ "\"/\"&-")
-					      (#\. ".&-")
-					      (#\- "&-")
-					      (#\_ "_&-")
-					      ,@lout-verbatim-encoding
-					      (#\newline "")))))
-			   ;; Filter the URL in a way to give Lout hints on
-			   ;; where hyphenation should take place.
-			   (fprint (current-error-port) "Here!!!" filter-url)
-			   (display (filter-url url) e)))
+		     (if text
+                         (output text e)
+                         (display (lout-make-url-breakable url) e))
 		     (printf " } }"))
 		   (begin
 		     (markup-option-add! n '&transformed #t)
@@ -2630,7 +2634,7 @@
 ;*---------------------------------------------------------------------*/
 (markup-writer '&bib-entry-title
    :action (lambda (n e)
-	      (let* ((t (bold (markup-body n)))
+	      (let* ((t (markup-body n))
 		     (en (handle-ast (ast-parent n)))
 		     (url (markup-option en 'url))
 		     (ht (if url (ref :url (markup-body url) :text t) t)))
@@ -2652,7 +2656,7 @@
    :action (lambda (n e)
 	      (let* ((en (handle-ast (ast-parent n)))
 		     (url (markup-option en 'url))
-		     (t (bold (markup-body url))))
+		     (t (it (markup-body url))))
 		 (skribe-eval (ref :url (markup-body url) :text t) e))))
 
 ;*---------------------------------------------------------------------*/
