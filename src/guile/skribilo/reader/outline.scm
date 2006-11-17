@@ -22,7 +22,10 @@
   :use-module (skribilo utils syntax)
   :use-module (skribilo reader)
   :use-module (ice-9 optargs)
+
   :use-module (srfi srfi-11)
+  :use-module (srfi srfi-13)
+  :use-module (srfi srfi-14)
 
   :autoload   (ice-9 rdelim) (read-line)
   :autoload   (ice-9 regex) (make-regexp)
@@ -380,12 +383,19 @@ to @var{node-type}."
   (define modeline-rx
     (make-regexp "^[[:space:]]*-\\*- [a-zA-Z-]+ -\\*-[[:space:]]*$"))
   (define title-rx (make-regexp "^[Tt]itle: (.+)$" regexp/extended))
-  (define author-rx (make-regexp "^[Aa]uthor: (.+)$" regexp/extended))
+  (define author-rx (make-regexp "^[Aa]uthors?: (.+)$" regexp/extended))
+  (define keywords-rx
+    (make-regexp "^[Kk]ey ?[wW]ords?: (.+)$" regexp/extended))
+
+  (define (extract-keywords str)
+    (map string-trim-both
+         (string-tokenize str (char-set-complement (char-set #\,)))))
 
   (let ((doc-proc (make-document-processor %node-processors %line-processor)))
 
     (let loop ((title #f)
 	       (author #f)
+               (keywords '())
 	       (line (read-line port)))
 
       (if (eof-object? line)
@@ -394,20 +404,34 @@ to @var{node-type}."
 	      line)
 	  (if (or (empty-line? line)
 		  (regexp-exec modeline-rx line))
-	      (loop title author (read-line port))
-	      (let ((title-match (regexp-exec title-rx line)))
-		(if title-match
-		    (loop (match:substring title-match 1)
-			  author (read-line port))
-		    (let ((author-match (regexp-exec author-rx line)))
-		      (if author-match
-			  (loop title (match:substring author-match 1)
-				(read-line port))
+	      (loop title author keywords (read-line port))
+	      (cond ((regexp-exec title-rx line)
+                     =>
+                     (lambda (title-match)
+                       (loop (match:substring title-match 1)
+                             author keywords (read-line port))))
 
-			  ;; Let's go.
-			  `(document :title ,title
-				     :author (author :name ,author)
-				     ,@(doc-proc line port)))))))))))
+                    ((regexp-exec author-rx line)
+                     =>
+                     (lambda (author-match)
+                       (loop title (match:substring author-match 1)
+                             keywords (read-line port))))
+
+                    ((regexp-exec keywords-rx line)
+                     =>
+                     (lambda (kw-match)
+                       (loop title author
+                             (append keywords
+                                     (extract-keywords
+                                      (match:substring kw-match 1)))
+                             (read-line port))))
+
+                    (else
+                     ;; Let's go.
+                     `(document :title ,title
+                                :author (author :name ,author)
+                                :keywords ',keywords
+                                ,@(doc-proc line port)))))))))
 
 
 (define* (make-outline-reader :optional (version "0.1"))
