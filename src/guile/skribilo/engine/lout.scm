@@ -2495,6 +2495,7 @@
 					   ((is-markup? x 'bib-entry) x)
 					   ((is-markup? x 'bib-ref)
 					    (handle-ast (markup-body x)))
+                                           ((is-markup? x 'unref) #f)
 					   (else
 					    (skribe-error
 					     'lout
@@ -2502,9 +2503,14 @@
 					     x)))))
 		    (help-proc (lambda (proc)
 				 (lambda (e1 e2)
-				   (proc (canonicalize-entry e1)
-					 (canonicalize-entry e2)))))
+                                   (let ((e1 (canonicalize-entry e1))
+                                         (e2 (canonicalize-entry e2)))
+                                     ;; don't pass `unref's to PROC
+                                     (if (and e1 e2)
+                                         (proc e1 e2)
+                                         #f)))))
 		    (sort-proc (engine-custom e 'bib-refs-sort-proc)))
+
 	       (let loop ((rs (if sort-proc
 				  (sort entries (help-proc sort-proc))
 				  entries)))
