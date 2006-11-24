@@ -1187,6 +1187,49 @@
 	 (line (line-ref line))
 	 (else (skribe-error 'ref "illegal reference" opts)))))
 
+
+;*---------------------------------------------------------------------*/
+;*    numref ...                                                       */
+;*---------------------------------------------------------------------*/
+(define-markup (numref #!rest opts
+                       #!key (ident #f) (text "") (page #f)
+                             (separator ".") (class #f))
+  ;; Produce a numbered reference to `ident'.
+  (new unresolved
+       (proc (lambda (n e env)
+	       (let* ((parent (ast-parent n))
+                      (doc (ast-document n))
+		      (target (document-lookup-node doc ident))
+		      (number (and target
+                                   (markup-option target :number))))
+                 (cond
+                  ((not target)
+                   (skribe-warning/ast 1 n 'numref
+                                       (format #f "can't find `ident': ")
+                                       ident)
+                   (new markup
+                        (markup 'unref)
+                        (ident (symbol->string (gensym "unref")))
+                        (class class)
+                        (required-options '(:text))
+                        (options `((kind numref)
+                                   ,@(the-options opts :ident :class)))
+                        (body (list ident ": " (ast->file-location n)))))
+                  ((unresolved? number)
+                   ;; Loop until `number' is resolved.
+                   n)
+                  (else
+                   (let ((xref
+                          (ref :text
+                               (list (if text text "") " "
+                                     (if (number? number)
+                                         (markup-number-string target
+                                                               separator)
+                                         ""))
+                               :page page
+                               :handle (handle target))))
+                     (resolve! xref e env)))))))))
+
 ;*---------------------------------------------------------------------*/
 ;*    resolve ...                                                      */
 ;*---------------------------------------------------------------------*/
