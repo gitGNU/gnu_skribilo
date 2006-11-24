@@ -35,6 +35,7 @@
   :autoload   (skribilo lib)       (type-name)
   :autoload   (skribilo resolve)   (*document-being-resolved*)
   :autoload   (skribilo output)    (*document-being-output*)
+  :autoload   (skribilo biblio)    (*bib-table* open-bib-file)
   :use-module (skribilo debug)
 
   :re-export (file-size)  ;; re-exported from `(skribilo utils files)'
@@ -205,6 +206,18 @@
 
 (define-public (find-markup-ident ident)
   (or (find-markups ident) '()))
+
+
+
+;;;
+;;; Bibliography.
+;;;
+
+(define-public (default-bib-table)
+  (*bib-table*))
+
+(define-public (skribe-open-bib-file file command)
+  (open-bib-file file command))
 
 
 

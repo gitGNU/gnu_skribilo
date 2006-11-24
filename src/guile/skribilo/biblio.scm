@@ -1,5 +1,6 @@
 ;;; biblio.scm  --  Bibliography functions.
 ;;;
+;;; Copyright 2001, 2002, 2003, 2004  Manuel Serrano
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
 ;;; Copyright 2005, 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
@@ -24,9 +25,10 @@
   :use-module (skribilo utils strings)
   :use-module (skribilo utils syntax) ;; `when', `unless'
 
+  :use-module (srfi srfi-1)
   :autoload   (srfi srfi-34)         (raise)
   :use-module (srfi srfi-35)
-  :use-module (srfi srfi-1)
+  :use-module (srfi srfi-39)
   :autoload   (skribilo condition)   (&file-search-error)
 
   :autoload   (skribilo reader)      (%default-reader)
@@ -36,9 +38,9 @@
   :use-module (ice-9 optargs)
   :use-module (oop goops)
 
-  :export (bib-table? make-bib-table default-bib-table
+  :export (bib-table? make-bib-table *bib-table*
 	   bib-add! bib-duplicate bib-for-each bib-map
-	   skribe-open-bib-file parse-bib
+	   open-bib-file parse-bib
 
            bib-load! resolve-bib resolve-the-bib make-bib-entry
 
@@ -52,27 +54,15 @@
 ;;; Provides the bibliography data type and basic bibliography handling,
 ;;; including simple procedures to sort bibliography entries.
 ;;;
-;;; FIXME: This module need cleanup!
-;;;
 ;;; Code:
 
 (fluid-set! current-reader %skribilo-module-reader)
 
-
-;; FIXME: Should be a fluid?
-(define *bib-table*	     #f)
-
-;; Forward declarations
-(define skribe-open-bib-file #f)
-(define parse-bib	     #f)
-
 
 
-;;; ======================================================================
 ;;;
-;;;				Utilities
+;;; Accessors.
 ;;;
-;;; ======================================================================
 
 (define (make-bib-table ident)
    (make-hash-table))
@@ -80,10 +70,9 @@
 (define (bib-table? obj)
   (hash-table? obj))
 
-(define (default-bib-table)
-  (unless *bib-table*
-    (set! *bib-table* (make-bib-table "default-bib-table")))
-  *bib-table*)
+;; The current bib table.
+(define *bib-table*
+  (make-parameter (make-bib-table "default-bib-table")))
 
 (define (%bib-error who entry)
   (let ((msg "bibliography syntax error on entry"))
@@ -91,22 +80,34 @@
 	(skribe-line-error (%epair-file entry) (%epair-line entry) who msg entry)
 	(skribe-error who msg entry))))
 
-(define* (bib-for-each proc :optional (table (default-bib-table)))
+(define (bib-add! table . entries)
+  (if (not (bib-table? table))
+      (skribe-error 'bib-add! "Illegal bibliography table" table)
+      (for-each (lambda (entry)
+		  (cond
+		    ((and (list? entry) (> (length entry) 2))
+		     (let* ((kind   (car entry))
+			    (key    (format #f "~A" (cadr entry)))
+			    (fields (cddr entry))
+			    (old    (hash-ref table key)))
+		       (if old
+			   (bib-duplicate key #f old)
+			   (hash-set! table key
+				      (make-bib-entry kind key fields #f)))))
+		    (else
+		     (%bib-error 'bib-add! entry))))
+		entries)))
+
+(define* (bib-for-each proc :optional (table (*bib-table*)))
   (hash-for-each (lambda (ident entry)
 		   (proc ident entry))
 		 table))
 
-(define* (bib-map proc :optional (table (default-bib-table)))
+(define* (bib-map proc :optional (table (*bib-table*)))
   (hash-map->list (lambda (ident entry)
 		    (proc ident entry))
 		  table))
 
-
-;;; ======================================================================
-;;;
-;;;				BIB-DUPLICATE
-;;;
-;;; ======================================================================
 (define (bib-duplicate ident from old)
   (let ((ofrom (markup-option old 'from)))
     (skribe-warning 2
@@ -120,11 +121,11 @@
 			" ignoring redefinition."))))
 
 
-;;; ======================================================================
+
 ;;;
-;;;				PARSE-BIB
+;;; Parsing.
 ;;;
-;;; ======================================================================
+
 (define (parse-bib table port)
   (let ((read %default-reader)) ;; FIXME: We should use a fluid
     (if (not (bib-table? table))
@@ -146,43 +147,15 @@
 	       (else
 		(%bib-error 'bib-parse entry)))))))))
 
-
-;;; ======================================================================
-;;;
-;;;				   BIB-ADD!
-;;;
-;;; ======================================================================
-(define (bib-add! table . entries)
-  (if (not (bib-table? table))
-      (skribe-error 'bib-add! "Illegal bibliography table" table)
-      (for-each (lambda (entry)
-		  (cond
-		    ((and (list? entry) (> (length entry) 2))
-		     (let* ((kind   (car entry))
-			    (key    (format #f "~A" (cadr entry)))
-			    (fields (cddr entry))
-			    (old    (hash-ref table key)))
-		       (if old
-			   (bib-duplicate key #f old)
-			   (hash-set! table key
-				      (make-bib-entry kind key fields #f)))))
-		    (else
-		     (%bib-error 'bib-add! entry))))
-		entries)))
-
-
-;;; ======================================================================
-;;;
-;;;				SKRIBE-OPEN-BIB-FILE
-;;;
-;;; ======================================================================
-;; FIXME: Factoriser
-(define (skribe-open-bib-file file command)
+(define* (open-bib-file file :optional (command #f))
  (let ((path (search-path (*bib-path*) file)))
    (if (string? path)
        (begin
 	 (when (> (*verbose*) 0)
-	   (format (current-error-port) "  [loading bibliography: ~S]\n" path))
+	   (format (current-error-port)
+                   "  [loading bibliography: ~S]\n" path))
+         ;; FIXME: The following `open-input-file' won't work with actual
+         ;; commands.  We need to use `(ice-9 popen)'.
 	 (open-input-file (if (string? command)
 			      (string-append "| "
 					     (format #f command path))
@@ -209,7 +182,7 @@
    (if (not (bib-table? table))
        (skribe-error 'bib-load "Illegal bibliography table" table)
        ;; read the file
-       (let ((p (skribe-open-bib-file filename command)))
+       (let ((p (open-bib-file filename command)))
 	  (if (not (input-port? p))
 	      (skribe-error 'bib-load "Can't open data base" filename)
 	      (unwind-protect
