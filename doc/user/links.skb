@@ -71,9 +71,9 @@ automatically sets a mark whose value is the legend of the figure.]))
 ;*---------------------------------------------------------------------*/
 ;*    ref ...  @label ref@                                             */
 ;*---------------------------------------------------------------------*/
-(section :title "Reference" 
+(section :title "Reference" :ident "refs"
 
-(p [Skribe proposes only one single function for all the references. 
+(p [Skribilo proposes a single function that can be used for most references. 
 This same ,(code "ref") function is used for introducing references to
 section, to bibliographic entries, to source code line number, etc.])
 
@@ -92,7 +92,8 @@ section, to bibliographic entries, to source code line number, etc.])
 	      (:section [The title of a ,(markup-ref "section").])
 	      (:subsection [The title of a ,(markup-ref "subsection").])
 	      (:subsubsection [The title of a ,(markup-ref "subsubsection").])
-	      (:page [A boolean enabling/disabling page reference.])
+	      (:page [A boolean enabling/disabling page reference (for
+                hard copies as produced by the Lout and LaTeX engines).])
 	      (:bib ,[A name or a list of names of 
                 ,(ref :chapter "Bibliographies" :text "bibliographic") entry.])
 	      (:bib-table ,[The 
@@ -108,8 +109,21 @@ section, to bibliographic entries, to source code line number, etc.])
                 a ,(tt "mark") located in the Skribe document 
                 described by the ,(var "file") ,(sc "sui").]))
 	    :force-args '(:url :bib :line :skribe)
-	    :see-also '(index))
+	    :see-also '(index numref))
 
+(p [Sometimes, it is useful to produce phrases that refer a section by
+its number, as in ``See Section 2.3''.  This is especially useful on
+printed documents, as produced by the Lout and LaTeX engines.  The
+,(code "numref") markup is provided to that end:])
+
+(doc-markup 'numref
+	    `((:text [Text preceding the reference number.])
+	      (:ident [The identifier of the node (a chapter, section,
+                subsection, etc.) being referenced.])
+	      (:page [A boolean enabling/disabling page reference (for
+                hard copies as produced by the Lout and LaTeX engines).])
+	      (:separator [The separator between numbers.]))
+	     :see-also '(ref))
 
 (example-produce 
  (example :legend "Some references" (prgm :file "src/links1.skb"))

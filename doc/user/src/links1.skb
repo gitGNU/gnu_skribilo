@@ -11,6 +11,10 @@ That other one points to a well known
 ,(code ":text"): ,(ref :url "http://slashdot.org/").
 
 ,(linebreak)
+And one can also refer to sections by number, as in ``see ,(numref :text
+[Wonderful Section] :ident "refs")''.
+
+,(linebreak)
 With more complex tricks that are explained in Section 
 ,(ref :section "Resolve"), it is also possible use, for the text of the
 reference, a container number such as chapter:
