@@ -30,6 +30,9 @@
 
   :autoload (skribilo location) (location?)
   :autoload (srfi srfi-1)  (fold)
+
+  :use-module (ice-9 optargs)
+
   :export (<ast> ast? ast-loc ast-loc-set!
 		 ast-parent ast->string ast->file-location
 		 ast-resolved?
@@ -61,6 +64,9 @@
            container-search-down search-down find-down find1-down
            find-up find1-up
            ast-document ast-chapter ast-section
+
+           ;; numbering
+           markup-number-string
 
 	   ;; error conditions
 	   &ast-error &ast-orphan-error &ast-cycle-error
@@ -595,6 +601,22 @@
 
 (define (ast-section m)
   (find1-up (lambda (n) (is-markup? n 'section)) m))
+
+
+;;;
+;;; Section numbering.
+;;;
+
+(define* (markup-number-string markup :optional (sep "."))
+  ;; Return a structure number string such as "1.2".
+  (let loop ((markup markup))
+    (if (document? markup)
+	""
+	(let ((parent-num (loop (ast-parent markup)))
+	      (num (markup-option markup :number)))
+	  (string-append parent-num
+			 (if (string=? "" parent-num) "" sep)
+			 (if (number? num) (number->string num) ""))))))
 
 
 ;;; arch-tag: e2489bd6-1b6d-4b03-bdfb-83cffd2f7ce7

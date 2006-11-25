@@ -502,7 +502,7 @@
     (if num
 	(begin
 	  (if (is-markup? node 'chapter) (display "@B { "))
-	  (printf "~a. |2s " (lout-structure-number-string node))
+	  (printf "~a. |2s " (markup-number-string node))
 	  (output title engine)
 	  (if (is-markup? node 'chapter) (display " }")))
 	(if (is-markup? node 'chapter)
@@ -525,7 +525,7 @@
 (define (lout-pdf-bookmark-title node engine)
   ;; Default implementation of the `pdf-bookmark-title-proc' custom that
   ;; returns a title (a string) for the PDF bookmark of `node'.
-  (let ((number (lout-structure-number-string node)))
+  (let ((number (markup-number-string node)))
     (string-append  (if (string=? number "") "" (string-append number ". "))
 		    (ast->string (markup-option node :title)))))
 
@@ -1321,17 +1321,11 @@
 		     doc-type)))))
 
 (define-public (lout-structure-number-string markup)
-  ;; Return a structure number string such as "1.2".
-  ;; FIXME: External code has started to rely on this.  This should be
-  ;;        generalized and moved elsewhere.
-  (let loop ((struct markup))
-    (if (document? struct)
-	""
-	(let ((parent-num (loop (ast-parent struct)))
-	      (num (markup-option struct :number)))
-	  (string-append parent-num
-			 (if (string=? "" parent-num) "" ".")
-			 (if (number? num) (number->string num) ""))))))
+  ;; FIXME: External code has started to rely on this before this was moved
+  ;; to the `ast' module as `markup-number-string'.  Thus, we'll have to keep it
+  ;; here for some time.
+  (markup-number-string markup "."))
+
 
 ;*---------------------------------------------------------------------*/
 ;*    lout-block-before ...                                            */
@@ -1360,7 +1354,7 @@
 
 	   (if (number? number)
 	       (printf "  @BypassNumber { ~a }\n"
-		       (lout-structure-number-string n))
+		       (markup-number-string n))
 	       (if (not number)
 		   ;; this trick hides the section number
 		   (printf "  @BypassNumber { } # unnumbered\n")))
