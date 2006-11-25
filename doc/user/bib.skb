@@ -52,32 +52,36 @@ tables.])
    
    (p [The predicate ,(code "bib-table?") returns ,(code "#t") if and only
 if its argument is a bibliography table as returned by 
-,(markup-ref "make-bib-table") or ,(markup-ref "default-bib-table"). Otherwise
+,(markup-ref "make-bib-table") or ,(markup-ref "*bib-table*"). Otherwise
 ,(code "bib-table?") returns ,(code "#f").])
    
    (doc-markup 'bib-table?
 	       '((obj [The value to be tested]))
-	       :see-also '(make-bib-table default-bib-table bibliography the-bibliography)
+	       :see-also '(make-bib-table *bib-table* bibliography the-bibliography)
 	       :force-engines *api-engines*
 	       :common-args '()
 	       :source #f ;;"skribilo/biblio.scm"
                :def '(define-markup (bib-table? obj) ...))
    
-   (p [The function ,(code "default-bib-table") returns a global, pre-existing
+   (p [The function ,(code "*bib-table*") returns a global, pre-existing
 bibliography-table:])
-   (doc-markup 'default-bib-table
+   (doc-markup '*bib-table*
 	       '()
 	       :see-also '(bib-table? make-bib-table bibliography the-bibliography)
 	       :force-engines *api-engines*
 	       :common-args '()
                :source #f
-               :def '(define-markup (default-bib-table) ...))
+               :def '(define-markup (*bib-table*) ...))
+   (p [Technically, ,(code "*bib-table*") is actually an ,(ref :text
+[SRFI-39] :url "http://srfi.schemers.org/srfi-39/srfi-39.html")
+parameter object, so it can be queried and modified like any other
+parameter object.])
    
    (p [The function ,(code "make-bib-table") constructs a new 
 bibliography-table:])
    (doc-markup 'make-bib-table
 	       '((ident [The name of the bibliography table.]))
-	       :see-also '(bib-table? default-bib-table bibliography the-bibliography)
+	       :see-also '(bib-table? *bib-table* bibliography the-bibliography)
 	       :force-engines *api-engines*
 	       :common-args '()
 	       :source #f
@@ -109,7 +113,7 @@ the ,(code "bibliography") Skribe function call before the call to the
               :text "bibliograph path")). Otherwise, it is a list described
               by the ,(ref :subsection "Bibliography syntax" :text "syntax") 
               below.]))
-	    :see-also '(bib-table? make-bib-table default-bib-table the-bibliography)
+	    :see-also '(bib-table? make-bib-table *bib-table* the-bibliography)
 	    :force-engines *api-engines*
 	    :common-args '())
 
@@ -161,7 +165,7 @@ Here is an example of a simple Skribe database.])
                filtered in by ,(param :pred). The value ,(code "full")
                tells Skribe to count all entries, event those filtered out
                by ,(param :pred).]))
-	    :see-also '(bib-table? make-bib-table default-bib-table bibliography)
+	    :see-also '(bib-table? make-bib-table *bib-table* bibliography)
 	    :force-engines *api-engines*
 	    :common-args '())
 

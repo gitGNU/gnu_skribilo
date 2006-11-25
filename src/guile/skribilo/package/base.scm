@@ -33,7 +33,7 @@
   :autoload   (skribilo engine)    (engine?)
 
   ;; optional ``sub-packages''
-  :autoload   (skribilo biblio)    (default-bib-table resolve-bib
+  :autoload   (skribilo biblio)    (*bib-table* resolve-bib
                                     bib-load! bib-add!)
   :autoload   (skribilo color)     (skribe-use-color!)
   :autoload   (skribilo source)    (language? source-read-lines source-fontify)
@@ -1015,7 +1015,7 @@
 		    (subsection #f)
 		    (subsubsection #f)
 		    (bib #f)
-		    (bib-table (default-bib-table))
+		    (bib-table (*bib-table*))
 		    (url #f)
 		    (figure #f)
 		    (mark #f)
@@ -1245,7 +1245,7 @@
 ;*---------------------------------------------------------------------*/
 (define-markup (bibliography #!rest files
 			     #!key
-			     (command #f) (bib-table (default-bib-table)))
+			     (command #f) (bib-table (*bib-table*)))
    (for-each (lambda (f)
 		(cond
 		   ((string? f)
@@ -1267,7 +1267,7 @@
 (define-markup (the-bibliography #!rest opts
 				 #!key
 				 pred
-				 (bib-table (default-bib-table))
+				 (bib-table (*bib-table*))
 				 (sort bib-sort/authors)
 				 (count 'partial))
    (if (not (memq count '(partial full)))
