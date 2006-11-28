@@ -85,8 +85,12 @@
 
 	 ;; Note: We could use `pmatrix' here but it precludes line-breaking
 	 ;; within equations.
-	 (open-par `(if need-paren? "{ @VScale ( }" ""))
-	 (close-par `(if need-paren? "{ @VScale ) }" "")))
+	 (open-par (if parentheses?
+                       `(if need-paren? "{ @VScale ( }" "")
+                       ""))
+	 (close-par (if parentheses?
+                        `(if need-paren? "{ @VScale ) }" "")
+                        "")))
 
     `(markup-writer ',(symbol-append 'eq: sym)
 		    (find-engine 'lout)
@@ -102,25 +106,21 @@
                                              (eq-op? (equation-markup? op))
                                              (need-paren?
                                               (and eq-op?
-                                                   (< (operator-precedence
-                                                       (equation-markup-name->operator
-                                                        (markup-markup op)))
-                                                      ,precedence)))
+                                                   (>= (operator-precedence
+                                                        (equation-markup-name->operator
+                                                         (markup-markup op)))
+                                                       ,precedence)))
                                              (column (port-column
                                                       (current-output-port))))
 
                                         ;; Work around Lout's limitations...
                                         (if (> column 1000) (display "\n"))
 
-                                        (display (string-append " { "
-                                                                ,(if parentheses?
-                                                                     open-par
-                                                                     "")))
+                                        (display
+                                         (string-append " { " ,open-par))
                                         (output op engine)
-                                        (display (string-append ,(if parentheses?
-                                                                     close-par
-                                                                     "")
-                                                                " }"))
+                                        (display
+                                         (string-append ,close-par " }"))
                                         (if (pair? (cdr operands))
                                             (display (string-append " "
                                                                     lout-name

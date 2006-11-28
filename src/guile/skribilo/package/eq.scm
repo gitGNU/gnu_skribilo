@@ -116,18 +116,27 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
 ;;;
 
 (define %operator-precedence
-  ;; FIXME: This needs to be augmented.
-  '((+ . 1)
-    (- . 1)
-    (* . 2)
-    (/ . 2)
-    (sum . 3)
+  ;; Taken from http://en.wikipedia.org/wiki/Order_of_operations .
+  '((expt . 2)
+    (sqrt . 2)
+
+    (* . 3)
+    (/ . 3)
     (product . 3)
-    (= . 0)
-    (< . 0)
-    (> . 0)
-    (<= . 0)
-    (>= . 0)))
+
+    (+ . 4)
+    (- . 4)
+    (sum . 4)
+
+    (< . 6)
+    (> . 6)
+    (<= . 6)
+    (>= . 6)
+
+    (= . 7)
+    (!= . 7)
+    (~= . 7)))
+
 
 (define-public (operator-precedence op)
   (let ((p (assq op %operator-precedence)))
@@ -329,10 +338,10 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
 			      (nested-eq? (equation-markup? o))
 			      (need-paren?
 			       (and nested-eq?
-; 				    (< (operator-precedence
-; 					(equation-markup-name->operator
-; 					 (markup-markup o)))
-; 				       ,precedence)
+ 				    (>= (operator-precedence
+                                         (equation-markup-name->operator
+                                          (markup-markup o)))
+                                        ,precedence)
 				    )
 			       ))
 
