@@ -1,0 +1,38 @@
+(p [This paragraph contains this equation: ,(eq :inline? #t '(/ alpha
+beta)).  This is actually an ,(emph [inline]) equation, meaning that it
+occurs within a paragraph.  Typesetting has to be adjusted
+accordingly.])
+
+(eq-display
+	
+   (p [This is an equation display block, within which equations can be
+aligned with one another.])
+
+   (eq :ident "eq-limit-b-over-l"
+       :renderer 'lout
+       :align-with '=
+       '(= (limit (/ lambda beta) 0
+		  (apply IPL n k))
+
+	   ;; non-simplified
+	   (/ (expt (+ alpha beta) k)
+	      (* beta
+		 (sum :from (= x 0)
+		      :to   (- k 1)
+		      (* (combinations k x)
+			 (expt beta (- k 1 x))
+			 (expt alpha x)))))))
+
+   [This equation can be simplified as follows:]
+
+   (eq :ident "eq-limit-b-over-l-simplified"
+       :renderer 'lout
+       :align-with '=
+       '(= ;; simplified
+	   (/ (expt (+ alpha beta) k)
+	      (- (expt (+ alpha beta) k)
+		 (expt alpha k)))
+	
+	   (limit (/ lambda beta) 0
+		  (apply IPL n k)))))
+
