@@ -169,12 +169,15 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
 ;;; Markup.
 ;;;
 
-(define-markup (eq :rest opts :key (ident #f) (inline? #f)
-		                   (renderer #f) (class "eq"))
-  (new markup
+(define-markup (eq :rest opts :key (ident #f) (class "eq")
+                                   (inline? #f)
+		                   (renderer #f) (div-style 'over))
+  (new container
        (markup 'eq)
        (ident (or ident (symbol->string (gensym "eq"))))
-       (options (the-options opts))
+       (class class)
+       (options `((:div-style ,div-style)
+                  ,@(the-options opts :ident :class :div-style)))
        (body (let loop ((body (the-body opts))
 			(result '()))
 	       (if (null? body)
@@ -187,7 +190,16 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
 						       ;; passed
 			     ))))))
 
-(define-simple-markup eq:/)
+(define-markup (eq:/ :rest opts :key (ident #f) (div-style #f))
+  ;; If no `:div-style' is specified here, obey the top-level one.
+  (new markup
+       (markup 'eq:/)
+       (ident (or ident (symbol->string (gensym "eq:/"))))
+       (class #f)
+       (options `((:div-style ,div-style)
+                  ,@(the-options opts :ident :class :div-style)))
+       (body (the-body opts))))
+
 (define-simple-markup eq:*)
 (define-simple-markup eq:+)
 (define-simple-markup eq:-)

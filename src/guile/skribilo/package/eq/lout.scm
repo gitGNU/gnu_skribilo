@@ -53,7 +53,7 @@
 
 
 (markup-writer 'eq (find-engine 'lout)
-   :options '(:inline?)
+   :options '(:inline? :div-style)
    :before "{ "
    :action (lambda (node engine)
 	     (display (if (markup-option node :inline?)
@@ -65,6 +65,14 @@
    :after  " } }")
 
 
+(define (div-style->lout style)
+  (case style
+    ((over)     "over")
+    ((fraction) "frac")
+    ((div)      "div")
+    ((slash)    "slash")
+    (else
+     (error "unsupported div style" style))))
 
 (define-macro (simple-lout-markup-writer sym . args)
   (let* ((lout-name (if (null? args)
@@ -83,37 +91,41 @@
     `(markup-writer ',(symbol-append 'eq: sym)
 		    (find-engine 'lout)
 		    :action (lambda (node engine)
-			      (let loop ((operands (markup-body node)))
-				(if (null? operands)
-				    #t
-				    (let* ((op (car operands))
-					   (eq-op? (equation-markup? op))
-					   (need-paren?
-					    (and eq-op?
-						 (< (operator-precedence
-						     (equation-markup-name->operator
-						      (markup-markup op)))
-						    ,precedence)))
-					   (column (port-column
-						    (current-output-port))))
+                              (let ((lout-name ,(if (string? lout-name)
+                                                    lout-name
+                                                    `(,lout-name node
+                                                                 engine))))
+                                (let loop ((operands (markup-body node)))
+                                  (if (null? operands)
+                                      #t
+                                      (let* ((op (car operands))
+                                             (eq-op? (equation-markup? op))
+                                             (need-paren?
+                                              (and eq-op?
+                                                   (< (operator-precedence
+                                                       (equation-markup-name->operator
+                                                        (markup-markup op)))
+                                                      ,precedence)))
+                                             (column (port-column
+                                                      (current-output-port))))
 
-				      ;; Work around Lout's limitations...
-				      (if (> column 1000) (display "\n"))
+                                        ;; Work around Lout's limitations...
+                                        (if (> column 1000) (display "\n"))
 
-				      (display (string-append " { "
-							      ,(if parentheses?
-								   open-par
-								   "")))
-				      (output op engine)
-				      (display (string-append ,(if parentheses?
-								   close-par
-								   "")
-							      " }"))
-				      (if (pair? (cdr operands))
-					  (display ,(string-append " "
-								   lout-name
-								   " ")))
-				      (loop (cdr operands)))))))))
+                                        (display (string-append " { "
+                                                                ,(if parentheses?
+                                                                     open-par
+                                                                     "")))
+                                        (output op engine)
+                                        (display (string-append ,(if parentheses?
+                                                                     close-par
+                                                                     "")
+                                                                " }"))
+                                        (if (pair? (cdr operands))
+                                            (display (string-append " "
+                                                                    lout-name
+                                                                    " ")))
+                                        (loop (cdr operands))))))))))
 
 
 ;; `+' and `*' have higher precedence than `-', `/', `=', etc., so their
@@ -124,7 +136,16 @@
 (simple-lout-markup-writer +)
 (simple-lout-markup-writer * "times")
 (simple-lout-markup-writer - "-")
-(simple-lout-markup-writer / "over" #f)
+(simple-lout-markup-writer /
+                           (lambda (n e)
+                             ;; Obey either the per-node `:div-style' or the
+                             ;; top-level one.
+                             (or (markup-option n :div-style)
+                                 (let* ((eq (ast-parent n))
+                                        (div-style
+                                         (markup-option eq :div-style)))
+                                   (div-style->lout div-style))))
+                           #f)
 (simple-lout-markup-writer =)
 (simple-lout-markup-writer <)
 (simple-lout-markup-writer >)
@@ -208,7 +229,7 @@
 		     (display " } ")))
 	       (if sub
 		   (begin
-		     (display " on { ")
+		     (display (if sup " on { " " sub { "))
 		     (output sub engine)
 		     (display " } ")))
 	       (display " } "))))
