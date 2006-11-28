@@ -29,6 +29,8 @@
   :use-module (skribilo utils keywords) ;; `the-options', etc.
   :autoload   (skribilo package base) (it symbol sub sup)
   :autoload   (skribilo engine lout) (lout-illustration)
+
+  :use-module (srfi srfi-39)
   :use-module (ice-9 optargs))
 
 ;;; Author: Ludovic Courtès
@@ -51,6 +53,11 @@
 ;;;
 ;;; Utilities.
 ;;;
+
+(define-public *embedded-renderer*
+  ;; Tells whether an engine is invoked as an embedded renderer or as the
+  ;; native engine.
+  (make-parameter #f))
 
 (define %operators
   '(/ * + - = != ~= < > <= >= sqrt expt sum product script
@@ -178,15 +185,25 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
 ;;; Markup.
 ;;;
 
+(define-markup (eq-display :rest opts :key (ident #f) (class "eq-display"))
+  (new container
+       (markup 'eq-display)
+       (ident (or ident (symbol->string (gensym "eq-display"))))
+       (class class)
+       (options (the-options opts :ident :class :div-style))
+       (body (the-body opts))))
+
 (define-markup (eq :rest opts :key (ident #f) (class "eq")
-                                   (inline? #f)
+                                   (inline? #f) (align-with #f)
 		                   (renderer #f) (div-style 'over))
   (new container
        (markup 'eq)
        (ident (or ident (symbol->string (gensym "eq"))))
        (class class)
-       (options `((:div-style ,div-style)
-                  ,@(the-options opts :ident :class :div-style)))
+       (options `((:div-style ,div-style) (:align-with ,align-with)
+                  ,@(the-options opts
+                                 :ident :class
+                                 :div-style :align-with)))
        (body (let loop ((body (the-body opts))
 			(result '()))
 	       (if (null? body)
@@ -198,6 +215,7 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
 			     (eq-evaluate (car body))) ;; a quoted list was
 						       ;; passed
 			     ))))))
+
 
 (define-markup (eq:/ :rest opts :key (ident #f) (div-style #f))
   ;; If no `:div-style' is specified here, obey the top-level one.
@@ -295,6 +313,15 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
 ;;;
 
 
+(markup-writer 'eq-display (find-engine 'base)
+   :action (lambda (node engine)
+             (for-each (lambda (node)
+                         (let ((eq? (is-markup? node 'eq)))
+                           (if eq? (output (linebreak) engine))
+                           (output node engine)
+                           (if eq? (output (linebreak) engine))))
+                       (markup-body node))))
+
 (markup-writer 'eq (find-engine 'base)
    :action (lambda (node engine)
 	     ;; The `:renderer' option should be a symbol (naming an engine
@@ -306,20 +333,21 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
 	       (cond ((not renderer) ;; default: use the current engine
 		      (output (it (markup-body node)) engine))
 		     ((symbol? renderer)
-		      (case renderer
-			;; FIXME: We should have an `embed' slot for each
-			;; engine class similar to `lout-illustration'.
-			((lout)
-			 (let ((lout-code
-				(with-output-to-string
-				  (lambda ()
-				    (output node (find-engine 'lout))))))
-			   (output (lout-illustration
-				    :ident (markup-ident node)
-				    lout-code)
-				   engine)))
-			(else
-			 (skribe-error 'eq "invalid renderer" renderer))))
+                      (parameterize ((*embedded-renderer* #t))
+                        (case renderer
+                          ;; FIXME: We should have an `embed' slot for each
+                          ;; engine class similar to `lout-illustration'.
+                          ((lout)
+                           (let ((lout-code
+                                  (with-output-to-string
+                                    (lambda ()
+                                      (output node (find-engine 'lout))))))
+                             (output (lout-illustration
+                                      :ident (markup-ident node)
+                                      lout-code)
+                                     engine)))
+                          (else
+                           (skribe-error 'eq "invalid renderer" renderer)))))
 		     ;; FIXME: `engine?' and `engine-class?'
 		     (else
 		      (skribe-error 'eq "`:renderer' -- wrong argument type"
