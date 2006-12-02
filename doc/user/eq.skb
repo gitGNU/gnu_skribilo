@@ -57,7 +57,7 @@ much like any other kind of markup.  However, the resulting syntax
 is very verbose and hard to read.])
       
       (p [Fortunately, the ,(tt [eq]) package allows for the use of a
-much simple syntax.  ]
+much simpler syntax.  ]
 
 	(example-produce
 	  (example :legend "Example of a simple equation"
@@ -69,10 +69,30 @@ may have already recognized its ,(emph [prefix notation]).  Note that,
 unlike in the previous example, the equation itself if ,(emph [quoted]),
 that is, preceded by the ,(tt [']) sign.  Additionally, when referring
 to a symbol (such as the Greek letter ,(symbol "phi")), you no longer
-need to use the ,(tt [symbol]) markup (,(ref :text [see subsection]
-:subsection "Symbols")).]))
+need to use the ,(tt [symbol]) markup (,(numref :text [see Section]
+:ident "symbols")).]))
    
+   ;; FIXME: Write this.
    (section :title [Rendering])
+   
+   (section :title [Summary]
+      
+      (p [The options available for the top-level ,(code [eq]) markup
+are summarized here:])
+      
+      (doc-markup 'eq
+	          `((:inline? [A boolean indicating whether the equation
+is to appear "inline", i.e., within a paragraph.  If the engine supports
+it, it may adjust various parameters such as in-equation spacing
+accordingly.])
+	            (:renderer [The engine that should be used to render
+the equation.  This allows, for instance, to use the Lout engine to
+render equations in HTML.])
+	            (:div-style [A symbol denoting the default style for
+divisions.  This should be one of ,(code [over]), ,(code [fraction]),
+,(code [div]) and ,(code [slash]).  Per-,(code [eq:/]) ,(code
+[:div-style]) options override this setting.]))
+	          :source "skribilo/package/eq.scm"))
 
    )
 

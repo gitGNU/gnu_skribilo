@@ -67,6 +67,7 @@ are replaced with the actual values of the arguments ,(param 'node).])
 
 ;*--- Symbols ---------------------------------------------------------*/
 (subsection :title "Symbols"
+   :ident "symbols"
 
 (p [The function ,(code "symbol") introduces special symbols in the
 produced file. Note that the rendering of symbols is unportable. It depends
