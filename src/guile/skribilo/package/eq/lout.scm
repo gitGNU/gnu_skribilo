@@ -191,6 +191,30 @@
 	       (display ")"))))
 
 
+(markup-writer 'eq:limit (find-engine 'lout)
+   :action (lambda (node engine)
+             (let ((body  (markup-body node))
+                   (var   (markup-option node :var))
+                   (limit (markup-option node :limit)))
+               (display "{ lim on { ")
+               (output var engine)
+               (display " --> ")
+               (output limit engine)
+               (display " } } (")
+               (output body engine)
+               (display ") "))))
+
+(markup-writer 'eq:combinations (find-engine 'lout)
+   :action (lambda (node engine)
+             (let ((of    (markup-option node :of))
+                   (among (markup-option node :among)))
+               (display " { matrix atleft { blpar } atright { brpar } { ")
+               (display "row col { ")
+               (output among engine)
+               (display " } row col { ")
+               (output of engine)
+               (display " } } }\n"))))
+
 
 ;;;
 ;;; Sums, products, integrals, etc.

@@ -54,7 +54,7 @@
 
 (define %operators
   '(/ * + - = != ~= < > <= >= sqrt expt sum product script
-    in notin apply))
+    in notin apply limit combinations))
 
 (define %symbols
   ;; A set of symbols that are automatically recognized within an `eq' quoted
@@ -264,6 +264,22 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
 			 (loop (cdr body) (cons first result)))))))))
 
 
+(define-markup (eq:limit var lim :rest body :key (ident #f))
+  (new markup
+       (markup 'eq:limit)
+       (ident (or ident (symbol->string (gensym "eq:limit"))))
+       (options `((:var ,var) (:limit ,lim)
+                  ,@(the-options body :ident)))
+       (body (the-body body))))
+
+(define-markup (eq:combinations x y :rest opts :key (ident #f))
+  (new markup
+       (markup 'eq:combinations)
+       (ident (or ident (symbol->string (gensym "eq:combinations"))))
+       (options `((:of ,x) (:among ,y)
+                  ,@(the-options opts :ident)))
+       (body (the-body opts))))
+
 
 ;;;
 ;;; Text-based rendering.
@@ -434,6 +450,28 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
 	       (output (sup sup*) engine)
 	       (output (sub sub*) engine))))
 
+(markup-writer 'eq:limit (find-engine 'base)
+   :action (lambda (node engine)
+             (let ((body  (markup-body node))
+                   (var   (markup-option node :var))
+                   (limit (markup-option node :limit)))
+               (display "lim (")
+               (output var engine)
+               (output (symbol "->") engine)
+               (output limit engine)
+               (display ", ")
+               (output body engine)
+               (display ")"))))
+
+(markup-writer 'eq:combinations (find-engine 'base)
+   :action (lambda (node engine)
+             (let ((of    (markup-option node :of))
+                   (among (markup-option node :among)))
+               (display "combinations(")
+               (output of engine)
+               (display ", ")
+               (output among engine)
+               (display ")"))))
 
 
 
