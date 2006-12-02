@@ -51,10 +51,18 @@
 ;;; Simple markup writers.
 ;;;
 
+(markup-writer 'eq-display (find-engine 'lout)
+   :before "\n@BeginAlignedDisplays\n"
+   :after  "\n@EndAlignedDisplays\n")
 
 (markup-writer 'eq (find-engine 'lout)
-   :options '(:inline? :div-style)
-   :before "{ "
+   :options '(:inline? :align-with :div-style)
+   :before (lambda (node engine)
+             (let* ((parent (ast-parent node))
+                    (displayed? (is-markup? parent 'eq-display)))
+               (format #t "~a{ "
+                       (if (and displayed? (not (*embedded-renderer*)))
+                           "\n@IAD " ""))))
    :action (lambda (node engine)
 	     (display (if (markup-option node :inline?)
 			  "@E { "
@@ -92,40 +100,46 @@
                         `(if need-paren? "{ @VScale ) }" "")
                         "")))
 
-    `(markup-writer ',(symbol-append 'eq: sym)
-		    (find-engine 'lout)
-		    :action (lambda (node engine)
-                              (let ((lout-name ,(if (string? lout-name)
-                                                    lout-name
-                                                    `(,lout-name node
-                                                                 engine))))
-                                (let loop ((operands (markup-body node)))
-                                  (if (null? operands)
-                                      #t
-                                      (let* ((op (car operands))
-                                             (eq-op? (equation-markup? op))
-                                             (need-paren?
-                                              (and eq-op?
-                                                   (>= (operator-precedence
-                                                        (equation-markup-name->operator
-                                                         (markup-markup op)))
-                                                       ,precedence)))
-                                             (column (port-column
-                                                      (current-output-port))))
+    `(markup-writer ',(symbol-append 'eq: sym) (find-engine 'lout)
+        :action (lambda (node engine)
+                  (let* ((lout-name ,(if (string? lout-name)
+                                         lout-name
+                                         `(,lout-name node
+                                                      engine)))
+                         (eq        (ast-parent node))
+                         (eq-parent (ast-parent eq)))
 
-                                        ;; Work around Lout's limitations...
-                                        (if (> column 1000) (display "\n"))
+                    (let loop ((operands (markup-body node))
+                               (first? #t))
+                      (if (null? operands)
+                          #t
+                          (let* ((align?
+                                  (and first?
+                                       (is-markup? eq-parent 'eq-display)
+                                       (eq? ',sym
+                                            (markup-option eq :align-with))))
+                                 (op (car operands))
+                                 (eq-op? (equation-markup? op))
+                                 (need-paren?
+                                  (and eq-op?
+                                       (>= (operator-precedence
+                                            (equation-markup-name->operator
+                                             (markup-markup op)))
+                                           ,precedence)))
+                                 (column (port-column (current-output-port))))
 
-                                        (display
-                                         (string-append " { " ,open-par))
-                                        (output op engine)
-                                        (display
-                                         (string-append ,close-par " }"))
-                                        (if (pair? (cdr operands))
-                                            (display (string-append " "
-                                                                    lout-name
-                                                                    " ")))
-                                        (loop (cdr operands))))))))))
+                            ;; Work around Lout's limitations...
+                            (if (> column 1000) (display "\n"))
+
+                            (display (string-append " { " ,open-par))
+                            (output op engine)
+                            (display (string-append ,close-par " }"))
+                            (if (pair? (cdr operands))
+                                (display (string-append " "
+                                                        (if align? "^" "")
+                                                        lout-name
+                                                        " ")))
+                            (loop (cdr operands) #f)))))))))
 
 
 ;; `+' and `*' have higher precedence than `-', `/', `=', etc., so their
