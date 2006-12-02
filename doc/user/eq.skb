@@ -70,7 +70,16 @@ unlike in the previous example, the equation itself if ,(emph [quoted]),
 that is, preceded by the ,(tt [']) sign.  Additionally, when referring
 to a symbol (such as the Greek letter ,(symbol "phi")), you no longer
 need to use the ,(tt [symbol]) markup (,(numref :text [see Section]
-:ident "symbols")).]))
+:ident "symbols")).])
+
+      (p [It is possible to create ,(emph [equation display blocks]),
+where several equations are displayed and aligned according to a
+particular operator. ]
+
+	(example-produce
+	  (example :legend "Inlined, displayed, and aligned equations"
+	     (prgm :file "src/eq3.skb"))
+	  (disp (include "src/eq3.skb")))))
    
    ;; FIXME: Write this.
    (section :title [Rendering])
@@ -91,7 +100,19 @@ render equations in HTML.])
 	            (:div-style [A symbol denoting the default style for
 divisions.  This should be one of ,(code [over]), ,(code [fraction]),
 ,(code [div]) and ,(code [slash]).  Per-,(code [eq:/]) ,(code
-[:div-style]) options override this setting.]))
+[:div-style]) options override this setting.])
+	            (:align-with [Within a ,(code [eq-display]) block,
+this should be a symbol specifying according to which operator equations
+are to be aligned with one another.]))
+	          :source "skribilo/package/eq.scm")
+      
+      (p [Equation display blocks can be defined using ,(code
+[eq-display]).  Display blocks define the scope of the alignment among
+equations as specified by the ,(code [:align-with]) options of ,(code
+[eq]).])
+      
+      (doc-markup 'eq-display
+	          `()
 	          :source "skribilo/package/eq.scm"))
 
    )
