@@ -210,7 +210,7 @@
              (let ((body  (markup-body node))
                    (var   (markup-option node :var))
                    (limit (markup-option node :limit)))
-               (display "{ lim on { ")
+               (display "{ lim from { ")
                (output var engine)
                (display " --> ")
                (output limit engine)
