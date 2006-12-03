@@ -2,6 +2,21 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-12-03 19:31:45 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-89
+
+    Summary:
+      eq/lout: Fixed binomial coefficient.
+    Revision:
+      skribilo--devel--1.2--patch-89
+
+    * src/guile/skribilo/package/eq/lout.scm (eq:combinations): Fixed
+      spacing, use `lpar' instead of `blpar' (according to "The TeXbook"),
+      changed order of OF and AMONG.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/eq/lout.scm
+
+
 2006-12-03 19:21:19 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-88
 
     Summary:

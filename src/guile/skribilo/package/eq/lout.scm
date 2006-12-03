@@ -245,12 +245,12 @@
    :action (lambda (node engine)
              (let ((of    (markup-option node :of))
                    (among (markup-option node :among)))
-               (display " { matrix atleft { blpar } atright { brpar } { ")
+               (display " ` { matrix atleft { lpar } atright { rpar } { ")
                (display "row col { ")
-               (output among engine)
-               (display " } row col { ")
                (output of engine)
-               (display " } } }\n"))))
+               (display " } row col { ")
+               (output among engine)
+               (display " } } } `\n"))))
 
 
 ;;;
