@@ -73,6 +73,11 @@
    :after  " } }")
 
 
+;; Scaled parenthesis.  We could use `pmatrix' here but it precludes
+;; line-breaking within equations.
+(define %left-paren  "{ Base @Font @VScale \"(\" }")
+(define %right-paren "{ Base @Font @VScale \")\" }")
+
 (define (div-style->lout style)
   (case style
     ((over)     "over")
@@ -91,13 +96,11 @@
 			   (cadr args)))
 	 (precedence (operator-precedence sym))
 
-	 ;; Note: We could use `pmatrix' here but it precludes line-breaking
-	 ;; within equations.
 	 (open-par (if parentheses?
-                       `(if need-paren? "{ @VScale ( }" "")
+                       `(if need-paren? %left-paren "")
                        ""))
 	 (close-par (if parentheses?
-                        `(if need-paren? "{ @VScale ) }" "")
+                        `(if need-paren? %right-paren "")
                         "")))
 
     `(markup-writer ',(symbol-append 'eq: sym) (find-engine 'lout)
@@ -175,9 +178,9 @@
 			    (second (cadr body))
 			    (parentheses? (equation-markup? first)))
 		       (display " { { ")
-		       (if parentheses? (display "("))
+		       (if parentheses? (display %left-paren))
 		       (output first engine)
-		       (if parentheses? (display ")"))
+		       (if parentheses? (display %right-paren))
 		       (display ,(string-append " } " lout-name " { "))
 		       (output second engine)
 		       (display " } } "))
@@ -185,15 +188,15 @@
 				   "wrong number of arguments"
 				   body))))))
 
-(binary-lout-markup-writer expt "sup")
-(binary-lout-markup-writer in "element")
+(binary-lout-markup-writer expt  "sup")
+(binary-lout-markup-writer in    "element")
 (binary-lout-markup-writer notin "notelement")
 
 (markup-writer 'eq:apply (find-engine 'lout)
    :action (lambda (node engine)
 	     (let ((func (car (markup-body node))))
 	       (output func engine)
-	       (display "(")
+	       (display %left-paren)
 	       (let loop ((operands (cdr (markup-body node))))
 		 (if (null? operands)
 		     #t
@@ -202,7 +205,7 @@
 		       (if (not (null? (cdr operands)))
 			   (display ", "))
 		       (loop (cdr operands)))))
-	       (display ")"))))
+	       (display %right-paren))))
 
 
 (markup-writer 'eq:limit (find-engine 'lout)
@@ -214,9 +217,9 @@
                (output var engine)
                (display " --> ")
                (output limit engine)
-               (display " } } (")
+               (display (string-append " } } @VContract { " %left-paren))
                (output body engine)
-               (display ") "))))
+               (display (string-append %right-paren " } ")))))
 
 (markup-writer 'eq:combinations (find-engine 'lout)
    :action (lambda (node engine)
