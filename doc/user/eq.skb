@@ -90,13 +90,18 @@ particular operator. ]
 are summarized here:])
       
       (doc-markup 'eq
-	          `((:inline? [A boolean indicating whether the equation
-is to appear "inline", i.e., within a paragraph.  If the engine supports
-it, it may adjust various parameters such as in-equation spacing
+	          `((:inline? [If ,(code [auto]), Skribilo will
+automatically determine whether the equation is to be "in-line".
+Otherwise, it should be a boolean indicating whether the equation is to
+appear "in-line", i.e., within a paragraph.  If the engine supports it,
+it may adjust various parameters such as in-equation spacing
 accordingly.])
 	            (:renderer [The engine that should be used to render
 the equation.  This allows, for instance, to use the Lout engine to
 render equations in HTML.])
+	            (:mul-style [A symbol denoting the default style for
+multiplications.  This should be one of ,(code [space]), ,(code
+[cross]), ,(code [asterisk]) or ,(code [dot]).])
 	            (:div-style [A symbol denoting the default style for
 divisions.  This should be one of ,(code [over]), ,(code [fraction]),
 ,(code [div]) and ,(code [slash]).  Per-,(code [eq:/]) ,(code
