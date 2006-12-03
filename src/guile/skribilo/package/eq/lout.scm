@@ -64,7 +64,7 @@
                        (if (and displayed? (not (*embedded-renderer*)))
                            "\n@IAD " ""))))
    :action (lambda (node engine)
-	     (display (if (markup-option node :inline?)
+	     (display (if (inline-equation? node)
 			  "@E { "
 			  "@Eq { "))
 	     (let ((eq (markup-body node)))

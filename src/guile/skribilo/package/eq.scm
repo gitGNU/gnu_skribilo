@@ -19,7 +19,7 @@
 ;;; USA.
 
 (define-module (skribilo package eq)
-  :autoload   (skribilo ast)    (markup?)
+  :autoload   (skribilo ast)    (markup? find-up)
   :autoload   (skribilo output) (output)
   :use-module (skribilo writer)
   :use-module (skribilo engine)
@@ -117,6 +117,18 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
 				   (string-length str))))
       #f))
 
+(define-public (inline-equation? m)
+  "Return @code{#t} if @var{m} is an equation that is to be displayed inline."
+  (and (is-markup? m 'eq)
+       (let ((i (markup-option m :inline?)))
+         (case i
+           ((auto)
+            (not (find-up (lambda (n)
+                            (is-markup? n 'eq-display))
+                          m)))
+           ((#t) #t)
+           (else #f)))))
+
 
 ;;;
 ;;; Operator precedence.
@@ -194,7 +206,7 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
        (body (the-body opts))))
 
 (define-markup (eq :rest opts :key (ident #f) (class "eq")
-                                   (inline? #f) (align-with #f)
+                                   (inline? 'auto) (align-with #f)
 		                   (renderer #f) (div-style 'over)
                                    (mul-style 'space))
   (new container
