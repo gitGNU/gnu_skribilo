@@ -56,7 +56,7 @@
    :after  "\n@EndAlignedDisplays\n")
 
 (markup-writer 'eq (find-engine 'lout)
-   :options '(:inline? :align-with :div-style)
+   :options '(:inline? :align-with :div-style :mul-style)
    :before (lambda (node engine)
              (let* ((parent (ast-parent node))
                     (displayed? (is-markup? parent 'eq-display)))
@@ -86,6 +86,16 @@
     ((slash)    "slash")
     (else
      (error "unsupported div style" style))))
+
+(define (mul-style->lout style)
+  (case style
+    ((space)    "")
+    ((cross)    "times")
+    ((asterisk) "*")
+    ((dot)      "cdot")
+    (else
+     (error "unsupported mul style" style))))
+
 
 (define-macro (simple-lout-markup-writer sym . args)
   (let* ((lout-name (if (null? args)
@@ -151,8 +161,18 @@
 
 
 (simple-lout-markup-writer +)
-(simple-lout-markup-writer * "times")
 (simple-lout-markup-writer - "-")
+
+(simple-lout-markup-writer *
+                           (lambda (n e)
+                             ;; Obey either the per-node `:mul-style' or the
+                             ;; top-level one.
+                             (or (markup-option n :mul-style)
+                                 (let* ((eq (ast-parent n))
+                                        (mul-style
+                                         (markup-option eq :mul-style)))
+                                   (mul-style->lout mul-style)))))
+
 (simple-lout-markup-writer /
                            (lambda (n e)
                              ;; Obey either the per-node `:div-style' or the

@@ -2,6 +2,26 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-12-03 19:21:19 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-88
+
+    Summary:
+      eq: Added support for `:mul-style'.
+    Revision:
+      skribilo--devel--1.2--patch-88
+
+    * src/guile/skribilo/package/eq.scm (eq)[:mul-style]: New option.
+      (eq*)[mul-style]: New option.
+    
+    * src/guile/skribilo/package/eq/lout.scm (eq)[options]: Added
+      `:mul-style'.
+      (mul-style->lout): New.
+      (eq:*): Support `:mul-style'.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/eq.scm
+     src/guile/skribilo/package/eq/lout.scm
+
+
 2006-12-03 19:00:42 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-87
 
     Summary:

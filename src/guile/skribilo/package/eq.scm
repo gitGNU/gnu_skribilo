@@ -190,20 +190,22 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
        (markup 'eq-display)
        (ident (or ident (symbol->string (gensym "eq-display"))))
        (class class)
-       (options (the-options opts :ident :class :div-style))
+       (options (the-options opts :ident :class))
        (body (the-body opts))))
 
 (define-markup (eq :rest opts :key (ident #f) (class "eq")
                                    (inline? #f) (align-with #f)
-		                   (renderer #f) (div-style 'over))
+		                   (renderer #f) (div-style 'over)
+                                   (mul-style 'space))
   (new container
        (markup 'eq)
        (ident (or ident (symbol->string (gensym "eq"))))
        (class class)
        (options `((:div-style ,div-style) (:align-with ,align-with)
+                  (:mul-style ,mul-style)
                   ,@(the-options opts
                                  :ident :class
-                                 :div-style :align-with)))
+                                 :div-style :mul-style :align-with)))
        (body (let loop ((body (the-body opts))
 			(result '()))
 	       (if (null? body)
@@ -224,10 +226,19 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
        (ident (or ident (symbol->string (gensym "eq:/"))))
        (class #f)
        (options `((:div-style ,div-style)
-                  ,@(the-options opts :ident :class :div-style)))
+                  ,@(the-options opts :ident :div-style)))
        (body (the-body opts))))
 
-(define-simple-markup eq:*)
+(define-markup (eq:* :rest opts :key (ident #f) (mul-style #f))
+  ;; If no `:mul-style' is specified here, obey the top-level one.
+  (new markup
+       (markup 'eq:*)
+       (ident (or ident (symbol->string (gensym "eq:*"))))
+       (class #f)
+       (options `((:mul-style ,mul-style)
+                  ,@(the-options opts :ident :mul-style)))
+       (body (the-body opts))))
+
 (define-simple-markup eq:+)
 (define-simple-markup eq:-)
 
