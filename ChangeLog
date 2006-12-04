@@ -2,6 +2,207 @@
 # arch-tag: automatic-ChangeLog--lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2
 #
 
+2006-12-03 20:02:17 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-91
+
+    Summary:
+      doc: Updated the `eq' markup documentation.
+    Revision:
+      skribilo--devel--1.2--patch-91
+
+    * doc/user/eq.skb: Updated documentation of `eq': the `inline?'
+      parameter and the `:mul-style' parameter.
+
+    modified files:
+     ChangeLog doc/user/eq.skb
+
+
+2006-12-03 19:59:46 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-90
+
+    Summary:
+      eq: Support automatic detection of inlining.
+    Revision:
+      skribilo--devel--1.2--patch-90
+
+    * src/guile/skribilo/package/eq.scm (inline-equation?): New.
+      (eq)[inline?]: Default to `auto'.
+    
+    * src/guile/skribilo/package/eq/lout.scm (eq): Use `inline-equation?'.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/eq.scm
+     src/guile/skribilo/package/eq/lout.scm
+
+
+2006-12-03 19:31:45 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-89
+
+    Summary:
+      eq/lout: Fixed binomial coefficient.
+    Revision:
+      skribilo--devel--1.2--patch-89
+
+    * src/guile/skribilo/package/eq/lout.scm (eq:combinations): Fixed
+      spacing, use `lpar' instead of `blpar' (according to "The TeXbook"),
+      changed order of OF and AMONG.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/eq/lout.scm
+
+
+2006-12-03 19:21:19 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-88
+
+    Summary:
+      eq: Added support for `:mul-style'.
+    Revision:
+      skribilo--devel--1.2--patch-88
+
+    * src/guile/skribilo/package/eq.scm (eq)[:mul-style]: New option.
+      (eq*)[mul-style]: New option.
+    
+    * src/guile/skribilo/package/eq/lout.scm (eq)[options]: Added
+      `:mul-style'.
+      (mul-style->lout): New.
+      (eq:*): Support `:mul-style'.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/eq.scm
+     src/guile/skribilo/package/eq/lout.scm
+
+
+2006-12-03 19:00:42 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-87
+
+    Summary:
+      eq/lout: Improved typesetting of parentheses.
+    Revision:
+      skribilo--devel--1.2--patch-87
+
+    * src/guile/skribilo/package/eq/lout.scm (%left-paren): New.
+      (%right-paren): New.
+      (simple-lout-markup-writer): Use them.
+      (binary-lout-markup-writer): Likewise.
+      (eq:apply): Likewise.
+      (eq:limit): Likewise.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/eq/lout.scm
+
+
+2006-12-03 17:35:08 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-86
+
+    Summary:
+      eq/lout: Fixed `limit'.
+    Revision:
+      skribilo--devel--1.2--patch-86
+
+    * src/guile/skribilo/package/eq/lout.scm (eq:limit): Use `from' instead
+      of `on'.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/eq/lout.scm
+
+
+2006-12-02 10:56:17 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-85
+
+    Summary:
+      Merge from skribilo@sv.gnu.org--2006/skribilo--devo--1.2
+    Revision:
+      skribilo--devel--1.2--patch-85
+
+    Patches applied:
+    
+     * lcourtes@laas.fr--2005-libre/skribilo--devo--1.2  (patch 80-85)
+     * skribilo@sv.gnu.org--2006/skribilo--devo--1.2  (patch 22-27)
+    
+       - eq:  Added the `:div-style' option.
+       - doc: Documented `eq' and the `:div-style' option.
+       - eq: Added `limit' and `combinations'.
+       - eq: Properly handle operator precedence.
+       - eq: Added `eq-display' and the `:align-with' option for `eq'.
+       - doc: Augmented the `eq' doc, documented `eq-display'.
+
+    new files:
+     doc/user/src/.arch-ids/eq3.skb.id doc/user/src/eq3.skb
+
+    modified files:
+     ChangeLog doc/user/char.skb doc/user/eq.skb
+     src/guile/skribilo/package/eq.scm
+     src/guile/skribilo/package/eq/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-80
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-81
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-82
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-83
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-84
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-85
+     skribilo@sv.gnu.org--2006/skribilo--devo--1.2--patch-22
+     skribilo@sv.gnu.org--2006/skribilo--devo--1.2--patch-23
+     skribilo@sv.gnu.org--2006/skribilo--devo--1.2--patch-24
+     skribilo@sv.gnu.org--2006/skribilo--devo--1.2--patch-25
+     skribilo@sv.gnu.org--2006/skribilo--devo--1.2--patch-26
+     skribilo@sv.gnu.org--2006/skribilo--devo--1.2--patch-27
+
+
+2006-11-25 17:47:29 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-84
+
+    Summary:
+      Merge from skribilo@sv.gnu.org--2006/skribilo--devo--1.2
+    Revision:
+      skribilo--devel--1.2--patch-84
+
+    Patches applied:
+    
+     * lcourtes@laas.fr--2005-libre/skribilo--devo--1.2  (patch 72-79)
+    
+       - Merge from skribilo@sv.gnu.org--2006
+       - Lout engine: Better cover sheet for `doc' documents.
+       - outline reader: Support keywords.
+       - lout: bib-ref+: Gracefully handle `unref' objects.
+       - Introduced `markup-number-string'.
+       - `base' package: Added `numref'.
+       - doc: Documented `numref'.
+       - Cleaned up `(skribilo biblio)' a bit.
+    
+     * skribilo@sv.gnu.org--2006/skribilo--devo--1.2  (patch 13-21)
+    
+       - Added the `(skribilo biblio template)' module.
+       - Lout engine: Make URLs breakable; make bibliography defaults sane.
+       - Lout engine: Better cover sheet for `doc' documents.
+       - outline reader: Support keywords.
+       - lout: bib-ref+: Gracefully handle `unref' objects.
+       - Introduced `markup-number-string'.
+       - `base' package: Added `numref'.
+       - doc: Documented `numref'.
+       - Cleaned up `(skribilo biblio)' a bit.
+
+    modified files:
+     ChangeLog doc/user/bib.skb doc/user/links.skb
+     doc/user/src/links1.skb src/guile/skribilo/ast.scm
+     src/guile/skribilo/biblio.scm
+     src/guile/skribilo/engine/lout.scm
+     src/guile/skribilo/package/base.scm
+     src/guile/skribilo/reader/outline.scm
+     src/guile/skribilo/utils/compat.scm
+
+    new patches:
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-72
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-73
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-74
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-75
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-76
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-77
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-78
+     lcourtes@laas.fr--2005-libre/skribilo--devo--1.2--patch-79
+     skribilo@sv.gnu.org--2006/skribilo--devo--1.2--patch-13
+     skribilo@sv.gnu.org--2006/skribilo--devo--1.2--patch-14
+     skribilo@sv.gnu.org--2006/skribilo--devo--1.2--patch-15
+     skribilo@sv.gnu.org--2006/skribilo--devo--1.2--patch-16
+     skribilo@sv.gnu.org--2006/skribilo--devo--1.2--patch-17
+     skribilo@sv.gnu.org--2006/skribilo--devo--1.2--patch-18
+     skribilo@sv.gnu.org--2006/skribilo--devo--1.2--patch-19
+     skribilo@sv.gnu.org--2006/skribilo--devo--1.2--patch-20
+     skribilo@sv.gnu.org--2006/skribilo--devo--1.2--patch-21
+
+
 2006-11-11 23:02:57 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-83
 
     Summary:

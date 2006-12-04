@@ -56,7 +56,7 @@
    :after  "\n@EndAlignedDisplays\n")
 
 (markup-writer 'eq (find-engine 'lout)
-   :options '(:inline? :align-with :div-style)
+   :options '(:inline? :align-with :div-style :mul-style)
    :before (lambda (node engine)
              (let* ((parent (ast-parent node))
                     (displayed? (is-markup? parent 'eq-display)))
@@ -64,7 +64,7 @@
                        (if (and displayed? (not (*embedded-renderer*)))
                            "\n@IAD " ""))))
    :action (lambda (node engine)
-	     (display (if (markup-option node :inline?)
+	     (display (if (inline-equation? node)
 			  "@E { "
 			  "@Eq { "))
 	     (let ((eq (markup-body node)))
@@ -72,6 +72,11 @@
 	       (output eq engine)))
    :after  " } }")
 
+
+;; Scaled parenthesis.  We could use `pmatrix' here but it precludes
+;; line-breaking within equations.
+(define %left-paren  "{ Base @Font @VScale \"(\" }")
+(define %right-paren "{ Base @Font @VScale \")\" }")
 
 (define (div-style->lout style)
   (case style
@@ -82,6 +87,16 @@
     (else
      (error "unsupported div style" style))))
 
+(define (mul-style->lout style)
+  (case style
+    ((space)    "")
+    ((cross)    "times")
+    ((asterisk) "*")
+    ((dot)      "cdot")
+    (else
+     (error "unsupported mul style" style))))
+
+
 (define-macro (simple-lout-markup-writer sym . args)
   (let* ((lout-name (if (null? args)
 			(symbol->string sym)
@@ -91,13 +106,11 @@
 			   (cadr args)))
 	 (precedence (operator-precedence sym))
 
-	 ;; Note: We could use `pmatrix' here but it precludes line-breaking
-	 ;; within equations.
 	 (open-par (if parentheses?
-                       `(if need-paren? "{ @VScale ( }" "")
+                       `(if need-paren? %left-paren "")
                        ""))
 	 (close-par (if parentheses?
-                        `(if need-paren? "{ @VScale ) }" "")
+                        `(if need-paren? %right-paren "")
                         "")))
 
     `(markup-writer ',(symbol-append 'eq: sym) (find-engine 'lout)
@@ -148,8 +161,18 @@
 
 
 (simple-lout-markup-writer +)
-(simple-lout-markup-writer * "times")
 (simple-lout-markup-writer - "-")
+
+(simple-lout-markup-writer *
+                           (lambda (n e)
+                             ;; Obey either the per-node `:mul-style' or the
+                             ;; top-level one.
+                             (or (markup-option n :mul-style)
+                                 (let* ((eq (ast-parent n))
+                                        (mul-style
+                                         (markup-option eq :mul-style)))
+                                   (mul-style->lout mul-style)))))
+
 (simple-lout-markup-writer /
                            (lambda (n e)
                              ;; Obey either the per-node `:div-style' or the
@@ -175,9 +198,9 @@
 			    (second (cadr body))
 			    (parentheses? (equation-markup? first)))
 		       (display " { { ")
-		       (if parentheses? (display "("))
+		       (if parentheses? (display %left-paren))
 		       (output first engine)
-		       (if parentheses? (display ")"))
+		       (if parentheses? (display %right-paren))
 		       (display ,(string-append " } " lout-name " { "))
 		       (output second engine)
 		       (display " } } "))
@@ -185,15 +208,15 @@
 				   "wrong number of arguments"
 				   body))))))
 
-(binary-lout-markup-writer expt "sup")
-(binary-lout-markup-writer in "element")
+(binary-lout-markup-writer expt  "sup")
+(binary-lout-markup-writer in    "element")
 (binary-lout-markup-writer notin "notelement")
 
 (markup-writer 'eq:apply (find-engine 'lout)
    :action (lambda (node engine)
 	     (let ((func (car (markup-body node))))
 	       (output func engine)
-	       (display "(")
+	       (display %left-paren)
 	       (let loop ((operands (cdr (markup-body node))))
 		 (if (null? operands)
 		     #t
@@ -202,7 +225,7 @@
 		       (if (not (null? (cdr operands)))
 			   (display ", "))
 		       (loop (cdr operands)))))
-	       (display ")"))))
+	       (display %right-paren))))
 
 
 (markup-writer 'eq:limit (find-engine 'lout)
@@ -210,24 +233,24 @@
              (let ((body  (markup-body node))
                    (var   (markup-option node :var))
                    (limit (markup-option node :limit)))
-               (display "{ lim on { ")
+               (display "{ lim from { ")
                (output var engine)
                (display " --> ")
                (output limit engine)
-               (display " } } (")
+               (display (string-append " } } @VContract { " %left-paren))
                (output body engine)
-               (display ") "))))
+               (display (string-append %right-paren " } ")))))
 
 (markup-writer 'eq:combinations (find-engine 'lout)
    :action (lambda (node engine)
              (let ((of    (markup-option node :of))
                    (among (markup-option node :among)))
-               (display " { matrix atleft { blpar } atright { brpar } { ")
+               (display " ` { matrix atleft { lpar } atright { rpar } { ")
                (display "row col { ")
-               (output among engine)
-               (display " } row col { ")
                (output of engine)
-               (display " } } }\n"))))
+               (display " } row col { ")
+               (output among engine)
+               (display " } } } `\n"))))
 
 
 ;;;
