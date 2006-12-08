@@ -24,6 +24,7 @@
 
 
 (define-skribe-module (skribilo engine lout)
+  :use-module (srfi srfi-13)
   :autoload (ice-9 popen)   (open-output-pipe)
   :autoload (ice-9 rdelim)  (read-line))
 
@@ -1673,8 +1674,12 @@
 ;; Program lines appear within a `lines @Break' block.
 (markup-writer '&prog-line
    :before (lambda (n e)
-	      (let ((n (markup-ident n)))
-		 (if n (skribe-eval (it (list n) ": ") e))))
+             (let ((num (markup-option n :number)))
+               (if (number? num)
+                   (skribe-eval
+                    (it (string-append (string-pad (number->string num) 3)
+                                       ": "))
+                    e))))
    :after "\n")
 
 ;*---------------------------------------------------------------------*/

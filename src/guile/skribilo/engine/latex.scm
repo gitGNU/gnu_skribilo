@@ -18,7 +18,8 @@
 ;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 ;;; USA.
 
-(define-skribe-module (skribilo engine latex))
+(define-skribe-module (skribilo engine latex)
+  :use-module (srfi srfi-13))
 
 ;*---------------------------------------------------------------------*/
 ;*    latex-verbatim-encoding ...                                      */
@@ -997,8 +998,12 @@
 ;*---------------------------------------------------------------------*/
 (markup-writer '&prog-line
    :before (lambda (n e)
-	      (let ((n (markup-ident n)))
-		 (if n (skribe-eval (it (list n) ": ") e))))
+             (let ((num (markup-option n :number)))
+               (if (number? num)
+                   (skribe-eval
+                    (it (string-append (string-pad (number->string num) 3)
+                                       ": "))
+                    e))))
    :after "\\\\\n")
 
 ;*---------------------------------------------------------------------*/
