@@ -280,7 +280,7 @@
 ;*---------------------------------------------------------------------*/
 (markup-writer '&bib-entry-publisher
    :action (lambda (n e)
-	      (skribe-eval (it (markup-body n)) e)))
+	      (skribe-eval (markup-body n) e)))
 
 ;*---------------------------------------------------------------------*/
 ;*    &the-index ...  @label the-index@                                */
