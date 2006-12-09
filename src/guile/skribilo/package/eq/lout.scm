@@ -167,21 +167,19 @@
                            (lambda (n e)
                              ;; Obey either the per-node `:mul-style' or the
                              ;; top-level one.
-                             (or (markup-option n :mul-style)
-                                 (let* ((eq (ast-parent n))
-                                        (mul-style
-                                         (markup-option eq :mul-style)))
-                                   (mul-style->lout mul-style)))))
+                             (mul-style->lout
+                              (or (markup-option n :mul-style)
+                                  (let ((eq (ast-parent n)))
+                                    (markup-option eq :mul-style))))))
 
 (simple-lout-markup-writer /
                            (lambda (n e)
                              ;; Obey either the per-node `:div-style' or the
                              ;; top-level one.
-                             (or (markup-option n :div-style)
-                                 (let* ((eq (ast-parent n))
-                                        (div-style
-                                         (markup-option eq :div-style)))
-                                   (div-style->lout div-style))))
+                             (div-style->lout
+                              (or (markup-option n :div-style)
+                                  (let ((eq (ast-parent n)))
+                                    (markup-option eq :div-style)))))
                            #f)
 (simple-lout-markup-writer =)
 (simple-lout-markup-writer <)
