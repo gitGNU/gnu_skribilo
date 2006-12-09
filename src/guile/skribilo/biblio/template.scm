@@ -130,7 +130,8 @@
               (series ", ")
               ("(" number ")")
               ("pp. " pages ", ")
-              ;; FIXME:  Addr., month., pub.
+              ("" publisher ", ")
+              ;; FIXME:  Addr., month.
               year "."))
     ((book) ;; FIXME:  Title should be in italics
      '(author ". " (or title url documenturl) ". "
