@@ -25,6 +25,7 @@
 
 (define-skribe-module (skribilo engine lout)
   :use-module (srfi srfi-13)
+  :use-module (srfi srfi-14)
   :autoload (ice-9 popen)   (open-output-pipe)
   :autoload (ice-9 rdelim)  (read-line))
 
@@ -471,9 +472,9 @@
 		 (let ((split (let loop ((where 10))
 				(if (= 0 where)
 				    10
-				    (if (char=? (string-ref text
-							    (- where 1))
-						#\space)
+				    (if (char-set-contains?
+                                         char-set:whitespace
+                                         (string-ref text (- where 1)))
 					(loop (- where 1))
 					where)))))
 		   `(,(ref :url url :text (substring text 0 split))
@@ -2539,7 +2540,7 @@
                          (#\_ "_&0ik{}")
                          (#\@ "\"@\"&0ik{}")
                          ,@lout-verbatim-encoding
-                         (#\newline ""))))
+                         (#\newline " "))))
 
 ;*---------------------------------------------------------------------*/
 ;*    url-ref ...                                                      */
