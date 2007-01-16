@@ -1,6 +1,7 @@
-;;; lncs.scm  --  The Skribe style for LNCS articles.
+;;; lncs.scm  --  The Skribilo style for LNCS articles.
 ;;;
 ;;; Copyright 2003, 2004  Manuel Serrano
+;;; Copyright 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -18,13 +19,31 @@
 ;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 ;;; USA.
 
-(define-skribe-module (skribilo package lncs))
+(define-module (skribilo package lncs)
+  :use-module (skribilo ast)
+  :use-module (skribilo engine)
+  :use-module (skribilo writer)
+  :autoload   (skribilo output)         (output)
+  :autoload   (skribilo package base)   (section font flush
+                                         toc the-bibliography)
+  :autoload   (skribilo utils keywords) (the-options the-body)
 
+  :use-module (skribilo lib)
+  :use-module (skribilo utils syntax)
+
+  :use-module (ice-9 optargs)
+
+  :export (abstract references))
+
+(fluid-set! current-reader %skribilo-module-reader)
+
+
 ;*---------------------------------------------------------------------*/
 ;*    LaTeX global customizations                                      */
 ;*---------------------------------------------------------------------*/
 (let ((le (find-engine 'latex)))
    (engine-custom-set! le 'documentclass "\\documentclass{llncs}")
+   (engine-custom-set! le 'class-has-chapters? #f)
    ;; &latex-author
    (markup-writer '&latex-author le
       :action (lambda (n e)
@@ -130,11 +149,11 @@
 			(exp (p (center (color :bg bg :width 90. 
 					   (markup-body n))))))
 		    (skribe-eval exp e)))))
-		 
+
 ;*---------------------------------------------------------------------*/
 ;*    abstract ...                                                     */
 ;*---------------------------------------------------------------------*/
-(define-markup (abstract #!rest opt #!key postscript)
+(define-markup (abstract :rest opt :key postscript)
    (if (engine-format? "latex")
        (section :number #f :title "ABSTRACT" (p (the-body opt)))
        (let ((a (new markup
