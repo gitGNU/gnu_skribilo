@@ -1,6 +1,7 @@
 ;;; latex.scm  --  LaTeX engine.
 ;;;
 ;;; Copyright 2003, 2004  Manuel Serrano
+;;; Copyright 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -329,6 +330,7 @@
 	 :delegate (find-engine 'base)
 	 :filter (make-string-replace latex-encoding)
 	 :custom '((documentclass "\\documentclass{article}")
+                   (class-has-chapters? #f)
 		   (usepackage "\\usepackage{epsfig}\n")
 		   (predocument "\\newdimen\\oldframetabcolsep\n\\newdimen\\oldcolortabcolsep\n\\newdimen\\oldpretabcolsep\n")
 		   (postdocument #f)
@@ -695,10 +697,27 @@
 ;*    latex-block-before ...                                           */
 ;*---------------------------------------------------------------------*/
 (define (latex-block-before m)
+
+   ;; Mapping of Skribilo markups to LaTeX, with and without chapters.
+   (define %chapter-mapping
+     '((chapter       . "chapter")
+       (section       . "section")
+       (subsection    . "subsection")
+       (subsubsection . "subsubsection")))
+   (define %chapterless-mapping
+     '((chapter       . "section")
+       (section       . "subsection")
+       (subsection    . "subsubsection")
+       (subsubsection . "subsubsection")))
+
    (lambda (n e)
-      (let ((num (markup-option n :number)))
+      (let* ((num (markup-option n :number))
+             (markup-mapping (if (engine-custom e 'class-has-chapters?)
+                                 %chapter-mapping
+                                 %chapterless-mapping))
+             (latex-markup (cdr (assq m markup-mapping))))
 	 (printf "\n\n%% ~a\n" (string-canonicalize (markup-ident n)))
-	 (printf "\\~a~a{" m (if (not num) "*" ""))
+	 (printf "\\~a~a{" latex-markup (if (not num) "*" ""))
 	 (output (markup-option n :title) latex-title-engine)
 	 (display "}\n")
 	 (when num
