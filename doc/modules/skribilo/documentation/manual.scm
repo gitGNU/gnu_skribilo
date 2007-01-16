@@ -115,6 +115,7 @@
 		  (string-append lpckg opckg)
 		  lpckg)))
    (engine-custom-set! le 'documentclass "\\documentclass{book}")
+   (engine-custom-set! le 'class-has-chapters? #t)
    (engine-custom-set! le 'usepackage npckg))
 
 ;*---------------------------------------------------------------------*/
