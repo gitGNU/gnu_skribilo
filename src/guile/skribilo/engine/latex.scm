@@ -1626,7 +1626,7 @@
    :predicate (lambda (n e)
 		 (engine-custom e 'hyperref))
    :action (lambda (n e)
-	      (let* ((t (bold (markup-body n)))
+	      (let* ((t (markup-body n))
 		     (en (handle-ast (ast-parent n)))
 		     (url (markup-option en 'url))
 		     (ht (if url (ref :url (markup-body url) :text t) t)))
@@ -1648,7 +1648,7 @@
    :action (lambda (n e)
 	      (let* ((en (handle-ast (ast-parent n)))
 		     (url (markup-option en 'url))
-		     (t (bold (markup-body url))))
+		     (t (it (markup-body url))))
 		 (skribe-eval (ref :url (markup-body url) :text t) e))))
 
 ;*---------------------------------------------------------------------*/
