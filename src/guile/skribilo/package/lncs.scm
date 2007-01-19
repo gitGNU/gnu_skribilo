@@ -27,15 +27,32 @@
   :autoload   (skribilo package base)   (section font flush
                                          toc the-bibliography)
   :autoload   (skribilo utils keywords) (the-options the-body)
+  :autoload   (skribilo biblio template)(output-bib-entry-template
+                                         make-bib-entry-template/default)
 
   :use-module (skribilo lib)
   :use-module (skribilo utils syntax)
 
   :use-module (ice-9 optargs)
+  :use-module (srfi srfi-13)
 
   :export (abstract references))
 
 (fluid-set! current-reader %skribilo-module-reader)
+
+;;; Author: Manuel Serrano, Ludovic Courtès
+;;;
+;;; Commentary:
+;;;
+;;; This module provides support for writing articles for the ``Lecture Notes
+;;; in Computer Science'' series (LNCS) published by Springer-Verlag.
+;;;
+;;; Since Springer provides a LaTeX class (called `llncs') and expects you to
+;;; submit articles only in LaTeX, this module tries hard to use native LaTeX
+;;; constructs when the LaTeX engine is being used, so that you can pass the
+;;; generated TeX file to Springer-Verlag and make them happy.
+;;;
+;;; Code:
 
 
 ;*---------------------------------------------------------------------*/
@@ -192,4 +209,44 @@
       ;; Use the `abstract' command provided by the `llncs' class.
       (markup-writer 'lncs-abstract latex
          :before "\n\\begin{abstract}\n"
-         :after  "\n\\end{abstract}\n"))))
+         :after  "\n\\end{abstract}\n")
+
+
+      ;; Use the native bibliography system (BibTeX).
+
+      (markup-writer 'bib-ref latex
+         :options '(:text :bib)
+         :action (lambda (n e)
+                   (let ((entry (handle-ast (markup-body n))))
+                     (format #t "\\cite{~a}" (markup-ident entry)))))
+
+      (markup-writer 'bib-ref+ latex
+         :options '(:text :bib)
+         :action (lambda (n e)
+                   (let ((entries (map (lambda (bib-ref)
+                                         (handle-ast (markup-body bib-ref)))
+                                       (markup-body n))))
+                     (format #t "\\cite{~a}"
+                             (string-join (map markup-ident entries)
+                                          ",")))))
+
+      (markup-writer '&the-bibliography latex
+         :before "\\begin{thebibliography}{}\n"
+         :after  "\\end{thebibliography}\n")
+
+      (markup-writer '&bib-entry-body
+         :action (lambda (n e)
+                   (let* ((kind (markup-option n 'kind))
+                          (template (make-bib-entry-template/default kind)))
+                     (output-bib-entry-template n e template))))
+
+      (markup-writer '&bib-entry latex
+         :action (lambda (n e)
+                   (display "%\n\\bibitem[")
+                   (output (markup-option n :title) e)
+                   (format #t "]{~a}\n" (markup-ident n))
+                   (output n e (markup-writer-get '&bib-entry-body e)))
+         :after "\n%\n"))))
+
+
+;;; lncs.scm ends here
