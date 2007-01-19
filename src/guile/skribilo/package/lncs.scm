@@ -154,17 +154,21 @@
 ;*    abstract ...                                                     */
 ;*---------------------------------------------------------------------*/
 (define-markup (abstract :rest opt :key postscript)
-   (if (engine-format? "latex")
-       (section :number #f :title "ABSTRACT" (p (the-body opt)))
-       (let ((a (new markup
-		   (markup '&html-lncs-abstract)
-		   (body (the-body opt)))))
-	  (list (if postscript
-		    (section :number #f :toc #f :title "Postscript download"
-		       postscript))
-		(section :number #f :toc #f :title "Abstract" a)
-		(section :number #f :toc #f :title "Table of contents"
-		   (toc :subsection #t))))))
+   (let ((w (markup-writer-get 'lncs-abstract (*current-engine*))))
+     (if (writer? w)
+         (new markup
+            (markup 'lncs-abstract)
+            (options (the-options opt))
+            (body (the-body opt)))
+         (let ((a (new markup
+                     (markup '&html-lncs-abstract)
+                     (body (the-body opt)))))
+           (list (if postscript
+                     (section :number #f :toc #f :title "Postscript Download"
+                              postscript))
+                 (section :number #f :toc #f :title "Abstract" a)
+                 (section :number #f :toc #f :title "Table of Contents"
+                          (toc :subsection #t)))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    references ...                                                   */
@@ -175,3 +179,17 @@
 	     (font :size -1 (flush :side 'left (the-bibliography)))
 	     (section :title "References"
                       (font :size -1 (the-bibliography))))))
+
+
+;;;
+;;; Writers for LaTeX's `llncs' document class.
+;;;
+
+(when-engine-is-loaded 'latex
+  (lambda ()
+    (let ((latex (find-engine 'latex)))
+
+      ;; Use the `abstract' command provided by the `llncs' class.
+      (markup-writer 'lncs-abstract latex
+         :before "\n\\begin{abstract}\n"
+         :after  "\n\\end{abstract}\n"))))
