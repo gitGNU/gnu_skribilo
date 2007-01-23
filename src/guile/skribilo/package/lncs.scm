@@ -29,6 +29,7 @@
   :autoload   (skribilo utils keywords) (the-options the-body)
   :autoload   (skribilo biblio template)(output-bib-entry-template
                                          make-bib-entry-template/default)
+  :autoload   (skribilo biblio author)  (bib-sort/first-author-last-name)
 
   :use-module (skribilo lib)
   :use-module (skribilo utils syntax)
@@ -190,12 +191,16 @@
 ;*---------------------------------------------------------------------*/
 ;*    references ...                                                   */
 ;*---------------------------------------------------------------------*/
-(define (references)
-   (list "\n\n"
-	 (if (engine-format? "latex")
-	     (font :size -1 (flush :side 'left (the-bibliography)))
-	     (section :title "References"
-                      (font :size -1 (the-bibliography))))))
+(define* (references :key (sort #f))
+   (let ((sort-proc (or sort bib-sort/first-author-last-name)))
+     (list "\n\n"
+           (if (engine-format? "latex")
+               (font :size -1
+                     (flush :side 'left
+                            (the-bibliography :sort sort-proc)))
+               (section :title "References"
+                        (font :size -1
+                              (the-bibliography :sort sort-proc)))))))
 
 
 ;;;
