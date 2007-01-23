@@ -1,6 +1,7 @@
 ;;; package.skb  --  Packages
 ;;;
 ;;; Copyright 2004, 2005  Manuel Serrano
+;;; Copyright 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -79,14 +80,26 @@ markup ,(code "abstract"):])
       (p [
 This package enables producing LaTeX documents conforming to the
 ,(emph "Lecture Notes on Computer Science") (LNCS) style. It introduces the
-markup ,(code "abstract"):])
+markups ,(code "abstract") and ,(code "references"):])
+
       (doc-markup 'abstract
 	 `((:postscript [The URL of the PostScript version of the paper.]))
 	 :common-args '()
 	 :idx-note "lncs"
 	 :idx-suffix " (lncs)"
 	 :force-engines *api-engines*
-	 :source "skribilo/package/lncs.scm")))
+	 :source "skribilo/package/lncs.scm")
+
+      (doc-markup 'references
+	 `((:sort [A sort procedure, as for ,(code "the-bibliography").]))
+	 :common-args '()
+	 :idx-note "lncs"
+	 :idx-suffix " (lncs)"
+	 :force-engines *api-engines*
+	 :source "skribilo/package/lncs.scm"
+	 :see-also '(the-bibliography bib-sort/authors))
+
+      ))
 
 ;*---------------------------------------------------------------------*/
 ;*    french                                                           */
