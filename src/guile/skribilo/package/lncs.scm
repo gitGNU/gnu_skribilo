@@ -30,6 +30,7 @@
   :autoload   (skribilo biblio template)(output-bib-entry-template
                                          make-bib-entry-template/default)
   :autoload   (skribilo biblio author)  (bib-sort/first-author-last-name)
+  :autoload   (skribilo evaluator)      (evaluate-document)
 
   :use-module (skribilo lib)
   :use-module (skribilo utils syntax)
@@ -166,7 +167,7 @@
 				"#cccccc"))
 			(exp (p (center (color :bg bg :width 90. 
 					   (markup-body n))))))
-		    (skribe-eval exp e)))))
+		    (evaluate-document exp e)))))
 
 ;*---------------------------------------------------------------------*/
 ;*    abstract ...                                                     */
