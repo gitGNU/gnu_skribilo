@@ -1494,17 +1494,26 @@
    :action (lambda (n e)
 	      (let ((t (markup-option n :text)))
 		 (if t
-		     (begin
-			(output t e)
-			(output "~" e (markup-writer-get '~ e))))))
+                     (let* ((c (handle-ast (markup-body n)))
+                            (i (markup-ident c))
+                            (hyper? (engine-custom e 'hyperref)))
+                       (if (and hyper? i)
+                           (printf "\\hyperref[~a]{" i))
+                       (output t e)
+                       (if (and hyper? i)
+                           (printf "}"))))))
    :after (lambda (n e)
 	     (let* ((c (handle-ast (markup-body n)))
-		    (id (markup-ident c)))
-		(if (markup-option n :page)
-		    (printf "\\begin{math}{\\pageref{~a}}\\end{math}" 
-			    (string-canonicalize id))
-		    (printf "\\ref{~a}" 
-			    (string-canonicalize id))))))
+		    (id (markup-ident c))
+                    (t (markup-option n :text)))
+		(cond ((markup-option n :page)
+                       (printf "~\\begin{math}{\\pageref{~a}}\\end{math}"
+                               (string-canonicalize id)))
+                      ((markup-option n :text)
+                       #t)
+                      (else
+                       (printf "\\ref{~a}"
+                               (string-canonicalize id)))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    bib-ref ...                                                      */
