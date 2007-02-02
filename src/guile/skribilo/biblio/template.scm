@@ -1,7 +1,7 @@
 ;;; template.scm  --  Template system for bibliography entries.
 ;;;
 ;;; Copyright 2003, 2004  Manuel Serrano
-;;; Copyright 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2006, 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -115,7 +115,7 @@
   (case kind
     ((techreport)
      `(author ". " (or title url documenturl) ". "
-              number ", " institution ", "
+              ,(_ "Technical Report") " " number ", " institution ", "
               address ", " month " " year ", "
               ("pp. " pages) "."))
     ((article)
@@ -159,7 +159,7 @@
   (case kind
     ((techreport)
      `(author " -- " (or title url documenturl) " -- "
-              number ", " institution ", "
+              ,(_ "Technical Report") " " number ", " institution ", "
               address ", " month ", " year ", "
               ("pp. " pages) "."))
     ((article)

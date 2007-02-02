@@ -7,6 +7,9 @@ AM_INIT_AUTOMAKE(skribilo, 1.2)
 
 AC_CONFIG_SRCDIR([src/guile/skribilo/reader.scm])
 
+# GNU Gettext.
+AM_GNU_GETTEXT([external])
+
 # Look for Guile.
 GUILE_PROGS
 GUILE_SITE_DIR
@@ -33,6 +36,7 @@ AC_SUBST([SKRIBILO_SKR_PATH], ["$GUILE_SITE/"])
 AC_CONFIG_COMMANDS([skribilo-executable], [chmod a+x src/skribilo])
 
 AC_OUTPUT([Makefile
+	   po/Makefile.in
 	   src/skribilo
 	   src/Makefile
 	   src/guile/Makefile

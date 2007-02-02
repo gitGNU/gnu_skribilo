@@ -1,6 +1,6 @@
 ;;; syntax.scm  --  Syntactic candy for Skribilo modules.
 ;;;
-;;; Copyright 2005, 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2005, 2006, 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,8 @@
   :use-module (system reader library)
   :use-module (system reader compat) ;; make sure `current-reader' exists
   :use-module (system reader confinement)
-  :export (%skribe-reader %skribilo-module-reader)
+  :export (%skribe-reader %skribilo-module-reader
+           _ N_)
   :export-syntax (unwind-protect unless when))
 
 ;;; Author:  Ludovic Courtès
@@ -49,7 +50,7 @@
 		     (if (string? file)
 			 (format #f "~a:~a:~a: " file line column)
 			 "")
-		     "unexpected character in Skribilo module")
+		     (_ "unexpected character in Skribilo module"))
 		    chr)))
 
          ;; By default, don't record positions: this yields a nice read
@@ -75,6 +76,22 @@
 
 (define-macro (when condition . exprs)
   `(if ,condition (begin ,@exprs)))
+
+
+;;;
+;;; Gettext support.
+;;;
+
+(define %skribilo-text-domain "skribilo")
+
+(textdomain %skribilo-text-domain)
+
+(define (_ msg)
+  (gettext msg %skribilo-text-domain))
+
+(define (N_ msg msgplural n)
+  (ngettext msg msg plural n %skribilo-text-domain))
+
 
 ;;; arch-tag: 9a0e0638-64f0-480a-ab19-49e8bfcbcd9b
 

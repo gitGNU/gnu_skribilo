@@ -1,0 +1,26 @@
+# French translation.
+# Copyright (C) 2007 Ludovic Courtès
+# This file is distributed under the same license as the PACKAGE package.
+# Ludovic Courtès <ludovic.courtes@laas.fr>, 2007.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: ludovic.courtes@laas.fr\n"
+"POT-Creation-Date: 2007-02-02 18:03+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Ludovic Courtès <ludovic.courtes@laas.fr>\n"
+"Language-Team: fr <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/guile/skribilo/utils/syntax.scm:53
+msgid "unexpected character in Skribilo module"
+msgstr "caractère inattendu dans le module Skribilo"
+
+#: src/guile/skribilo/biblio/template.scm:118
+#: src/guile/skribilo/biblio/template.scm:162
+msgid "Technical Report"
+msgstr "Rapport Technique"
