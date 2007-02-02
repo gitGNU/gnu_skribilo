@@ -1,0 +1,6 @@
+# List of source files which contain translatable strings.
+#
+# Copyright 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
+
+src/guile/skribilo/utils/syntax.scm
+src/guile/skribilo/biblio/template.scm
