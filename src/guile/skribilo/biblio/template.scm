@@ -20,6 +20,7 @@
 ;;; USA.
 
 (define-module (skribilo biblio template)
+  :use-module (srfi srfi-1)
   :use-module (skribilo ast)
   :autoload   (skribilo lib)    (skribe-error)
   :autoload   (skribilo output) (output)
@@ -28,7 +29,8 @@
 
   :use-module (skribilo utils syntax)
 
-  :export (output-bib-entry-template
+  :export (evaluate-bib-entry-template
+           output-bib-entry-template
            make-bib-entry-template/default
            make-bib-entry-template/skribe))
 
@@ -52,57 +54,82 @@
 ;;; Outputting a bibliography entry template for a specific entry.
 ;;;
 
+(define (evaluate-bib-entry-template bib template . rest)
+  ;; An interpreter for the bibliography template language.  Overview of the
+  ;; language:
+  ;;
+  ;;  form := (cond-list|special-sexp|string|field-spec)
+  ;;
+  ;;  field-spec   := ("author"|"title"|...)
+  ;;  cond-list    := (form+)
+  ;;  special-sexp := (("if" form form form?)|("or" form*))
+  ;;
+  ;; A `cond-list' gets issued only if all its elements are true.
+
+  (define get-field
+    (if (null? rest)
+        markup-option
+        (car rest)))
+
+  (define (eval-cond-list sexp eval-sexp)
+    (let loop ((sexp   sexp)
+               (result '()))
+      (if (null? sexp)
+          (reverse! result)
+          (let ((head (eval-sexp (car sexp))))
+            (if (not head)
+                #f
+                (loop (cdr sexp)
+                      (cons head result)))))))
+
+  (define (eval-special-sexp sexp eval-sexp)
+    (let ((special (car sexp))
+          (formals (cdr sexp)))
+      (case special
+        ((or)
+         (any eval-sexp formals))
+        ((if)
+         (if (or (> (length formals) 3)
+                 (< (length formals) 2))
+             (error (_ "wrong number of arguments to `if' template")
+                    formals))
+         (let* ((if-cond (car formals))
+                (if-then (cadr formals))
+                (if-else (if (null? (cddr formals))
+                             #f
+                             (caddr formals)))
+                (result (eval-sexp if-cond)))
+           (if result
+               (eval-sexp if-then)
+               (eval-sexp if-else))))
+        (else
+         (eval-cond-list sexp eval-sexp)))))
+
+  (let loop ((template template))
+    (cond ((symbol? template)
+           (get-field bib template))
+          ((null? template)
+           #f)
+          ((pair? template)
+           (cond ((symbol? (car template))
+                  (eval-special-sexp template loop))
+                 (else
+                  (eval-cond-list template loop))))
+          ((string? template)
+           template)
+          (else
+           (error (_ "invalid bibliography entry template") template)))))
+
+
 (define* (output-bib-entry-template bib engine template
                                     :optional (get-field markup-option))
   ;; Output the fields of BIB (a bibliography entry) for ENGINE according to
   ;; TEMPLATE.  Example of templates are found below (e.g.,
   ;; `make-bib-entry-template/default').
-  (let loop ((template template)
-             (pending #f)
-             (armed #f))
-    (cond
-     ((null? template)
-      'done)
-     ((pair? (car template))
-      (if (eq? (caar template) 'or)
-          (let ((o1 (cadr (car template))))
-            (if (get-field bib o1)
-                (loop (cons o1 (cdr template))
-                      pending
-                      #t)
-                (let ((o2 (caddr (car template))))
-                  (loop (cons o2 (cdr template))
-                        pending
-                        armed))))
-          (let ((o (get-field bib (cadr (car template)))))
-            (if o
-                (begin
-                  (if (and pending armed)
-                      (output pending engine))
-                  (output (caar template) engine)
-                  (output o engine)
-                  (if (pair? (cddr (car template)))
-                      (output (caddr (car template)) engine))
-                  (loop (cdr template) #f #t))
-                (loop (cdr template) pending armed)))))
-     ((symbol? (car template))
-      (let ((o (get-field bib (car template))))
-        (if o
-            (begin
-              (if (and armed pending)
-                  (output pending engine))
-              (output o engine)
-              (loop (cdr template) #f #t))
-            (loop (cdr template) pending armed))))
-     ((null? (cdr template))
-      (output (car template) engine))
-     ((string? (car template))
-      (if pending (output pending engine))
-      (loop (cdr template) (car template) armed))
-     (else
-      (skribe-error 'output-bib-fields
-                    "Illegal templateiption"
-                    (car template))))))
+  (output (map (lambda (form)
+                 (evaluate-bib-entry-template bib form get-field))
+               template)
+          engine))
 
 
 ;;;
