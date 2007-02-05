@@ -23,6 +23,7 @@
   :autoload   (srfi srfi-34) (guard)
   :use-module (srfi srfi-35)
   :use-module (srfi srfi-39)
+  :autoload   (skribilo utils syntax) (_ N_)
   :export     (&skribilo-error skribilo-error?
 	       &invalid-argument-error invalid-argument-error?
 	       &too-few-arguments-error too-few-arguments-error?
@@ -118,34 +119,40 @@
 
 (define (%call-with-skribilo-error-catch thunk exit exit-val)
   (guard (c ((invalid-argument-error? c)
-	     (format (current-error-port) "in `~a': invalid argument: ~S~%"
+	     (format (current-error-port)
+                     (_ "in `~a': invalid argument: ~S~%")
 		     (invalid-argument-error:proc-name c)
 		     (invalid-argument-error:argument c))
 	     (exit exit-val))
 
 	    ((too-few-arguments-error? c)
-	     (format (current-error-port) "in `~a': too few arguments: ~S~%"
+	     (format (current-error-port)
+                     (_ "in `~a': too few arguments: ~S~%")
 		     (too-few-arguments-error:proc-name c)
 		     (too-few-arguments-error:arguments c)))
 
 	    ((file-search-error? c)
-	     (format (current-error-port) "~a: not found in path `~S'~%"
+	     (format (current-error-port)
+                     (_ "~a: not found in path `~S'~%")
 		     (file-error:file-name c)
 		     (file-search-error:path c))
 	     (exit exit-val))
 
 	    ((file-open-error? c)
-	     (format (current-error-port) "~a: cannot open file~%"
+	     (format (current-error-port)
+                     (_ "~a: cannot open file~%")
 		     (file-error:file-name c))
 	     (exit exit-val))
 
 	    ((file-write-error? c)
-	     (format (current-error-port) "~a: cannot write to file~%"
+	     (format (current-error-port)
+                     (_ "~a: cannot write to file~%")
 		     (file-error:file-name c))
 	     (exit exit-val))
 
 	    ((file-error? c)
-	     (format (current-error-port) "file error: ~a~%"
+	     (format (current-error-port)
+                     (_ "file error: ~a~%")
 		     (file-error:file-name c))
 	     (exit exit-val))
 
@@ -156,7 +163,7 @@
 	       (if (procedure? handler)
 		   (handler c)
 		   (format (current-error-port)
-			   "undefined skribilo error: ~S~%"
+			   (_ "undefined skribilo error: ~S~%")
 			   c)))
 	     (exit exit-val)))
 
