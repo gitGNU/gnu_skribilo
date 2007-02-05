@@ -21,9 +21,13 @@
 
 (define-module (skribilo biblio template)
   :use-module (srfi srfi-1)
+  :use-module (srfi srfi-34)
+  :use-module (srfi srfi-35)
+
   :use-module (skribilo ast)
   :autoload   (skribilo lib)    (skribe-error)
   :autoload   (skribilo output) (output)
+  :use-module (skribilo biblio)
 
   :use-module (ice-9 optargs)
 
@@ -91,8 +95,9 @@
         ((if)
          (if (or (> (length formals) 3)
                  (< (length formals) 2))
-             (error (_ "wrong number of arguments to `if' template")
-                    formals))
+             (raise (condition
+                     (&biblio-template-error (expression sexp)
+                                             (template template)))))
          (let* ((if-cond (car formals))
                 (if-then (cadr formals))
                 (if-else (if (null? (cddr formals))
@@ -118,7 +123,9 @@
           ((string? template)
            template)
           (else
-           (error (_ "invalid bibliography entry template") template)))))
+           (raise (condition
+                   (&biblio-template-error (expression template)
+                                           (template template))))))))
 
 
 (define* (output-bib-entry-template bib engine template
