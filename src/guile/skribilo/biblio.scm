@@ -29,7 +29,7 @@
   :autoload   (srfi srfi-34)         (raise)
   :use-module (srfi srfi-35)
   :use-module (srfi srfi-39)
-  :autoload   (skribilo condition)   (&file-search-error)
+  :use-module (skribilo condition)
 
   :autoload   (skribilo reader)      (%default-reader)
   :autoload   (skribilo parameters)  (*bib-path*)
@@ -45,7 +45,14 @@
            bib-load! resolve-bib resolve-the-bib make-bib-entry
 
            ;; sorting entries
-           bib-sort/authors bib-sort/idents bib-sort/dates))
+           bib-sort/authors bib-sort/idents bib-sort/dates
+
+           ;; error conditions
+           &biblio-error &biblio-entry-error &biblio-template-error
+           biblio-error? biblio-entry-error? biblio-template-error?
+           biblio-entry-error:entry
+           biblio-template-error:expression
+           biblio-template-error:template))
 
 ;;; Author: Erick Gallesio, Manuel Serrano, Ludovic Courtès
 ;;;
@@ -57,6 +64,52 @@
 ;;; Code:
 
 (fluid-set! current-reader %skribilo-module-reader)
+
+
+
+;;;
+;;; Error conditions.
+;;;
+
+(define-condition-type &biblio-error &skribilo-error
+  biblio-error?)
+
+(define-condition-type &biblio-entry-error &biblio-error
+  biblio-entry-error?
+  (entry biblio-entry-error:entry))
+
+(define-condition-type &biblio-template-error &biblio-error
+  biblio-template-error?
+  (expression  biblio-template-error:expression)
+  (template    biblio-template-error:template))
+
+
+(define (handle-biblio-error c)
+  ;; Issue a user-friendly error message for error condition C.
+  (cond ((biblio-entry-error? c)
+         (let* ((entry (biblio-entry-error:entry c))
+                (file  (source-property entry 'filename))
+                (col   (source-property entry 'column))
+                (line  (source-property entry 'line)))
+           (if (and file col line)
+               (format (current-error-port)
+                       (_ "~a:~a:~a: invalid bibliography entry: ~a~%")
+                       file line col)
+               (format (current-error-port)
+                       (_ "invalid bibliography entry: ~a~%")
+                       entry))))
+	((biblio-template-error? c)
+	 (format (current-error-port)
+                 (_ "invalid bibliography entry template: `~a', in `~a'~%")
+                 (biblio-template-error:expression c)
+                 (biblio-template-error:template c)))
+	(else
+	 (format (current-error-port)
+                 (_ "undefined bibliography error: ~a~%")
+		 c))))
+
+(register-error-condition-handler! biblio-error?
+				   handle-biblio-error)
 
 
 
@@ -74,15 +127,11 @@
 (define *bib-table*
   (make-parameter (make-bib-table "default-bib-table")))
 
-(define (%bib-error who entry)
-  (let ((msg "bibliography syntax error on entry"))
-    (if (%epair? entry)
-	(skribe-line-error (%epair-file entry) (%epair-line entry) who msg entry)
-	(skribe-error who msg entry))))
-
 (define (bib-add! table . entries)
   (if (not (bib-table? table))
-      (skribe-error 'bib-add! "Illegal bibliography table" table)
+      (raise (condition
+              (&invalid-argument-error (proc-name "bib-add!")
+                                       (argument table))))
       (for-each (lambda (entry)
 		  (cond
 		    ((and (list? entry) (> (length entry) 2))
@@ -95,7 +144,8 @@
 			   (hash-set! table key
 				      (make-bib-entry kind key fields #f)))))
 		    (else
-		     (%bib-error 'bib-add! entry))))
+                     (raise (condition
+                             (&biblio-entry-error (entry entry)))))))
 		entries)))
 
 (define* (bib-for-each proc :optional (table (*bib-table*)))
@@ -129,7 +179,9 @@
 (define (parse-bib table port)
   (let ((read %default-reader)) ;; FIXME: We should use a fluid
     (if (not (bib-table? table))
-	(skribe-error 'parse-bib "Illegal bibliography table" table)
+        (raise (condition
+                (&invalid-argument-error (proc-name "parse-bib")
+                                         (argument table))))
 	(let ((from (port-filename port)))
 	  (let Loop ((entry (read port)))
 	    (unless (eof-object? entry)
@@ -145,7 +197,8 @@
 				 (make-bib-entry kind key fields from)))
 		  (Loop (read port))))
 	       (else
-		(%bib-error 'bib-parse entry)))))))))
+                (raise (condition
+                        (&biblio-entry-error (entry entry))))))))))))
 
 (define* (open-bib-file file :optional (command #f))
  (let ((path (search-path (*bib-path*) file)))
@@ -180,25 +233,31 @@
 ;*---------------------------------------------------------------------*/
 (define (bib-load! table filename command)
    (if (not (bib-table? table))
-       (skribe-error 'bib-load "Illegal bibliography table" table)
+       (raise (condition
+               (&invalid-argument-error (proc-name "bib-load!")
+                                        (argument table))))
        ;; read the file
        (let ((p (open-bib-file filename command)))
-	  (if (not (input-port? p))
-	      (skribe-error 'bib-load "Can't open data base" filename)
-	      (unwind-protect
-		 (parse-bib table p)
-		 (close-input-port p))))))
+         (unwind-protect
+           (parse-bib table p)
+           (close-input-port p)))))
 
 ;*---------------------------------------------------------------------*/
 ;*    resolve-bib ...                                                  */
 ;*---------------------------------------------------------------------*/
 (define (resolve-bib table ident)
    (if (not (bib-table? table))
-       (skribe-error 'resolve-bib "Illegal bibliography table" table)
+       (raise (condition
+               (&invalid-argument-error (proc-name "resolve-bib")
+                                        (argument table))))
        (let* ((i (cond
 		    ((string? ident) ident)
 		    ((symbol? ident) (symbol->string ident))
-		    (else (skribe-error 'resolve-bib "Illegal ident" ident))))
+		    (else
+                     (raise (condition
+                             (&invalid-argument-error
+                              (proc-name "resolve-bib")
+                              (argument ident)))))))
 	      (en (hash-ref table i)))
 	  (if (is-markup? en '&bib-entry)
 	      en
@@ -339,7 +398,9 @@
 				       :body (make <handle> :ast (car es))))
 		(loop (cdr es) (+ i 1))))))
    (if (not (bib-table? table))
-       (skribe-error 'resolve-the-bib "Illegal bibliography table" table)
+       (raise (condition
+               (&invalid-argument-error (proc-name "resolve-the-bib")
+                                        (argument table))))
        (let* ((es (sort (hash-map->list (lambda (key val) val) table)))
 	      (fes (filter (if (procedure? pred)
 			       (lambda (m) (pred m n))
