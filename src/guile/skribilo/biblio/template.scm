@@ -97,9 +97,8 @@
      ((null? (cdr template))
       (output (car template) engine))
      ((string? (car template))
-      (loop (cdr template)
-            (if pending pending (car template))
-            armed))
+      (if pending (output pending engine))
+      (loop (cdr template) (car template) armed))
      (else
       (skribe-error 'output-bib-fields
                     "Illegal templateiption"
