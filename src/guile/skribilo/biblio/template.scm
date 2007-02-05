@@ -141,14 +141,16 @@
   (case kind
     ((techreport)
      `(author ". " (or title url documenturl) ". "
-              ,(_ "Technical Report") " " number ", " institution ", "
-              address ", " month " " year ", "
-              ("pp. " pages) "."))
+              ,(_ "Technical Report") " " number
+              (", " institution)
+              (", " address)
+              (", " month) " " year
+              (", pp. " pages) "."))
     ((article)
      `(author ". " (or title url documenturl) ". "
               "In " journal ", " volume
-              ("(" number ")") ", "
-              address ", " month " " year ", "
+              ("(" number ") ")", "
+              (address ", ") month " " year ", "
               ("pp. " pages) "."))
     ((inproceedings)
      `(author ". " (or title url documenturl) ". "
@@ -156,28 +158,33 @@
               (series ", ")
               ("(" number ")")
               ("pp. " pages ", ")
-              ("" publisher ", ")
-              ;; FIXME:  Addr., month.
-              year "."))
+              (publisher ", ")
+              (month " ") year "."))
     ((book) ;; FIXME:  Title should be in italics
      '(author ". " (or title url documenturl) ". "
-              publisher ", " address
-              ", " month " " year ", "
+              publisher
+              (", " address)
+              (", " month)
+              (if month " " ", ") year ", "
               ("pp. " pages) "."))
     ((phdthesis)
-     '(author ". " (or title url documenturl)
-              ". " type ", "
-              school ", " address
-              ", " month " " year"."))
+     `(author ". " (or title url documenturl)
+              ", " ,(_ "PhD Thesis")
+              (", " (or school institution))
+              (", " address)
+              (", " month)
+              (if month " " ", ") year "."))
     ((misc)
      '(author ". " (or title url documenturl) ". "
-              publisher ", " address
-              ", " month " " year
-              (", " url) "."))
+              (publisher ", ")
+              (address ", ")
+              (month " ") year ". "
+              (url ".")))
     (else
      '(author ". " (or title url documenturl) ". "
-              publisher ", " address
-              ", " month " " year ", "
+              (publisher ", ")
+              (address ", ")
+              (month " ") year ", "
               ("pp. " pages) "."))))
 
 (define (make-bib-entry-template/skribe kind)
