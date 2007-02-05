@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: ludovic.courtes@laas.fr\n"
-"POT-Creation-Date: 2007-02-02 18:03+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"POT-Creation-Date: 2007-02-05 15:56+0100\n"
+"PO-Revision-Date: 2007-02-05 16:02+0100\n"
 "Last-Translator: Ludovic Courtès <ludovic.courtes@laas.fr>\n"
 "Language-Team: fr <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -20,7 +20,66 @@ msgstr ""
 msgid "unexpected character in Skribilo module"
 msgstr "caractère inattendu dans le module Skribilo"
 
-#: src/guile/skribilo/biblio/template.scm:118
-#: src/guile/skribilo/biblio/template.scm:162
+#: src/guile/skribilo/condition.scm:123
+#, scheme-format
+msgid "in `~a': invalid argument: ~S~%"
+msgstr "dans `~a': argument incorrect: ~S~%"
+
+#: src/guile/skribilo/condition.scm:130
+#, scheme-format
+msgid "in `~a': too few arguments: ~S~%"
+msgstr "dans `~a': trop peu d'arguments: ~S~%"
+
+#: src/guile/skribilo/condition.scm:136
+#, scheme-format
+msgid "~a: not found in path `~S'~%"
+msgstr "~a: non trouvé dans le chemin `~S'~%"
+
+#: src/guile/skribilo/condition.scm:143
+#, scheme-format
+msgid "~a: cannot open file~%"
+msgstr "~a: échec d'ouverture du fichier~%"
+
+#: src/guile/skribilo/condition.scm:149
+#, scheme-format
+msgid "~a: cannot write to file~%"
+msgstr "~a: échec en écriture sur le fichier~%"
+
+#: src/guile/skribilo/condition.scm:155
+#, scheme-format
+msgid "file error: ~a~%"
+msgstr "erreur de fichier : ~a~%"
+
+#: src/guile/skribilo/condition.scm:166
+#, scheme-format
+msgid "undefined skribilo error: ~S~%"
+msgstr "erreur skribilo indéfinie : ~S~%"
+
+#: src/guile/skribilo/biblio.scm:96
+#, scheme-format
+msgid "~a:~a:~a: invalid bibliography entry: ~a~%"
+msgstr "~a:~a:~a: entrée de bibliographie incorrecte : ~a~%"
+
+#: src/guile/skribilo/biblio.scm:99
+#, scheme-format
+msgid "invalid bibliography entry: ~a~%"
+msgstr "entrée de bibliographie incorrecte : ~a~%"
+
+#: src/guile/skribilo/biblio.scm:103
+#, scheme-format
+msgid "invalid bibliography entry template: `~a', in `~a'~%"
+msgstr "patron de bibliographie incorrect : `~a', dans `~a'~%"
+
+#: src/guile/skribilo/biblio.scm:108
+#, scheme-format
+msgid "undefined bibliography error: ~a~%"
+msgstr "erreur de bibliographie indéfinie : ~a~%"
+
+#: src/guile/skribilo/biblio/template.scm:151
+#: src/guile/skribilo/biblio/template.scm:202
 msgid "Technical Report"
 msgstr "Rapport Technique"
+
+#: src/guile/skribilo/biblio/template.scm:179
+msgid "PhD Thesis"
+msgstr "Thèse de doctorat"
