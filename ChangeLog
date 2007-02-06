@@ -2,6 +2,27 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-02-06 22:54:27 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-56
+
+    Summary:
+      `slide' package: use the native APIs.
+    Revision:
+      skribilo--devo--1.2--patch-56
+
+    Patches applied:
+    
+     * lcourtes@laas.fr--2005-libre/skribilo--engine-classes--1.2  (patch 5)
+    
+       - `slide' package: use the native APIs.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/slide.scm
+
+    new patches:
+     lcourtes@laas.fr--2005-libre/skribilo--engine-classes--1.2--patch-5
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-96
+
+
 2007-02-06 22:53:16 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-55
 
     Summary:

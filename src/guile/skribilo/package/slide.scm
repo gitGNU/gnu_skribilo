@@ -20,13 +20,29 @@
 ;;; USA.
 
 
-(define-skribe-module (skribilo package slide))
+(define-module (skribilo package slide)
+  :use-module (skribilo reader)
+  :use-module (skribilo utils syntax)
+
+  :use-module (skribilo lib)
+  :use-module (skribilo ast)
+  :use-module (skribilo engine)
+  :use-module (skribilo evaluator) ;; `*load-options*'
+  :use-module (skribilo package base)
+
+  :autoload   (skribilo utils keywords) (the-options the-body)
+
+  :use-module (srfi srfi-1)
+  :use-module (ice-9 optargs))
+
+(fluid-set! current-reader (make-reader 'skribe))
 
 
+
 ;*---------------------------------------------------------------------*/
 ;*    slide-options                                                    */
 ;*---------------------------------------------------------------------*/
-(define-public &slide-load-options (skribe-load-options))
+(define-public &slide-load-options (*load-options*))
 
 
 ;*---------------------------------------------------------------------*/
@@ -49,7 +65,7 @@
    (let ((s (new container
 	       (markup 'slide)
 	       (ident (if (not ident)
-			  (symbol->string (gensym 'slide))
+			  (symbol->string (gensym "slide"))
 			  ident))
 	       (class class)
 	       (required-options '(:title :number :toc))
@@ -232,7 +248,7 @@
    (new container
       (markup 'slide-topic)
       (required-options '(:title :outline?))
-      (ident (or ident (symbol->string (gensym 'slide-topic))))
+      (ident (or ident (symbol->string (gensym "slide-topic"))))
       (class class)
       (options `((:outline? ,outline?)
                  ,@(the-options opt :outline? :class)))
@@ -247,7 +263,7 @@
    (new container
       (markup 'slide-subtopic)
       (required-options '(:title :outline?))
-      (ident (or ident (symbol->string (gensym 'slide-subtopic))))
+      (ident (or ident (symbol->string (gensym "slide-subtopic"))))
       (class class)
       (options `((:outline? ,outline?)
                  ,@(the-options opt :outline? :class)))
