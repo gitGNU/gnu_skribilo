@@ -153,13 +153,12 @@
 				 "  skribe-load: `~a' -> `~a'~%"
 				 file mod-name))
 		     (let ((mod (false-if-exception
-				 (resolve-module mod-name))))
+				 (resolve-interface mod-name))))
 		       (if (not mod)
 			   (raise c)
 			   (begin
-			     (set-module-uses!
-			      (current-module)
-			      (cons mod (module-uses (current-module))))
+			     (module-use-interfaces! (current-module)
+                                                     (list mod))
 			     #t))))
 		   (raise c)))))
 
