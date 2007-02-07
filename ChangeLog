@@ -2,6 +2,27 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-02-07 23:07:16 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-57
+
+    Summary:
+      evaluator: Slight module-related cleanups.
+    Revision:
+      skribilo--devo--1.2--patch-57
+
+    * src/guile/skribilo/evaluator.scm (%evaluate): Take an additional MODULE
+      argument.  Updated callers.
+      (evaluate-document-from-port): Likewise.
+      (load-document): Take additional MODULE and READER arguments.
+      (include-document): Have MODULE default to `(*skribilo-user-module*)'
+      instead of `(current-module)'.
+
+    modified files:
+     ChangeLog src/guile/skribilo/evaluator.scm
+
+    new patches:
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-97
+
+
 2007-02-06 22:54:27 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-56
 
     Summary:

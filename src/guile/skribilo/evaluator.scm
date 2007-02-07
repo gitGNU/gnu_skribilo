@@ -57,11 +57,11 @@
 ;;;
 ;;; %EVALUATE
 ;;;
-(define (%evaluate expr)
+(define (%evaluate expr module)
   ;; Evaluate EXPR in the current module.  EXPR is an arbitrary S-expression
   ;; that may contain calls to the markup functions defined in a markup
   ;; package such as `(skribilo package base)', e.g., `(bold "hello")'.
-  (let ((result (eval expr (current-module))))
+  (let ((result (eval expr module)))
     (if (ast? result)
         (let ((file (source-property expr 'filename))
               (line (source-property expr 'line))
@@ -93,7 +93,8 @@
 ;;;
 (define* (evaluate-document-from-port port engine
 				      :key (env '())
-				           (reader (*document-reader*)))
+				           (reader (*document-reader*))
+                                           (module (*skribilo-user-module*)))
   (with-debug 2 'evaluate-document-from-port
      (debug-item "engine=" engine)
      (debug-item "reader=" reader)
@@ -110,9 +111,11 @@
 
               (let loop ((exp (reader port)))
                 (if (eof-object? exp)
-                    (evaluate-document (%evaluate exp) e :env env)
+                    (evaluate-document (%evaluate exp module)
+                                       e :env env)
                     (begin
-                      (evaluate-document (%evaluate exp) e :env env)
+                      (evaluate-document (%evaluate exp module)
+                                         e :env env)
                       (loop (reader port)))))))))))
 
 
@@ -127,7 +130,12 @@
 ;; List of the names of files already loaded.
 (define *loaded-files* (make-parameter '()))
 
-(define* (load-document file :key (engine #f) (path #f) :allow-other-keys
+
+(define* (load-document file
+                        :key engine path
+                             (module (*skribilo-user-module*))
+                             (reader (*document-reader*))
+                        :allow-other-keys
 			:rest opt)
   (with-debug 4 'load-document
      (debug-item "  engine=" engine)
@@ -167,7 +175,9 @@
 	   ;; Load it
 	   (with-input-from-file filep
 	     (lambda ()
-	       (evaluate-document-from-port (current-input-port) ei)))
+	       (evaluate-document-from-port (current-input-port) ei
+                                            :module module
+                                            :reader reader)))
 
 	   (*loaded-files* (cons filep (*loaded-files*))))))))
 
@@ -176,7 +186,7 @@
 ;;;
 (define* (include-document file :key (path (*document-path*))
 			             (reader (*document-reader*))
-                                     (module (current-module)))
+                                     (module (*skribilo-user-module*)))
   (unless (every string? path)
     (raise (condition (&invalid-argument-error (proc-name 'include-document)
 					       (argument  path)))))
@@ -203,4 +213,4 @@
                       (car res)
                       (reverse! res))
                   (Loop (reader (current-input-port))
-                        (cons (%evaluate exp) res))))))))))
+                        (cons (%evaluate exp module) res))))))))))
