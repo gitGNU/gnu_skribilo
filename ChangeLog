@@ -2,6 +2,23 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-02-19 23:31:50 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-59
+
+    Summary:
+      `base' engine: Use the native Skribilo APIs.
+    Revision:
+      skribilo--devo--1.2--patch-59
+
+    * src/guile/skribilo/engine/base.scm: No longer use
+      `define-skribe-module'.  Use the native Skribilo APIs instead.
+
+    modified files:
+     ChangeLog src/guile/skribilo/engine/base.scm
+
+    new patches:
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-99
+
+
 2007-02-07 23:07:44 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-58
 
     Summary:
