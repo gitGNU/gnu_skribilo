@@ -57,19 +57,18 @@
 ;;;
 ;;; %EVALUATE
 ;;;
-(define (%evaluate expr)
-  ;; Evaluate EXPR, an arbitrary S-expression that may contain calls to the
-  ;; markup functions defined in a markup package such as
-  ;; `(skribilo package base)', e.g., `(bold "hello")'.
-  (let ((result (eval expr (*skribilo-user-module*))))
-
+(define (%evaluate expr module)
+  ;; Evaluate EXPR in the current module.  EXPR is an arbitrary S-expression
+  ;; that may contain calls to the markup functions defined in a markup
+  ;; package such as `(skribilo package base)', e.g., `(bold "hello")'.
+  (let ((result (eval expr module)))
     (if (ast? result)
-	(let ((file (source-property expr 'filename))
-	      (line (source-property expr 'line))
-	      (column (source-property expr 'column)))
-	  (slot-set! result 'loc
-		     (make <location>
-		       :file file :line line :pos column))))
+        (let ((file (source-property expr 'filename))
+              (line (source-property expr 'line))
+              (column (source-property expr 'column)))
+          (slot-set! result 'loc
+                     (make <location>
+                       :file file :line line :pos column))))
 
     result))
 
@@ -94,7 +93,8 @@
 ;;;
 (define* (evaluate-document-from-port port engine
 				      :key (env '())
-				           (reader (*document-reader*)))
+				           (reader (*document-reader*))
+                                           (module (*skribilo-user-module*)))
   (with-debug 2 'evaluate-document-from-port
      (debug-item "engine=" engine)
      (debug-item "reader=" reader)
@@ -103,12 +103,21 @@
        (debug-item "e=" e)
        (if (not (engine? e))
 	   (skribe-error 'evaluate-document-from-port "cannot find engine" engine)
-	   (let loop ((exp (reader port)))
-	     (with-debug 10 'evaluate-document-from-port
-		(debug-item "exp=" exp))
-	     (unless (eof-object? exp)
-	       (evaluate-document (%evaluate exp) e :env env)
-	       (loop (reader port))))))))
+           (save-module-excursion
+            (lambda ()
+              (with-debug 10 'evaluate-document-from-port
+                          (debug-item "exp=" exp))
+              (set-current-module (*skribilo-user-module*))
+
+              (let loop ((exp (reader port)))
+                (if (eof-object? exp)
+                    (evaluate-document (%evaluate exp module)
+                                       e :env env)
+                    (begin
+                      (evaluate-document (%evaluate exp module)
+                                         e :env env)
+                      (loop (reader port)))))))))))
+
 
 
 ;;;
@@ -121,9 +130,14 @@
 ;; List of the names of files already loaded.
 (define *loaded-files* (make-parameter '()))
 
-(define* (load-document file :key (engine #f) (path #f) :allow-other-keys
+
+(define* (load-document file
+                        :key engine path
+                             (module (*skribilo-user-module*))
+                             (reader (*document-reader*))
+                        :allow-other-keys
 			:rest opt)
-  (with-debug 4 'skribe-load
+  (with-debug 4 'load-document
      (debug-item "  engine=" engine)
      (debug-item "  path=" path)
      (debug-item "  opt=" opt)
@@ -138,15 +152,7 @@
 					       (argument  path)))))
 			   (else path))
 			  %load-path))
-            (filep (or (search-path path file)
-		       (search-path (append path %load-path) file)
-		       (search-path (append path %load-path)
-				    (let ((dot (string-rindex file #\.)))
-				      (if dot
-					  (string-append
-					   (string-take file dot)
-					   ".scm")
-					  file))))))
+            (filep  (search-path path file)))
 
        (unless (and (string? filep) (file-exists? filep))
 	 (raise (condition (&file-search-error
@@ -169,7 +175,9 @@
 	   ;; Load it
 	   (with-input-from-file filep
 	     (lambda ()
-	       (evaluate-document-from-port (current-input-port) ei)))
+	       (evaluate-document-from-port (current-input-port) ei
+                                            :module module
+                                            :reader reader)))
 
 	   (*loaded-files* (cons filep (*loaded-files*))))))))
 
@@ -177,7 +185,8 @@
 ;;; INCLUDE-DOCUMENT
 ;;;
 (define* (include-document file :key (path (*document-path*))
-			             (reader (*document-reader*)))
+			             (reader (*document-reader*))
+                                     (module (*skribilo-user-module*)))
   (unless (every string? path)
     (raise (condition (&invalid-argument-error (proc-name 'include-document)
 					       (argument  path)))))
@@ -193,11 +202,15 @@
 
     (with-input-from-file full-path
       (lambda ()
-	(let Loop ((exp (reader (current-input-port)))
-		   (res '()))
-	  (if (eof-object? exp)
-	      (if (and (pair? res) (null? (cdr res)))
-		    (car res)
-		    (reverse! res))
-	      (Loop (reader (current-input-port))
-		    (cons (%evaluate exp) res))))))))
+        (save-module-excursion
+          (lambda ()
+            (set-current-module module)
+
+            (let Loop ((exp (reader (current-input-port)))
+                       (res '()))
+              (if (eof-object? exp)
+                  (if (and (pair? res) (null? (cdr res)))
+                      (car res)
+                      (reverse! res))
+                  (Loop (reader (current-input-port))
+                        (cons (%evaluate exp module) res))))))))))

@@ -19,11 +19,23 @@
 ;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 ;;; USA.
 
-(define-skribe-module (skribilo engine base)
-  :autoload (skribilo biblio template) (make-bib-entry-template/default
-                                        output-bib-entry-template)
-  :use-module (srfi srfi-13))
+(define-module (skribilo engine base)
+  :use-module (skribilo ast)
+  :use-module (skribilo engine)
+  :use-module (skribilo writer)
+  :autoload   (skribilo output) (output)
+  :use-module (skribilo evaluator)
+  :autoload   (skribilo package base) (color)
+  :autoload   (skribilo utils keywords) (list-split)
+  :autoload   (skribilo biblio template) (make-bib-entry-template/default
+                                          output-bib-entry-template)
+  ;; syntactic sugar
+  :use-module (skribilo reader)
+  :use-module (skribilo utils syntax))
 
+(fluid-set! current-reader (make-reader 'skribe))
+
+
 ;*---------------------------------------------------------------------*/
 ;*    base-engine ...                                                  */
 ;*---------------------------------------------------------------------*/
@@ -170,7 +182,7 @@
 			    (format #f "?~a " k))))
 		     (msg (list f (markup-body n)))
 		     (n (list "[" (color :fg "red" (bold msg)) "]")))
-		 (skribe-eval n e))))
+		 (evaluate-document n e))))
 
 ;*---------------------------------------------------------------------*/
 ;*    &the-bibliography ...                                            */
@@ -234,7 +246,7 @@
 (markup-writer '&bib-entry-url
                :action (lambda (n e)
                          (let ((url (markup-body n)))
-                           (skribe-eval
+                           (evaluate-document
                             (ref :text (it url) :url url) e))))
 
 ;*---------------------------------------------------------------------*/
@@ -258,7 +270,7 @@
 ;*---------------------------------------------------------------------*/
 (markup-writer '&bib-entry-title
    :action (lambda (n e)
-	      (skribe-eval (markup-body n)) e))
+	      (evaluate-document (markup-body n) e)))
 
 ;*---------------------------------------------------------------------*/
 ;*    &bib-entry-booktitle ...                                         */
@@ -266,21 +278,21 @@
 (markup-writer '&bib-entry-booktitle
                :action (lambda (n e)
                          (let ((title (markup-body n)))
-                           (skribe-eval (it title) e))))
+                           (evaluate-document (it title) e))))
 
 ;*---------------------------------------------------------------------*/
 ;*    &bib-entry-journal ...                                           */
 ;*---------------------------------------------------------------------*/
 (markup-writer '&bib-entry-journal
                :action (lambda (n e)
-                         (skribe-eval (it (markup-body n)) e)))
+                         (evaluate-document (it (markup-body n)) e)))
 
 ;*---------------------------------------------------------------------*/
 ;*    &bib-entry-publisher ...                                         */
 ;*---------------------------------------------------------------------*/
 (markup-writer '&bib-entry-publisher
    :action (lambda (n e)
-	      (skribe-eval (markup-body n) e)))
+	      (evaluate-document (markup-body n) e)))
 
 ;*---------------------------------------------------------------------*/
 ;*    &the-index ...  @label the-index@                                */
@@ -400,7 +412,7 @@
 			       ;;:&skribe-eval-location loc
 			       :class "index-table"
 			       (make-sub-tables ie nc pref))))))
-		 (output (skribe-eval t e) e))))
+		 (output (evaluate-document t e) e))))
 
 ;*---------------------------------------------------------------------*/
 ;*    &the-index-header ...                                            */
@@ -418,7 +430,7 @@
    :before (lambda (n e)
              (let ((num (markup-option n :number)))
                (if (number? num)
-                   (skribe-eval
+                   (evaluate-document
                     (it (string-append (string-pad (number->string num) 3)
                                        ": "))
                     e))))
@@ -432,11 +444,5 @@
    :action (lambda (n e)
 	      (let ((o (markup-option n :offset))
 		    (n (markup-ident (handle-body (markup-body n)))))
-		 (skribe-eval (it (if (integer? o) (+ o n) n)) e))))
+		 (evaluate-document (it (if (integer? o) (+ o n) n)) e))))
 
-
-
-;;;; A VIRER (mais handle-body n'est pas défini)
-(markup-writer 'line-ref
-   :options '(:offset)
-   :action #f)
