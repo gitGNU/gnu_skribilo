@@ -2,6 +2,25 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-03-08 18:15:01 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-61
+
+    Summary:
+      evaluator: Modularized the evaluation process.
+    Revision:
+      skribilo--devo--1.2--patch-61
+
+    * src/guile/skribilo/evaluator.scm (evaluate-ast-from-port): New.  Based
+      on code formerly in `evaluate-document-from-port'.  Pass
+      `(current-module)' instead of `module' when invoking `%evaluate'.
+      (evaluate-document-from-port): Use it.
+
+    modified files:
+     ChangeLog src/guile/skribilo/evaluator.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-20
+
+
 2007-03-08 18:13:30 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-60
 
     Summary:
