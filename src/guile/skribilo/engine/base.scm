@@ -1,7 +1,7 @@
 ;;; base.scm  --  BASE Skribe engine
 ;;;
 ;;; Copyright 2003, 2004  Manuel Serrano
-;;; Copyright 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2006, 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -25,7 +25,7 @@
   :use-module (skribilo writer)
   :autoload   (skribilo output) (output)
   :use-module (skribilo evaluator)
-  :autoload   (skribilo package base) (color)
+  :autoload   (skribilo package base) (color it bold ref)
   :autoload   (skribilo utils keywords) (list-split)
   :autoload   (skribilo biblio template) (make-bib-entry-template/default
                                           output-bib-entry-template)

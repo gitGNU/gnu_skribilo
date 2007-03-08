@@ -2,6 +2,24 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-03-08 18:13:30 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-60
+
+    Summary:
+      `base' engine: Fixed autoload issue.
+    Revision:
+      skribilo--devo--1.2--patch-60
+
+    * src/guile/skribilo/engine/base.scm: Autoload `(skribilo package base)'
+      upon `it', `bold' and `ref' as well.
+
+    modified files:
+     ChangeLog src/guile/skribilo/engine/base.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-18
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-19
+
+
 2007-02-19 23:31:50 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-59
 
     Summary:
