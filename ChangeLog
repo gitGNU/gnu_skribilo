@@ -2,6 +2,25 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-03-08 18:17:42 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-64
+
+    Summary:
+      `diff' package: Fixes and hacking.
+    Revision:
+      skribilo--devo--1.2--patch-64
+
+    * src/guile/skribilo/package/diff.scm (add-unchanged): Fixed (hopefully).
+      (annotated-string-diff): New.
+      (make-diff-document): Moved code to `annotated-string-diff'.
+      (make-diff-document-from-files): Cleaned up.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/diff.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-23
+
+
 2007-03-08 18:16:51 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-63
 
     Summary:
