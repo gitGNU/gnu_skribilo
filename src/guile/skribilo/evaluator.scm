@@ -1,7 +1,7 @@
 ;;; eval.scm  --  Skribilo evaluator.
 ;;;
-;;; Copyright 2003-2004  Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
-;;; Copyright 2005,2006  Ludovic Courtès  <ludovic.courtes@laas.fr>
+;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
+;;; Copyright 2005, 2006, 2007  Ludovic Courtès  <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -21,7 +21,8 @@
 
 
 (define-module (skribilo evaluator)
-  :export (evaluate-document evaluate-document-from-port
+  :export (evaluate-ast-from-port
+           evaluate-document evaluate-document-from-port
 	   load-document include-document *load-options*)
   :autoload (skribilo parameters) (*verbose* *document-path*)
   :autoload (skribilo location)   (<location>)
@@ -73,7 +74,29 @@
     result))
 
 
+;;;
+;;; EVALUATE-AST-FROM-PORT
+;;;
+(define* (evaluate-ast-from-port port :key (reader (*document-reader*))
+                                           (module (*skribilo-user-module*)))
+  ;; Evaluate code from PORT in MODULE, reading it with READER, and return an
+  ;; AST (resulting from the last form evaluated).  The returned AST is
+  ;; unresolved and unverified.
+  (save-module-excursion
+   (lambda ()
+     (with-debug 10 'evaluate-ast-from-port
 
+       (set-current-module module)
+
+       (let loop ((exp (reader port))
+                  (result #f))
+         (debug-item "exp=" exp)
+         (if (eof-object? exp)
+             result
+             (loop (reader port)
+                   (%evaluate exp (current-module)))))))))
+
+
 ;;;
 ;;; EVALUATE-DOCUMENT
 ;;;
@@ -103,20 +126,9 @@
        (debug-item "e=" e)
        (if (not (engine? e))
 	   (skribe-error 'evaluate-document-from-port "cannot find engine" engine)
-           (save-module-excursion
-            (lambda ()
-              (with-debug 10 'evaluate-document-from-port
-                          (debug-item "exp=" exp))
-              (set-current-module (*skribilo-user-module*))
-
-              (let loop ((exp (reader port)))
-                (if (eof-object? exp)
-                    (evaluate-document (%evaluate exp module)
-                                       e :env env)
-                    (begin
-                      (evaluate-document (%evaluate exp module)
-                                         e :env env)
-                      (loop (reader port)))))))))))
+           (let ((ast (evaluate-ast-from-port port :reader reader
+                                              :module module)))
+             (evaluate-document ast engine :env env))))))
 
 
 
@@ -186,7 +198,7 @@
 ;;;
 (define* (include-document file :key (path (*document-path*))
 			             (reader (*document-reader*))
-                                     (module (*skribilo-user-module*)))
+                                     (module (current-module)))
   (unless (every string? path)
     (raise (condition (&invalid-argument-error (proc-name 'include-document)
 					       (argument  path)))))
