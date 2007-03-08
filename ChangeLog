@@ -2,6 +2,29 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-03-08 18:16:51 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-63
+
+    Summary:
+      Added an experimental `diff' package.
+    Revision:
+      skribilo--devo--1.2--patch-63
+
+    * src/guile/Makefile.am (dist_guilemodule_DATA): Added `differ.scm'.
+    
+    * src/guile/skribilo/package/Makefile.am (dist_guilemodule_DATA): Added
+      `diff.scm'.
+
+    new files:
+     src/guile/differ.scm src/guile/skribilo/package/diff.scm
+
+    modified files:
+     ChangeLog src/guile/Makefile.am
+     src/guile/skribilo/package/Makefile.am
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-22
+
+
 2007-03-08 18:15:59 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-62
 
     Summary:
