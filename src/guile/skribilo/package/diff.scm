@@ -35,7 +35,8 @@
   :use-module (skribilo package base)
   :use-module (skribilo utils syntax)
 
-  :export (make-diff-document-from-files))
+  :export (make-diff-document
+           make-diff-document-from-files))
 
 (fluid-set! current-reader %skribilo-module-reader)
 
@@ -57,10 +58,13 @@
 ;;;
 
 (define-markup (deletion :rest args)
-  (color :fg "red" "[deletion]"))
+  (color :fg "red" (symbol "middot")))
 
 (define-markup (insertion :rest args)
   (color :fg "green" args))
+
+(define-markup (replacement :rest args)
+  (color :fg "orange" args))
 
 (define-markup (unchanged :rest args)
   args)
@@ -108,45 +112,42 @@
   ;; Add information about unchanged regions to EDITS, a list returned by
   ;; `coalesce-edits'.  STR-LEN should be the length of the _target_ string,
   ;; i.e., the second argument of `diff:edits'.
-  (define %nop '(unchanged 0 0))
-  (define (strip-nop result)
-    (if (equal? (car result) %nop)
-        (cdr result)
-        result))
+  (define (coalesce-unchanged start end result)
+    (if (null? result)
+        `((unchanged ,start ,end))
+        (let ((prev-unchanged? (eq? (caar result) 'unchanged))
+              (prev-start      (cadr (car result)))
+              (prev-end        (caddr (car result))))
+          (if prev-unchanged?
+              (cons `(unchanged ,prev-start ,end)
+                    (cdr result))
+              (cons `(unchanged ,start ,end)
+                    result)))))
 
   (let loop ((edits   edits)
-             (result  (list (list 'unchanged 0 0)))
+             (result  '())
              (str-pos 0))
     (if (null? edits)
-        (strip-nop
-         (reverse! (if (< str-pos (- str-len 1))
-                       (cons (list 'unchanged str-pos (- str-len 1))
-                             result)
-                       result)))
+        (reverse! (if (< str-pos (- str-len 1))
+                      (cons (list 'unchanged str-pos (- str-len 1))
+                            result)
+                      result))
         (let* ((change (car edits))
                (kind  (car change))
                (start (cadr change))
-               (end   (caddr change))
-
-               (prev-unchanged? (eq? (caar result) 'unchanged))
-               (prev-start      (cadr (car result)))
-               (prev-end        (caddr (car result))))
+               (end   (caddr change)))
 
           (loop (cdr edits)
                 (if (memq kind '(insertion replacement))
-                    (if (> start (+ 1 prev-end))
-                        (if prev-unchanged?
-                            (cons* change
-                                   `(unchanged ,prev-start
-                                               ,(- start 1))
-                                   (cdr result))
-                            (cons* change
-                                   `(unchanged ,(+ 1 prev-end)
-                                               ,(- start 1))
-                                   result))
+                    (if (> start str-pos)
+                        (cons change
+                              (coalesce-unchanged str-pos (- start 1)
+                                                  result))
                         (cons change result))
                     (cons change result))
-                (+ end 1))))))
+                (if (eq? kind 'deletion)
+                    str-pos ;; deletion doesn't change string position
+                    (+ end 1)))))))
 
 (define (string-diff-sequences str1 str2)
   ;; Return a "diff sequence" between STR1 and STR2.  The diff sequence is
@@ -173,6 +174,27 @@
     toc
     index &index-entry &the-index &the-index-header))
 
+(define (annotated-string-diff str1 str2)
+  ;; Return a list (actually an AST) denoting the differences between STR1
+  ;; and STR2.  The returned text is actually that of STR2 augmented with
+  ;; `insertion', `deletion', `replacement', and `unchanged' markup.
+  (reverse!
+   (fold (lambda (edit result)
+           (let ((start (cadr edit))
+                 (end   (+ 1 (caddr edit))))
+             (cons (case (car edit)
+                     ((insertion)
+                      (insertion (substring str2 start end)))
+                     ((deletion)
+                      (deletion  (substring str1 start end)))
+                     ((replacement)
+                      (replacement (substring str2 start end)))
+                     ((unchanged)
+                      (unchanged (substring str2 start end))))
+                   result)))
+         '()
+         (string-diff-sequences str1 str2))))
+
 (define (make-diff-document ast1 ast2)
   ;; Return a document based on AST2 that highlights differences between AST1
   ;; and AST2, enclosing unchanged parts in `unchanged' markups, etc.
@@ -181,22 +203,7 @@
     ;;(format (current-error-port) "diff: ~a ~a~%" ast1 ast2)
     (cond ((string? ast2)
            (if (string? ast1)
-               (reverse!
-                (fold (lambda (edit result)
-                        (let ((start (cadr edit))
-                              (end   (+ 1 (caddr edit))))
-                          (cons (case (car edit)
-                                  ((insertion)
-                                   (insertion (substring ast2 start end)))
-                                  ((deletion)
-                                   (deletion  (substring ast1 start end)))
-                                  ((replacement)
-                                   (replacement (substring ast2 start end)))
-                                  ((unchanged)
-                                   (unchanged (substring ast2 start end))))
-                                result)))
-                      '()
-                      (string-diff-sequences ast1 ast2)))
+               (annotated-string-diff ast1 ast2)
                (insertion ast2)))
 
           ((document? ast2)
@@ -283,21 +290,17 @@
            (evaluate-ast-from-port (open-input-file old-file)
                                    :reader reader
                                    :module (make-run-time-module))))
-        (~~ (skribe-message "diff: first document loaded"))
+        (~~ (skribe-message "diff: first document loaded~%"))
         (ast2
          (parameterize ((*bib-table* (make-bib-table 'doc-2)))
            (evaluate-ast-from-port (open-input-file new-file)
                                    :reader reader
                                    :module (make-run-time-module))))
-        (%% (skribe-message "diff: second document loaded")))
+        (%% (skribe-message "diff: second document loaded~%")))
 
     (resolve! ast1 engine env)
     (resolve! ast2 engine env)
-    (let ((diff (make-diff-document ast1 ast2)))
-      (format (current-error-port) "diff-doc: ~a ~a~%"
-              diff (document? diff))
-      diff)))
-
+    (make-diff-document ast1 ast2)))
 
 ;;; diff.scm ends here
 
