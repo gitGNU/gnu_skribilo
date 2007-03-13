@@ -166,7 +166,8 @@
 
 (define %undiffable-markups
   ;; List of markups to not diff.
-  '(ref url-ref bib-ref bib-ref+ line-ref unref
+  '(ref url-ref bib-ref bib-ref+ line-ref unref numref
+    eq     ;; XXX: not supported because of the `eq-evaluate' thing
     figref ;; non-standard
     mark
     image symbol lout-illustration
@@ -197,7 +198,12 @@
 
 (define (make-diff-document ast1 ast2)
   ;; Return a document based on AST2 that highlights differences between AST1
-  ;; and AST2, enclosing unchanged parts in `unchanged' markups, etc.
+  ;; and AST2, enclosing unchanged parts in `unchanged' markups, etc.  AST2
+  ;; is used as the "reference" tree, thus changes from AST1 to AST2 are
+  ;; shown in the resulting document.
+  (define (undiffable? kind)
+    (memq kind %undiffable-markups))
+
   (let loop ((ast1 ast1)
              (ast2 ast2))
     ;;(format (current-error-port) "diff: ~a ~a~%" ast1 ast2)
@@ -240,10 +246,13 @@
                   (ident   ident)
                   (class   class)
                   (options opts)
-                  (body (loop (if (markup? ast1)
-                                  (markup-body ast1)
-                                  ast1)
-                              body)))))
+                  (body (if (undiffable? kind)
+                            body
+                            (loop (if (and (container? ast1)
+                                           (is-markup? ast1 kind))
+                                      (markup-body ast1)
+                                      ast1)
+                                  body))))))
 
           ((markup? ast2)
            (let ((kind  (markup-markup ast2))
@@ -256,19 +265,31 @@
                   (ident   ident)
                   (class   class)
                   (options opts)
-                  (body (if (memq kind %undiffable-markups)
+                  (body (if (undiffable? kind)
                             body
-                            (loop (if (markup? ast1)
+                            (loop (if (is-markup? ast1 kind)
                                       (markup-body ast1)
                                       ast1)
                                   body))))))
 
           ((list? ast2)
            (if (list? ast1)
-               (map loop ast1 ast2)
+               (let liip ((ast1 ast1)
+                          (ast2 ast2)
+                          (result '()))
+                 (if (null? ast2)
+                     (reverse! result)
+                     (liip (if (null? ast1) ast1 (cdr ast1))
+                           (cdr ast2)
+                           (cons (loop (if (null? ast1) #f (car ast1))
+                                       (car ast2))
+                                 result))))
                (map (lambda (x)
                       (loop ast1 x))
                     ast2)))
+
+          ((equal? ast1 ast2)
+           (unchanged ast1))
 
           (else
            (insertion ast2)))))
