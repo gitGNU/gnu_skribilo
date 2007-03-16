@@ -2,6 +2,28 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-03-16 17:10:38 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-66
+
+    Summary:
+      `diff' package: Various fixes.
+    Revision:
+      skribilo--devo--1.2--patch-66
+
+    * src/guile/skribilo/package/diff.scm (%undiffable-markups): Added
+      `numref' and `eq'.
+      (make-diff-document)[undiffable?]: New.
+      For containers, check whether they are undiffable.
+      For lists, iterate until AST2 is empty, not until the smallest is
+      empty.
+      Added an `(equal? ast1 ast2)' cond clause.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/diff.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-25
+
+
 2007-03-16 17:09:41 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-65
 
     Summary:
