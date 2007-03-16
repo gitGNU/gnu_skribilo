@@ -2,6 +2,28 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-03-16 17:11:30 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-67
+
+    Summary:
+      `eq' package: Added `eq:set'.
+    Revision:
+      skribilo--devo--1.2--patch-67
+
+    * src/guile/skribilo/package/eq.scm: Use `(srfi srfi-1)'.
+      (%operators): Added `set'.
+      (eq:set): New.  New writer.
+    
+    * src/guile/skribilo/package/eq/lout.scm: Use `srfi-1'.
+      (eq:set): New writer.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/eq.scm
+     src/guile/skribilo/package/eq/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-26
+
+
 2007-03-16 17:10:38 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-66
 
     Summary:
