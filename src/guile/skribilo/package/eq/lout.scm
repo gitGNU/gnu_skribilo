@@ -1,6 +1,6 @@
 ;;; lout.scm  --  Lout implementation of the `eq' package.
 ;;;
-;;; Copyright 2005, 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2005, 2006, 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -27,6 +27,7 @@
   :use-module (skribilo lib)
   :use-module (skribilo utils syntax)
   :use-module (skribilo utils keywords) ;; `the-options', etc.
+  :use-module (srfi srfi-1)
   :use-module (ice-9 optargs))
 
 (fluid-set! current-reader %skribilo-module-reader)
@@ -292,6 +293,28 @@
 		     (output sub engine)
 		     (display " } ")))
 	       (display " } "))))
+
+
+;;;
+;;; Sets.
+;;;
+
+(markup-writer 'eq:set (find-engine 'lout)
+   ;; Take the elements of the set and enclose them into braces.
+   :action (lambda (node engine)
+             (define (printable elem)
+               (if (eq? elem '...)
+                   (symbol "ellipsis")
+                   elem))
+
+             (display " brmatrix { ")
+             (pair-for-each (lambda (pair)
+                              (let ((elem (printable (car pair))))
+                                (output elem engine)
+                                (if (not (null? (cdr pair)))
+                                    (output ", " engine))))
+                            (markup-body node))
+             (display " } ")))
 
 
 ;;; arch-tag: 2a1410e5-977e-4600-b781-3d57f4409b35

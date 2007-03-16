@@ -1,6 +1,6 @@
 ;;; eq.scm  --  An equation formatting package.
 ;;;
-;;; Copyright 2005, 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2005, 2006, 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -30,6 +30,7 @@
   :autoload   (skribilo package base) (it symbol sub sup)
   :autoload   (skribilo engine lout) (lout-illustration)
 
+  :use-module (srfi srfi-1)
   :use-module (srfi srfi-39)
   :use-module (ice-9 optargs))
 
@@ -61,7 +62,7 @@
 
 (define %operators
   '(/ * + - = != ~= < > <= >= sqrt expt sum product script
-    in notin apply limit combinations))
+    in notin apply limit combinations set))
 
 (define %symbols
   ;; A set of symbols that are automatically recognized within an `eq' quoted
@@ -330,6 +331,13 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
                   ,@(the-options opts :ident)))
        (body (the-body opts))))
 
+(define-markup (eq:set :rest opts :key (ident #f))
+  (new markup
+       (markup 'eq:set)
+       (ident (or ident (symbol->string (gensym "eq:set"))))
+       (options '())
+       (body (the-body opts))))
+
 
 ;;;
 ;;; Text-based rendering.
@@ -532,6 +540,23 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
                (display ", ")
                (output among engine)
                (display ")"))))
+
+(markup-writer 'eq:set (find-engine 'base)
+   ;; Take the elements of the set and enclose them into braces.
+   :action (lambda (node engine)
+             (define (printable elem)
+               (if (eq? elem '...)
+                   (symbol "ellipsis")
+                   elem))
+
+             (output "{ " engine)
+             (pair-for-each (lambda (pair)
+                              (let ((elem (printable (car pair))))
+                                (output elem engine)
+                                (if (not (null? (cdr pair)))
+                                    (output ", " engine))))
+                            (markup-body node))
+             (output " }" engine)))
 
 
 
