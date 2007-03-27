@@ -1567,11 +1567,11 @@
    :before (lambda (n e)
 	     (let* ((w (markup-option n :width))
 		    (fg (markup-option n :fg)))
-	       (printf "{ { ~a } @Color { " (lout-color-specification fg))))
+               ;; Skip a line to avoid hitting Basser Lout's length limit.
+	       (printf "{ { ~a }\n@Color { " (lout-color-specification fg))))
 
    :after (lambda (n e)
-            ;; Skip a line to avoid hitting Basser Lout's length limit.
-	    (display " } }\n")))
+	    (display " } }")))
 
 ;*---------------------------------------------------------------------*/
 ;*    frame ...                                                        */
