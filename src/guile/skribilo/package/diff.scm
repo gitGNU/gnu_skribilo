@@ -21,6 +21,7 @@
 (define-module (skribilo package diff)
   :use-module (differ)
   :use-module (srfi srfi-1)
+  :use-module (srfi srfi-14)
   :use-module (srfi srfi-39)
   :use-module (ice-9 optargs)
 
@@ -197,19 +198,45 @@
   ;; Return a list (actually an AST) denoting the differences between STR1
   ;; and STR2.  The returned text is actually that of STR2 augmented with
   ;; `insertion', `deletion', `replacement', and `unchanged' markup.
+
+  (define (space-preserving-substring str start end)
+    ;; Return the substring of STR, possibly inserting unbreakable spaces at
+    ;; the beginning/end if STR starts/ends in whitespaces.
+    (let ((len (- end start)))
+      (if (> len 0)
+          (let* ((lead (string-ref str start))
+                 (lead* (if (char-set-contains? char-set:whitespace
+                                                lead)
+                            (~)
+                            (string lead))))
+            (if (> len 1)
+                (let* ((trail (string-ref str (- end 1)))
+                       (trail* (if (char-set-contains? char-set:whitespace
+                                                       trail)
+                                   (~)
+                                   (string trail))))
+                  (list lead* (substring str (+ start 1) (- end 1))
+                        trail*))
+                (list lead* (substring str (+ start 1) end))))
+          "")))
+
   (reverse!
    (fold (lambda (edit result)
            (let ((start (cadr edit))
                  (end   (+ 1 (caddr edit))))
              (cons (case (car edit)
                      ((insertion)
-                      (insertion (substring str2 start end)))
+                      (insertion (space-preserving-substring str2 start
+                                                             end)))
                      ((deletion)
-                      (deletion  (substring str1 start end)))
+                      (deletion  (space-preserving-substring str1 start
+                                                             end)))
                      ((replacement)
-                      (replacement (substring str2 start end)))
+                      (replacement (space-preserving-substring str2 start
+                                                               end)))
                      ((unchanged)
-                      (unchanged (substring str2 start end))))
+                      (unchanged (space-preserving-substring str2 start
+                                                             end))))
                    result)))
          '()
          (string-diff-sequences str1 str2))))
