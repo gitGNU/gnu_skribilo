@@ -2,6 +2,24 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-03-28 08:48:01 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-70
+
+    Summary:
+      `diff' package: Compute diffs on selected options.
+    Revision:
+      skribilo--devo--1.2--patch-70
+
+    * src/guile/skribilo/package/diff.scm (%diffable-options): New.
+      (make-diff-document)[make-diff-options]: New.
+      Use it.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/diff.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-29
+
+
 2007-03-28 08:45:48 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-69
 
     Summary:

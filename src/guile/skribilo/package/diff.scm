@@ -189,6 +189,10 @@
     toc
     index &index-entry &the-index &the-index-header))
 
+(define %diffable-options
+  ;; List of diffable options.
+  '(:title :text))
+
 (define (annotated-string-diff str1 str2)
   ;; Return a list (actually an AST) denoting the differences between STR1
   ;; and STR2.  The returned text is actually that of STR2 augmented with
@@ -217,6 +221,18 @@
   ;; shown in the resulting document.
   (define (undiffable? kind)
     (memq kind %undiffable-markups))
+
+  (define (make-diff-options m1 m2 loop)
+    ;; Return a list of options based on that of markup M2.
+    (map (lambda (opt+val)
+           (let ((opt (car opt+val)))
+             (if (memq opt %diffable-options)
+                 (cons opt
+                       (loop (markup-option m1 opt)
+                             (cdr opt+val)))
+                 opt+val)))
+         (markup-options m2)))
+
 
   (let loop ((ast1 ast1)
              (ast2 ast2))
@@ -252,14 +268,16 @@
           ((container? ast2)
            (let ((kind  (markup-markup ast2))
                  (ident (markup-ident ast2))
-                 (opts  (markup-options ast2))
                  (class (markup-class ast2))
                  (body  (markup-body ast2)))
              (new container
                   (markup  kind)
                   (ident   ident)
                   (class   class)
-                  (options opts)
+                  (options (if (or (undiffable? kind)
+                                   (not (container? ast1)))
+                               (markup-options ast2)
+                               (make-diff-options ast1 ast2 loop)))
                   (body (if (undiffable? kind)
                             body
                             (loop (if (and (container? ast1)
@@ -271,14 +289,16 @@
           ((markup? ast2)
            (let ((kind  (markup-markup ast2))
                  (ident (markup-ident ast2))
-                 (opts  (markup-options ast2))
                  (class (markup-class ast2))
                  (body  (markup-body ast2)))
              (new markup
                   (markup  kind)
                   (ident   ident)
                   (class   class)
-                  (options opts)
+                  (options (if (or (undiffable? kind)
+                                   (not (markup? ast1)))
+                               (markup-options ast2)
+                               (make-diff-options ast1 ast2 loop)))
                   (body (if (undiffable? kind)
                             body
                             (loop (if (is-markup? ast1 kind)
