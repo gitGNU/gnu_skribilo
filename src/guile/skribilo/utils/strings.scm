@@ -111,7 +111,7 @@
 
 (define (%make-general-string-replace lst)
   ;; The general version
-  (let ((chars (make-hash-table)))
+  (let ((chars (make-hash-table 200)))
 
     ;; Setup a hash table equivalent to LST.
     (for-each (lambda (chr)
@@ -124,8 +124,8 @@
     (lambda (str)
       (let ((out (open-output-string)))
 	(string-for-each (lambda (ch)
-			   (let ((res (hashq-ref chars ch #f)))
-			     (display (if res res ch) out)))
+                           (display (or (hashq-ref chars ch #f) ch)
+                                    out))
 			 str)
 	(get-output-string out)))))
 
