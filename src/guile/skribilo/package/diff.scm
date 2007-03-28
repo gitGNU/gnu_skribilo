@@ -145,7 +145,7 @@
              (result  '())
              (str-pos 0))
     (if (null? edits)
-        (reverse! (if (< str-pos (- str-len 1))
+        (reverse! (if (< str-pos str-len)
                       (cons (list 'unchanged str-pos (- str-len 1))
                             result)
                       result))

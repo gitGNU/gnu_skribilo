@@ -2,6 +2,25 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-03-28 09:26:08 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-77
+
+    Summary:
+      `diff' package: Fixed off-by-one in string diff.
+    Revision:
+      skribilo--devo--1.2--patch-77
+
+    * src/guile/skribilo/package/diff.scm (add-unchanged): When `(null?
+      edits)', check whether `(< str-pos str-len)' (was `(< str-pos (-
+      str-len 1))').  This fixes off-by-one when diffing strings (last
+      character didn't appear).
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/diff.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-36
+
+
 2007-03-28 09:25:20 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-76
 
     Summary:
