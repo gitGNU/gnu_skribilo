@@ -984,6 +984,12 @@
 ;*---------------------------------------------------------------------*/
 (markup-writer '~ :before "~" :action #f)
 
+;*---------------------------------------------------------------------*/
+;*    breakable-space ...                                              */
+;*---------------------------------------------------------------------*/
+(markup-writer 'breakable-space :before " &1s\n" :action #f)
+
+
 (define (lout-page-orientation orientation)
   ;; Return a string representing the Lout page orientation name for symbol
   ;; `orientation'.
