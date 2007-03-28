@@ -2,6 +2,31 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-03-28 09:23:47 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-74
+
+    Summary:
+      `base' package: Introduced `breakable-space'.
+    Revision:
+      skribilo--devo--1.2--patch-74
+
+    * src/guile/skribilo/engine/base.scm (breakable-space): New writer.
+    
+    * src/guile/skribilo/engine/latex.scm (breakable-space): New writer.
+    
+    * src/guile/skribilo/engine/lout.scm (breakable-space): New writer.
+    
+    * src/guile/skribilo/package/base.scm (breakable-space): New markup.
+
+    modified files:
+     ChangeLog src/guile/skribilo/engine/base.scm
+     src/guile/skribilo/engine/latex.scm
+     src/guile/skribilo/engine/lout.scm
+     src/guile/skribilo/package/base.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-33
+
+
 2007-03-28 09:23:01 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-73
 
     Summary:
