@@ -2,6 +2,24 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-03-28 09:23:01 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-73
+
+    Summary:
+      `lout' engine: Fixed space handling with `color'.
+    Revision:
+      skribilo--devo--1.2--patch-73
+
+    * src/guile/skribilo/engine/lout.scm (color): Insert the linebreak
+      between the left parameter of `@Color' and `@Color' itself, so as to
+      never insert additional spaces.
+
+    modified files:
+     ChangeLog src/guile/skribilo/engine/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-32
+
+
 2007-03-28 09:22:14 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-72
 
     Summary:
