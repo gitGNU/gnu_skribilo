@@ -2,6 +2,24 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-03-28 09:21:28 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-71
+
+    Summary:
+      `diff' package: Preserve space around diff'd strings.
+    Revision:
+      skribilo--devo--1.2--patch-71
+
+    * src/guile/skribilo/package/diff.scm: Use `srfi-14'.
+      (annotated-string-diff)[space-preserving-substring]: New.
+      Use it.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/diff.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-30
+
+
 2007-03-28 08:48:01 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-70
 
     Summary:
