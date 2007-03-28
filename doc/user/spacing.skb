@@ -1,0 +1,36 @@
+;;; spacing.skb  --  Spacing.
+;;;
+;;; Copyright 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;;
+;;;
+;;; This program is free software; you can redistribute it and/or modify
+;;; it under the terms of the GNU General Public License as published by
+;;; the Free Software Foundation; either version 2 of the License, or
+;;; (at your option) any later version.
+;;;
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;;
+;;; You should have received a copy of the GNU General Public License
+;;; along with this program; if not, write to the Free Software
+;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+;;; USA.
+
+(section :title [Spacing] :file #t
+   
+   (p [By default, the spacing rules are the same as those of TeX/LaTeX,
+for instance: subsequent white spaces in the input text are coalesced
+into a single space in the output.  Language-dependent spacing rules
+(e.g., for punctuation) are to be handled by the engine.  This frees you
+from having to remember all the spacing details.])
+   
+   (p [Additionally, the following markups allow you to produce explicit
+unbreakable and breakable space, respectively:])
+
+   (doc-markup '~ '() :common-args '((:class "The node class.")))
+
+   (doc-markup 'breakable-space '()))
+	
+;;; arch-tag: a6a542b9-6bf0-406d-8cf1-3cfffbdfa40d
