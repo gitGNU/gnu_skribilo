@@ -26,8 +26,10 @@
 
   :use-module (skribilo ast)
   :use-module (skribilo lib)
+  :use-module (skribilo engine)
+  :use-module (skribilo writer)
+  :autoload   (skribilo output)        (output)
   :autoload   (skribilo reader)        (*document-reader*)
-  :autoload   (skribilo engine)        (*current-engine*)
   :autoload   (skribilo module)        (make-run-time-module)
   :autoload   (skribilo resolve)       (resolve!)
   :autoload   (skribilo evaluator)     (evaluate-ast-from-port)
@@ -58,16 +60,28 @@
 ;;;
 
 (define-markup (deletion :rest args)
-  (color :fg "red" (symbol "middot")))
+  (new markup
+       (markup 'diff:deletion)
+       (ident  (gensym "diff:deletion"))
+       (body   args)))
 
 (define-markup (insertion :rest args)
-  (color :fg "green" args))
+  (new markup
+       (markup 'diff:insertion)
+       (ident  (gensym "diff:insertion"))
+       (body   args)))
 
 (define-markup (replacement :rest args)
-  (color :fg "orange" args))
+  (new markup
+       (markup 'diff:replacement)
+       (ident  (gensym "diff:replacement"))
+       (body   args)))
 
 (define-markup (unchanged :rest args)
-  args)
+  (new markup
+       (markup 'diff:unchanged)
+       (ident  (gensym "diff:unchanged"))
+       (body   args)))
 
 
 ;;;
@@ -322,6 +336,33 @@
     (resolve! ast1 engine env)
     (resolve! ast2 engine env)
     (make-diff-document ast1 ast2)))
+
+
+
+;;;
+;;; Default writers.
+;;;
+
+(markup-writer 'diff:deletion (find-engine 'base)
+  :action (lambda (n e)
+            ;;(color :fg "red" (symbol "middot"))
+
+            ;; Output nothing by default so that the document remains
+            ;; readable.
+            #f))
+
+(markup-writer 'diff:insertion (find-engine 'base)
+  :action (lambda (n e)
+            (output (color :fg "green" (markup-body n)) e)))
+
+(markup-writer 'diff:replacement (find-engine 'base)
+  :action (lambda (n e)
+            (output (color :fg "orange" (markup-body n)) e)))
+
+(markup-writer 'diff:unchanged (find-engine 'base)
+  :action (lambda (n e)
+            (output (markup-body n) e)))
+
 
 ;;; diff.scm ends here
 

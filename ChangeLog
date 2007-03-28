@@ -2,6 +2,24 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-03-28 08:44:53 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-68
+
+    Summary:
+      `diff' package: Use actual markups and writers.
+    Revision:
+      skribilo--devo--1.2--patch-68
+
+    * src/guile/skribilo/package/diff.scm: Use `output' and `writer'.
+      (deletion, insertion, replacement, unchanged): Return a specific markup
+      object.  Add the corresponding writers for the `base' engine.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/diff.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-27
+
+
 2007-03-16 17:11:30 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-67
 
     Summary:
