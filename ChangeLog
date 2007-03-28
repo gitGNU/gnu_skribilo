@@ -2,6 +2,25 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-03-28 09:25:20 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-76
+
+    Summary:
+      `diff' package: Use `breakable-space' instead of `~' in `annotated-string-diff'.
+    Revision:
+      skribilo--devo--1.2--patch-76
+
+    * src/guile/skribilo/package/diff.scm: Autoload `(skribilo utils
+      keywords)'.
+      (annotated-string-diff)[space-preserving-substring]: Use
+      `breakable-space' instead of `~'.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/diff.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-35
+
+
 2007-03-28 09:24:33 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-75
 
     Summary:

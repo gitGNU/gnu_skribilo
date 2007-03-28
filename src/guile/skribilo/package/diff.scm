@@ -37,6 +37,7 @@
   :autoload   (skribilo biblio)        (*bib-table* make-bib-table)
   :use-module (skribilo package base)
   :use-module (skribilo utils syntax)
+  :autoload   (skribilo utils keywords) (the-options the-body)
 
   :export (make-diff-document
            make-diff-document-from-files))
@@ -83,6 +84,7 @@
        (markup 'diff:unchanged)
        (ident  (gensym "diff:unchanged"))
        (body   args)))
+
 
 
 ;;;
@@ -207,13 +209,13 @@
           (let* ((lead (string-ref str start))
                  (lead* (if (char-set-contains? char-set:whitespace
                                                 lead)
-                            (~)
+                            (breakable-space)
                             (string lead))))
             (if (> len 1)
                 (let* ((trail (string-ref str (- end 1)))
                        (trail* (if (char-set-contains? char-set:whitespace
                                                        trail)
-                                   (~)
+                                   (breakable-space)
                                    (string trail))))
                   (list lead* (substring str (+ start 1) (- end 1))
                         trail*))
