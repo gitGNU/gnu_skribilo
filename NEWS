@@ -4,7 +4,8 @@ New in Skribilo 1.2 (compared to Skribe 1.2d)
 
   * New package `eq' for equation formatting.
 
-  * New markups: `~', `numref', `!lout', `lout-illustration'.
+  * New markups: `~', `breakable-space', `numref',
+    `!lout', `lout-illustration'.
 
   * Extended markups:
 
