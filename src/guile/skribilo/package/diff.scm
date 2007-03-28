@@ -333,6 +333,12 @@
                                       ast1)
                                   body))))))
 
+          ((command? ast2)
+           ;; Leave it untouched.
+           (new command
+                (fmt  (command-fmt ast2))
+                (body (command-body ast2))))
+
           ((list? ast2)
            (if (list? ast1)
                (let liip ((ast1 ast1)

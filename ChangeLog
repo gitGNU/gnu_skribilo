@@ -2,6 +2,23 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-03-28 09:22:14 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-72
+
+    Summary:
+      `diff' package: Handle commands appropriately.
+    Revision:
+      skribilo--devo--1.2--patch-72
+
+    * src/guile/skribilo/package/diff.scm (make-diff-document): Don't touch
+      commands.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/diff.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-31
+
+
 2007-03-28 09:21:28 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-71
 
     Summary:
