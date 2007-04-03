@@ -24,7 +24,6 @@
   :use-module ((skribilo utils syntax) :select (%skribilo-module-reader))
   :export (<location> location? ast-location
 	   location-file location-line location-column
-           location-pos
            invocation-location))
 
 ;;; Author:  Ludovic Courtès
@@ -49,10 +48,6 @@
 
 (define (location? obj)
   (is-a? obj <location>))
-
-(define (location-pos loc)
-  ;; Kept for compatibility with Skribe.  XXX: Move to `compat.scm'.
-  0)
 
 (define (ast-location obj)
   (let ((loc (slot-ref obj 'loc)))

@@ -1,6 +1,6 @@
 ;;; compat.scm  --  Skribe compatibility module.
 ;;;
-;;; Copyright 2005, 2006  Ludovic Courtès  <ludovic.courtes@laas.fr>
+;;; Copyright 2005, 2006, 2007  Ludovic Courtès  <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -24,6 +24,7 @@
   :use-module (skribilo utils files)
   :use-module (skribilo parameters)
   :use-module (skribilo evaluator)
+  :use-module (skribilo location)
   :use-module (srfi srfi-1)
   :autoload   (srfi srfi-13)       (string-rindex)
   :use-module (srfi srfi-34)
@@ -178,6 +179,14 @@
       (set! %skribe-reader (make-reader 'skribe)))
   (%skribe-reader port))
 
+
+;;;
+;;; Location.
+;;;
+
+(define-public (location-pos loc)  0)
+
+(define-public skribe-eval-location invocation-location)
 
 
 ;;;
