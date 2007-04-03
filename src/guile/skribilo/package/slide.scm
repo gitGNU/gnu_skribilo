@@ -1,7 +1,7 @@
 ;;; slide.scm  --  Overhead transparencies.
 ;;;
 ;;; Copyright 2003, 2004  Manuel Serrano
-;;; Copyright 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2006, 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -68,6 +68,7 @@
 			  (symbol->string (gensym "slide"))
 			  ident))
 	       (class class)
+               (loc   &invocation-location)
 	       (required-options '(:title :number :toc))
 	       (options `((:number
 			   ,(cond
@@ -145,6 +146,7 @@
 ;*---------------------------------------------------------------------*/
 (define-markup (slide-pause)
    (new markup
+      (loc    &invocation-location)
       (markup 'slide-pause)))
 
 ;*---------------------------------------------------------------------*/
@@ -153,6 +155,7 @@
 (define-markup (slide-vspace #!rest opt #!key (unit 'cm))
    (new markup
       (markup 'slide-vspace)
+      (loc &invocation-location)
       (options `((:unit ,unit) ,@(the-options opt :unit)))
       (body (the-body opt))))
 
@@ -174,7 +177,7 @@
 		     command)
        (new markup
 	  (markup 'slide-embed)
-	  (loc &skribe-eval-location)
+          (loc &invocation-location)
 	  (required-options '(:alt))
 	  (options `((:geometry-opt ,geometry-opt)
 		     (:alt ,alt)
@@ -191,6 +194,7 @@
 	  (markup 'slide-record)
 	  (ident ident)
 	  (class class)
+          (loc   &invocation-location)
 	  (options `((:play ,play) ,@(the-options opt)))
 	  (body (the-body opt)))))
 
@@ -204,6 +208,7 @@
 	  (markup 'slide-play)
 	  (ident ident)
 	  (class class)
+          (loc   &invocation-location)
 	  (options `((:color ,(if color (skribe-use-color! color) #f))
 		     ,@(the-options opt :color)))
 	  (body (the-body opt)))))
@@ -223,6 +228,7 @@
 	 (markup 'slide-play*)
 	 (ident ident)
 	 (class class)
+         (loc   &invocation-location)
 	 (options `((:color ,(if color (skribe-use-color! color) #f))
 		    (:scolor ,(if color (skribe-use-color! scolor) #f))
 		    ,@(the-options opt :color :scolor)))
@@ -250,6 +256,7 @@
       (required-options '(:title :outline?))
       (ident (or ident (symbol->string (gensym "slide-topic"))))
       (class class)
+      (loc   &invocation-location)
       (options `((:outline? ,outline?)
                  ,@(the-options opt :outline? :class)))
       (body (the-body opt))))
@@ -265,6 +272,7 @@
       (required-options '(:title :outline?))
       (ident (or ident (symbol->string (gensym "slide-subtopic"))))
       (class class)
+      (loc   &invocation-location)
       (options `((:outline? ,outline?)
                  ,@(the-options opt :outline? :class)))
       (body (the-body opt))))

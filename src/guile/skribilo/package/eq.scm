@@ -203,6 +203,7 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
        (markup 'eq-display)
        (ident (or ident (symbol->string (gensym "eq-display"))))
        (class class)
+       (loc   &invocation-location)
        (options (the-options opts :ident :class))
        (body (the-body opts))))
 
@@ -214,6 +215,7 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
        (markup 'eq)
        (ident (or ident (symbol->string (gensym "eq"))))
        (class class)
+       (loc   &invocation-location)
        (options `((:div-style ,div-style) (:align-with ,align-with)
                   (:mul-style ,mul-style)
                   ,@(the-options opts

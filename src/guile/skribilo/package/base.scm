@@ -1,7 +1,7 @@
 ;;; base.scm -- The base markup package of Skribe/Skribilo.
 ;;;
 ;;; Copyright 2003, 2004  Manuel Serrano
-;;; Copyright 2005, 2006  Ludovic Courtès  <ludovic.courtes@laas.fr>
+;;; Copyright 2005, 2006, 2007  Ludovic Courtès  <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -31,6 +31,7 @@
   :autoload   (srfi srfi-1)        (every any filter)
   :autoload   (skribilo evaluator) (include-document)
   :autoload   (skribilo engine)    (engine?)
+  :autoload   (skribilo parameters)(*document-path*)
 
   ;; optional ``sub-packages''
   :autoload   (skribilo biblio)    (*bib-table* resolve-bib
@@ -80,6 +81,7 @@
 		 (ast->string title)
 		 (symbol->string (gensym "document"))))
       (class class)
+      (loc   &invocation-location)
       (required-options '(:title :author :ending))
       (options (the-options opts :ident :class :env))
       (body (the-body opts))
@@ -125,6 +127,7 @@
 	  (markup 'author)
 	  (ident (or ident (symbol->string (gensym "author"))))
 	  (class class)
+          (loc   &invocation-location)
 	  (required-options '(:name :title :affiliation :email :url :address :phone :photo :align))
 	  (options `((:name ,name)
 		     (:align ,align)
@@ -145,6 +148,7 @@
 	 (markup 'toc)
 	 (ident (or ident (symbol->string (gensym "toc"))))
 	 (class class)
+         (loc   &invocation-location)
 	 (required-options '())
 	 (options `((:chapter ,chapter)
 		    (:section ,section)
@@ -154,6 +158,7 @@
 	 (body (cond
 		  ((null? body)
 		   (new unresolved
+                      (loc   &invocation-location)
 		      (proc (lambda (n e env)
 			       (handle
 				(resolve-search-parent n env document?))))))
@@ -185,6 +190,7 @@
       (markup 'chapter)
       (ident (or ident (symbol->string (gensym "chapter"))))
       (class class)
+      (loc   &invocation-location)
       (required-options '(:title :file :toc :number))
       (options `((:toc ,toc)
 		 (:number ,(and number
@@ -225,6 +231,7 @@
       (markup 'section)
       (ident (or ident (symbol->string (gensym "section"))))
       (class class)
+      (loc   &invocation-location)
       (required-options '(:title :toc :file :toc :number))
       (options `((:number ,(section-number number 'section))
 		 (:toc ,toc)
@@ -252,6 +259,7 @@
       (markup 'subsection)
       (ident (or ident (symbol->string (gensym "subsection"))))
       (class class)
+      (loc   &invocation-location)
       (required-options '(:title :toc :file :number))
       (options `((:number ,(section-number number 'subsection))
 		 (:toc ,toc)
@@ -276,6 +284,7 @@
       (markup 'subsubsection)
       (ident (or ident (symbol->string (gensym "subsubsection"))))
       (class class)
+      (loc   &invocation-location)
       (required-options '(:title :toc :number :file))
       (options `((:number ,(section-number number 'subsubsection))
 		 (:toc ,toc)
@@ -296,6 +305,7 @@
      (markup '~)
      (ident (symbol->string (gensym "~")))
      (class class)
+     (loc   &invocation-location)
      (required-options '())
      (options (the-options opts :class))
      (body (the-body opts))))
@@ -315,6 +325,7 @@
       (markup 'footnote)
       (ident (symbol->string (gensym "footnote")))
       (class class)
+      (loc   &invocation-location)
       (required-options '())
       (options `((:label
 		  ,(cond ((string? label) label)
@@ -335,6 +346,7 @@
    (let ((ln (new markup
 		(ident (or ident (symbol->string (gensym "linebreak"))))
 		(class class)
+                (loc   &invocation-location)
 		(markup 'linebreak)))
 	 (num (the-body opts)))
       (cond
@@ -359,6 +371,7 @@
       (markup 'hrule)
       (ident (or ident (symbol->string (gensym "hrule"))))
       (class class)
+      (loc   &invocation-location)
       (required-options '())
       (options `((:width ,width)
 		 (:height ,height)
@@ -377,6 +390,7 @@
       (markup 'color)
       (ident (or ident (symbol->string (gensym "color"))))
       (class class)
+      (loc   &invocation-location)
       (required-options '(:bg :fg :width))
       (options `((:bg ,(if bg (skribe-use-color! bg) bg))
 		 (:fg ,(if fg (skribe-use-color! fg) fg))
@@ -395,6 +409,7 @@
       (markup 'frame)
       (ident (or ident (symbol->string (gensym "frame"))))
       (class class)
+      (loc   &invocation-location)
       (required-options '(:width :border :margin))
       (options `((:margin ,margin)
 		 (:border ,(cond
@@ -416,6 +431,7 @@
       (markup 'font)
       (ident (or ident (symbol->string (gensym "font"))))
       (class class)
+      (loc   &invocation-location)
       (required-options '(:size))
       (options (the-options opts :ident :class))
       (body (the-body opts))))
@@ -434,6 +450,7 @@
 	  (markup 'flush)
 	  (ident (or ident (symbol->string (gensym "flush"))))
 	  (class class)
+          (loc   &invocation-location)
 	  (required-options '(:side))
 	  (options (the-options opts :ident :class))
 	  (body (the-body opts))))
@@ -469,6 +486,7 @@
 	  (markup 'prog)
 	  (ident (or ident (symbol->string (gensym "prog"))))
 	  (class class)
+          (loc   &invocation-location)
 	  (required-options '(:line :mark))
 	  (options (the-options opts :ident :class :linedigit))
 	  (body (make-prog-body (the-body opts) line linedigit mark)))))
@@ -566,6 +584,7 @@
 			s
 			(symbol->string (gensym "figure"))))))
       (class class)
+      (loc   &invocation-location)
       (required-options '(:legend :number :multicolumns))
       (options `((:number
 		  ,(new unresolved
@@ -619,6 +638,7 @@
       (markup 'itemize)
       (ident (or ident (symbol->string (gensym "itemize"))))
       (class class)
+      (loc   &invocation-location)
       (required-options '(:symbol))
       (options `((:symbol ,symbol) ,@(the-options opts :ident :class)))
       (body (parse-list-of 'itemize 'item (the-body opts)))))
@@ -631,6 +651,7 @@
       (markup 'enumerate)
       (ident (or ident (symbol->string (gensym "enumerate"))))
       (class class)
+      (loc   &invocation-location)
       (required-options '(:symbol))
       (options `((:symbol ,symbol) ,@(the-options opts :ident :class)))
       (body (parse-list-of 'enumerate 'item (the-body opts)))))
@@ -643,6 +664,7 @@
       (markup 'description)
       (ident (or ident (symbol->string (gensym "description"))))
       (class class)
+      (loc   &invocation-location)
       (required-options '(:symbol))
       (options `((:symbol ,symbol) ,@(the-options opts :ident :class)))
       (body (parse-list-of 'description 'item (the-body opts)))))
@@ -660,6 +682,7 @@
 	  (markup 'item)
 	  (ident (or ident (symbol->string (gensym "item"))))
 	  (class class)
+          (loc   &invocation-location)
 	  (required-options '(:key))
 	  (options `((:key ,key) ,@(the-options opts :ident :class :key)))
 	  (body (the-body opts)))))
@@ -711,6 +734,7 @@
 	     (markup 'table)
 	     (ident (or ident (symbol->string (gensym "table"))))
 	     (class class)
+             (loc   &invocation-location)
 	     (required-options '(:width :frame :rules))
 	     (options `((:frame ,frame)
 			(:rules ,rules)
@@ -726,6 +750,7 @@
       (markup 'tr)
       (ident (or ident (symbol->string (gensym "tr"))))
       (class class)
+      (loc   &invocation-location)
       (required-options '())
       (options `(,@(if bg `((:bg ,(if bg (skribe-use-color! bg) bg))) '())
 		 ,@(the-options opts :ident :class :bg)))
@@ -767,6 +792,7 @@
 	     (markup 'tc)
 	     (ident (or ident (symbol->string (gensym "tc"))))
 	     (class class)
+             (loc   &invocation-location)
 	     (required-options '(:width :align :valign :colspan))
 	     (options `((markup ,m)
 			(:align ,align)
@@ -824,6 +850,7 @@
 	  (markup 'image)
 	  (ident (or ident (symbol->string (gensym "image"))))
 	  (class class)
+          (loc   &invocation-location)
 	  (required-options '(:file :url :width :height))
 	  (options (the-options opts :ident :class))
 	  (body (the-body opts))))))
@@ -881,6 +908,7 @@
 			   symbol)))))
     (new markup
 	 (markup 'symbol)
+         (loc    &invocation-location)
 	 (body v))))
 
 ;*---------------------------------------------------------------------*/
@@ -890,6 +918,7 @@
    (if (not (string? format))
        (skribe-type-error '! "Illegal format:" format "string")
        (new command
+          (loc &invocation-location)
 	  (fmt format)
 	  (body node))))
 
@@ -915,6 +944,7 @@
        (skribe-error 'processor "Illegal procedure" procedure))
       (else
        (new processor
+          (loc &invocation-location)
 	  (combinator combinator)
 	  (engine engine)
 	  (procedure (or procedure (lambda (n e) n)))
@@ -936,14 +966,17 @@
 	 (section
 	  (error 'handle "Illegal handle `section' option" section)
 	  (new unresolved
+             (loc  &invocation-location)
 	     (proc (lambda (n e env)
 		      (let ((s (resolve-ident section 'section n env)))
 			 (new handle
+                            (loc   &invocation-location)
 			    (ast s)))))))
 	 ((and (pair? body)
 	       (null? (cdr body))
 	       (markup? (car body)))
 	  (new handle
+             (loc &invocation-location)
 	     (ast (car body))))
 	 (else
 	  (skribe-error 'handle "Illegal handle" opts)))))
@@ -961,6 +994,7 @@
       (markup 'mailto)
       (ident (or ident (symbol->string (gensym "ident"))))
       (class class)
+      (loc   &invocation-location)
       (required-options '(:text))
       (options (the-options opts :ident :class))
       (body (the-body opts))))
@@ -995,6 +1029,7 @@
 		       (markup 'mark)
 		       (ident (symbol->string (gensym bs)))
 		       (class class)
+                       (loc   &invocation-location)
 		       (options (the-options opts :ident :class :text))
 		       (body text))))
 	     (hash-set! *mark-table* bs n)
@@ -1037,6 +1072,7 @@
 		   (markup 'unref)
 		   (ident (symbol->string (gensym "unref")))
 		   (class class)
+                   (loc   &invocation-location)
 		   (required-options '(:text))
 		   (options `((kind ,kind) ,@(the-options opts :ident :class)))
 		   (body (list text ": " (ast->file-location ast)))))
@@ -1046,11 +1082,12 @@
 		   (markup 'unref)
 		   (ident (symbol->string (gensym "unref")))
 		   (class class)
+                   (loc   &invocation-location)
 		   (required-options '(:text))
 		   (options `((kind ,kind) ,@(the-options opts :ident :class)))
 		   (body text))))))
    (define (skribe-ref skribe)
-      (let ((path (find-file/path skribe (skribe-path))))
+      (let ((path (search-path (*document-path*) skribe)))
 	 (if (not path)
 	     (unref #f skribe 'sui-file)
 	     (let* ((sui (load-sui path))
@@ -1064,6 +1101,7 @@
 	 (markup 'ref)
 	 (ident (symbol->string (gensym "handle-ref")))
 	 (class class)
+         (loc   &invocation-location)
 	 (required-options '(:text))
 	 (options `((kind handle) ,@(the-options opts :ident :class)))
 	 (body text)))
@@ -1071,6 +1109,7 @@
       (if (not (string? title))
 	  (skribe-type-error 'ref "illegal reference" title "string")
 	  (new unresolved
+             (loc  &invocation-location)
 	     (proc (lambda (n e env)
 		      (let* ((doc (ast-document n))
                              (s (find1-down
@@ -1084,6 +1123,7 @@
 				(markup 'ref)
 				(ident (symbol->string (gensym "title-ref")))
 				(class class)
+                                (loc   &invocation-location)
 				(required-options '(:text))
 				(options `((kind ,kind)
 					   (mark ,title)
@@ -1095,6 +1135,7 @@
       (if (not (string? text))
 	  (skribe-type-error 'ref "Illegal reference" text "string")
 	  (new unresolved
+             (loc  &invocation-location)
 	     (proc (lambda (n e env)
 		      (let ((s (resolve-ident text kind n env)))
 			 (if s
@@ -1102,6 +1143,7 @@
 				(markup 'ref)
 				(ident (symbol->string (gensym "ident-ref")))
 				(class class)
+                                (loc   &invocation-location)
 				(required-options '(:text))
 				(options `((kind ,kind)
 					   (mark ,text)
@@ -1113,6 +1155,7 @@
       (if (not (string? mark))
 	  (skribe-type-error 'mark "Illegal mark, " mark "string")
 	  (new unresolved
+             (loc  &invocation-location)
 	     (proc (lambda (n e env)
 		      (let ((s (hash-ref *mark-table* mark)))
 			 (if s
@@ -1120,6 +1163,7 @@
 				(markup 'ref)
 				(ident (symbol->string (gensym "mark-ref")))
 				(class class)
+                                (loc   &invocation-location)
 				(required-options '(:text))
 				(options `((kind mark)
 					   (mark ,mark)
@@ -1134,6 +1178,7 @@
 			  (markup 'bib-ref)
 			  (ident (symbol->string (gensym "bib-ref")))
 			  (class class)
+                          (loc   &invocation-location)
 			  (required-options '(:text))
 			  (options (the-options opts :ident :class))
 			  (body (new handle
@@ -1150,6 +1195,7 @@
 	     (markup 'bib-ref+)
 	     (ident (symbol->string (gensym "bib-ref+")))
 	     (class class)
+             (loc   &invocation-location)
 	     (options (the-options opts :ident :class))
 	     (body (map make-bib-ref text)))
 	  (make-bib-ref text)))
@@ -1158,10 +1204,12 @@
 	 (markup 'url-ref)
 	 (ident (symbol->string (gensym "url-ref")))
 	 (class class)
+         (loc   &invocation-location)
 	 (required-options '(:url :text))
 	 (options (the-options opts :ident :class))))
    (define (line-ref line)
       (new unresolved
+         (loc   &invocation-location)
 	 (proc  (lambda (n e env)
 		   (let ((l (resolve-line line)))
 		      (if (pair? l)
@@ -1169,6 +1217,7 @@
 			     (markup 'line-ref)
 			     (ident (symbol->string (gensym "line-ref")))
 			     (class class)
+                             (loc   &invocation-location)
 			     (options `((:text ,(markup-ident (car l)))
 					,@(the-options opts :ident :class)))
 			     (body (new handle
@@ -1201,6 +1250,7 @@
                              (separator ".") (class #f))
   ;; Produce a numbered reference to `ident'.
   (new unresolved
+       (loc  &invocation-location)
        (proc (lambda (n e env)
 	       (let* ((parent (ast-parent n))
                       (doc (ast-document n))
@@ -1216,6 +1266,7 @@
                         (markup 'unref)
                         (ident (symbol->string (gensym "unref")))
                         (class class)
+                        (loc   &invocation-location)
                         (required-options '(:text))
                         (options `((kind numref)
                                    ,@(the-options opts :ident :class)))
@@ -1240,6 +1291,7 @@
 ;*---------------------------------------------------------------------*/
 (define-markup (resolve fun)
    (new unresolved
+      (loc  &invocation-location)
       (proc fun)))
 
 ;*---------------------------------------------------------------------*/
@@ -1280,6 +1332,7 @@
 		     "Cound must be either `partial' or `full'"
 		     count)
        (new unresolved
+          (loc  &invocation-location)
 	  (proc (lambda (n e env)
 		   (resolve-the-bib bib-table
 				    (new handle (ast n))
@@ -1333,6 +1386,7 @@
 		  (markup '&index-entry)
 		  (ident (or ident (symbol->string (gensym "index"))))
 		  (class class)
+                  (loc   &invocation-location)
 		  (options `((name ,ename) ,@(the-options opts :ident :class)))
 		  (body (if url
 			    (ref :url url :text (or shape ename))
@@ -1378,6 +1432,7 @@
 			(filter (lambda (o) (not (index? o))) bd)))
 	 (else
 	  (new unresolved
+             (loc  &invocation-location)
 	     (proc (lambda (n e env)
 		      (resolve-the-index (ast-loc n)
 					 ident class
@@ -1394,8 +1449,8 @@
 ;*---------------------------------------------------------------------*/
 ;*    p ...                                                            */
 ;*---------------------------------------------------------------------*/
-(define-markup (p #!rest opt #!key ident (class #f) &skribe-eval-location)
-   (paragraph :ident ident :class class :loc &skribe-eval-location
+(define-markup (p #!rest opt #!key ident (class #f))
+   (paragraph :ident ident :class class :loc &invocation-location
       (the-body opt)))
 
 ;*---------------------------------------------------------------------*/
@@ -1453,6 +1508,7 @@
 (define-markup (q #!rest opt)
    (new markup
       (markup 'q)
+      (loc &invocation-location)
       (options (the-options opt))
       (body (the-body opt))))
 
