@@ -2,6 +2,38 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-04-03 11:57:10 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-79
+
+    Summary:
+      Added support for source location tracking.
+    Revision:
+      skribilo--devo--1.2--patch-79
+
+    * src/guile/skribilo/ast.scm (<ast>): Added the `:loc' init-keyword.
+    
+    * src/guile/skribilo/lib.scm: Re-export `invocation-location'.
+      (define-markup): Locally define `&invocation-location' for use by
+      markups.
+      (define-simple-markup): Initialize `loc'.
+      (define-simple-container): Likewise.
+      (%skribe-warn): New `col'. parameter.
+      (skribe-warning): Updated.
+      (skribe-warning/ast): Likewise.
+    
+    * src/guile/skribilo/location.scm (<location>): Removed slot `pos'.
+      Added slot `column'.  Export `location-column'.
+      (location-pos): Kept for compatibility.
+      (write): New method.
+      (invocation-location): New function.
+
+    modified files:
+     ChangeLog src/guile/skribilo/ast.scm
+     src/guile/skribilo/lib.scm src/guile/skribilo/location.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-38
+
+
 2007-04-03 11:55:49 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-78
 
     Summary:

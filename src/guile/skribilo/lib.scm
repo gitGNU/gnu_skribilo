@@ -1,8 +1,7 @@
+;;; lib.scm -- Utilities.
 ;;;
-;;; lib.scm	-- Utilities
-;;;
-;;; Copyright © 2003-2004 Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
-;;; Copyright © 2005 Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
+;;; Copyright 2005, 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -31,6 +30,9 @@
 
   :export-syntax (new define-markup define-simple-markup
                   define-simple-container define-processor-markup)
+
+  ;; Re-exported because used in `define-markup'.
+  :re-export  (invocation-location)
 
   :use-module (skribilo config)
   :use-module (skribilo ast)
@@ -100,7 +102,12 @@
 
   (let ((name (car bindings))
 	(opts (cdr bindings)))
-    `(define*-public ,(cons name (fix-rest-arg opts)) ,@body)))
+    `(define*-public ,(cons name (fix-rest-arg opts))
+       ;; Memorize the invocation location.  Note: the invocation depth
+       ;; passed to `invocation-location' was determined experimentally and
+       ;; may change as Guile changes (XXX).
+       (let ((&invocation-location (invocation-location 6)))
+         ,@body))))
 
 
 ;;;
@@ -112,7 +119,7 @@
 	  (markup ',markup)
 	  (ident (or ident (symbol->string
 			    (gensym ',(symbol->string markup)))))
-	  (loc loc)
+	  (loc (or loc &invocation-location))
 	  (class class)
 	  (required-options '())
 	  (options (the-options opts :ident :class :loc))
@@ -128,7 +135,7 @@
 	  (markup ',markup)
 	  (ident (or ident (symbol->string
 			    (gensym ',(symbol->string markup)))))
-	  (loc loc)
+	  (loc (or loc &invocation-location))
 	  (class class)
 	  (required-options '())
 	  (options (the-options opts :ident :class :loc))
@@ -196,15 +203,10 @@
 ;;;
 ;;; SKRIBE-WARNING  &  SKRIBE-WARNING/AST
 ;;;
-(define (%skribe-warn level file line lst)
+(define (%skribe-warn level file line col lst)
   (let ((port (current-error-port)))
-    (if (or (not file) (not line))
-	(begin
-	  ;; XXX:  This is a bit hackish, but it proves to be quite useful.
-	  (set! file (port-filename (current-input-port)))
-	  (set! line (port-line (current-input-port)))))
-    (when (and file line)
-      (format port "~a:~a: " file line))
+    (when (and file line col)
+      (format port "~a:~a:~a: " file line col))
     (format port "warning: ")
     (for-each (lambda (x) (format port "~a " x)) lst)
     (newline port)))
@@ -212,15 +214,16 @@
 
 (define (skribe-warning level . obj)
   (if (>= (*warning*) level)
-      (%skribe-warn level #f #f obj)))
+      (%skribe-warn level #f #f #f obj)))
 
 
 (define (skribe-warning/ast level ast . obj)
   (if (>= (*warning*) level)
       (let ((l (ast-loc ast)))
 	(if (location? l)
-	    (%skribe-warn level (location-file l) (location-line l) obj)
-	    (%skribe-warn level #f #f obj)))))
+	    (%skribe-warn level (location-file l) (location-line l)
+                          (location-column l) obj)
+	    (%skribe-warn level #f #f #f obj)))))
 
 ;;;
 ;;; SKRIBE-MESSAGE
