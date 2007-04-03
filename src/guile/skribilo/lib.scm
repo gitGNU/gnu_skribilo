@@ -21,7 +21,7 @@
 
 (define-module (skribilo lib)
   :use-module (skribilo utils syntax)
-  :export (skribe-eval-location skribe-ast-error skribe-error
+  :export (skribe-ast-error skribe-error
            skribe-type-error
            skribe-warning skribe-warning/ast
            skribe-message
@@ -167,14 +167,6 @@
 	((keyword? obj) "keyword")
 	(else           (with-output-to-string
 			  (lambda () (write obj))))))
-
-;;;
-;;; SKRIBE-EVAL-LOCATION ...
-;;;
-(define (skribe-eval-location)
-  (format (current-error-port)
-	  "FIXME: ...... SKRIBE-EVAL-LOCATION (should not appear)\n")
-  #f)
 
 ;;;
 ;;; SKRIBE-ERROR

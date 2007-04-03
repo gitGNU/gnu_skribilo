@@ -2,6 +2,29 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-04-03 11:58:43 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-81
+
+    Summary:
+      Moved legacy source location code to `compat'.
+    Revision:
+      skribilo--devo--1.2--patch-81
+
+    * src/guile/skribilo/lib.scm (skribe-eval-location): Removed.
+    
+    * src/guile/skribilo/location.scm (location-pos): Removed.
+    
+    * src/guile/skribilo/utils/compat.scm: Use `(skribilo location)'.
+      (location-pos, skribe-eval-location): New.
+
+    modified files:
+     ChangeLog src/guile/skribilo/lib.scm
+     src/guile/skribilo/location.scm
+     src/guile/skribilo/utils/compat.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-40
+
+
 2007-04-03 11:57:56 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-80
 
     Summary:
