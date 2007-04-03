@@ -172,8 +172,8 @@
               publisher
               (", " address)
               (", " month)
-              (if month " " ", ") year ", "
-              ("pp. " pages) "."))
+              ", " year
+              (", pp. " pages) "."))
     ((phdthesis)
      `(author ". " (or title url documenturl)
               ", " ,(_ "PhD Thesis")
