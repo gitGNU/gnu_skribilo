@@ -2,7 +2,7 @@
 ;;;
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
 ;;; Copyright 2003, 2004  Manuel Serrano
-;;; Copyright 2005, 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2005, 2006, 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -167,13 +167,12 @@
 ;;; Abstract syntax tree (AST).
 ;;;
 
-;;FIXME: set! location in <ast>
 (define-class <ast> ()
   ;; Parent of this guy.
   (parent  :accessor ast-parent :init-keyword :parent :init-value 'unspecified)
 
   ;; Its source location.
-  (loc     :init-value #f)
+  (loc     :init-value #f :init-keyword :loc)
 
   ;; This slot is used as an optimization when resolving an AST: sub-parts of
   ;; the tree are marked as resolved as soon as they are and don't need to be
