@@ -4,34 +4,34 @@ main='(module-ref (resolve-module '\''(skribilo)) '\'main')'
 exec ${GUILE-guile} --debug -l $0 -c "(apply $main (cdr (command-line)))" "$@"
 !#
 
-;;;; skribilo.scm
-;;;;
-;;;; Copyright © 2003-2004 Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
-;;;; Copyright 2005, 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
-;;;;
-;;;;
-;;;; This program is free software; you can redistribute it and/or modify
-;;;; it under the terms of the GNU General Public License as published by
-;;;; the Free Software Foundation; either version 2 of the License, or
-;;;; (at your option) any later version.
-;;;;
-;;;; This program is distributed in the hope that it will be useful,
-;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;;;; GNU General Public License for more details.
-;;;;
-;;;; You should have received a copy of the GNU General Public License
-;;;; along with this program; if not, write to the Free Software
-;;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
-;;;; USA.
+;;; skribilo.scm  --  The Skribilo document processor.
+;;;
+;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
+;;; Copyright 2005, 2006, 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;;
+;;;
+;;; This program is free software; you can redistribute it and/or modify
+;;; it under the terms of the GNU General Public License as published by
+;;; the Free Software Foundation; either version 2 of the License, or
+;;; (at your option) any later version.
+;;;
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;;
+;;; You should have received a copy of the GNU General Public License
+;;; along with this program; if not, write to the Free Software
+;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+;;; USA.
 
-;;;; Commentary:
-;;;;
-;;;; Usage: skribilo [ARGS]
-;;;;
-;;;; Process a skribilo document.
-;;;;
-;;;; Code:
+;;; Commentary:
+;;;
+;;; Usage: skribilo [ARGS]
+;;;
+;;; Process a skribilo document.
+;;;
+;;; Code:
 
 
 
@@ -405,11 +405,6 @@ Processes a Skribilo/Skribe source file and produces its output.
 
 	 (help-wanted       (option-ref options 'help #f))
 	 (version-wanted    (option-ref options 'version #f)))
-
-    ;; Set up the debugging infrastructure.
-    (debug-enable 'debug)
-    (debug-enable 'backtrace)
-    (debug-enable 'procnames)
 
     (cond (help-wanted    (begin (skribilo-show-help) (exit 1)))
 	  (version-wanted (begin (skribilo-show-version) (exit 1))))

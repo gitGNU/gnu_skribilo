@@ -2,6 +2,31 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-04-03 14:57:19 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-82
+
+    Summary:
+      Reduced reliance on the debugging evaluator (improves performance).
+    Revision:
+      skribilo--devo--1.2--patch-82
+
+    * src/guile/skribilo.scm (skribilo): Do not impose use of the debugging
+      evaluator, allowing for significant performance improvements.
+    
+    * src/guile/skribilo/evaluator.scm (%evaluate): Use the debugging
+      evaluator when evaluating EXPR.
+    
+    * src/guile/skribilo/location.scm (invocation-location): Return `#f' when
+      the debugging evaluator is not being used.
+
+    modified files:
+     ChangeLog src/guile/skribilo.scm
+     src/guile/skribilo/evaluator.scm
+     src/guile/skribilo/location.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-41
+
+
 2007-04-03 11:58:43 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-81
 
     Summary:

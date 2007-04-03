@@ -62,16 +62,18 @@
   ;; Evaluate EXPR in the current module.  EXPR is an arbitrary S-expression
   ;; that may contain calls to the markup functions defined in a markup
   ;; package such as `(skribilo package base)', e.g., `(bold "hello")'.
-  (let ((result (eval expr module)))
-    (if (ast? result)
-        (let ((file (source-property expr 'filename))
-              (line (source-property expr 'line))
-              (column (source-property expr 'column)))
-          (slot-set! result 'loc
-                     (make <location>
-                       :file file :line line :pos column))))
-
-    result))
+  (let ((opts (debug-options)))
+    (dynamic-wind
+        (lambda ()
+          ;; Force use of the debugging evaluator so that we can track source
+          ;; location.
+          (debug-enable 'debug)
+          (debug-enable 'backtrace))
+        (lambda ()
+          (eval expr module))
+        (lambda ()
+          ;; Restore previous evaluator options.
+          (debug-options opts)))))
 
 
 ;;;
