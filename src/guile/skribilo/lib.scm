@@ -106,7 +106,7 @@
        ;; Memorize the invocation location.  Note: the invocation depth
        ;; passed to `invocation-location' was determined experimentally and
        ;; may change as Guile changes (XXX).
-       (let ((&invocation-location (invocation-location 6)))
+       (let ((&invocation-location (invocation-location 3)))
          ,@body))))
 
 
