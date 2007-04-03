@@ -2,6 +2,29 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-04-03 14:58:13 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-83
+
+    Summary:
+      Fixed computation of `&invocation-location'.
+    Revision:
+      skribilo--devo--1.2--patch-83
+
+    * src/guile/skribilo/location.scm (invocation-location): Make sure we
+      always return the exact invocation location, no matter how
+      `invocation-location' is implemented.
+    
+    * src/guile/skribilo/lib.scm (define-markup): Updated DEPTH argument to
+      `invocation-location' due to previous change in the implementation of
+      `invocation-location'.
+
+    modified files:
+     ChangeLog src/guile/skribilo/lib.scm
+     src/guile/skribilo/location.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-42
+
+
 2007-04-03 14:57:19 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-82
 
     Summary:

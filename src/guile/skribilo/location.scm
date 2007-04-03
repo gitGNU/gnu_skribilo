@@ -81,7 +81,11 @@
   ;; Return a location object denoting the place of invocation of this
   ;; function's caller.  Debugging must be enable for this to work, via
   ;; `(debug-enable 'debug)', otherwise `#f' is returned.
-  (let ((depth (if (null? depth) 4 (car depth)))
+
+  (define %outer-depth 3) ;; update when moving `make-stack'!
+
+  (let ((depth (+ %outer-depth
+                  (if (null? depth) 0 (car depth))))
         (stack (make-stack #t)))
     (and stack
          (let* ((frame  (stack-ref stack depth))
