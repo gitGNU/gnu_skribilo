@@ -2,6 +2,35 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-04-03 11:57:56 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-80
+
+    Summary:
+      Added source location tracking to various packages.
+    Revision:
+      skribilo--devo--1.2--patch-80
+
+    * src/guile/skribilo/package/base.scm: Autoload `parameters'.
+      (ref)[skribe-ref]: Use `search-path' and `*document-path*' instead of
+      `find-file/path' and `skribe-path'.
+    
+      Initialize the `loc' field of markups.
+    
+    * src/guile/skribilo/package/eq.scm: Likewise.
+    
+    * src/guile/skribilo/package/pie.scm: Likewise.
+    
+    * src/guile/skribilo/package/slide.scm: Likewise.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/base.scm
+     src/guile/skribilo/package/eq.scm
+     src/guile/skribilo/package/pie.scm
+     src/guile/skribilo/package/slide.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-39
+
+
 2007-04-03 11:57:10 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-79
 
     Summary:

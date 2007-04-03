@@ -1,6 +1,6 @@
 ;;; pie.scm  --  An pie-chart formatting package.
 ;;;
-;;; Copyright 2005, 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2005, 2006, 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -52,6 +52,7 @@
    (new container
 	(markup 'pie)
 	(ident (or ident (symbol->string (gensym "pie"))))
+        (loc &invocation-location)
 	(options (the-options opts))
 	(body (the-body opts))))
 
@@ -60,6 +61,7 @@
    (new container
 	(markup 'slice)
 	(ident (or ident (symbol->string (gensym "slice"))))
+        (loc &invocation-location)
 	(weight weight)
 	(color color)
 	(detach? detach?)
@@ -71,6 +73,7 @@
    (new markup
 	(markup 'sliceweight)
 	(ident (or ident (symbol->string (gensym "sliceweight"))))
+        (loc &invocation-location)
 	(percentage? percentage?)
 	(options (the-options opts))
 	(body '())))
