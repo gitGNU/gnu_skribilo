@@ -79,19 +79,21 @@
 
 (define (invocation-location . depth)
   ;; Return a location object denoting the place of invocation of this
-  ;; function's caller.
-  (let ((depth (if (null? depth) 4 (car depth))))
-    (let* ((stack  (make-stack #t))
-           (frame  (stack-ref stack depth))
-           (source (frame-source frame)))
-      (and source
-           (let ((file (source-property source 'filename))
-                 (line (source-property source 'line))
-                 (col  (source-property source 'column)))
-             (and file
-                  (make <location> :file file
-                        :line (and line (+ line 1))
-                        :column col)))))))
+  ;; function's caller.  Debugging must be enable for this to work, via
+  ;; `(debug-enable 'debug)', otherwise `#f' is returned.
+  (let ((depth (if (null? depth) 4 (car depth)))
+        (stack (make-stack #t)))
+    (and stack
+         (let* ((frame  (stack-ref stack depth))
+                (source (frame-source frame)))
+           (and source
+                (let ((file (source-property source 'filename))
+                      (line (source-property source 'line))
+                      (col  (source-property source 'column)))
+                  (and file
+                       (make <location> :file file
+                             :line (and line (+ line 1))
+                             :column col))))))))
 
 ;;; arch-tag: d68fa45d-a200-465e-a3c2-eb2861907f83
 
