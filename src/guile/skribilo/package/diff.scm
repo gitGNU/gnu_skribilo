@@ -19,7 +19,7 @@
 ;;; USA.
 
 (define-module (skribilo package diff)
-  :use-module (differ)
+  :use-module (diff)
   :use-module (srfi srfi-1)
   :use-module (srfi srfi-14)
   :use-module (srfi srfi-39)

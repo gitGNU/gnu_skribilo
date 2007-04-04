@@ -6,7 +6,7 @@
 ;;; <ludovic.courtes@laas.fr> to use Guile's native API (March 2007).
 ;;;
 
-(define-module (differ)
+(define-module (diff)
   :export (diff:longest-common-subsequence diff:edits
            diff:edit-length))
 
