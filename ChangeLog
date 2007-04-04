@@ -2,6 +2,25 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-04-04 17:15:48 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-84
+
+    Summary:
+      `diff' package: Added basic source location support.
+    Revision:
+      skribilo--devo--1.2--patch-84
+
+    * src/guile/skribilo/package/diff.scm (deletion, insertion, replacement,
+      unchanged): Added a `:loc' parameter.
+      (make-diff-document): When creating new ASTs, keep the location of
+      AST2.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/diff.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-43
+
+
 2007-04-03 14:58:13 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-83
 
     Summary:
