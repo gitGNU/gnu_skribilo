@@ -66,7 +66,7 @@
                            "\n@IAD " ""))))
    :action (lambda (node engine)
 	     (display (if (inline-equation? node)
-			  "@E { "
+			  "@OneRow @OneCol @E { "
 			  "@Eq { "))
 	     (let ((eq (markup-body node)))
 	       ;;(fprint (current-error-port) "eq=" eq)
