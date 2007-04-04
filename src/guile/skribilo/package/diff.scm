@@ -61,28 +61,32 @@
 ;;; Markup.
 ;;;
 
-(define-markup (deletion :rest args)
+(define-markup (deletion :rest args :key loc)
   (new markup
        (markup 'diff:deletion)
        (ident  (gensym "diff:deletion"))
+       (loc    (or loc &invocation-location))
        (body   args)))
 
-(define-markup (insertion :rest args)
+(define-markup (insertion :rest args :key loc)
   (new markup
        (markup 'diff:insertion)
        (ident  (gensym "diff:insertion"))
+       (loc    (or loc &invocation-location))
        (body   args)))
 
-(define-markup (replacement :rest args)
+(define-markup (replacement :rest args :key loc)
   (new markup
        (markup 'diff:replacement)
        (ident  (gensym "diff:replacement"))
+       (loc    (or loc &invocation-location))
        (body   args)))
 
-(define-markup (unchanged :rest args)
+(define-markup (unchanged :rest args :key loc)
   (new markup
        (markup 'diff:unchanged)
        (ident  (gensym "diff:unchanged"))
+       (loc    (or loc &invocation-location))
        (body   args)))
 
 
@@ -282,6 +286,7 @@
                   (markup 'document)
                   (ident ident)
                   (class class)
+                  (loc   (ast-loc ast2))
                   (options opts)
                   (body (loop (if (markup? ast1)
                                   (markup-body ast1)
@@ -303,6 +308,7 @@
                   (markup  kind)
                   (ident   ident)
                   (class   class)
+                  (loc     (ast-loc ast2))
                   (options (if (or (undiffable? kind)
                                    (not (container? ast1)))
                                (markup-options ast2)
@@ -324,6 +330,7 @@
                   (markup  kind)
                   (ident   ident)
                   (class   class)
+                  (loc     (ast-loc ast2))
                   (options (if (or (undiffable? kind)
                                    (not (markup? ast1)))
                                (markup-options ast2)
@@ -338,6 +345,7 @@
           ((command? ast2)
            ;; Leave it untouched.
            (new command
+                (loc  (ast-loc ast2))
                 (fmt  (command-fmt ast2))
                 (body (command-body ast2))))
 
@@ -358,10 +366,10 @@
                     ast2)))
 
           ((equal? ast1 ast2)
-           (unchanged ast1))
+           (unchanged :loc (ast-loc ast2) ast1))
 
           (else
-           (insertion ast2)))))
+           (insertion :loc (ast-loc ast2) ast2)))))
 
 
 
