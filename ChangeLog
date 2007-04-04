@@ -2,6 +2,26 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-04-04 17:16:45 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-85
+
+    Summary:
+      Renamed module `(differ)' to `(diff)'.
+    Revision:
+      skribilo--devo--1.2--patch-85
+
+
+    modified files:
+     ChangeLog src/guile/Makefile.am src/guile/diff.scm
+     src/guile/skribilo/package/diff.scm
+
+    renamed files:
+     src/guile/differ.scm
+       ==> src/guile/diff.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-44
+
+
 2007-04-04 17:15:48 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-84
 
     Summary:
