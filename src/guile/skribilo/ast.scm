@@ -580,7 +580,7 @@
      ((pred obj)
       (loop (ast-parent obj) (cons obj res)))
      (else
-      (loop (ast-parent obj) (cons obj res))))))
+      (loop (ast-parent obj) res)))))
 
 (define (find1-up pred obj)
   (let loop ((obj obj))
