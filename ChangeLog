@@ -2,6 +2,28 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-04-04 17:18:18 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-87
+
+    Summary:
+      `eq' package: Properly handle auto-inlining.
+    Revision:
+      skribilo--devo--1.2--patch-87
+
+    * src/guile/skribilo/package/eq.scm (inline-equation?): Use `find1-up'
+      instead of `find-up'.  This fixes a bug.
+      (eq): Properly pass the `:inline?' options through the `options' slot.
+    
+    * src/guile/skribilo/package/eq/lout.scm (eq): When inline, enclose
+      equation in `@OneRow @OneCol' so that it is not breakable.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/eq.scm
+     src/guile/skribilo/package/eq/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-46
+
+
 2007-04-04 17:17:32 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-86
 
     Summary:

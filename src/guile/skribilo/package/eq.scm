@@ -19,7 +19,7 @@
 ;;; USA.
 
 (define-module (skribilo package eq)
-  :autoload   (skribilo ast)    (markup? find-up)
+  :autoload   (skribilo ast)    (markup? find1-up)
   :autoload   (skribilo output) (output)
   :use-module (skribilo writer)
   :use-module (skribilo engine)
@@ -124,9 +124,9 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
        (let ((i (markup-option m :inline?)))
          (case i
            ((auto)
-            (not (find-up (lambda (n)
-                            (is-markup? n 'eq-display))
-                          m)))
+            (not (find1-up (lambda (n)
+                             (is-markup? n 'eq-display))
+                           m)))
            ((#t) #t)
            (else #f)))))
 
@@ -217,9 +217,9 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
        (class class)
        (loc   &invocation-location)
        (options `((:div-style ,div-style) (:align-with ,align-with)
-                  (:mul-style ,mul-style)
+                  (:mul-style ,mul-style) (:inline? ,inline?)
                   ,@(the-options opts
-                                 :ident :class
+                                 :ident :class :inline?
                                  :div-style :mul-style :align-with)))
        (body (let loop ((body (the-body opts))
 			(result '()))
