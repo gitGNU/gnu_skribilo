@@ -60,6 +60,11 @@
   ;; native engine.
   (make-parameter #f))
 
+(define-public *use-lout-eq2?*
+  ;; Whether the use the new Lout `eq2' package instead of `eq'.
+  (make-parameter #f))
+
+
 (define %operators
   '(/ * + - = != ~= < > <= >= sqrt expt sum product script
     in notin apply limit combinations set))
@@ -129,6 +134,16 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
                            m)))
            ((#t) #t)
            (else #f)))))
+
+(define-public (direct-equation-child? m)
+  "Return @code{#t} if @var{m} is a direct child of an @code{eq} markup."
+  (let ((parent (ast-parent m)))
+    (and (is-markup? parent 'eq)
+         (let ((body (markup-body parent)))
+           (or (eq? body m)
+               (and (list? body)
+                    (memq m body)))))))
+
 
 
 ;;;

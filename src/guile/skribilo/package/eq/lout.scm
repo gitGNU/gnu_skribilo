@@ -45,7 +45,9 @@
 	;; Append the `eq' include file
 	(engine-custom-set! lout 'includes
 			    (string-append includes "\n"
-					   "@SysInclude { eq }\n")))))
+					   "@SysInclude { "
+                                           (if (*use-lout-eq2?*) "eq2" "eq")
+                                           " }\n")))))
 
 
 ;;;
@@ -131,7 +133,8 @@
                                   (and first?
                                        (is-markup? eq-parent 'eq-display)
                                        (eq? ',sym
-                                            (markup-option eq :align-with))))
+                                            (markup-option eq :align-with))
+                                       (direct-equation-child? node)))
                                  (op (car operands))
                                  (eq-op? (equation-markup? op))
                                  (need-paren?
@@ -232,9 +235,12 @@
              (let ((body  (markup-body node))
                    (var   (markup-option node :var))
                    (limit (markup-option node :limit)))
-               (display "{ lim from { ")
+               (format #t "{ lim ~a { { "
+                       (if (*use-lout-eq2?*)
+                           "atop @SubScriptStyle"
+                           "from"))
                (output var engine)
-               (display " --> ")
+               (display " } --> ")
                (output limit engine)
                (display (string-append " } } @VContract { " %left-paren))
                (output body engine)
@@ -262,7 +268,11 @@
 		(let ((from (markup-option node :from))
 		      (to (markup-option node :to))
 		      (body (markup-body node)))
-		  (display ,(string-append " { big " lout-name
+		  (display ,(string-append " { "
+                                           (if (*use-lout-eq2?*)
+                                               ""
+                                               "big ")
+                                           lout-name
 					   " from { "))
 		  (output from engine)
 		  (display " } to { ")
