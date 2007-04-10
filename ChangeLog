@@ -2,6 +2,24 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-04-10 07:47:03 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-88
+
+    Summary:
+      `lncs' package: Fixed for non-LaTeX engines.
+    Revision:
+      skribilo--devo--1.2--patch-88
+
+    * src/guile/skribilo/package/lncs.scm (abstract): Use `chapter' instead
+      of `section'.
+      (references): Likewise.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/lncs.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-47
+
+
 2007-04-04 17:18:18 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-87
 
     Summary:

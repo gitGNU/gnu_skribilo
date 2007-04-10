@@ -24,7 +24,7 @@
   :use-module (skribilo engine)
   :use-module (skribilo writer)
   :autoload   (skribilo output)         (output)
-  :autoload   (skribilo package base)   (section font flush
+  :autoload   (skribilo package base)   (chapter font flush
                                          toc the-bibliography)
   :autoload   (skribilo utils keywords) (the-options the-body)
   :autoload   (skribilo biblio template)(output-bib-entry-template
@@ -183,10 +183,10 @@
                      (markup '&html-lncs-abstract)
                      (body (the-body opt)))))
            (list (if postscript
-                     (section :number #f :toc #f :title "Postscript Download"
+                     (chapter :number #f :toc #f :title "Postscript Download"
                               postscript))
-                 (section :number #f :toc #f :title "Abstract" a)
-                 (section :number #f :toc #f :title "Table of Contents"
+                 (chapter :number #f :toc #f :title "Abstract" a)
+                 (chapter :number #f :toc #f :title "Table of Contents"
                           (toc :subsection #t)))))))
 
 ;*---------------------------------------------------------------------*/
@@ -199,7 +199,7 @@
                (font :size -1
                      (flush :side 'left
                             (the-bibliography :sort sort-proc)))
-               (section :title "References"
+               (chapter :title "References"
                         (font :size -1
                               (the-bibliography :sort sort-proc)))))))
 
