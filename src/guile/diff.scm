@@ -1,5 +1,5 @@
 ;;; "differ.scm" O(NP) Sequence Comparison Algorithm.
-;;; Copyright (C) 2001, 2002, 2003, 2004 Aubrey Jaffer
+;;; Copyright (C) 2001, 2002, 2003, 2004, 2007 Aubrey Jaffer
 
 ;;;
 ;;; Taken from Slib 3a2 and adapated by Ludovic Courtès
@@ -196,11 +196,10 @@
     (let ((b-splt (diff:mid-split len-b RR CC tcst)))
       (define est-c (array-ref CC b-splt))
       (define est-r (array-ref RR (- len-b b-splt)))
-      ;;(set! splts (cons (/ b-splt (max .1 len-b)) splts))
-      ;;(display "A: ") (array-for-each display (fp:subarray A start-a mid-a)) (display " + ") (array-for-each display (fp:subarray A mid-a end-a)) (newline)
-      ;;(display "B: ") (array-for-each display (fp:subarray B start-b end-b)) (newline)
+      ;;(display "A:     ") (array-for-each display (fp:subarray A start-a mid-a)) (display " + ") (array-for-each display (fp:subarray A mid-a end-a)) (newline)
+      ;;(display "B:     ") (array-for-each display (fp:subarray B start-b end-b)) (newline)
       ;;(print 'cc cc) (print 'rr (fp:subarray RR (+ 1 len-b) 0))
-      ;;(print (make-string (+ 7 (* 2 b-splt)) #\-) '^  (list b-splt))
+      ;;(print (make-string (+ 12 (* 2 b-splt)) #\-) '^  (list b-splt))
       (check-cost! 'CC est-c
 		  (diff2et fp fpoff CCRR
 			   A start-a mid-a
@@ -384,24 +383,23 @@
 (define (diff:edits A B . p-lim)
   (define M (car (array-dimensions A)))
   (define N (car (array-dimensions B)))
-  (set! p-lim (if (null? p-lim) -1 (car p-lim)))
-  (let ((fp (make-typed-array 's32 0
-                              (if (negative? p-lim)
-                                  (+ 3 M N)
-                                  (+ 3 (abs (- N M)) p-lim p-lim)))))
-    (define est (if (< N M)
-		    (diff2editlen fp B A p-lim)
-		    (diff2editlen fp A B p-lim)))
-    (and est
-	 (let ((edits (make-typed-array 's32 0 est))
-	       (CCRR (make-typed-array 's32 0 (* 2 (+ (max M N) 1)))))
-	   (cond ((< N M)
-		  (diff2edits! edits fp CCRR B A)
-		  (diff:invert-edits! edits))
-		 (else
-		  (diff2edits! edits fp CCRR A B)))
-	   ;;(diff:order-edits! edits est)
-	   edits))))
+  (define est (diff:edit-length A B (if (null? p-lim) -1 (car p-lim))))
+  (and est
+       (let ((CCRR (make-typed-array 's32 0
+                                     (* 2 (+ (max M N) 1))))
+	     (edits (make-typed-array 's32 0 est)))
+	 (define fp (make-typed-array 's32 0
+                                      (+ (max (- N (quotient M 2))
+                                              (- M (quotient N 2)))
+                                         (- est (abs (- N M))) ; 2 * p-lim
+                                         3)))
+	 (cond ((< N M)
+		(diff2edits! edits fp CCRR B A)
+		(diff:invert-edits! edits))
+	       (else
+		(diff2edits! edits fp CCRR A B)))
+	 ;;(diff:order-edits! edits est)
+	 edits)))
 
 ;;@args array1 array2 p-lim
 ;;@args array1 array2
@@ -437,7 +435,7 @@
 ;;       ; e  c  h p q  r
 ;;@end example
 
-;;(trace-all "/home/jaffer/slib/differ.scm")(set! *qp-width* 333)(untrace fp:run fp:subarray)
+;;(trace-all "/home/jaffer/slib/differ.scm")(set! *qp-width* 999)(untrace fp:run fp:subarray)
 
 
 ;;;arch-tag: 8e80eb1d-fb11-4872-895a-8adcee26580d

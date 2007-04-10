@@ -2,6 +2,25 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-04-10 07:48:46 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-90
+
+    Summary:
+      `diff': Included Aubrey Jaffer's fix for `diff:edits'.
+    Revision:
+      skribilo--devo--1.2--patch-90
+
+    * src/guile/diff.scm: Updated from Aubrey Jaffer's latest upstream
+      version which includes a fix for bug in `diff:edits' that showed up in
+      `(diff:edits "Conclusion" "Related Work")' (SLIB changes dated
+      2007-04-07).
+
+    modified files:
+     ChangeLog src/guile/diff.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-49
+
+
 2007-04-10 07:47:58 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-89
 
     Summary:
