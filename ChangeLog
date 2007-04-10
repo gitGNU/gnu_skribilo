@@ -2,6 +2,32 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-04-10 07:47:58 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-89
+
+    Summary:
+      `eq' package: Added support for Lout's new `eq2'.
+    Revision:
+      skribilo--devo--1.2--patch-89
+
+    * src/guile/skribilo/package/eq.scm (*use-lout-eq2?*): New.
+      (direct-equation-child?): New.
+    
+    * src/guile/skribilo/package/eq/lout.scm (Initialization): Use `eq2' if
+      asked to.
+      (simple-lout-markup-writer): Use `direct-equation-child?' to decide on
+      whether the issue the `^' character.  This is to avoid issuing too many
+      `^', which could result in broken layout.
+      (eq:limit): Adapated.
+      (range-lout-markup-writer): Likewise.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/eq.scm
+     src/guile/skribilo/package/eq/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-48
+
+
 2007-04-10 07:47:03 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-88
 
     Summary:
