@@ -39,7 +39,7 @@
   :autoload   (skribilo color)     (skribe-use-color!)
   :autoload   (skribilo source)    (language? source-read-lines source-fontify)
   :autoload   (skribilo prog)      (make-prog-body resolve-line)
-  :autoload   (skribilo index)     (make-index-table)
+  :autoload   (skribilo index)     (make-index-table default-index)
 
   :replace (symbol))
 
