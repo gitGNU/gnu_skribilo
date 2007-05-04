@@ -2,6 +2,52 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-05-04 13:47:41 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-92
+
+    Summary:
+      biblio: Implemented the `name+year' label style.
+    Revision:
+      skribilo--devo--1.2--patch-92
+
+    * src/guile/skribilo/biblio.scm: Use `biblio author'.
+      (assign-entries-numbers!): New (formerly `count!' in `resolve-the-bib').
+      (assign-entries-name+years!): New.
+      (resolve-the-bib): New optional `assign-entries-identifiers!' argument.
+      Use it.
+    
+    * src/guile/skribilo/biblio/author.scm (short-author-names): New.
+    
+    * src/guile/skribilo/engine/lout.scm (lout-bib-refs-sort/number): Accept
+      non-number identifiers.
+      (&the-bibliography): Use simply `@TaggedList' when a style other than
+      `number' is used.
+      (&bib-entry): Use `@DropTagItem' when the bibliography style is not
+      `number'.
+    
+    * src/guile/skribilo/package/base.scm (the-bibliography): New `:labels'
+      option.  Pass the right label assignment function to `resolve-the-bib'.
+    
+    --This line, and those below, will be ignored--
+    Files to commit:
+       src/guile/skribilo/package/base.scm
+       src/guile/skribilo/engine/lout.scm
+       src/guile/skribilo/biblio.scm
+       doc/user/bib.skb
+       src/guile/skribilo/biblio/author.scm
+    
+    This list might be incomplete or outdated if editing the log
+    message was not invoked from an up-to-date changes buffer!
+
+    modified files:
+     ChangeLog src/guile/skribilo/biblio.scm
+     src/guile/skribilo/biblio/author.scm
+     src/guile/skribilo/engine/lout.scm
+     src/guile/skribilo/package/base.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-51
+
+
 2007-05-04 13:46:55 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-91
 
     Summary:

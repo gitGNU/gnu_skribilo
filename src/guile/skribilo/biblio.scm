@@ -2,7 +2,7 @@
 ;;;
 ;;; Copyright 2001, 2002, 2003, 2004  Manuel Serrano
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
-;;; Copyright 2005, 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2005, 2006, 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
 ;;; it under the terms of the GNU General Public License as published by
@@ -31,10 +31,11 @@
   :use-module (srfi srfi-39)
   :use-module (skribilo condition)
 
-  :autoload   (skribilo reader)      (%default-reader)
-  :autoload   (skribilo parameters)  (*bib-path*)
-  :autoload   (skribilo ast)         (<markup> <handle> is-markup?)
-  :autoload   (skribilo lib)         (skribe-warning)
+  :autoload   (skribilo reader)       (%default-reader)
+  :autoload   (skribilo parameters)   (*bib-path*)
+  :autoload   (skribilo ast)          (<markup> <handle> is-markup?)
+  :autoload   (skribilo lib)          (skribe-warning)
+  :autoload   (skribilo biblio author)(short-author-names)
 
   :use-module (ice-9 optargs)
   :use-module (oop goops)
@@ -44,6 +45,9 @@
 	   open-bib-file parse-bib
 
            bib-load! resolve-bib resolve-the-bib make-bib-entry
+
+           ;; entry labels
+           assign-entries-numbers! assign-entries-name+years!
 
            ;; sorting entries
            bib-sort/authors bib-sort/idents bib-sort/dates
@@ -290,6 +294,11 @@
 		fields)
       m))
 
+
+;;;
+;;; Sorting.
+;;;
+
 ;*---------------------------------------------------------------------*/
 ;*    bib-sort/authors ...                                             */
 ;*---------------------------------------------------------------------*/
@@ -381,23 +390,88 @@
 					 (m2 (month-num d2)))
 				      (> m1 m2))))))))))))))
 
+
+;;;
+;;; Bibliography creation and entry name assignment.
+;;;
+
+(define (assign-entries-numbers! entries)
+  ;; Traverse `&bib-entry' markups in ENTRIES and add them a `:title' option
+  ;; whose content is a `&bib-entry-ident' markup suitable numbered.
+  (let loop ((es entries)
+             (i 1))
+    (if (pair? es)
+        (begin
+          (markup-option-add! (car es)
+                              :title
+                              (make <markup>
+                                :markup '&bib-entry-ident
+                                :parent (car es)
+                                :options `((number ,i))
+                                :body (make <handle> :ast (car es))))
+          (loop (cdr es) (+ i 1))))))
+
+(define (assign-entries-name+years! entries)
+  ;; Assign name+year-style labels to bibliography entries in ENTRIES (a list
+  ;; of `&bib-entry' markups.  Such labels will look like this: "[Smith
+  ;; 1984]", "[Smith & Johnson 1979]", "[Smith et al. 1980]".
+
+  (define %letters
+    '(#\a #\b #\c #\d #\e #\f #\g #\h #\i #\j #\k #\l #\m #\n #\o #\p #\q #\r
+#\s #\t #\u #\v #\w #\x #\y #\z #\A #\B #\C #\D #\E #\F #\G #\H #\I #\J #\K
+#\L #\M #\N #\O #\P #\Q #\R #\S #\T #\U #\V #\W #\X #\Y #\Z))
+
+  (define (assign-label! entry label)
+    (markup-option-add! entry :title
+                        (make <markup>
+                          :markup '&bib-entry-ident
+                          :parent entry
+                          :options `((number ,label))
+                          :body (make <handle> :ast entry))))
+
+  (let ((name+year-table (make-hash-table)))
+    ;; Construct NAME+YEAR-TABLE such that keys are name+year labels and
+    ;; values are a list of matching entries.
+    (let loop ((entries entries))
+      (if (pair? entries)
+          (let* ((e (car entries))
+                 (author (markup-body (markup-option e 'author)))
+                 (name (if (string? author)
+                           (short-author-names author)
+                           author))
+                 (year (let ((m (markup-option e 'year)))
+                         (and (markup? m) (markup-body m))))
+                 (name+year (list name " " year)))
+            (let ((same-named (hash-create-handle! name+year-table
+                                                   name+year '())))
+              (set-cdr! same-named (cons e (cdr same-named)))
+              (loop (cdr entries))))))
+
+    ;; Actually assign labels to entries.  When there are several entries per
+    ;; author-year tuple (e.g., several "[Smith et al. 1984]"), they are
+    ;; assigned distinguishing labels by adding a letter at the end of the
+    ;; label (e.g., "[Smith et al. 1984a]").
+    (hash-for-each (lambda (name+year entries)
+                     (if (null? (cdr entries))
+                         (assign-label! (car entries) name+year)
+                         (let loop ((entries (reverse! entries))
+                                    (letters %letters))
+                           (if (not (null? entries))
+                               (let ((letter (string (car letters))))
+                                 ;; Disambiguate same-named entries.
+                                 (assign-label! (car entries)
+                                                (append name+year
+                                                        (list letter)))
+                                 (loop (cdr entries)
+                                       (cdr letters)))))))
+                   name+year-table)))
+
 ;*---------------------------------------------------------------------*/
 ;*    resolve-the-bib ...                                              */
 ;*---------------------------------------------------------------------*/
-(define (resolve-the-bib table n sort pred count opts)
-   (define (count! entries)
-      (let loop ((es entries)
-		 (i 1))
-	 (if (pair? es)
-	     (begin
-		(markup-option-add! (car es)
-				    :title
-				    (make <markup>
-				       :markup '&bib-entry-ident
-				       :parent (car es)
-				       :options `((number ,i))
-				       :body (make <handle> :ast (car es))))
-		(loop (cdr es) (+ i 1))))))
+(define* (resolve-the-bib table n sort pred count opts
+                          :optional (assign-entries-identifiers!
+                                     assign-entries-numbers!))
    (if (not (bib-table? table))
        (raise (condition
                (&invalid-argument-error (proc-name "resolve-the-bib")
@@ -407,7 +481,13 @@
 			       (lambda (m) (pred m n))
 			       (lambda (m) (pair? (markup-option m 'used))))
 			   es)))
-	  (count! (if (eq? count 'full) es fes))
+
+          ;; XXX: Assigning identifiers through side-effects is somewhat
+          ;; broken since it precludes the production of more several
+          ;; bibliographies with different styles in a single document (e.g.,
+          ;; the user manual cannot illustrate more than one style).
+	  (assign-entries-identifiers! (if (eq? count 'full) es fes))
+
 	  (make <markup>
 	     :markup '&the-bibliography
 	     :options opts

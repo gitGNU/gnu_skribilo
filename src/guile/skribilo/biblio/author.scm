@@ -1,6 +1,6 @@
 ;;; author.scm  --  Handling author names.
 ;;;
-;;; Copyright 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2006, 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -25,6 +25,7 @@
   :autoload   (skribilo ast)     (markup-option markup-body markup-ident)
   :autoload   (skribilo lib)     (skribe-error)
   :autoload   (skribilo utils strings) (make-string-replace)
+  :autoload   (skribilo package base)  (it)
   :export (comma-separated->author-list
 	   comma-separated->and-separated-authors
 
@@ -32,6 +33,7 @@
 	   abbreviate-author-first-names
 	   abbreviate-first-names
 	   first-author-last-name
+           short-author-names
 
 	   bib-sort/first-author-last-name))
 
@@ -112,6 +114,21 @@
 	  (loop (substring first-author (+ space 1)
 			   (string-length first-author)))))))
 
+(define (short-author-names authors)
+  ;; Given AUTHORS (a string containing a comma-separated author list),
+  ;; return author markup suitable for use as a bibliography identifier.  For
+  ;; instance, "Smith", "Smith & Johnson", "Smith et al.".
+  (let ((authors (comma-separated->author-list authors)))
+    (if (null? (cdr authors))
+        (first-author-last-name (car authors))
+        (if (null? (cddr authors))
+            (string-append (first-author-last-name (car authors))
+                           " & "
+                           (first-author-last-name (cadr authors)))
+            (list (first-author-last-name (car authors)) " "
+                  (it " et al."))))))
+
+
 (define (bib-sort/first-author-last-name entries)
    ;; May be passed as the `:sort' argument of `the-bibliography'.
    (let ((check-author (lambda (e)
