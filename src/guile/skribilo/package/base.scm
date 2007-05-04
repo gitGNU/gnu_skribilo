@@ -1326,20 +1326,29 @@
 				 pred
 				 (bib-table (*bib-table*))
 				 (sort bib-sort/authors)
-				 (count 'partial))
+				 (count 'partial)
+                                 (labels 'number))
    (if (not (memq count '(partial full)))
        (skribe-error 'the-bibliography
-		     "Cound must be either `partial' or `full'"
+		     "count must be either `partial' or `full'"
 		     count)
-       (new unresolved
-          (loc  &invocation-location)
-	  (proc (lambda (n e env)
-		   (resolve-the-bib bib-table
-				    (new handle (ast n))
-				    sort
-				    pred
-				    count
-				    (the-options opts)))))))
+       (let ((label-proc (case labels
+                           ((number)    assign-entries-numbers!)
+                           ((name+year) assign-entries-name+years!)
+                           (else
+                            (skribe-error
+                             'the-bibliography
+                             "invalid label type" lables)))))
+         (new unresolved
+            (loc  &invocation-location)
+            (proc (lambda (n e env)
+                     (resolve-the-bib bib-table
+                                      (new handle (ast n))
+                                      sort
+                                      pred
+                                      count
+                                      (the-options opts)
+                                      label-proc)))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    make-index ...                                                   */

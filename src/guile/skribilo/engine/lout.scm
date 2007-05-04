@@ -1,6 +1,7 @@
 ;;; lout.scm  --  A Lout engine.
 ;;;
-;;; Copyright 2004, 2005, 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2004, 2005, 2006, 2007
+;;; Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -21,6 +22,8 @@
 ;;;    Taken from `lcourtes@laas.fr--2004-libre',
 ;;;               `skribe-lout--main--0.2--patch-15'.
 ;;;    Based on `latex.skr', copyright 2003, 2004 Manuel Serrano.
+;;;
+;;;    For more information on Lout, see http://lout.sf.net/ .
 
 
 (define-skribe-module (skribilo engine lout)
@@ -518,8 +521,10 @@
   (let ((ident1 (markup-option entry1 :title))
 	(ident2 (markup-option entry2 :title)))
     (if (and (markup? ident1) (markup? ident2))
-	(< (markup-option ident1 'number)
-	   (markup-option ident2 'number))
+        (let ((n1 (markup-option ident1 'number))
+              (n2 (markup-option ident2 'number)))
+          (and (number? n1) (number? n2)
+               (< n1 n2)))
 	(begin
 	  (fprint (current-error-port) "i1: " ident1 ", " entry1)
 	  (fprint (current-error-port) "i2: " ident2 ", " entry2)))))
@@ -2532,7 +2537,7 @@
 		       (output (car rs) e))
 		   (if (pair? (cdr rs))
 		       (begin
-			 (display ",")
+			 (display ", ")
 			 (loop (cdr rs)))))))))
    :after "]")
 
@@ -2591,44 +2596,45 @@
 ;*---------------------------------------------------------------------*/
 (markup-writer '&the-bibliography
    :before (lambda (n e)
-	     ;; Compute the length (in characters) of the longest entry label
-	     ;; so that the label width of the list is adjusted.
-	     (let loop ((entries (markup-body n))
-			(label-width 0))
-	       (if (null? entries)
-		   (begin
-		     (display "\n# the-bibliography\n@LP\n")
-		     ;; usually, the tag with be something like "[7]", hence
-		     ;; the `+ 1' below (`[]' is narrower than 2f)
-		     (printf  "@TaggedList labelwidth { ~af }\n"
-			      (+ 1 label-width)))
-		   (loop (cdr entries)
-			 (let ((entry-length
-				(let liip ((e (car entries)))
-				  (cond
-				   ((markup? e)
-				    (cond ((is-markup? e '&bib-entry)
-					   (liip (markup-option e :title)))
-					  ((is-markup? e '&bib-entry-ident)
-					   (liip (markup-option e 'number)))
-					  (else
-					   (liip (markup-body e)))))
-				   ((string? e)
-				    (string-length e))
-				   ((number? e)
-				    (liip (number->string e)))
-				   ((list? e)
-				    (apply + (map liip e)))
-				   (else 0)))))
-; 			   (fprint (current-error-port)
-; 				   "node=" (car entries)
-; 				   " body=" (markup-body (car entries))
-; 				   " title=" (markup-option (car entries)
-; 							    :title)
-; 				   " len=" entry-length)
-			   (if (> label-width entry-length)
-			       label-width
-			       entry-length))))))
+             (display "\n# the-bibliography\n@LP\n")
+
+             (case (markup-option n 'labels)
+               ((number)
+                ;; Compute the length (in characters) of the longest entry
+                ;; label so that the label width of the list is adjusted.
+                (let loop ((entries (markup-body n))
+                           (label-width 0))
+                  (if (null? entries)
+                      ;; usually, the tag with be something like "[7]", hence
+                      ;; the `+ 1' below (`[]' is narrower than 2f)
+                      (printf  "@TaggedList labelwidth { ~af }\n"
+                               (+ 1 label-width))
+                      (loop (cdr entries)
+                            (let ((entry-length
+                                   (let liip ((e (car entries)))
+                                     (cond
+                                      ((markup? e)
+                                       (cond ((is-markup? e '&bib-entry)
+                                              (liip (markup-option e :title)))
+                                             ((is-markup? e '&bib-entry-ident)
+                                              (liip (markup-option e 'number)))
+                                             (else
+                                              (liip (markup-body e)))))
+                                      ((string? e)
+                                       (string-length e))
+                                      ((number? e)
+                                       (liip (number->string e)))
+                                      ((list? e)
+                                       (apply + (map liip e)))
+                                      (else 0)))))
+
+                              (if (> label-width entry-length)
+                                  label-width
+                                  entry-length))))))
+
+               (else  ;; `name+year' and others.
+                (display "@TaggedList\n"))))
+
    :after (lambda (n e)
 	     (display "\n@EndList # the-bibliography (end)\n")))
 
@@ -2637,13 +2643,25 @@
 ;*---------------------------------------------------------------------*/
 (markup-writer '&bib-entry
    :options '(:title)
-   :before "@TagItem "
+
+   :before (lambda (n e)
+             (let ((ident (markup-option n :title)))
+               (if (is-markup? ident '&bib-entry-ident)
+                   (let ((number (markup-option ident 'number)))
+                     (cond ((number? number)
+                            (display "@TagItem "))
+                           (else
+                            ;; probably `name+year'-style.
+                            (display "@DropTagItem "))))
+                   (display "@TagItem "))))
+
    :action (lambda (n e)
 	     (display " { ")
 	     (output n e (markup-writer-get '&bib-entry-label e))
 	     (display " }  { ")
 	     (output n e (markup-writer-get '&bib-entry-body e))
 	     (display " }"))
+
    :after "\n")
 
 ;*---------------------------------------------------------------------*/
