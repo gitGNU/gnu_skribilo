@@ -1,6 +1,7 @@
-;;; bib.skb  --  The Skribe index
+;;; bib.skb  --  The Skribilo bibliography.
 ;;;
 ;;; Copyright 2001, 2002, 2003, 2004  Manuel Serrano
+;;; Copyright 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -122,11 +123,11 @@ The following example, shows how to directly use a Bibtex bibliography
 using the ,(ref :section "Skribebibtex") translator.])
 
 (example-produce 
- (example :legend "Printing a bibliography" (prgm :file "src/bib6.skb")))
+ (example :legend "Printing a Bibliography" (prgm :file "src/bib6.skb")))
 
 
 ;; bibliography syntax
-(subsection :title "Bibliography syntax"
+(subsection :title "Bibliography Syntax"
 
 (p [The Skribe bibliography database uses a format very close to
 the Bibtex one. It is a parenthetic version of Bibtex. Here is the
@@ -148,7 +149,7 @@ Here is an example of a simple Skribe database.])
 ;*---------------------------------------------------------------------*/
 ;*    the-bibliography ... @label the-bibliography@                    */
 ;*---------------------------------------------------------------------*/
-(section :title "Printing a bibliography"
+(section :title "Printing a Bibliography"
 
 (p [The function ,(code "the-bibliography") displays the bibliography. ])
 
@@ -159,22 +160,32 @@ Here is an example of a simple Skribe database.])
                       two parameters: the bibliography entry and the 
                       ,(code "the-bibliography") node.])
 	      (:sort [A function sorting a list of entries.])
+	      (:labels [Specifies the style for bibliography entries
+                        labels.  The default, ,(code "number"), uses
+                        numbers to identify references, e.g., "\[7\]".
+                        When ,(code "name+year") is chosen, long labels
+                        including the first author's last name (and
+                        optionally the second author's last name) and
+                        the year of publication will be used.  For
+                        instance: "\[Smith 1984\]",
+                        "\[Smith & Johnson 1979\]", or
+                        "\[Smith et al. 1980\]".])
 	      (:count ,[The symbol ,(code "partial") or ,(code "full")
                specifies the numbering to be applied. The value 
-               ,(code "partial") tells Skribe to count only the entries
+               ,(code "partial") tells Skribilo to count only the entries
                filtered in by ,(param :pred). The value ,(code "full")
-               tells Skribe to count all entries, event those filtered out
+               tells Skribilo to count all entries, event those filtered out
                by ,(param :pred).]))
 	    :see-also '(bib-table? make-bib-table *bib-table* bibliography)
 	    :force-engines *api-engines*
 	    :common-args '())
 
 (example-produce 
- (example :legend "Printing a bibliography" (prgm :file "src/bib2.skb"))
+ (example :legend "Printing a Bibliography" (prgm :file "src/bib2.skb"))
  (disp (include "src/bib2.skb")))
 
 ;; filtering bibliography
-(subsection :title "Filtering bibliography entries"
+(subsection :title "Filtering Bibliography Entries"
 (index "the-bibliography" :note "filtering")
 
 (p [The ,(param :pred) option is bound to a function of one argument
@@ -185,14 +196,14 @@ display ,(emph "all") the entries of a bibliography, is it needed to
 print the bibliography with a predicate returning always ,(code "#t").])
 
 (example-produce 
- (example :legend "Unfiltering bibliography entries" (prgm :file "src/bib3.skb"))
+ (example :legend "Unfiltering Bibliography Entries" (prgm :file "src/bib3.skb"))
  (disp (include "src/bib3.skb")))
 
 (p [The second example, filters out the entries that are not ,(emph "book")
 or that are not referenced to from the document.])
 
 (example-produce 
- (example :legend "Unfiltering bibliography entries" (prgm :file "src/bib4.skb"))
+ (example :legend "Unfiltering Bibliography Entries" (prgm :file "src/bib4.skb"))
  (disp (include "src/bib4.skb")))
 
 (p [The last example, illustrates how to change the rendering of a
@@ -206,11 +217,11 @@ markups is the bibliography entry itself. The ,(code "&bib-entry-") markups
 are options of there parent.])
 
 (example-produce 
- (example :legend "Unfiltering bibliography entries" (prgm :file "src/bib5.skb"))
+ (example :legend "Unfiltering Bibliography Entries" (prgm :file "src/bib5.skb"))
  (disp (include "src/bib5.skb"))))
 
 ;; sorting bibliography
-(subsection :title "Sorting bibliography entries"
+(subsection :title "Sorting Bibliography Entries"
 (index "the-bibliography" :note "sorting")
 
 (p [The ,(param :sort) option of the ,(markup-ref "the-bibliography")
@@ -229,7 +240,7 @@ on authors. The second sorts according to an alphabetic ordering on
 entries identifier. The last one sorts according to entries date.])
 
 (example-produce 
- (example :legend "Sorting bibliography entries" 
+ (example :legend "Sorting Bibliography Entries" 
 	  (prgm :file "skribilo/biblio.scm"
 	        :definition 'bib-sort/idents)))))
 

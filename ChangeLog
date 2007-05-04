@@ -2,6 +2,21 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-05-04 13:48:29 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-93
+
+    Summary:
+      doc: Documented the `:labels' option of `the-bibliography'.
+    Revision:
+      skribilo--devo--1.2--patch-93
+
+
+    modified files:
+     ChangeLog doc/user/bib.skb
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-52
+
+
 2007-05-04 13:47:41 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-92
 
     Summary:
