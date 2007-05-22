@@ -2,6 +2,24 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-05-22 13:56:04 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-94
+
+    Summary:
+      Resolve <command>s too.
+    Revision:
+      skribilo--devo--1.2--patch-94
+
+    * src/guile/skribilo/resolve.scm (do-resolve!<command>): New method.
+      Allows arguments of a command (the command body) to be properly
+      resolved.
+
+    modified files:
+     ChangeLog src/guile/skribilo/resolve.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-53
+
+
 2007-05-04 13:48:29 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-93
 
     Summary:
