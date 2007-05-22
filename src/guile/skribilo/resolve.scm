@@ -196,6 +196,18 @@
   node)
 
 
+(define-method (do-resolve! (node <command>) engine env)
+  (with-debug 5 'do-resolve<command>
+     (debug-item "node=" node)
+     (let ((p (assq 'parent env)))
+       (slot-set! node 'parent (and (pair? p) (pair? (cdr p)) (cadr p))))
+     (for-each (lambda (n)
+                 (do-resolve! n engine env))
+               (command-body node))
+     node))
+
+
+
 ;;;; ======================================================================
 ;;;;
 ;;;; RESOLVE-PARENT
