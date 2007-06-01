@@ -2,6 +2,31 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-06-01 17:59:55 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-95
+
+    Summary:
+      eq/biblio: Small additions.
+    Revision:
+      skribilo--devo--1.2--patch-95
+
+    * src/guile/skribilo/biblio/template.scm
+      (make-bib-entry-template/default): Issue `institution' for `misc'
+      entries.
+    
+    * src/guile/skribilo/package/eq.scm (%operators): Added `modulo'.
+      (eq:modulo): New.
+    
+    * src/guile/skribilo/package/eq/lout.scm (eq:modulo): New writer.
+
+    modified files:
+     ChangeLog src/guile/skribilo/biblio/template.scm
+     src/guile/skribilo/package/eq.scm
+     src/guile/skribilo/package/eq/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-54
+
+
 2007-05-22 13:56:04 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-94
 
     Summary:

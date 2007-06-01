@@ -185,6 +185,7 @@
                                   (let ((eq (ast-parent n)))
                                     (markup-option eq :div-style)))))
                            #f)
+(simple-lout-markup-writer modulo "mod")
 (simple-lout-markup-writer =)
 (simple-lout-markup-writer <)
 (simple-lout-markup-writer >)
