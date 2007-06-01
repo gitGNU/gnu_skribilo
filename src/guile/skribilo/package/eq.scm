@@ -66,7 +66,7 @@
 
 
 (define %operators
-  '(/ * + - = != ~= < > <= >= sqrt expt sum product script
+  '(/ * + - modulo = != ~= < > <= >= sqrt expt sum product script
     in notin apply limit combinations set))
 
 (define %symbols
@@ -271,6 +271,7 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
 
 (define-simple-markup eq:+)
 (define-simple-markup eq:-)
+(define-simple-markup eq:modulo)
 
 (define-simple-markup eq:=)
 (define-simple-markup eq:!=)

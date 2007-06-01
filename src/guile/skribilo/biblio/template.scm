@@ -183,6 +183,7 @@
               (if month " " ", ") year "."))
     ((misc)
      '(author ". " (or title url documenturl) ". "
+              (institution ", ")
               (publisher ", ")
               (address ", ")
               (month " ") year ". "
