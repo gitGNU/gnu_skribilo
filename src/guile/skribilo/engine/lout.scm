@@ -2441,30 +2441,25 @@
 ;*    ref ... @label ref@                                              */
 ;*---------------------------------------------------------------------*/
 (markup-writer 'ref
-   :options '(:text :chapter :section :subsection :subsubsection
-	      :figure :mark :handle :ident :page)
+   :options '(:text :page text kind
+              :chapter :section :subsection :subsubsection
+	      :figure :mark :handle :ident)
+
    :action (lambda (n e)
-	     (let ((url (markup-option n :url))
-		   (text (markup-option n :text))
-		   (mark (markup-option n :mark))
-		   (handle (markup-option n :handle))
-		   (chapter (markup-option n :chapter))
-		   (section (markup-option n :section))
-		   (subsection (markup-option n :subsection))
-		   (subsubsection (markup-option n :subsubsection))
+	     (let ((ident          (markup-option n 'text))
+                   (kind           (markup-option n 'kind))
+		   (text           (markup-option n :text))
 		   (show-page-num? (markup-option n :page)))
 
-		;; A handle to the target is automagically passed
-		;; as the body of each `ref' instance (see `api.scm').
+                   ;; A handle to the target is passed as the body of each
+                   ;; `ref' instance (see `package/base.scm').
 		(let* ((target (handle-ast (markup-body n)))
-		       (ident (markup-ident target))
-		       (title (markup-option target :title))
-		       (number (markup-option target :number)))
+		       (title  (markup-option target :title)))
 		   (lout-debug "ref: target=~a ident=~a" target ident)
 		   (if text (output text e))
 
 		   ;; Marks don't have a number
-		   (if (eq? (markup-markup target) 'mark)
+		   (if (eq? kind 'mark)
 		       (printf (lout-page-of ident))
 		       (begin
 			  ;; Don't output a section/whatever number
@@ -2474,10 +2469,14 @@
 			  ;; we don't even know how to reference them
 			  ;; anyway.
 			  (if (not text)
-			      (printf " @NumberOf { ~a }"
-				      (lout-tagify ident)))
-			  (if show-page-num?
-			      (printf (lout-page-of ident)))))))))
+                              (let ((number
+                                     (if (eq? kind 'figure)
+                                         (markup-option target :number)
+                                         (markup-number-string target))))
+                                (display " ")
+                                (display number))
+                              (if show-page-num?
+                                  (printf (lout-page-of ident))))))))))
 
 
 ;*---------------------------------------------------------------------*/

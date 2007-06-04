@@ -608,14 +608,21 @@
 
 (define* (markup-number-string markup :optional (sep "."))
   ;; Return a structure number string such as "1.2".
-  (let loop ((markup markup))
-    (if (document? markup)
-	""
-	(let ((parent-num (loop (ast-parent markup)))
-	      (num (markup-option markup :number)))
-	  (string-append parent-num
-			 (if (string=? "" parent-num) "" sep)
-			 (if (number? num) (number->string num) ""))))))
+  (cond ((is-markup? markup 'figure)
+         ;; Figure numbering is assumed to be document-wide.
+         (number->string (markup-option markup :number)))
+        (else
+         ;; Use a hierarchical numbering scheme.
+         (let loop ((markup markup))
+           (if (document? markup)
+               ""
+               (let ((parent-num (loop (ast-parent markup)))
+                     (num (markup-option markup :number)))
+                 (string-append parent-num
+                                (if (string=? "" parent-num) "" sep)
+                                (if (number? num)
+                                    (number->string num)
+                                    ""))))))))
 
 
 ;;; arch-tag: e2489bd6-1b6d-4b03-bdfb-83cffd2f7ce7
