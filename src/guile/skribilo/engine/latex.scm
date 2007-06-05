@@ -442,7 +442,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    skribe-get-latex-color ...                                       */
 ;*---------------------------------------------------------------------*/
-(define (skribe-get-latex-color spec)
+(define-public (skribe-get-latex-color spec)
    (let ((c (and (hashtable? *skribe-latex-color-table*)
 		 (hashtable-get *skribe-latex-color-table* spec))))
       (if (not (string? c))

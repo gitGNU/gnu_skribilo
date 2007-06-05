@@ -36,6 +36,7 @@
   :use-module (skribilo utils syntax)
 
   :use-module (ice-9 optargs)
+  :use-module (srfi srfi-1)
   :use-module (srfi srfi-13)
 
   :export (abstract references))
@@ -95,28 +96,29 @@
 			      (cdr n))
 		    (display "}\n"))
 		 (let ((body (markup-body n)))
+                    (define (institute=? n1 n2)
+                      (let ((aff1 (markup-option n1 :affiliation))
+                            (add1 (markup-option n1 :address))
+                            (aff2 (markup-option n2 :affiliation))
+                            (add2 (markup-option n2 :address)))
+                        (and (equal? aff1 aff2) (equal? add1 add2))))
+                    (define (search-institute n i j)
+                      (cond
+                       ((null? i)
+                        #f)
+                       ((institute=? n (car i))
+                        j)
+                       (else
+                        (search-institute n (cdr i) (- j 1)))))
+
 		    (cond
 		       ((is-markup? body 'author)
 			(markup-option-add! n 'inst 1)
 			(&latex-author-1 body)
 			(&latex-inst-n (list body)))
 		       ((and (list? body)
-			     (every? (lambda (b) (is-markup? b 'author))
-				     body))
-			(define (institute=? n1 n2)
-			   (let ((aff1 (markup-option n1 :affiliation))
-				 (add1 (markup-option n1 :address))
-				 (aff2 (markup-option n2 :affiliation))
-				 (add2 (markup-option n2 :address)))
-			      (and (equal? aff1 aff2) (equal? add1 add2))))
-			(define (search-institute n i j)
-			   (cond
-			      ((null? i)
-			       #f)
-			      ((institute=? n (car i))
-			       j)
-			      (else
-			       (search-institute n (cdr i) (- j 1)))))
+			     (every (lambda (b) (is-markup? b 'author))
+                                    body))
 			(if (null? (cdr body))
 			    (begin
 			       (markup-option-add! (car body) 'inst 1)
@@ -155,7 +157,7 @@
 			  (inst (markup-option n 'inst)))
 		       (if name (output name e))
 		       (if title (output title e))
-		       (if inst (printf "\\inst{~a}\n" inst)))))))
+		       (if inst (format #t "\\inst{~a}\n" inst)))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    HTML global customizations                                       */
@@ -178,6 +180,7 @@
          (new markup
             (markup 'lncs-abstract)
             (options (the-options opt))
+            (loc  &invocation-location)
             (body (the-body opt)))
          (let ((a (new markup
                      (markup '&html-lncs-abstract)

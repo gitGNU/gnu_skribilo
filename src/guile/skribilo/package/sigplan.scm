@@ -1,6 +1,7 @@
 ;;; sigplan.scm  --  The Skribe style for ACMPROC articles.
 ;;;
 ;;; Copyright 2003, 2004  Manuel Serrano
+;;; Copyright 2007  Ludovic Courtès <ludo@chbouib.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -18,8 +19,25 @@
 ;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 ;;; USA.
 
-(define-skribe-module (skribilo package sigplan))
+(define-module (skribilo package sigplan)
+  :use-module (skribilo ast)
+  :use-module (skribilo engine)
+  :use-module (skribilo writer)
+  :autoload   (skribilo output)          (output)
+  :autoload   (skribilo evaluator)       (evaluate-document)
+  :autoload   (skribilo lib)             (skribe-error)
+  :autoload   (skribilo utils keywords)  (the-body)
+  :use-module (skribilo package base)
+  :use-module (srfi srfi-1)
 
+  :use-module (skribilo utils syntax)
+  :use-module (ice-9 optargs)
+
+  :export (abstract references))
+
+(fluid-set! current-reader %skribilo-module-reader)
+
+
 ;*---------------------------------------------------------------------*/
 ;*    LaTeX global customizations                                      */
 ;*---------------------------------------------------------------------*/
@@ -31,8 +49,8 @@
    (markup-writer '&latex-author le
       :before (lambda (n e)
 		 (let ((body (markup-body n)))
-		    (printf "\\authorinfo{\n"
-			    (if (pair? body) (length body) 1))))
+		    (display "\\authorinfo{\n")
+                    (display (if (pair? body) (length body) 1))))
       :action (lambda (n e)
 		 (let ((body (markup-body n)))
 		    (for-each (lambda (a)
@@ -43,8 +61,8 @@
    ;; author
    (let ((old-author (markup-writer-get 'author le)))
       (markup-writer 'author le
-         :options (writer-options old-author)		     
-         :action (writer-action old-author)))
+	 :options (writer-options old-author)
+	 :action (writer-action old-author)))
    ;; ACM category, terms, and keywords
    (markup-writer '&acm-category le
       :options '(:index :section :subsection)
@@ -86,27 +104,33 @@
    (markup-writer '&html-acmproc-abstract he
       :action (lambda (n e)
 		 (let* ((ebg (engine-custom e 'abstract-background))
-			(bg (or (and (string? ebg) 
+			(bg (or (and (string? ebg)
 				     (> (string-length ebg) 0))
 				ebg
 				"#cccccc"))
-			(exp (p (center (color :bg bg :width 90. 
+			(exp (p (center (color :bg bg :width 90.
 					   (markup-body n))))))
-		    (skribe-eval exp e))))
+		    (evaluate-document exp e))))
    ;; ACM category, terms, and keywords
    (markup-writer '&acm-category :action #f)
    (markup-writer '&acm-terms :action #f)
    (markup-writer '&acm-keywords :action #f)
    (markup-writer '&acm-copyright :action #f))
-		 
+
+
+;;;
+;;; Markup.
+;;;
+
 ;*---------------------------------------------------------------------*/
 ;*    abstract ...                                                     */
 ;*---------------------------------------------------------------------*/
-(define-markup (abstract #!rest opt #!key postscript)
+(define-markup (abstract :rest opt :key postscript)
    (if (engine-format? "latex")
        (section :number #f :title "ABSTRACT" (p (the-body opt)))
        (let ((a (new markup
 		   (markup '&html-acmproc-abstract)
+                   (loc &invocation-location)
 		   (body (the-body opt)))))
 	  (list (if postscript
 		    (section :number #f :toc #f :title "Postscript download"
@@ -118,43 +142,46 @@
 ;*---------------------------------------------------------------------*/
 ;*    acm-category ...                                                 */
 ;*---------------------------------------------------------------------*/
-(define-markup (acm-category #!rest opt #!key index section subsection)
+(define-markup (acm-category :rest opt :key index section subsection)
    (new markup
       (markup '&acm-category)
+      (loc &invocation-location)
       (options (the-options opt))
       (body (the-body opt))))
 
 ;*---------------------------------------------------------------------*/
 ;*    acm-terms ...                                                    */
 ;*---------------------------------------------------------------------*/
-(define-markup (acm-terms #!rest opt)
+(define-markup (acm-terms :rest opt)
    (new markup
       (markup '&acm-terms)
+      (loc &invocation-location)
       (options (the-options opt))
       (body (the-body opt))))
 
 ;*---------------------------------------------------------------------*/
 ;*    acm-keywords ...                                                 */
 ;*---------------------------------------------------------------------*/
-(define-markup (acm-keywords #!rest opt)
+(define-markup (acm-keywords :rest opt)
    (new markup
       (markup '&acm-keywords)
+      (loc &invocation-location)
       (options (the-options opt))
       (body (the-body opt))))
 
 ;*---------------------------------------------------------------------*/
 ;*    acm-copyright ...                                                */
 ;*---------------------------------------------------------------------*/
-(define-markup (acm-copyright #!rest opt #!key conference location year crdata)
+(define-markup (acm-copyright :rest opt :key conference location year crdata)
    (let* ((le (find-engine 'latex))
-	  (cop (format "\\conferenceinfo{~a,} {~a}
+	  (cop (format #f "\\conferenceinfo{~a,} {~a}
 \\CopyrightYear{~a}
 \\crdata{~a}\n" conference location year crdata))
 	  (old (engine-custom le 'predocument)))
       (if (string? old)
 	  (engine-custom-set! le 'predocument (string-append cop old))
 	  (engine-custom-set! le 'predocument cop))))
-   
+
 ;*---------------------------------------------------------------------*/
 ;*    references ...                                                   */
 ;*---------------------------------------------------------------------*/
@@ -163,4 +190,4 @@
 	 (if (engine-format? "latex")
 	     (font :size -1 (flush :side 'left (the-bibliography)))
 	     (section :title "References"
-                      (font :size -1 (the-bibliography))))))
+		      (font :size -1 (the-bibliography))))))

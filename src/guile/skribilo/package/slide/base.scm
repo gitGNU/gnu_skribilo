@@ -123,8 +123,7 @@
   ;; Produce an entry for `topic'.  Colorize it based on the fact
   ;; that the current topic is `current-topic' (it may need to be
   ;; hightlighted).
-  (let ((title (markup-option topic :title))
-        (current? (eq? topic current-topic)))
+  (let ((current? (eq? topic current-topic)))
     (color :fg (if current? "#000000" "#666666")
            (apply (if current? bold (lambda (x) x))
                   (list (markup-option topic :title))))))

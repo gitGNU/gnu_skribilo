@@ -1,6 +1,7 @@
 ;;; acmproc.scm  --  The Skribe style for ACMPROC articles.
 ;;;
 ;;; Copyright 2003, 2004  Manuel Serrano
+;;; Copyright 2007  Ludovic Courtès <ludo@chbouib.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -18,6 +19,28 @@
 ;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 ;;; USA.
 
+(define-module (skribilo package acmproc)
+  :use-module (skribilo ast)
+  :use-module (skribilo engine)
+  :use-module (skribilo writer)
+  :autoload   (skribilo output)         (output)
+  :autoload   (skribilo package base)   (chapter font flush
+                                         toc the-bibliography)
+  :autoload   (skribilo utils keywords) (the-options the-body)
+  :autoload   (skribilo evaluator)      (evaluate-document)
+
+  :use-module (skribilo lib)
+  :use-module (skribilo utils syntax)
+
+  :use-module (ice-9 optargs)
+  :use-module (srfi srfi-13)
+
+  :export (abstract references))
+
+(fluid-set! current-reader %skribilo-module-reader)
+
+
+
 ;*---------------------------------------------------------------------*/
 ;*    LaTeX global customizations                                      */
 ;*---------------------------------------------------------------------*/
@@ -29,7 +52,7 @@
    (markup-writer '&latex-author le
       :before (lambda (n e)
 		 (let ((body (markup-body n)))
-		    (printf "\\numberofauthors{~a}\n\\author{\n"
+		    (format #f "\\numberofauthors{~a}\n\\author{\n"
 			    (if (pair? body) (length body) 1))))
       :action (lambda (n e)
 		 (let ((body (markup-body n)))
@@ -90,7 +113,7 @@
 				"#cccccc"))
 			(exp (p (center (color :bg bg :width 90. 
 					   (markup-body n))))))
-		    (skribe-eval exp e))))
+		    (evaluate-document exp e))))
    ;; ACM category, terms, and keywords
    (markup-writer '&acm-category :action #f)
    (markup-writer '&acm-terms :action #f)
@@ -100,11 +123,12 @@
 ;*---------------------------------------------------------------------*/
 ;*    abstract ...                                                     */
 ;*---------------------------------------------------------------------*/
-(define-markup (abstract #!rest opt #!key (class "abstract") postscript)
+(define-markup (abstract :rest opt :key (class "abstract") postscript)
    (if (engine-format? "latex")
        (section :number #f :title "ABSTRACT" (p (the-body opt)))
        (let ((a (new markup
 		   (markup '&html-acmproc-abstract)
+                   (loc  &invocation-location)
 		   (body (the-body opt)))))
 	  (list (if postscript
 		    (section :number #f :toc #f :title "Postscript download"
@@ -116,36 +140,39 @@
 ;*---------------------------------------------------------------------*/
 ;*    acm-category ...                                                 */
 ;*---------------------------------------------------------------------*/
-(define-markup (acm-category #!rest opt #!key index section subsection)
+(define-markup (acm-category :rest opt :key index section subsection)
    (new markup
       (markup '&acm-category)
+      (loc &invocation-location)
       (options (the-options opt))
       (body (the-body opt))))
 
 ;*---------------------------------------------------------------------*/
 ;*    acm-terms ...                                                    */
 ;*---------------------------------------------------------------------*/
-(define-markup (acm-terms #!rest opt)
+(define-markup (acm-terms :rest opt)
    (new markup
       (markup '&acm-terms)
+      (loc &invocation-location)
       (options (the-options opt))
       (body (the-body opt))))
 
 ;*---------------------------------------------------------------------*/
 ;*    acm-keywords ...                                                 */
 ;*---------------------------------------------------------------------*/
-(define-markup (acm-keywords #!rest opt)
+(define-markup (acm-keywords :rest opt)
    (new markup
       (markup '&acm-keywords)
+      (loc &invocation-location)
       (options (the-options opt))
       (body (the-body opt))))
 
 ;*---------------------------------------------------------------------*/
 ;*    acm-copyright ...                                                */
 ;*---------------------------------------------------------------------*/
-(define-markup (acm-copyright #!rest opt #!key conference location year crdata)
+(define-markup (acm-copyright :rest opt :key conference location year crdata)
    (let* ((le (find-engine 'latex))
-	  (cop (format "\\conferenceinfo{~a,} {~a}
+	  (cop (format #f "\\conferenceinfo{~a,} {~a}
 \\CopyrightYear{~a}
 \\crdata{~a}\n" conference location year crdata))
 	  (old (engine-custom le 'predocument)))

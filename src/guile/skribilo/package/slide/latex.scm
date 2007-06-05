@@ -1,6 +1,7 @@
 ;;; latex.scm  --  LaTeX implementation of the `slide' package.
 ;;;
 ;;; Copyright 2003, 2004  Manuel Serrano
+;;; Copyright 2007  Ludovic Courtès <ludo@chbouib.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -18,13 +19,33 @@
 ;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 ;;; USA.
 
-(define-skribe-module (skribilo package slide latex)
-  :use-module (skribilo package slide))
+(define-module (skribilo package slide latex)
+  :use-module (skribilo package slide)
+  :use-module (skribilo utils syntax)
+
+  :use-module (skribilo engine)
+  :use-module (skribilo writer)
+  :autoload   (skribilo output)        (output)
+  :use-module (skribilo ast)
+  :use-module (skribilo lib)
+  :autoload   (skribilo evaluator)     (evaluate-document)
+  :autoload   (skribilo engine latex)  (skribe-get-latex-color)
+
+  :autoload   (ice-9 regex)            (string-match)
+  :use-module (ice-9 match)
+  :use-module (srfi srfi-11)
+  :use-module (srfi srfi-13)
+  :use-module (srfi srfi-39)
+
+  :export (%slide-latex-mode %slide-latex-initialize! *slide-advi-scale*))
 
 
-(define-public %slide-latex-mode 'seminar)
+(fluid-set! current-reader %skribilo-module-reader)
 
-(define-public (%slide-latex-initialize!)
+
+(define %slide-latex-mode 'seminar)
+
+(define (%slide-latex-initialize!)
   (skribe-message "LaTeX slides setup...\n")
   (case %slide-latex-mode
     ((seminar)
@@ -36,7 +57,12 @@
     (else
      (skribe-error 'slide "Illegal latex mode" %slide-latex-mode))))
 
+(define string->integer string->number)
 
+(define *slide-advi-scale*
+  (make-parameter 1.0))
+
+
 ;*---------------------------------------------------------------------*/
 ;*    &slide-seminar-predocument ...                                   */
 ;*---------------------------------------------------------------------*/
@@ -92,7 +118,7 @@
       :action (lambda (n e)
 		 (display "\n\\vspace{")
 		 (output (markup-body n) e)
-		 (printf " ~a}\n\n" (markup-option n :unit))))
+		 (format #t " ~a}\n\n" (markup-option n :unit))))
    ;; slide-slide
    (markup-writer 'slide le
       :options '(:title :number :transition :vfill :toc :vspace :image)
@@ -136,14 +162,13 @@
 ;*---------------------------------------------------------------------*/
 (define (%slide-seminar-setup!)
    (skribe-message "Seminar slides setup...\n")
-   (let ((le (find-engine 'latex))
-	 (be (find-engine 'base)))
+   (let ((le (find-engine 'latex)))
       ;; latex configuration
       (define (seminar-slide n e)
 	 (let ((nb (markup-option n :number))
 	       (t (markup-option n :title)))
 	    (display "\\begin{slide}\n")
-	    (if nb (printf "~a/~a -- " nb (slide-number)))
+	    (if nb (format #t "~a/~a -- " nb (slide-number)))
 	    (output t e)
 	    (display "\\hrule\n"))
 	 (output (markup-body n) e)
@@ -168,36 +193,29 @@
 ;*---------------------------------------------------------------------*/
 (define (%slide-advi-setup!)
    (skribe-message "Generating `Advi Seminar' slides...\n")
-   (let ((le (find-engine 'latex))
-	 (be (find-engine 'base)))
+   (let ((le (find-engine 'latex)))
       (define (advi-geometry geo)
-	 (let ((r (pregexp-match "([0-9]+)x([0-9]+)" geo)))
+	 (let ((r (string-match "([0-9]+)x([0-9]+)" geo)))
 	    (if (pair? r)
 		(let* ((w (cadr r))
-		       (w' (string->integer w))
-		       (w'' (number->string (/ w' *skribe-slide-advi-scale*)))
-		       (h (caddr r))
-		       (h' (string->integer h))
-		       (h'' (number->string (/ h' *skribe-slide-advi-scale*))))
+		       (h (caddr r)))
 		   (values "" (string-append w "x" h "+!x+!y")))
-		(let ((r (pregexp-match "([0-9]+)x([0-9]+)[+](-?[0-9]+)[+](-?[0-9]+)" geo)))
+		(let ((r (string-match "([0-9]+)x([0-9]+)[+](-?[0-9]+)[+](-?[0-9]+)" geo)))
 		   (if (pair? r)
 		       (let ((w (number->string (/ (string->integer (cadr r))
-						   *skribe-slide-advi-scale*)))
+						   (*slide-advi-scale*))))
 			     (h (number->string (/ (string->integer (caddr r))
-						   *skribe-slide-advi-scale*)))
-			     (x (cadddr r))
-			     (y (car (cddddr r))))
+						   (*slide-advi-scale*)))))
 			  (values (string-append "width=" w "cm,height=" h "cm")
 				  "!g"))
 		       (values "" geo))))))
       (define (advi-transition trans)
 	 (cond
 	    ((string? trans)
-	     (printf "\\advitransition{~s}" trans))
+	     (format #t "\\advitransition{~s}" trans))
 	    ((and (symbol? trans)
 		  (memq trans '(wipe block slide)))
-	     (printf "\\advitransition{~s}" trans))
+	     (format #t "\\advitransition{~s}" trans))
 	    (else
 	     #f)))
       ;; latex configuration
@@ -208,7 +226,7 @@
 	       (lt (markup-option n :transition))
 	       (gt (engine-custom e 'transition)))
 	    (if (and i (engine-custom e 'advi))
-		(printf "\\advibg[global]{image=~a}\n"
+		(format #t "\\advibg[global]{image=~a}\n"
 			(if (and (pair? i)
 				 (null? (cdr i))
 				 (string? (car i)))
@@ -216,7 +234,7 @@
 			    i)))
 	    (display "\\begin{slide}\n")
 	    (advi-transition (or lt gt))
-	    (if n (printf "~a/~a -- " n (slide-number)))
+	    (if n (format #t "~a/~a -- " n (slide-number)))
 	    (output t e)
 	    (display "\\hrule\n"))
 	 (output (markup-body n) e)
@@ -226,7 +244,7 @@
       (define (advi-record n e)
 	 (display "\\advirecord")
 	 (when (markup-option n :play) (display "[play]"))
-	 (printf "{~a}{" (markup-option n :tag))
+	 (format #t "{~a}{" (markup-option n :tag))
 	 (output (markup-body n) e)
 	 (display "}"))
       ;; advi play
@@ -237,7 +255,7 @@
 	       (display "[")
 	       (display (skribe-get-latex-color c))
 	       (display "]")))
-	 (printf "{~a}" (markup-option n :tag)))
+	 (format #t "{~a}" (markup-option n :tag)))
       ;; advi play*
       (define (advi-play* n e)
 	 (let ((c (skribe-get-latex-color (markup-option n :color)))
@@ -247,21 +265,21 @@
 	       (when last
 		  (display "\\adviplay[")
 		  (display d)
-		  (printf "]{~a}" last))
+		  (format #t "]{~a}" last))
 	       (when (pair? lbls)
 		  (let ((lbl (car lbls)))
-		     (match-case lbl
-			((?id ?col)
+		     (match lbl
+			((id col)
 			 (display "\\adviplay[")
 			 (display (skribe-get-latex-color col))
-			 (printf "]{" ~a "}" id)
-			 (skribe-eval (slide-pause) e)
+			 (display (string-append "]{" id "}"))
+			 (evaluate-document (slide-pause) e)
 			 (loop (cdr lbls) id))
 			(else
 			 (display "\\adviplay[")
 			 (display c)
-			 (printf "]{~a}" lbl)
-			 (skribe-eval (slide-pause) e)
+			 (format #t "]{~a}" lbl)
+			 (evaluate-document (slide-pause) e)
 			 (loop (cdr lbls) lbl))))))))
       (engine-custom-set! le 'documentclass
 	 "\\documentclass{seminar}\n")
@@ -295,8 +313,8 @@
 					       geometry-opt " "
 					       geometry))
 			       (rgeometry
-				(multiple-value-bind (aopt dopt)
-				   (advi-geometry rgeometry)
+				(let-values (((aopt dopt)
+                                              (advi-geometry rgeometry)))
 				   (set! a (string-append a "," aopt))
 				   (string-append cmd " "
 						  geometry-opt " "
@@ -306,7 +324,7 @@
 			 (c (if (and transient transient-opt)
 				(string-append c " " transient-opt " !p")
 				c)))
-		     (printf "\\adviembed[~a]{~a}\n" a c)))))
+		     (format #t "\\adviembed[~a]{~a}\n" a c)))))
       (set! &latex-record advi-record)
       (set! &latex-play advi-play)
       (set! &latex-play* advi-play*)))
@@ -317,31 +335,29 @@
 (define (%slide-prosper-setup!)
    (skribe-message "Generating `Prosper' slides...\n")
    (let ((le (find-engine 'latex))
-	 (be (find-engine 'base))
 	 (overlay-count 0))
       ;; transitions
       (define (prosper-transition trans)
 	 (cond
 	    ((string? trans)
-	     (printf "[~s]" trans))
+	     (format #t "[~s]" trans))
 	    ((eq? trans 'slide)
-	     (printf "[Blinds]"))
+	     (display "[Blinds]"))
 	    ((and (symbol? trans)
 		  (memq trans '(split blinds box wipe dissolve glitter)))
-	     (printf "[~s]"
+	     (format #t "[~s]"
 		     (string-upcase (symbol->string trans))))
 	    (else
 	     #f)))
       ;; latex configuration
       (define (prosper-slide n e)
-	 (let* ((i (markup-option n :image))
-		(t (markup-option n :title))
+	 (let* ((t (markup-option n :title))
 		(lt (markup-option n :transition))
 		(gt (engine-custom e 'transition))
 		(pa (search-down (lambda (x) (is-markup? x 'slide-pause)) n))
 		(lpa (length pa)))
 	    (set! overlay-count 1)
-	    (if (>= lpa 1) (printf "\\overlays{~a}{%\n" (+ 1 lpa)))
+	    (if (>= lpa 1) (format #t "\\overlays{~a}{%\n" (+ 1 lpa)))
 	    (display "\\begin{slide}")
 	    (prosper-transition (or lt gt))
 	    (display "{")
@@ -368,7 +384,7 @@
       (set! &latex-pause
 	    (lambda (n e)
 	       (set! overlay-count (+ 1 overlay-count))
-	       (printf "\\FromSlide{~s}%\n" overlay-count)))))
+	       (format #t "\\FromSlide{~s}%\n" overlay-count)))))
 
 ;*---------------------------------------------------------------------*/
 ;*    Setup ...                                                        */
