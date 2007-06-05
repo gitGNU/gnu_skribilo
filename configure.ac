@@ -14,6 +14,12 @@ AM_GNU_GETTEXT([external])
 GUILE_PROGS
 GUILE_SITE_DIR
 
+# Guile-Lint (http://www.geocities.com/user42_kevin/guile-lint/index.html)
+AC_PATH_PROG([GUILE_LINT], [guile-lint])
+AC_SUBST([GUILE_LINT])
+AM_CONDITIONAL([HAVE_GUILE_LINT], test "x$GUILE_LINT" != "x")
+
+
 # Need guile-reader 0.2.
 GUILE_MODULE_REQUIRED([system reader])
 

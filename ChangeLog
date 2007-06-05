@@ -2,6 +2,36 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-06-05 17:08:05 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-97
+
+    Summary:
+      Added support for Guile-Lint.
+    Revision:
+      skribilo--devo--1.2--patch-97
+
+    * configure.ac: Look for `guile-lint'.
+    
+    * */Makefile.am: Include `guile-lint.am'.
+
+    new files:
+     .arch-ids/guile-lint.am.id guile-lint.am
+
+    modified files:
+     ChangeLog configure.ac src/guile/skribilo/Makefile.am
+     src/guile/skribilo/biblio/Makefile.am
+     src/guile/skribilo/coloring/Makefile.am
+     src/guile/skribilo/engine/Makefile.am
+     src/guile/skribilo/package/Makefile.am
+     src/guile/skribilo/package/eq/Makefile.am
+     src/guile/skribilo/package/pie/Makefile.am
+     src/guile/skribilo/package/slide/Makefile.am
+     src/guile/skribilo/reader/Makefile.am
+     src/guile/skribilo/utils/Makefile.am
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-56
+
+
 2007-06-05 17:05:42 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-96
 
     Summary:
