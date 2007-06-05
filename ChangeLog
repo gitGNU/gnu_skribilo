@@ -2,6 +2,28 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-06-05 17:05:42 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-96
+
+    Summary:
+      Fixed handling of figure numbering in `ref'.
+    Revision:
+      skribilo--devo--1.2--patch-96
+
+    * src/guile/skribilo/ast.scm (markup-number-string): Don't use a
+      hierarchical numbering scheme for figures.
+    
+    * src/guile/skribilo/engine/lout.scm (ref): Use `markup-number-string'
+      rather than `@NumberOf' to determine the number of a figure.  This
+      guarantees numbering consistency.
+
+    modified files:
+     ChangeLog src/guile/skribilo/ast.scm
+     src/guile/skribilo/engine/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-55
+
+
 2007-06-01 17:59:55 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-95
 
     Summary:
