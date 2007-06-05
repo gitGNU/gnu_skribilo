@@ -1,6 +1,7 @@
 ;;; scribe.scm  --  Scribe Compatibility kit
 ;;;
 ;;; Copyright 2003, 2004  Manuel Serrano
+;;; Copyright 2007  Ludovic Courtès <ludo@chbouib.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -18,8 +19,42 @@
 ;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 ;;; USA.
 
-(define-skribe-module (skribilo package scribe))
+(define-module (skribilo package scribe)
+  :use-module (skribilo engine)
+  :autoload   (skribilo package base)   (chapter font flush
+                                         toc the-bibliography)
+  :autoload   (skribilo utils keywords) (the-options the-body)
+  :autoload   (skribilo evaluator)      (load-document)
+  :use-module (skribilo biblio)
 
+  :use-module (skribilo lib)
+  :use-module (skribilo utils syntax)
+
+  :use-module (ice-9 optargs)
+  :use-module (srfi srfi-1)
+  :use-module (srfi srfi-13)
+
+  :export (style chapter table-of-contents frame copyright sect euro
+           tab space print-bibliography linebreak ref make-index
+           print-index scribe-format? scribe-url prgm
+           *scribe-tex-predocument* latex-prelude html-prelude
+
+           *scribe-background* *scribe-foreground* *scribe-tbackground*
+           *scribe-tforeground* *scribe-title-font* *scribe-author-font*
+           *scribe-chapter-numbering* *scribe-footer* *scribe-prgm-color*))
+
+(fluid-set! current-reader %skribilo-module-reader)
+
+;;; Author: Manuel Serrano, Ludovic Courtès
+;;;
+;;; Commentary:
+;;;
+;;; Compatibility layer for Scribe, Skribe's predecessor.  See
+;;; http://www-sop.inria.fr/mimosa/fp/Scribe/ for details.
+;;;
+;;; Code:
+
+
 ;*---------------------------------------------------------------------*/
 ;*    style ...                                                        */
 ;*---------------------------------------------------------------------*/
@@ -30,7 +65,7 @@
 		      style)
 		     ((symbol? style)
 		      (string-append (symbol->string style) ".scr")))))
-	 (skribe-load name :engine *skribe-engine*)))
+	 (load-document name)))
    (for-each load-style styles))
 
 ;*---------------------------------------------------------------------*/
@@ -38,7 +73,7 @@
 ;*---------------------------------------------------------------------*/
 (define skribe-chapter chapter)
 
-(define-markup (chapter #!rest opt #!key title subtitle split number toc file)
+(define-markup (chapter :rest opt :key title subtitle split number toc file)
    (apply skribe-chapter 
 	  :title (or title subtitle)
 	  :number number
@@ -49,7 +84,8 @@
 ;*---------------------------------------------------------------------*/
 ;*    table-of-contents ...                                            */
 ;*---------------------------------------------------------------------*/
-(define-markup (table-of-contents #!rest opts #!key chapter section subsection)
+(define* (table-of-contents :key chapter section subsection
+                            :rest opts)
    (apply toc opts))
 
 ;*---------------------------------------------------------------------*/
@@ -57,7 +93,7 @@
 ;*---------------------------------------------------------------------*/
 (define skribe-frame frame)
 
-(define-markup (frame #!rest opt #!key width margin)
+(define-markup (frame :rest opt :key width margin)
    (apply skribe-frame 
 	  :width (if (real? width) (* 100 width) width)
 	  :margin margin
@@ -96,8 +132,8 @@
 ;*---------------------------------------------------------------------*/
 ;*    print-bibliography ...                                           */
 ;*---------------------------------------------------------------------*/
-(define-markup (print-bibliography #!rest opts 
-				   #!key all (sort bib-sort/authors))
+(define-markup (print-bibliography :rest opts 
+				   :key all (sort bib-sort/authors))
    (the-bibliography all sort))
 
 ;*---------------------------------------------------------------------*/
@@ -105,7 +141,7 @@
 ;*---------------------------------------------------------------------*/
 (define skribe-linebreak linebreak)
 
-(define-markup (linebreak . lnum)
+(define (linebreak . lnum)
    (cond
       ((null? lnum)
        (skribe-linebreak))
@@ -119,12 +155,12 @@
 ;*---------------------------------------------------------------------*/
 (define skribe-ref ref)
 
-(define-markup (ref #!rest opts 
-		    #!key scribe url id page figure mark 
-		    chapter section subsection subsubsection subsubsection
-		    bib bib+ number)
+(define* (ref :key scribe url id page figure mark
+              chapter section subsection subsubsection subsubsubsection
+              bib bib+ number
+              :rest opts)
    (let ((bd (the-body opts))
-	 (args (apply append (the-options opts :id))))
+	 (args (concatenate (the-options opts :id))))
       (if id (set! args (cons* :mark id args)))
       (if (pair? bd) (set! args (cons* :text bd args)))
       (apply skribe-ref args)))
@@ -138,12 +174,12 @@
 (define skribe-index index)
 (define skribe-make-index make-index)
 
-(define-markup (make-index index)
+(define (make-index index)
    (let ((i (skribe-make-index index)))
       (set! *scribe-indexes* (cons (cons index i) *scribe-indexes*))
       i))
 
-(define-markup (index #!rest opts #!key note index shape)
+(define* (index :key note index shape :rest opts)
    (let ((i (if (not index)
 		"theindex"
 		(let ((i (assoc index *scribe-indexes*)))
@@ -152,8 +188,8 @@
 		       (make-index index))))))
       (apply skribe-index :note note :index i :shape shape (the-body opts))))
 
-(define-markup (print-index #!rest opts 
-			    #!key split (char-offset 0) (header-limit 100))
+(define* (print-index :key split (char-offset 0) (header-limit 100)
+                      :rest opts)
    (apply the-index 
 	  :split split 
 	  :char-offset char-offset
@@ -173,7 +209,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    scribe-url ...                                                   */
 ;*---------------------------------------------------------------------*/
-(define (scribe-url) (skribe-url))
+(define (scribe-url) "http://www.nongnu.org/skribilo/")
 
 ;*---------------------------------------------------------------------*/
 ;*    Various configurations                                           */
@@ -191,8 +227,8 @@
 ;*---------------------------------------------------------------------*/
 ;*    prgm ...                                                         */
 ;*---------------------------------------------------------------------*/
-(define-markup (prgm #!rest opts
-		     #!key lnum lnumwidth language bg frame (width 1.)
+(define-markup (prgm :rest opts
+		     :key lnum lnumwidth language bg frame (width 1.)
 		     colors (monospace #t))
    (let* ((w (cond
 		((real? width) (* width 100.))
@@ -236,5 +272,11 @@
 ;*---------------------------------------------------------------------*/
 ;*    prelude                                                          */
 ;*---------------------------------------------------------------------*/
-(let ((p (user-prelude)))
-   (user-prelude-set! (lambda (e) (p e) (latex-prelude e))))
+;; FIXME: I (Ludovic) guess `user-prelude' was supposed to be defined by user
+;; documents.  The issue is that the document's name space is not reachable
+;; from here.
+; (let ((p (user-prelude)))
+;    (user-prelude-set! (lambda (e) (p e) (latex-prelude e))))
+
+
+;;; scribe.scm ends here

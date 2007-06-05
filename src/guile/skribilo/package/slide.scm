@@ -35,7 +35,7 @@
   :use-module (srfi srfi-1)
   :use-module (ice-9 optargs))
 
-(fluid-set! current-reader (make-reader 'skribe))
+(fluid-set! current-reader %skribilo-module-reader)
 
 
 
@@ -54,8 +54,8 @@
 ;*---------------------------------------------------------------------*/
 ;*    slide ...                                                        */
 ;*---------------------------------------------------------------------*/
-(define-markup (slide #!rest opt
-		      #!key
+(define-markup (slide :rest opt
+		      :key
 		      (ident #f) (class #f)
 		      (toc #t)
 		      title (number #t)
@@ -152,7 +152,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    slide-vspace ...                                                 */
 ;*---------------------------------------------------------------------*/
-(define-markup (slide-vspace #!rest opt #!key (unit 'cm))
+(define-markup (slide-vspace :rest opt :key (unit 'cm))
    (new markup
       (markup 'slide-vspace)
       (loc &invocation-location)
@@ -162,8 +162,8 @@
 ;*---------------------------------------------------------------------*/
 ;*    slide-embed ...                                                  */
 ;*---------------------------------------------------------------------*/
-(define-markup (slide-embed #!rest opt
-			    #!key
+(define-markup (slide-embed :rest opt
+			    :key
 			    command
                             (arguments '())
 			    (geometry-opt "-geometry")
@@ -187,7 +187,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    slide-record ...                                                 */
 ;*---------------------------------------------------------------------*/
-(define-markup (slide-record #!rest opt #!key ident class tag (play #t))
+(define-markup (slide-record :rest opt :key ident class tag (play #t))
    (if (not tag)
        (skribe-error 'slide-record "Tag missing" tag)
        (new markup
@@ -201,7 +201,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    slide-play ...                                                   */
 ;*---------------------------------------------------------------------*/
-(define-markup (slide-play #!rest opt #!key ident class tag color)
+(define-markup (slide-play :rest opt :key ident class tag color)
    (if (not tag)
        (skribe-error 'slide-play "Tag missing" tag)
        (new markup
@@ -216,8 +216,8 @@
 ;*---------------------------------------------------------------------*/
 ;*    slide-play* ...                                                  */
 ;*---------------------------------------------------------------------*/
-(define-markup (slide-play* #!rest opt
-			    #!key ident class color (scolor "#000000"))
+(define-markup (slide-play* :rest opt
+			    :key ident class color (scolor "#000000"))
    (let ((body (the-body opt)))
       (for-each (lambda (lbl)
 		   (match-case lbl
@@ -248,8 +248,8 @@
 ;*---------------------------------------------------------------------*/
 ;*    slide-topic ...                                                  */
 ;*---------------------------------------------------------------------*/
-(define-markup (slide-topic #!rest opt
-			    #!key title (outline? #t)
+(define-markup (slide-topic :rest opt
+			    :key title (outline? #t)
                             (ident #f) (class #f))
    (new container
       (markup 'slide-topic)
@@ -264,8 +264,8 @@
 ;*---------------------------------------------------------------------*/
 ;*    slide-subtopic ...                                               */
 ;*---------------------------------------------------------------------*/
-(define-markup (slide-subtopic #!rest opt
-			       #!key title (outline? #f)
+(define-markup (slide-subtopic :rest opt
+			       :key title (outline? #f)
                                (ident #f) (class #f))
    (new container
       (markup 'slide-subtopic)

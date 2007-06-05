@@ -1,6 +1,7 @@
 ;;; letter.scm  --  Skribe style for letters
 ;;;
 ;;; Copyright 2003, 2004  Manuel Serrano
+;;; Copyright 2007  Ludovic Courtès <ludo@chbouib.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -18,29 +19,43 @@
 ;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 ;;; USA.
 
-(define-skribe-module (skribilo package letter))
+(define-module (skribilo package letter)
+  :use-module (skribilo ast)
+  :use-module (skribilo engine)
+  :use-module (skribilo writer)
+  :use-module (skribilo lib)
+  :autoload   (skribilo output)          (output)
+  :autoload   (skribilo utils keywords)  (the-body the-options)
+  :use-module (skribilo package base)
+  :use-module (srfi srfi-1)
 
+  :use-module (skribilo utils syntax)
+  :use-module (ice-9 optargs))
+
+(fluid-set! current-reader %skribilo-module-reader)
+
+
 ;*---------------------------------------------------------------------*/
 ;*    document                                                         */
 ;*---------------------------------------------------------------------*/
 (define %letter-document document)
 
-(define-markup (document #!rest opt 
-		  #!key (ident #f) (class "letter") 
+(define-markup (document :rest opt
+		  :key (ident #f) (class "letter")
 		  where date author
 		  &skribe-eval-location)
    (let* ((ubody (the-body opt))
 	  (body (list (new markup
 			 (markup '&letter-where)
-			 (loc &skribe-eval-location)
+			 (loc &invocation-location)
 			 (options `((:where ,where)
 				    (:date ,date)
 				    (:author ,author))))
 		      ubody)))
       (apply %letter-document
-	     :author #f :title #f 
-	     (append (apply append 
-			    (the-options opt :where :date :author :title))
+	     :author #f :title #f
+	     (append (concatenate
+		      (the-options opt :where :date :author :title))
 		     body))))
 
 ;*---------------------------------------------------------------------*/
@@ -94,11 +109,11 @@
 				     ;; url
 				     (if url (row url)))))
 		    ;; emit the author
-		    (if a 
+		    (if a
 			(output a ne)
 			(output hd e))))
       :after "\\end{raggedright}\n\\vspace{1cm}\n\n"))
-		 
+
 ;*---------------------------------------------------------------------*/
 ;*    HTML configuration                                               */
 ;*---------------------------------------------------------------------*/
@@ -149,9 +164,7 @@
 				     ;; url
 				     (if url (row url)))))
 		    ;; emit the author
-		    (if a 
+		    (if a
 			(output a ne)
 			(output hd e))))
       :after "</table>\n<hr>\n\n"))
-		 
-

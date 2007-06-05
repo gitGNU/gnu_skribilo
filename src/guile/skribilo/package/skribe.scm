@@ -18,10 +18,12 @@
 ;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 ;;; USA.
 
+;;; FIXME: This must be moved to the base package!
+
 ;*---------------------------------------------------------------------*/
 ;*    p ...                                                            */
 ;*---------------------------------------------------------------------*/
-(define-markup (p #!rest opt #!key ident (class #f) &skribe-eval-location)
+(define-markup (p :rest opt :key ident (class #f) &skribe-eval-location)
    (paragraph :ident ident :class class :loc &skribe-eval-location
       (the-body opt)))
 
@@ -45,7 +47,7 @@
 ;*    produces:                                                        */
 ;*       i) toto, ii) tutu, iii) titi.                                 */
 ;*---------------------------------------------------------------------*/
-(define-markup (counter #!rest opts #!key (numbering 'roman))
+(define-markup (counter :rest opts :key (numbering 'roman))
    (define items (if (eq? (car opts) :numbering) (cddr opts) opts))
    (define vroman '#(- "i" "ii" "iii" "iv" "v" "vi" "vii" "viii" "ix" "x"))
    (define (the-roman-number num)
@@ -77,7 +79,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    q                                                                */
 ;*---------------------------------------------------------------------*/
-(define-markup (q #!rest opt)
+(define-markup (q :rest opt)
    (new markup
       (markup 'q)
       (options (the-options opt))

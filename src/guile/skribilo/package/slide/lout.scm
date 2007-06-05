@@ -26,6 +26,7 @@
   :use-module (skribilo writer)
   :autoload   (skribilo output)        (output)
   :use-module (skribilo ast)
+  :autoload   (skribilo lib)           (skribe-error)
 
   :use-module (srfi srfi-13) ;; `string-join'
 
@@ -110,17 +111,16 @@
                      (args          (markup-option n :arguments))
                      (alt           (markup-option n :alt))
                      (geometry      (markup-option n :geometry))
-                     (geometry-opt  (markup-option n :geometry-opt))
-		     (filter (make-string-replace lout-verbatim-encoding)))
+                     (geometry-opt  (markup-option n :geometry-opt)))
                  (format #t "~%\"~a\" @SkribiloEmbed { "
                          (string-append command " "
                                         (if (and geometry-opt geometry)
                                             (string-append geometry-opt " "
                                                            geometry " ")
                                             "")
-                                        (string-join args " ")))
+                                        (string-join args)))
                  (output alt e)
-                 (format #t " }\n"))))
+                 (display " }\n"))))
 
   (markup-writer 'slide-pause le
      ;; FIXME:  Use a `pdfmark' custom action and a PDF transition action.

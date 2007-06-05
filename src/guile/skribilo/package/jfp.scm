@@ -1,6 +1,7 @@
 ;;; jfp.scm  --  The Skribe style for JFP articles.
 ;;;
 ;;; Copyright 2003, 2004  Manuel Serrano
+;;; Copyright 2007  Ludovic Courtès <ludo@chbouib.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -18,7 +19,39 @@
 ;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 ;;; USA.
 
-(define-skribe-module (skribilo package jfp))
+(define-module (skribilo package jfp)
+  :use-module (skribilo ast)
+  :use-module (skribilo engine)
+  :use-module (skribilo writer)
+  :autoload   (skribilo output)          (output)
+  :autoload   (skribilo evaluator)       (evaluate-document)
+  :autoload   (skribilo lib)             (skribe-error)
+  :autoload   (skribilo biblio template) (output-bib-entry-template)
+  :autoload   (skribilo utils keywords)  (the-body)
+  :use-module (skribilo package base)
+  :use-module (srfi srfi-1)
+
+  :use-module (skribilo utils syntax)
+  :use-module (ice-9 optargs)
+  :autoload   (ice-9 regex)              (regexp-substitute/global)
+
+  :export (abstract references))
+
+;;; Author: Manuel Serrano, Ludovic Courtès
+;;;
+;;; Commentary:
+;;;
+;;; Tools for the Journal of Functional Programming (JFP).
+;;;
+;;; Code:
+
+(fluid-set! current-reader %skribilo-module-reader)
+
+(define every? every)
+
+(define (pregexp-replace* regexp str1 str2)
+  (regexp-substitute/global #f regexp str1
+                            'pre str2 'post))
 
 ;*---------------------------------------------------------------------*/
 ;*    LaTeX global customizations                                      */
@@ -192,62 +225,8 @@
    ;; %bib-entry-body
    (markup-writer '&bib-entry-body le
       :action (lambda (n e)
-		 (define (output-fields descr)
-		    (display "\\item[")
-		    (let loop ((descr descr)
-			       (pending #f)
-			       (armed #f)
-			       (first #t))
-		       (cond
-			  ((null? descr)
-			   'done)
-			  ((pair? (car descr))
-			   (if (eq? (caar descr) 'or)
-			       (let ((o1 (cadr (car descr))))
-				  (if (markup-option n o1)
-				      (loop (cons o1 (cdr descr)) 
-					    pending 
-					    #t
-					    #f)
-				      (let ((o2 (caddr (car descr))))
-					 (loop (cons o2 (cdr descr)) 
-					       pending
-					       armed
-					       #f))))
-			       (let ((o (markup-option n (cadr (car descr)))))
-				  (if o
-				      (begin
-					 (if (and pending armed)
-					     (output pending e))
-					 (output (caar descr) e)
-					 (output o e)
-					 (if (pair? (cddr (car descr)))
-					     (output (caddr (car descr)) e))
-					 (loop (cdr descr) #f #t #f))
-				      (loop (cdr descr) pending armed #f)))))
-			  ((symbol? (car descr))
-			   (let ((o (markup-option n (car descr))))
-			      (if o 
-				  (begin
-				     (if (and armed pending)
-					 (output pending e))
-				     (output o e)
-				     (if first
-					 (display "]"))
-				     (loop (cdr descr) #f #t #f))
-				  (loop (cdr descr) pending armed #f))))
-			  ((null? (cdr descr))
-			   (output (car descr) e))
-			  ((string? (car descr))
-			   (loop (cdr descr) 
-				 (if pending pending (car descr))
-				 armed
-				 #f))
-			  (else
-			   (skribe-error 'output-bib-fields
-					 "Illegal description"
-					 (car descr))))))
-		 (output-fields
+		 (output-bib-entry-template n e
+
 		  (case (markup-option n 'kind)
 		     ((techreport)
 		      `(author (" (" year ")") " " (or title url) ". " 
@@ -297,15 +276,21 @@
 				    (center (color :bg bg :width 90. 
 					       (it (markup-body n))))
 				    (it (markup-body n))))))
-                    (skribe-eval exp e)))))
-		 
+                    (evaluate-document exp e)))))
+
+
+;;;
+;;; Markup.
+;;;
+
 ;*---------------------------------------------------------------------*/
 ;*    abstract ...                                                     */
 ;*---------------------------------------------------------------------*/
-(define-markup (abstract #!rest opt #!key postscript)
+(define-markup (abstract :rest opt :key postscript)
    (if (engine-format? "latex")
        (new markup
 	  (markup 'jfp-abstract)
+          (loc &invocation-location)
 	  (body (p (the-body opt))))
        (let ((a (new markup
 		   (markup '&html-jfp-abstract)
@@ -326,3 +311,5 @@
 	    :number (not (engine-format? "latex"))
 	    (font :size -1 (the-bibliography)))))
 
+
+;;; jfp.scm ends here

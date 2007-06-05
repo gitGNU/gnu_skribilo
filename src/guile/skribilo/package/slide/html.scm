@@ -30,7 +30,7 @@
   :autoload   (skribilo engine html) (html-width html-title-authors)
 
   :use-module (skribilo package slide)
-  :use-module ((skribilo package base) :select (ref))) 
+  :use-module (skribilo package base))
 
 
 (fluid-set! current-reader %skribilo-module-reader)
@@ -145,7 +145,6 @@
    :options '(:title :outline? :class :ident)
    :action (lambda (n e)
 	      (let ((title (markup-option n :title))
-		    (body (markup-body n))
                     (class (markup-class n)))
                  ;; top-level class
                  (if class (format #t "\n<div class=\"~a\">" class))

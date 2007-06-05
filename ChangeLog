@@ -2,6 +2,44 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-06-05 17:09:02 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-98
+
+    Summary:
+      Started cleaning up packages using Guile-Lint.
+    Revision:
+      skribilo--devo--1.2--patch-98
+
+    Most of the changes involve:
+    
+      * using a native module rather than `define-skribe-module'.
+    
+      * using `:'-style keywords instead of DSSSL keywords so that Guile-Lint
+        can handle them.
+    
+      * fixing unbound variables and the likes.
+
+    modified files:
+     ChangeLog src/guile/skribilo/engine/latex.scm
+     src/guile/skribilo/package/acmproc.scm
+     src/guile/skribilo/package/eq/lout.scm
+     src/guile/skribilo/package/french.scm
+     src/guile/skribilo/package/jfp.scm
+     src/guile/skribilo/package/letter.scm
+     src/guile/skribilo/package/lncs.scm
+     src/guile/skribilo/package/pie/lout.scm
+     src/guile/skribilo/package/scribe.scm
+     src/guile/skribilo/package/sigplan.scm
+     src/guile/skribilo/package/skribe.scm
+     src/guile/skribilo/package/slide.scm
+     src/guile/skribilo/package/slide/base.scm
+     src/guile/skribilo/package/slide/html.scm
+     src/guile/skribilo/package/slide/latex.scm
+     src/guile/skribilo/package/slide/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-57
+
+
 2007-06-05 17:08:05 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-97
 
     Summary:
