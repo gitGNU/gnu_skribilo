@@ -14,3 +14,5 @@ EXTRA_DIST = lisp-lex.l xml-lex.l c-lex.l
 	$(GUILE) -L $(top_srcdir)/src/guile/silex			\
 	         -c '(load-from-path "lex.scm") (lex "$^" "$@")'
 
+
+include $(top_srcdir)/guile-lint.am

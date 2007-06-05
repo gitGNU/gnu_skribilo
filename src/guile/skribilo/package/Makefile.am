@@ -5,3 +5,5 @@ dist_guilemodule_DATA = acmproc.scm french.scm jfp.scm letter.scm	\
 			eq.scm pie.scm base.scm diff.scm
 
 SUBDIRS = slide eq pie
+
+include $(top_srcdir)/guile-lint.am
