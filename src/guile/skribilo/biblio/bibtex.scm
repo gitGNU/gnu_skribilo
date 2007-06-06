@@ -1,6 +1,6 @@
 ;;; bibtex.scm  --  Handling BibTeX references.
 ;;;
-;;; Copyright 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2006, 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -25,6 +25,7 @@
   :autoload   (skribilo engine)        (engine-filter find-engine)
   :use-module (skribilo biblio author)
   :use-module (srfi srfi-39)
+  :use-module (srfi srfi-13)
   :export     (print-as-bibtex-entry))
 
 ;;; Author:  Ludovic Courtès
@@ -67,7 +68,7 @@
 		       (id (lambda (a) a)))
 		  (if o
 		      (display
-		       (apply string-append
+		       (string-concatenate
 			      `(,@(map (if (eq? 'url opt)
 					   id filter)
 				       (cons "  " o))
