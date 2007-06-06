@@ -2,6 +2,22 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-06-06 13:14:06 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-99
+
+    Summary:
+      Tiny Automake fix.
+    Revision:
+      skribilo--devo--1.2--patch-99
+
+    * Makefile.am (EXTRA_DIST): Added `guile-lint.am'.
+
+    modified files:
+     ChangeLog Makefile.am
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-58
+
+
 2007-06-05 17:09:02 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-98
 
     Summary:
