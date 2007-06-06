@@ -23,8 +23,9 @@
   :use-module (ice-9 regex)
   :autoload   (ice-9 receive) (receive)
   :use-module (skribilo lib)  ;; `new'
-  :autoload   (skribilo ast) (node? node-body)
+  :use-module (skribilo ast)
   :use-module (skribilo utils syntax)
+  :autoload   (skribilo package base) (mark)
 
   :export (make-prog-body resolve-line))
 
@@ -43,8 +44,7 @@
 (define pregexp-quote   regexp-quote)
 
 
-(define (node-body-set! b v)
-  (slot-set! b 'body v))
+(define node-body-set! markup-body-set!)
 
 ;;;
 ;;; FIXME: Tout le module peut se factoriser
@@ -186,13 +186,6 @@
 ;*    make-prog-body ...                                               */
 ;*---------------------------------------------------------------------*/
 (define (make-prog-body src lnum-init ldigit mark)
-   (define (int->str i rl)
-      (let* ((s (number->string i))
-	     (l (string-length s)))
-	 (if (= l rl)
-	     s
-	     (string-append (make-string (- rl l) #\space) s))))
- 
    (let* ((regexp (and mark
 		       (format #f "~a[-a-zA-Z_][-0-9a-zA-Z_]+"
 			       (pregexp-quote mark))))
@@ -205,8 +198,7 @@
 	  (s (number->string (+ (if (integer? ldigit)
 				    (max lnum (expt 10 (- ldigit 1)))
 				    lnum)
-				(length lines))))
-	  (cs (string-length s)))
+				(length lines)))))
      (let loop ((lines lines)
 		 (lnum lnum)
 		 (res '()))

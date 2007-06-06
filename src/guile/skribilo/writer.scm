@@ -20,7 +20,7 @@
 ;;; USA.
 
 (define-module (skribilo writer)
-  :export (<writer> writer? write-object writer-options writer-ident
+  :export (<writer> writer? writer-options writer-ident
 	            writer-before writer-action writer-after writer-class
 
 	   invoke markup-writer markup-writer-get markup-writer-get*
@@ -89,11 +89,9 @@
 
 
 (define (make-writer-predicate markup predicate class)
-  (define (%always-true n e) #t)
-
   (let* ((t2 (if class
 		 (lambda (n e)
-		   (and (equal? (markup-class n) class)))
+		   (equal? (markup-class n) class))
 		 #f)))
     (if predicate
 	(cond
@@ -230,7 +228,6 @@
        (skribe-error 'markup-writer "illegal engine" e))
       (else
        (let* ((writers (slot-ref e 'writers))
-	      (markup-writers (hashq-ref writers markup '()))
 	      (delegate (slot-ref e 'delegate)))
 
 	 (append (matching-writers writers)

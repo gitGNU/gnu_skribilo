@@ -30,7 +30,7 @@
 
 	   &reader-search-error reader-search-error?
 	   reader-search-error:reader)
-  :export-syntax (define-reader define-public-reader))
+  :export-syntax (define-reader define-public-reader reader?))
 
 ;;; Author:  Ludovic Courtès
 ;;;

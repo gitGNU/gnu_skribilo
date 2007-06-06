@@ -23,7 +23,6 @@
   :use-syntax (skribilo utils syntax)
   :use-syntax (skribilo lib)
 
-  :use-module (skribilo lib)
   :use-module (skribilo ast)
   :use-module (srfi srfi-39)
 

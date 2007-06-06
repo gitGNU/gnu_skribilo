@@ -25,8 +25,6 @@
            evaluate-document evaluate-document-from-port
 	   load-document include-document *load-options*)
   :autoload (skribilo parameters) (*verbose* *document-path*)
-  :autoload (skribilo location)   (<location>)
-  :autoload (skribilo ast)        (ast? markup?)
   :autoload (skribilo engine)     (*current-engine*
 				   engine? find-engine engine-ident)
   :autoload (skribilo reader)     (*document-reader*)
@@ -44,7 +42,6 @@
              (skribilo lib)
 
 	     (ice-9 optargs)
-	     (oop goops)
 	     (srfi srfi-1)
 	     (srfi srfi-13)
 	     (srfi srfi-34)
@@ -160,7 +157,7 @@
 	    (path (append (cond
 			   ((not path) (*document-path*))
 			   ((string? path) (list path))
-			   ((not (and (list? path) (every? string? path)))
+			   ((not (and (list? path) (every string? path)))
 			    (raise (condition (&invalid-argument-error
 					       (proc-name 'load-document)
 					       (argument  path)))))

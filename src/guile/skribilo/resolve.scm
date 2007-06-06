@@ -31,8 +31,8 @@
   :use-module (srfi srfi-34)
   :use-module (srfi srfi-35)
 
-  :export (resolve! resolve-search-parent resolve-children resolve-children*
-	   find1 resolve-counter resolve-parent resolve-ident
+  :export (resolve! resolve-search-parent
+	   resolve-counter resolve-parent resolve-ident
 	   *document-being-resolved*))
 
 (fluid-set! current-reader %skribilo-module-reader)
@@ -239,7 +239,7 @@
      (debug-item "searching=" pred)
      (let ((p (resolve-parent n e)))
        (debug-item "parent=" p " "
-		   (if (is-a? p 'markup) (slot-ref p 'markup) "???"))
+		   (if (is-a? p <markup>) (slot-ref p 'markup) "???"))
        (cond
 	 ((pred p)		 p)
 	 ((is-a? p <unresolved>) p)
@@ -262,10 +262,7 @@
 			(list (list (symbol-append cnt '-counter) 0)
 			      (list (symbol-append cnt '-env) '())))
 	      (resolve-counter n e cnt val)))
-	(let* ((num (cadr c))
-	       (nval (if (integer? val)
-			 val
-			 (+ 1 num))))
+	(let* ((num (cadr c)))
 	  (let ((c2 (assq (symbol-append cnt '-env) e)))
 	    (set-car! (cdr c2) (cons (resolve-parent n e) (cadr c2))))
 	  (cond
