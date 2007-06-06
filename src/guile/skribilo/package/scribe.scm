@@ -21,11 +21,10 @@
 
 (define-module (skribilo package scribe)
   :use-module (skribilo engine)
-  :autoload   (skribilo package base)   (chapter font flush
-                                         toc the-bibliography)
   :autoload   (skribilo utils keywords) (the-options the-body)
   :autoload   (skribilo evaluator)      (load-document)
   :use-module (skribilo biblio)
+  :use-module ((skribilo package base) :renamer (symbol-prefix-proc 'skr:))
 
   :use-module (skribilo lib)
   :use-module (skribilo utils syntax)
@@ -35,13 +34,13 @@
   :use-module (srfi srfi-13)
 
   :export (style chapter table-of-contents frame copyright sect euro
-           tab space print-bibliography linebreak ref make-index
-           print-index scribe-format? scribe-url prgm
-           *scribe-tex-predocument* latex-prelude html-prelude
+	   tab space print-bibliography linebreak ref make-index
+	   index print-index scribe-format? scribe-url prgm
+	   *scribe-tex-predocument* latex-prelude html-prelude
 
-           *scribe-background* *scribe-foreground* *scribe-tbackground*
-           *scribe-tforeground* *scribe-title-font* *scribe-author-font*
-           *scribe-chapter-numbering* *scribe-footer* *scribe-prgm-color*))
+	   *scribe-background* *scribe-foreground* *scribe-tbackground*
+	   *scribe-tforeground* *scribe-title-font* *scribe-author-font*
+	   *scribe-chapter-numbering* *scribe-footer* *scribe-prgm-color*))
 
 (fluid-set! current-reader %skribilo-module-reader)
 
@@ -71,10 +70,8 @@
 ;*---------------------------------------------------------------------*/
 ;*    chapter ...                                                      */
 ;*---------------------------------------------------------------------*/
-(define skribe-chapter chapter)
-
 (define-markup (chapter :rest opt :key title subtitle split number toc file)
-   (apply skribe-chapter 
+   (apply skr:chapter
 	  :title (or title subtitle)
 	  :number number
 	  :toc toc
@@ -85,16 +82,14 @@
 ;*    table-of-contents ...                                            */
 ;*---------------------------------------------------------------------*/
 (define* (table-of-contents :key chapter section subsection
-                            :rest opts)
-   (apply toc opts))
+			    :rest opts)
+   (apply skr:toc opts))
 
 ;*---------------------------------------------------------------------*/
 ;*    frame ...                                                        */
 ;*---------------------------------------------------------------------*/
-(define skribe-frame frame)
-
 (define-markup (frame :rest opt :key width margin)
-   (apply skribe-frame 
+   (apply skr:frame
 	  :width (if (real? width) (* 100 width) width)
 	  :margin margin
 	  (the-body opt)))
@@ -121,61 +116,54 @@
 ;*    tab ...                                                          */
 ;*---------------------------------------------------------------------*/
 (define (tab)
-   (char #\tab))
+   (skr:char #\tab))
 
 ;*---------------------------------------------------------------------*/
 ;*    space ...                                                        */
 ;*---------------------------------------------------------------------*/
 (define (space)
-   (char #\space))
+   (skr:char #\space))
 
 ;*---------------------------------------------------------------------*/
 ;*    print-bibliography ...                                           */
 ;*---------------------------------------------------------------------*/
-(define-markup (print-bibliography :rest opts 
+(define-markup (print-bibliography :rest opts
 				   :key all (sort bib-sort/authors))
-   (the-bibliography all sort))
+   (skr:the-bibliography all sort))
 
 ;*---------------------------------------------------------------------*/
 ;*    linebreak ...                                                    */
 ;*---------------------------------------------------------------------*/
-(define skribe-linebreak linebreak)
-
 (define (linebreak . lnum)
    (cond
       ((null? lnum)
-       (skribe-linebreak))
+       (skr:linebreak))
       ((string? (car lnum))
-       (skribe-linebreak (string->number (car lnum))))
+       (skr:linebreak (string->number (car lnum))))
       (else
-       (skribe-linebreak (car lnum)))))
+       (skr:linebreak (car lnum)))))
 
 ;*---------------------------------------------------------------------*/
 ;*    ref ...                                                          */
 ;*---------------------------------------------------------------------*/
-(define skribe-ref ref)
-
 (define* (ref :key scribe url id page figure mark
-              chapter section subsection subsubsection subsubsubsection
-              bib bib+ number
-              :rest opts)
+	      chapter section subsection subsubsection subsubsubsection
+	      bib bib+ number
+	      :rest opts)
    (let ((bd (the-body opts))
 	 (args (concatenate (the-options opts :id))))
       (if id (set! args (cons* :mark id args)))
       (if (pair? bd) (set! args (cons* :text bd args)))
-      (apply skribe-ref args)))
+      (apply skr:ref args)))
 
 ;*---------------------------------------------------------------------*/
 ;*    indexes ...                                                      */
 ;*---------------------------------------------------------------------*/
 (define *scribe-indexes*
-   (list (cons "theindex" (make-index "theindex"))))
-
-(define skribe-index index)
-(define skribe-make-index make-index)
+   (list (cons "theindex" (skr:make-index "theindex"))))
 
 (define (make-index index)
-   (let ((i (skribe-make-index index)))
+   (let ((i (skr:make-index index)))
       (set! *scribe-indexes* (cons (cons index i) *scribe-indexes*))
       i))
 
@@ -186,12 +174,12 @@
 		   (if (pair? i)
 		       (cdr i)
 		       (make-index index))))))
-      (apply skribe-index :note note :index i :shape shape (the-body opts))))
+      (apply skr:index :note note :index i :shape shape (the-body opts))))
 
 (define* (print-index :key split (char-offset 0) (header-limit 100)
-                      :rest opts)
-   (apply the-index 
-	  :split split 
+		      :rest opts)
+   (apply skr:the-index
+	  :split split
 	  :char-offset char-offset
 	  :header-limit header-limit
 	  (map (lambda (i)
@@ -200,7 +188,7 @@
 		       (cdr c)
 		       (skribe-error 'the-index "Unknown index" i))))
 	       (the-body opts))))
-	      
+
 ;*---------------------------------------------------------------------*/
 ;*    format?                                                          */
 ;*---------------------------------------------------------------------*/
@@ -227,26 +215,26 @@
 ;*---------------------------------------------------------------------*/
 ;*    prgm ...                                                         */
 ;*---------------------------------------------------------------------*/
-(define-markup (prgm :rest opts
-		     :key lnum lnumwidth language bg frame (width 1.)
-		     colors (monospace #t))
+(define (prgm :key lnum lnumwidth language bg frame (width 1.)
+		     colors (monospace #t)
+		     :rest opts)
    (let* ((w (cond
 		((real? width) (* width 100.))
 		((number? width) width)
 		(else 100.)))
-	  (body (if language 
-		    (source :language language (the-body opts))
+	  (body (if language
+		    (skr:source :language language (the-body opts))
 		    (the-body opts)))
 	  (body (if monospace
-		    (prog :line lnum body)
+		    (skr:prog :line lnum body)
 		    body))
 	  (body (if bg
-		    (color :width 100. :bg bg body)
+		    (skr:color :width 100. :bg bg body)
 		    body)))
-      (skribe-frame :width w
-		    :border (if frame 1 #f)
-		    body)))
-   
+      (skr:frame :width w
+		 :border (if frame 1 #f)
+		 body)))
+
 ;*---------------------------------------------------------------------*/
 ;*    latex configuration                                              */
 ;*---------------------------------------------------------------------*/
@@ -260,7 +248,7 @@
        (begin
 	  (if *scribe-tex-predocument*
 	      (engine-custom-set! e 'predocument *scribe-tex-predocument*)))))
-      
+
 ;*---------------------------------------------------------------------*/
 ;*    html-prelude ...                                                 */
 ;*---------------------------------------------------------------------*/
@@ -268,7 +256,7 @@
    (if (engine-format? "html" e)
        (begin
 	  #f)))
-      
+
 ;*---------------------------------------------------------------------*/
 ;*    prelude                                                          */
 ;*---------------------------------------------------------------------*/

@@ -37,7 +37,6 @@
   :autoload   (skribilo biblio)        (*bib-table* make-bib-table)
   :use-module (skribilo package base)
   :use-module (skribilo utils syntax)
-  :autoload   (skribilo utils keywords) (the-options the-body)
 
   :export (make-diff-document
            make-diff-document-from-files))
@@ -137,8 +136,7 @@
     (if (null? result)
         `((unchanged ,start ,end))
         (let ((prev-unchanged? (eq? (caar result) 'unchanged))
-              (prev-start      (cadr (car result)))
-              (prev-end        (caddr (car result))))
+              (prev-start      (cadr (car result))))
           (if prev-unchanged?
               (cons `(unchanged ,prev-start ,end)
                     (cdr result))
@@ -385,16 +383,16 @@
   ;; are highlighted.
   (let ((ast1
          (parameterize ((*bib-table* (make-bib-table 'doc-1)))
+           (skribe-message "diff: loading first document~%")
            (evaluate-ast-from-port (open-input-file old-file)
                                    :reader reader
                                    :module (make-run-time-module))))
-        (~~ (skribe-message "diff: first document loaded~%"))
         (ast2
          (parameterize ((*bib-table* (make-bib-table 'doc-2)))
+           (skribe-message "diff: loading second document~%")
            (evaluate-ast-from-port (open-input-file new-file)
                                    :reader reader
-                                   :module (make-run-time-module))))
-        (%% (skribe-message "diff: second document loaded~%")))
+                                   :module (make-run-time-module)))))
 
     (resolve! ast1 engine env)
     (resolve! ast2 engine env)

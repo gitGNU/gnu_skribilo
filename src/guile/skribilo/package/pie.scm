@@ -27,10 +27,9 @@
   :use-module (skribilo utils syntax)
   :use-module (skribilo utils keywords) ;; `the-options', etc.
   :use-module (skribilo utils strings)  ;; `make-string-replace'
-  :use-module (skribilo module)
   :autoload   (skribilo color)        (skribe-color->rgb)
   :autoload   (skribilo package base) (bold)
-  :autoload   (skribilo engine lout)  (lout-illustration)
+  :autoload   (srfi srfi-13)          (string-concatenate)
   :autoload   (ice-9 popen)           (open-output-pipe)
   :use-module (ice-9 optargs)
   :export     (%ploticus-program %ploticus-debug?
@@ -125,7 +124,7 @@ the string \"hello\".  Implement `sliceweight' markups too."
 	     (number->string (percentage-round value)))
 	  (pie-remove-markup (markup-body node)))
       (if (list? node)
-	  (apply string-append (map pie-remove-markup node))
+	  (string-concatenate (map pie-remove-markup node))
 	  node)))
 
 (define strip-newlines (make-string-replace '((#\newline " "))))
@@ -174,14 +173,16 @@ the string \"hello\".  Implement `sliceweight' markups too."
 			  (string-append (color-spec->ploticus c)
 					 " ")))
 		      (markup-body pie)))
-	 (total-weight (or (if (number? (markup-option pie
-						       :total))
-			       (markup-option pie :total)
-			       #f)
-			   (apply + weights)))
+	 (total-weight
+          (let ((w (or (if (number? (markup-option pie
+                                                   :total))
+                           (markup-option pie :total)
+                           #f)
+                       (apply + weights))))
 
-	 ;; Attach useful information to the pie and its slices
-	 (-/- (markup-option-add! pie '&total-weight total-weight))
+            ;; Attach useful information to the pie and its slices
+            (markup-option-add! pie '&total-weight w)
+            w))
 
 	 ;; One slice label per line -- so we need to remove
 	 ;; newlines from labels.
@@ -215,7 +216,7 @@ the string \"hello\".  Implement `sliceweight' markups too."
 		       (* max-radius max-radius)) .
 		       ,(* max-radius max-radius))))
 
-    (apply string-append
+    (string-concatenate
 	   (append (list "#proc getdata\n" "data: ")
 		   (map (lambda (weight)
 			  (string-append (number->string weight)

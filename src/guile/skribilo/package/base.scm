@@ -21,7 +21,6 @@
 
 (define-module (skribilo package base)
   :use-syntax (skribilo lib)
-  :use-syntax (skribilo reader)
   :use-syntax (skribilo utils syntax)
   :use-syntax (ice-9 optargs)
 
@@ -40,10 +39,11 @@
   :autoload   (skribilo source)    (language? source-read-lines source-fontify)
   :autoload   (skribilo prog)      (make-prog-body resolve-line)
   :autoload   (skribilo index)     (make-index-table default-index)
+  :autoload   (skribilo sui)       (load-sui sui-ref->url)
 
   :replace (symbol))
 
-(fluid-set! current-reader (make-reader 'skribe))
+(fluid-set! current-reader %skribilo-module-reader)
 
 ;;; Author: Manuel Serrano
 ;;; Commentary:
@@ -61,7 +61,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    include ...                                                      */
 ;*---------------------------------------------------------------------*/
-(define-markup (include file)
+(define-public (include file)
    (if (not (string? file))
        (skribe-error 'include "Illegal file (string expected)" file)
        (include-document file)))
@@ -69,9 +69,9 @@
 ;*---------------------------------------------------------------------*/
 ;*    document ...                                                     */
 ;*---------------------------------------------------------------------*/
-(define-markup (document #!rest
+(define-markup (document :rest
 			 opts
-			 #!key
+			 :key
 			 (ident #f) (class "document")
 			 (title #f) (html-title #f) (author #f)
 			 (ending #f) (keywords '()) (env '()))
@@ -108,9 +108,9 @@
 ;*---------------------------------------------------------------------*/
 ;*    author ...                                                       */
 ;*---------------------------------------------------------------------*/
-(define-markup (author #!rest
+(define-markup (author :rest
 		       opts
-		       #!key
+		       :key
 		       (ident #f) (class "author")
 		       name
 		       (title #f)
@@ -137,9 +137,9 @@
 ;*---------------------------------------------------------------------*/
 ;*    toc ...                                                          */
 ;*---------------------------------------------------------------------*/
-(define-markup (toc #!rest
+(define-markup (toc :rest
 		    opts
-		    #!key
+		    :key
 		    (ident #f) (class "toc")
 		    (chapter #t) (section #t) (subsection #f)
 		    (subsubsection #f))
@@ -181,9 +181,9 @@
 ;*    writer:                                                          */
 ;*       html: @ref ../../skr/html.skr:chapter@                        */
 ;*---------------------------------------------------------------------*/
-(define-markup (chapter #!rest
+(define-markup (chapter :rest
 			opts
-			#!key
+			:key
 			(ident #f) (class "chapter")
 			title (html-title #f) (file #f) (toc #t) (number #t))
    (new container
@@ -222,9 +222,9 @@
 ;*    writer:                                                          */
 ;*       html: @ref ../../skr/html.skr:sectionr@                       */
 ;*---------------------------------------------------------------------*/
-(define-markup (section #!rest
+(define-markup (section :rest
 			opts
-			#!key
+			:key
 			(ident #f) (class "section")
 			title (file #f) (toc #t) (number #t))
    (new container
@@ -250,9 +250,9 @@
 ;*    writer:                                                          */
 ;*       html: @ref ../../skr/html.skr:subsectionr@                    */
 ;*---------------------------------------------------------------------*/
-(define-markup (subsection #!rest
+(define-markup (subsection :rest
 			   opts
-			   #!key
+			   :key
 			   (ident #f) (class "subsection")
 			   title (file #f) (toc #t) (number #t))
    (new container
@@ -275,9 +275,9 @@
 ;*    writer:                                                          */
 ;*       html: @ref ../../skr/html.skr:subsubsectionr@                 */
 ;*---------------------------------------------------------------------*/
-(define-markup (subsubsection #!rest
+(define-markup (subsubsection :rest
 			      opts
-			      #!key
+			      :key
 			      (ident #f) (class "subsubsection")
 			      title (file #f) (toc #f) (number #t))
    (new container
@@ -300,7 +300,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    ~ (unbreakable space) ...                                        */
 ;*---------------------------------------------------------------------*/
-(define-markup (~ #!rest opts #!key (class #f))
+(define-markup (~ :rest opts :key (class #f))
   (new markup
      (markup '~)
      (ident (symbol->string (gensym "~")))
@@ -318,8 +318,8 @@
 ;*---------------------------------------------------------------------*/
 ;*    footnote ...                                                     */
 ;*---------------------------------------------------------------------*/
-(define-markup (footnote #!rest opts
-			 #!key (ident #f) (class "footnote") (label #t))
+(define-markup (footnote :rest opts
+			 :key (ident #f) (class "footnote") (label #t))
    ;; The `:label' option used to be called `:number'.
    (new container
       (markup 'footnote)
@@ -342,7 +342,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    linebreak ...                                                    */
 ;*---------------------------------------------------------------------*/
-(define-markup (linebreak #!rest opts #!key (ident #f) (class #f))
+(define-markup (linebreak :rest opts :key (ident #f) (class #f))
    (let ((ln (new markup
 		(ident (or ident (symbol->string (gensym "linebreak"))))
 		(class class)
@@ -362,9 +362,9 @@
 ;*---------------------------------------------------------------------*/
 ;*    hrule ...                                                        */
 ;*---------------------------------------------------------------------*/
-(define-markup (hrule #!rest
+(define-markup (hrule :rest
 		      opts
-		      #!key
+		      :key
 		      (ident #f) (class #f)
 		      (width 100.) (height 1))
    (new markup
@@ -381,9 +381,9 @@
 ;*---------------------------------------------------------------------*/
 ;*    color ...                                                        */
 ;*---------------------------------------------------------------------*/
-(define-markup (color #!rest
+(define-markup (color :rest
 		      opts
-		      #!key
+		      :key
 		      (ident #f) (class "color")
 		      (bg #f) (fg #f) (width #f) (margin #f))
    (new container
@@ -400,9 +400,9 @@
 ;*---------------------------------------------------------------------*/
 ;*    frame ...                                                        */
 ;*---------------------------------------------------------------------*/
-(define-markup (frame #!rest
+(define-markup (frame :rest
 		      opts
-		      #!key
+		      :key
 		      (ident #f) (class "frame")
 		      (width #f) (margin 2) (border 1))
    (new container
@@ -422,9 +422,9 @@
 ;*---------------------------------------------------------------------*/
 ;*    font ...                                                         */
 ;*---------------------------------------------------------------------*/
-(define-markup (font #!rest
+(define-markup (font :rest
 		     opts
-		     #!key
+		     :key
 		     (ident #f) (class #f)
 		     (size #f) (face #f))
    (new container
@@ -439,9 +439,9 @@
 ;*---------------------------------------------------------------------*/
 ;*    flush ...                                                        */
 ;*---------------------------------------------------------------------*/
-(define-markup (flush #!rest
+(define-markup (flush :rest
 		      opts
-		      #!key
+		      :key
 		      (ident #f) (class #f)
 		      side)
    (case side
@@ -475,9 +475,9 @@
 ;*    writer:                                                          */
 ;*       html: @ref ../../skr/html.skr:prog@                           */
 ;*---------------------------------------------------------------------*/
-(define-markup (prog #!rest
+(define-markup (prog :rest
 		     opts
-		     #!key
+		     :key
 		     (ident #f) (class "prog")
 		     (line 1) (linedigit #f) (mark ";!"))
    (if (not (or (string? mark) (eq? mark #f)))
@@ -499,9 +499,9 @@
 ;*    writer:                                                          */
 ;*       html: @ref ../../skr/html.skr:source@                         */
 ;*---------------------------------------------------------------------*/
-(define-markup (source #!rest
+(define-markup (source :rest
 		       opts
-		       #!key
+		       :key
 		       language
 		       (file #f) (start #f) (stop #f)
 		       (definition #f) (tab 8))
@@ -555,7 +555,7 @@
 ;*    doc:                                                             */
 ;*       @ref ../../doc/user/prgm.skb:language@                        */
 ;*---------------------------------------------------------------------*/
-(define-markup (language #!key name (fontifier #f) (extractor #f))
+(define-markup (language :key name (fontifier #f) (extractor #f))
    (if (not (string? name))
        (skribe-type-error 'language "illegal name" name "string")
        (new language
@@ -571,9 +571,9 @@
 ;*    writer:                                                          */
 ;*       html: @ref ../../skr/html.skr:figure@                         */
 ;*---------------------------------------------------------------------*/
-(define-markup (figure #!rest
+(define-markup (figure :rest
 		       opts
-		       #!key
+		       :key
 		       (ident #f) (class "figure")
 		       (legend #f) (number #t) (multicolumns #f))
    (new container
@@ -633,7 +633,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    itemize ...                                                      */
 ;*---------------------------------------------------------------------*/
-(define-markup (itemize #!rest opts #!key (ident #f) (class "itemize") symbol)
+(define-markup (itemize :rest opts :key (ident #f) (class "itemize") symbol)
    (new container
       (markup 'itemize)
       (ident (or ident (symbol->string (gensym "itemize"))))
@@ -646,7 +646,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    enumerate ...                                                    */
 ;*---------------------------------------------------------------------*/
-(define-markup (enumerate #!rest opts #!key (ident #f) (class "enumerate") symbol)
+(define-markup (enumerate :rest opts :key (ident #f) (class "enumerate") symbol)
    (new container
       (markup 'enumerate)
       (ident (or ident (symbol->string (gensym "enumerate"))))
@@ -659,7 +659,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    description ...                                                  */
 ;*---------------------------------------------------------------------*/
-(define-markup (description #!rest opts #!key (ident #f) (class "description") symbol)
+(define-markup (description :rest opts :key (ident #f) (class "description") symbol)
    (new container
       (markup 'description)
       (ident (or ident (symbol->string (gensym "description"))))
@@ -672,7 +672,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    item ...                                                         */
 ;*---------------------------------------------------------------------*/
-(define-markup (item #!rest opts #!key (ident #f) (class #f) key)
+(define-markup (item :rest opts :key (ident #f) (class #f) key)
    (if (and key (not (or (string? key)
 			 (number? key)
 			 (markup? key)
@@ -690,9 +690,9 @@
 ;*---------------------------------------------------------------------*/
 ;*    table                                                            */
 ;*---------------------------------------------------------------------*/
-(define-markup (table #!rest
+(define-markup (table :rest
 		      opts
-		      #!key
+		      :key
 		      (ident #f) (class #f)
 		      (border #f) (width #f)
 		      (frame 'none) (rules 'none)
@@ -745,7 +745,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    tr ...                                                           */
 ;*---------------------------------------------------------------------*/
-(define-markup (tr #!rest opts #!key (ident #f) (class #f) (bg #f))
+(define-markup (tr :rest opts :key (ident #f) (class #f) (bg #f))
    (new container
       (markup 'tr)
       (ident (or ident (symbol->string (gensym "tr"))))
@@ -760,9 +760,9 @@
 ;*    tc...                                                            */
 ;*---------------------------------------------------------------------*/
 (define-markup (tc m
-		   #!rest
+		   :rest
 		   opts
-		   #!key
+		   :key
 		   (ident #f) (class #f)
 		   (width #f) (align 'center) (valign #f)
 		   (colspan 1) (rowspan 1) (bg #f))
@@ -807,9 +807,9 @@
 ;*---------------------------------------------------------------------*/
 ;*    th ...                                                           */
 ;*---------------------------------------------------------------------*/
-(define-markup (th #!rest
+(define-markup (th :rest
 		   opts
-		   #!key
+		   :key
 		   (ident #f) (class #f)
 		   (width #f) (align 'center) (valign #f)
 		   (colspan 1) (rowspan 1) (bg #f))
@@ -818,9 +818,9 @@
 ;*---------------------------------------------------------------------*/
 ;*    td ...                                                           */
 ;*---------------------------------------------------------------------*/
-(define-markup (td #!rest
+(define-markup (td :rest
 		   opts
-		   #!key
+		   :key
 		   (ident #f) (class #f)
 		   (width #f) (align 'center) (valign #f)
 		   (colspan 1) (rowspan 1) (bg #f))
@@ -835,9 +835,9 @@
 ;*       html: @ref ../../skr/html.skr:image@                          */
 ;*       latex: @ref ../../skr/latex.skr:image@                        */
 ;*---------------------------------------------------------------------*/
-(define-markup (image #!rest
+(define-markup (image :rest
 		      opts
-		      #!key
+		      :key
 		      (ident #f) (class #f)
 		      file (url #f) (width #f) (height #f) (zoom #f))
    (cond
@@ -882,7 +882,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    char ...                                                         */
 ;*---------------------------------------------------------------------*/
-(define-markup (char char)
+(define-public (char char)
    (cond
       ((char? char)
        (string char))
@@ -914,7 +914,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    ! ...                                                            */
 ;*---------------------------------------------------------------------*/
-(define-markup (! format #!rest node)
+(define-markup (! format :rest node)
    (if (not (string? format))
        (skribe-type-error '! "Illegal format:" format "string")
        (new command
@@ -925,8 +925,8 @@
 ;*---------------------------------------------------------------------*/
 ;*    processor ...                                                    */
 ;*---------------------------------------------------------------------*/
-(define-markup (processor #!rest opts
-			  #!key (combinator #f) (engine #f) (procedure #f))
+(define-markup (processor :rest opts
+			  :key (combinator #f) (engine #f) (procedure #f))
    (cond
       ((and combinator (not (procedure? combinator)))
        (skribe-error 'processor "Combinator not a procedure" combinator))
@@ -959,8 +959,8 @@
 ;*---------------------------------------------------------------------*/
 ;*    handle ...                                                       */
 ;*---------------------------------------------------------------------*/
-(define-markup (handle #!rest opts
-		       #!key (ident #f) (class "handle") value section)
+(define-markup (handle :rest opts
+		       :key (ident #f) (class "handle") value section)
    (let ((body (the-body opts)))
       (cond
 	 (section
@@ -989,7 +989,7 @@
 ;*    writer:                                                          */
 ;*       html: @ref ../../skr/html.skr:mailto@                         */
 ;*---------------------------------------------------------------------*/
-(define-markup (mailto #!rest opts #!key (ident #f) (class "mailto") text)
+(define-markup (mailto :rest opts :key (ident #f) (class "mailto") text)
    (new markup
       (markup 'mailto)
       (ident (or ident (symbol->string (gensym "ident"))))
@@ -1012,7 +1012,7 @@
 ;*    writer:                                                          */
 ;*       html: @ref ../../skr/html.skr:mark@                           */
 ;*---------------------------------------------------------------------*/
-(define-markup (mark #!rest opts #!key (ident #f) (class "mark") (text #f))
+(define-markup (mark :rest opts :key (ident #f) (class "mark") (text #f))
    (let ((bd (the-body opts)))
       (cond
 	 ((and (pair? bd) (not (null? (cdr bd))))
@@ -1044,9 +1044,9 @@
 ;*       html: @ref ../../skr/html.skr:ref@                            */
 ;*       latex: @ref ../../skr/latex.skr:ref@                          */
 ;*---------------------------------------------------------------------*/
-(define-markup (ref #!rest
+(define-markup (ref :rest
 		    opts
-		    #!key
+		    :key
 		    (class #f)
 		    (ident #f)
 		    (text #f)
@@ -1245,22 +1245,21 @@
 ;*---------------------------------------------------------------------*/
 ;*    numref ...                                                       */
 ;*---------------------------------------------------------------------*/
-(define-markup (numref #!rest opts
-                       #!key (ident #f) (text "") (page #f)
+(define-markup (numref :rest opts
+                       :key (ident #f) (text "") (page #f)
                              (separator ".") (class #f))
   ;; Produce a numbered reference to `ident'.
   (new unresolved
        (loc  &invocation-location)
        (proc (lambda (n e env)
-	       (let* ((parent (ast-parent n))
-                      (doc (ast-document n))
+	       (let* ((doc (ast-document n))
 		      (target (document-lookup-node doc ident))
 		      (number (and target
                                    (markup-option target :number))))
                  (cond
                   ((not target)
                    (skribe-warning/ast 1 n 'numref
-                                       (format #f "can't find `ident': ")
+                                       "can't find `ident': "
                                        ident)
                    (new markup
                         (markup 'unref)
@@ -1300,8 +1299,8 @@
 ;*    doc:                                                             */
 ;*       @ref ../../doc/user/bib.skb:bibliography@                     */
 ;*---------------------------------------------------------------------*/
-(define-markup (bibliography #!rest files
-			     #!key
+(define-markup (bibliography :rest files
+			     :key
 			     (command #f) (bib-table (*bib-table*)))
    (for-each (lambda (f)
 		(cond
@@ -1321,8 +1320,8 @@
 ;*    writer:                                                          */
 ;*       base: @ref ../../skr/base.skr:the-bibliography@               */
 ;*---------------------------------------------------------------------*/
-(define-markup (the-bibliography #!rest opts
-				 #!key
+(define-markup (the-bibliography :rest opts
+				 :key
 				 pred
 				 (bib-table (*bib-table*))
 				 (sort bib-sort/authors)
@@ -1338,7 +1337,7 @@
                            (else
                             (skribe-error
                              'the-bibliography
-                             "invalid label type" lables)))))
+                             "invalid label type" labels)))))
          (new unresolved
             (loc  &invocation-location)
             (proc (lambda (n e env)
@@ -1356,7 +1355,7 @@
 ;*    doc:                                                             */
 ;*       @ref ../../doc/user/index.skb:make-index@                     */
 ;*---------------------------------------------------------------------*/
-(define-markup (make-index ident)
+(define-public (make-index ident)
    (make-index-table ident))
 
 ;*---------------------------------------------------------------------*/
@@ -1365,9 +1364,9 @@
 ;*    doc:                                                             */
 ;*       @ref ../../doc/user/index.skb:index@                          */
 ;*---------------------------------------------------------------------*/
-(define-markup (index #!rest
+(define-markup (index :rest
 		      opts
-		      #!key
+		      :key
 		      (ident #f) (class "index")
 		      (note #f) (index #f) (shape #f)
 		      (url #f))
@@ -1376,7 +1375,7 @@
 		    ((string? entry-name)
 		     entry-name)
 		    ((and (pair? entry-name) (every string? entry-name))
-		     (apply string-append entry-name))
+		     (string-concatenate entry-name))
 		    (else
 		     (skribe-error
 		      'index
@@ -1420,9 +1419,9 @@
 ;*       base: @ref ../../skr/base.skr:the-index@                      */
 ;*       html: @ref ../../skr/html.skr:the-index-header@               */
 ;*---------------------------------------------------------------------*/
-(define-markup (the-index #!rest
+(define-markup (the-index :rest
 			  opts
-			  #!key
+			  :key
 			  (ident #f)
 			  (class "the-index")
 			  (split #f)
@@ -1458,7 +1457,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    p ...                                                            */
 ;*---------------------------------------------------------------------*/
-(define-markup (p #!rest opt #!key ident (class #f))
+(define-markup (p :rest opt :key ident (class #f))
    (paragraph :ident ident :class class :loc &invocation-location
       (the-body opt)))
 
@@ -1482,7 +1481,7 @@
 ;*    produces:                                                        */
 ;*       i) toto, ii) tutu, iii) titi.                                 */
 ;*---------------------------------------------------------------------*/
-(define-markup (counter #!rest opts #!key (numbering 'roman))
+(define-markup (counter :rest opts :key (numbering 'roman))
    (define items (if (eq? (car opts) :numbering) (cddr opts) opts))
    (define vroman #(- "i" "ii" "iii" "iv" "v" "vi" "vii" "viii" "ix" "x"))
    (define (the-roman-number num)
@@ -1492,9 +1491,9 @@
 			"too many items for roman numbering"
 			(length items))))
    (define (the-arabic-number num)
-      (list (list "(" (it (integer->string num)) ") ")))
+      (list (list "(" (it (number->string num)) ") ")))
    (define (the-alpha-number num)
-      (list (list "(" (it (+ (integer->char #\a) num -1)) ") ")))
+      (list (list "(" (it (+ (char->integer #\a) num -1)) ") ")))
    (let ((the-number (case numbering
 			((roman) the-roman-number)
 			((arabic) the-arabic-number)
@@ -1514,7 +1513,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    q                                                                */
 ;*---------------------------------------------------------------------*/
-(define-markup (q #!rest opt)
+(define-markup (q :rest opt)
    (new markup
       (markup 'q)
       (loc &invocation-location)

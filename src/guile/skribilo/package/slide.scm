@@ -21,19 +21,19 @@
 
 
 (define-module (skribilo package slide)
-  :use-module (skribilo reader)
   :use-module (skribilo utils syntax)
 
   :use-module (skribilo lib)
   :use-module (skribilo ast)
   :use-module (skribilo engine)
   :use-module (skribilo evaluator) ;; `*load-options*'
-  :use-module (skribilo package base)
 
+  :autoload   (skribilo color)          (skribe-use-color!)
   :autoload   (skribilo utils keywords) (the-options the-body)
 
   :use-module (srfi srfi-1)
-  :use-module (ice-9 optargs))
+  :use-module (ice-9 optargs)
+  :use-module (ice-9 match))
 
 (fluid-set! current-reader %skribilo-module-reader)
 
@@ -92,7 +92,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    ref ...                                                          */
 ;*---------------------------------------------------------------------*/
-(define %slide-old-ref ref)
+; (define %slide-old-ref ref)
 
 ;; Extend the definition of `ref'.
 ;; FIXME: This technique breaks `ref' for some reason.
@@ -144,7 +144,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    slide-pause ...                                                  */
 ;*---------------------------------------------------------------------*/
-(define-markup (slide-pause)
+(define-markup (slide-pause :rest ignored)
    (new markup
       (loc    &invocation-location)
       (markup 'slide-pause)))
@@ -220,8 +220,8 @@
 			    :key ident class color (scolor "#000000"))
    (let ((body (the-body opt)))
       (for-each (lambda (lbl)
-		   (match-case lbl
-		      ((?id ?col)
+		   (match lbl
+		      ((id col)
 		       (skribe-use-color! col))))
 		body)
       (new markup

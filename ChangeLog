@@ -2,6 +2,32 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-06-06 13:17:02 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-102
+
+    Summary:
+      More package cleanups.
+    Revision:
+      skribilo--devo--1.2--patch-102
+
+    Various additional package cleanups, thanks to Guile-Lint.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/acmproc.scm
+     src/guile/skribilo/package/base.scm
+     src/guile/skribilo/package/diff.scm
+     src/guile/skribilo/package/eq.scm
+     src/guile/skribilo/package/letter.scm
+     src/guile/skribilo/package/pie.scm
+     src/guile/skribilo/package/scribe.scm
+     src/guile/skribilo/package/sigplan.scm
+     src/guile/skribilo/package/slide.scm
+     src/guile/skribilo/package/web-article.scm
+     src/guile/skribilo/package/web-book.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-61
+
+
 2007-06-06 13:16:02 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-101
 
     Summary:
