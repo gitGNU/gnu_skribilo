@@ -90,7 +90,7 @@
   (gettext msg %skribilo-text-domain))
 
 (define (N_ msg msgplural n)
-  (ngettext msg msg plural n %skribilo-text-domain))
+  (ngettext msg msgplural n %skribilo-text-domain))
 
 
 ;;; arch-tag: 9a0e0638-64f0-480a-ab19-49e8bfcbcd9b

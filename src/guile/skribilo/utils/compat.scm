@@ -28,7 +28,6 @@
   :use-module (srfi srfi-1)
   :autoload   (srfi srfi-13)       (string-rindex)
   :use-module (srfi srfi-34)
-  :use-module (srfi srfi-35)
   :use-module (ice-9 optargs)
   :autoload   (skribilo ast)       (ast? document? document-lookup-node)
   :autoload   (skribilo condition) (file-search-error? &file-search-error)
@@ -262,7 +261,9 @@
 	(else #f)))))
 
 (define-public (directory->list str)
-  (map basename (glob (string-append str "/*") (string-append "/.*"))))
+  ;; FIXME: Guile doesn't provide wrappers for `glob(3)'.
+  ;;(map basename (glob (string-append str "/*") "/.*"))
+  '())
 
 (define-macro (printf . args)   `(format #t ,@args))
 (export-syntax printf)

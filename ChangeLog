@@ -2,6 +2,26 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-06-06 13:18:03 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-103
+
+    Summary:
+      More linting.
+    Revision:
+      skribilo--devo--1.2--patch-103
+
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/scribe.scm
+     src/guile/skribilo/utils/compat.scm
+     src/guile/skribilo/utils/images.scm
+     src/guile/skribilo/utils/keywords.scm
+     src/guile/skribilo/utils/strings.scm
+     src/guile/skribilo/utils/syntax.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-62
+
+
 2007-06-06 13:17:02 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-102
 
     Summary:
