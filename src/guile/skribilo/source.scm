@@ -22,11 +22,12 @@
 
 (define-module (skribilo source)
   :export (<language> language? language-extractor language-fontifier
+           language-name
 	   source-read-lines source-read-definition source-fontify)
 
   :use-module (srfi srfi-35)
   :autoload   (srfi srfi-34) (raise)
-  :autoload   (srfi srfi-13) (string-prefix-length)
+  :autoload   (srfi srfi-13) (string-prefix-length string-concatenate)
   :autoload   (skribilo condition) (&file-search-error &file-open-error)
 
   :use-module (skribilo utils syntax)
@@ -44,7 +45,7 @@
 ;;;
 
 (define-class <language> ()
-  (name	:init-keyword :name	 :init-value #f :getter langage-name)
+  (name	:init-keyword :name	 :init-value #f :getter language-name)
   (fontifier	:init-keyword :fontifier :init-value #f
 		:getter language-fontifier)
   (extractor	:init-keyword :extractor :init-value #f
@@ -78,7 +79,7 @@
 		      (and (integer? stop) (> l stop))
 		      (and (string? stop)
 			   (= (string-prefix-length stop s) stopl)))
-		  (apply string-append (reverse! r)))
+		  (string-concatenate (reverse! r)))
 		 (armedp
 		  (loop (+ l 1)
 			#t

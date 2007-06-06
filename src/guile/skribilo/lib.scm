@@ -34,19 +34,16 @@
   ;; Re-exported because used in `define-markup'.
   :re-export  (invocation-location)
 
-  :use-module (skribilo config)
   :use-module (skribilo ast)
 
   ;; useful for `new' to work well with <language>
   :autoload   (skribilo source)   (<language>)
 
-  :use-module (skribilo reader)
   :use-module (skribilo parameters)
   :use-module (skribilo location)
 
   :use-module (srfi srfi-1)
-  :use-module (oop goops)
-  :use-module (ice-9 optargs))
+  :use-module (oop goops))
 
 
 (fluid-set! current-reader %skribilo-module-reader)
@@ -66,9 +63,9 @@
     `(let ((make ,make)
 	   (,class-name ,actual-class))
        (make ,class-name
-	 ,@(apply append (map (lambda (x)
-				`(,(symbol->keyword (car x)) ,(cadr x)))
-			      parameters))))))
+	 ,@(concatenate (map (lambda (x)
+                               `(,(symbol->keyword (car x)) ,(cadr x)))
+                             parameters))))))
 
 ;;;
 ;;; DEFINE-MARKUP
@@ -190,7 +187,7 @@
 ;;; SKRIBE-TYPE-ERROR
 ;;;
 (define (skribe-type-error proc msg obj etype)
-  (skribe-error proc (format "~a ~s (~a expected)" msg obj etype) #f))
+  (skribe-error proc (format #f "~a ~s (~a expected)" msg obj etype) #f))
 
 
 ;;;
@@ -200,7 +197,7 @@
   (let ((port (current-error-port)))
     (when (and file line col)
       (format port "~a:~a:~a: " file line col))
-    (format port "warning: ")
+    (display "warning: " port)
     (for-each (lambda (x) (format port "~a " x)) lst)
     (newline port)))
 

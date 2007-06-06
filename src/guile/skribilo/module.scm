@@ -1,6 +1,6 @@
 ;;; module.scm  --  Integration of Skribe code as Guile modules.
 ;;;
-;;; Copyright 2005, 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2005, 2006, 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -19,10 +19,7 @@
 ;;; USA.
 
 (define-module (skribilo module)
-  :autoload   (skribilo reader) (make-reader)
-  :use-module (skribilo debug)
   :use-module (srfi srfi-1)
-  :use-module (ice-9 optargs)
   :use-module (srfi srfi-39)
   :use-module (skribilo utils syntax)
   :export (make-run-time-module *skribilo-user-module*))

@@ -22,7 +22,6 @@
 
 
 (define-module (skribilo biblio)
-  :use-module (skribilo utils strings)
   :use-module (skribilo utils syntax) ;; `when', `unless'
 
   :use-module (srfi srfi-1)
@@ -54,10 +53,13 @@
 
            ;; error conditions
            &biblio-error &biblio-entry-error &biblio-template-error
+           &biblio-parse-error
            biblio-error? biblio-entry-error? biblio-template-error?
+           biblio-parse-error?
            biblio-entry-error:entry
            biblio-template-error:expression
-           biblio-template-error:template))
+           biblio-template-error:template
+           biblio-parse-error:sexp))
 
 ;;; Author: Erick Gallesio, Manuel Serrano, Ludovic Courtès
 ;;;
@@ -88,6 +90,10 @@
   (expression  biblio-template-error:expression)
   (template    biblio-template-error:template))
 
+(define-condition-type &biblio-parse-error &biblio-error
+  biblio-parse-error?
+  (sexp biblio-parse-error:sexp))
+
 
 (define (handle-biblio-error c)
   ;; Issue a user-friendly error message for error condition C.
@@ -108,6 +114,10 @@
                  (_ "invalid bibliography entry template: `~a', in `~a'~%")
                  (biblio-template-error:expression c)
                  (biblio-template-error:template c)))
+        ((biblio-parse-error? c)
+         (format (current-error-port)
+                 (_ "invalid bibliography entry s-exp: `~a'~%")
+                 (biblio-parse-error:sexp c)))
 	(else
 	 (format (current-error-port)
                  (_ "undefined bibliography error: ~a~%")
@@ -197,7 +207,7 @@
 		       (fields (cddr entry))
 		       (old    (hash-ref table key)))
 		  (if old
-		      (bib-duplicate ident from old)
+		      (bib-duplicate key from old)
 		      (hash-set! table key
 				 (make-bib-entry kind key fields from)))
 		  (Loop (read port))))
@@ -290,7 +300,8 @@
 						       (car f))
 					      :parent h
 					      :body (cadr f)))
-		       (bib-parse-error f)))
+                       (raise (condition (&biblio-parse-error
+                                          (sexp f))))))
 		fields)
       m))
 
@@ -351,10 +362,7 @@
 		 (let ((body (markup-body m)))
 		    (if (not (string? body))
 			13
-			(let* ((s (if (> (string-length body) 3)
-				      (substring body 0 3)
-				      body))
-			       (sy (string->symbol (string-downcase body)))
+			(let* ((sy (string->symbol (string-downcase body)))
 			       (c (assq sy '((jan . 1)
 					     (feb . 2)
 					     (mar . 3)

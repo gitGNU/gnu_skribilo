@@ -29,7 +29,7 @@
   :use-module (skribilo utils syntax)
 
   :autoload (skribilo location) (location?)
-  :autoload (srfi srfi-1)  (fold)
+  :autoload (srfi srfi-1)  (fold concatenate)
 
   :use-module (ice-9 optargs)
 
@@ -47,7 +47,7 @@
 		    markup-markup markup-body markup-body-set!
                     markup-ident markup-class
 		    markup-option markup-option-set!
-		    markup-option-add! markup-output
+		    markup-option-add!
 		    markup-parent markup-document markup-chapter
 
 	   <container> container? container-options
@@ -55,7 +55,7 @@
 		       container-env-get
 
 	   <document> document? document-ident document-body
-		      document-options document-end
+		      document-options document-env
 		      document-lookup-node document-bind-node!
 		      document-bind-nodes!
 
@@ -510,7 +510,7 @@
   (let loop ((obj (markup-body obj)))
     (cond
      ((pair? obj)
-      (apply append (map (lambda (o) (loop o)) obj)))
+      (concatenate (map (lambda (o) (loop o)) obj)))
      ((container? obj)
       (let ((rest (loop (markup-body obj))))
         (if (pred obj)
@@ -525,7 +525,7 @@
   (let loop ((obj (markup-body obj)))
     (cond
      ((pair? obj)
-      (apply append (map (lambda (o) (loop o)) obj)))
+      (concatenate (map (lambda (o) (loop o)) obj)))
      ((markup? obj)
       (let ((rest (loop (markup-body obj))))
         (if (pred obj)
@@ -540,7 +540,7 @@
   (let loop ((obj obj))
     (cond
      ((pair? obj)
-      (apply append (map (lambda (o) (loop o)) obj)))
+      (concatenate (map (lambda (o) (loop o)) obj)))
      ((markup? obj)
       (if (pred obj)
           (list (cons obj (loop (markup-body obj))))

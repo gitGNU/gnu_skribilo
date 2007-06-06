@@ -22,6 +22,7 @@
 (define-module (skribilo location)
   :use-module (oop goops)
   :use-module ((skribilo utils syntax) :select (%skribilo-module-reader))
+  :autoload   (srfi srfi-13)  (string-prefix?)
   :export (<location> location? ast-location
 	   location-file location-line location-column
            invocation-location))
@@ -57,7 +58,7 @@
 	       (pwd   (getcwd))
 	       (len   (string-length pwd))
 	       (lenf  (string-length fname))
-	       (file  (if (and (substring=? pwd fname len)
+	       (file  (if (and (string-prefix? pwd fname len)
 			       (> lenf len))
 			  (substring fname len (+ 1 (string-length fname)))
 			  fname)))

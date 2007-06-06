@@ -21,9 +21,8 @@
 
 (define-module (skribilo debug)
   :use-module (skribilo utils syntax)
-  :use-module (srfi srfi-17)
   :use-module (srfi srfi-39)
-  :export-syntax (debug-item with-debug))
+  :export-syntax (debug-item debug-bold with-debug))
 
 (fluid-set! current-reader %skribilo-module-reader)
 

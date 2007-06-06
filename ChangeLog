@@ -2,6 +2,29 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-06-06 13:20:57 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-106
+
+    Summary:
+      Cleaned up the core modules.
+    Revision:
+      skribilo--devo--1.2--patch-106
+
+
+    modified files:
+     ChangeLog src/guile/skribilo/ast.scm
+     src/guile/skribilo/biblio.scm src/guile/skribilo/debug.scm
+     src/guile/skribilo/evaluator.scm src/guile/skribilo/index.scm
+     src/guile/skribilo/lib.scm src/guile/skribilo/location.scm
+     src/guile/skribilo/module.scm src/guile/skribilo/prog.scm
+     src/guile/skribilo/reader.scm src/guile/skribilo/resolve.scm
+     src/guile/skribilo/source.scm
+     src/guile/skribilo/utils/compat.scm
+     src/guile/skribilo/verify.scm src/guile/skribilo/writer.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-65
+
+
 2007-06-06 13:19:59 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-105
 
     Summary:

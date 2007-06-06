@@ -42,7 +42,6 @@
 ;;;
 (define (check-required-options markup writer engine)
   (let ((required-options (slot-ref markup 'required-options))
-	(ident		  (slot-ref writer 'ident))
 	(options	  (slot-ref writer 'options))
 	(verified?	  (slot-ref writer 'verified?)))
     (or verified?
@@ -150,8 +149,7 @@
 
   ;; verify the engine customs
   (for-each (lambda (c)
-	      (let ((i (car c))
-		    (a (cadr c)))
+	      (let ((a (cadr c)))
 		(set-car! (cdr c) (verify a e))))
 	    (slot-ref e 'customs))
 
