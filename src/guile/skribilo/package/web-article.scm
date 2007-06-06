@@ -1,6 +1,7 @@
-;;; web-article.scm  --  A Skribe style for producing web articles
+;;; web-article.scm  --  A style to produce web articles.
 ;;;
 ;;; Copyright 2003, 2004  Manuel Serrano
+;;; Copyright 2007  Ludovic Courtès <ludo@chbouib.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -18,12 +19,28 @@
 ;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 ;;; USA.
 
-(define-skribe-module (skribilo package web-article))
+(define-module (skribilo package web-article)
+  :use-module (skribilo utils syntax)
 
+  :use-module (skribilo ast)
+  :use-module (skribilo engine)
+  :use-module (skribilo writer)
+  :use-module (skribilo package base)
+
+  :autoload   (skribilo output)         (output)
+  :autoload   (skribilo evaluator)      (evaluate-document)
+  :autoload   (skribilo engine html)    (html-width html-title-authors)
+  :autoload   (skribilo utils strings)  (string-canonicalize)
+
+  :use-module (srfi srfi-1))
+
+(fluid-set! current-reader %skribilo-module-reader)
+
+
 ;*---------------------------------------------------------------------*/
 ;*    &web-article-load-options ...                                    */
 ;*---------------------------------------------------------------------*/
-(define &web-article-load-options (skribe-load-options))
+(define &web-article-load-options (*load-options*))
 
 ;*---------------------------------------------------------------------*/
 ;*    web-article-body-width ...                                       */
@@ -41,23 +58,23 @@
 	  (tbg (engine-custom e 'title-background))
 	  (tfg (engine-custom e 'title-foreground))
 	  (tfont (engine-custom e 'title-font)))
-      (printf "<center><table cellspacing='0' cellpadding='0' width=\"~a\" class=\"skribetitle\"><tbody>\n<tr>"
+      (format #t "<center><table cellspacing='0' cellpadding='0' width=\"~a\" class=\"skribetitle\"><tbody>\n<tr>"
 	      (html-width (web-article-body-width e)))
       (if (string? tbg)
-	  (printf "<td bgcolor=\"~a\">" tbg)
+	  (format #t "<td bgcolor=\"~a\">" tbg)
 	  (display "<td>"))
       (if (string? tfg)
-	  (printf "<font color=\"~a\">" tfg))
+	  (format #t "<font color=\"~a\">" tfg))
       (if title
 	  (begin
 	     (display "<center>")
 	     (if (string? tfont)
 		 (begin
-		    (printf "<font ~a><b>" tfont)
+		    (format #t "<font ~a><b>" tfont)
 		    (output title e)
 		    (display "</b></font>"))
 		 (begin
-		    (printf "<h1>")
+		    (display "<h1>")
 		    (output title e)
 		    (display "</h1>")))
 	     (display "</center>\n")))
@@ -76,12 +93,12 @@
 	  (authors (markup-option n 'author))
 	  (id (markup-ident n)))
       ;; the title
-      (printf "<div id=\"~a\" class=\"document-title-title\">\n"
+      (format #t "<div id=\"~a\" class=\"document-title-title\">\n"
 	      (string-canonicalize id))
       (output title e)
       (display "</div>\n")
       ;; the authors
-      (printf "<div id=\"~a\" class=\"document-title-authors\">\n"
+      (format #t "<div id=\"~a\" class=\"document-title-authors\">\n"
 	      (string-canonicalize id))
       (for-each (lambda (a) (output a e))
 		(cond
@@ -103,26 +120,24 @@
 	 (email (markup-option n :email))
 	 (url (markup-option n :url))
 	 (address (markup-option n :address))
-	 (phone (markup-option n :phone))
-	 (nfn (engine-custom e 'author-font))
-	 (align (markup-option n :align)))
+	 (phone (markup-option n :phone)))
       (when name
-	 (printf "<span class=\"document-author-name\" id=\"~a\">"
+	 (format #t "<span class=\"document-author-name\" id=\"~a\">"
 		 (string-canonicalize (markup-ident n)))
 	 (output name e)
 	 (display "</span>\n"))
       (when title
-	 (printf "<span class=\"document-author-title\" id=\"~a\">"
+	 (format #t "<span class=\"document-author-title\" id=\"~a\">"
 		 (string-canonicalize (markup-ident n)))
 	 (output title e)
 	 (display "</span>\n"))
       (when affiliation
-	 (printf "<span class=\"document-author-affiliation\" id=\"~a\">"
+	 (format #t "<span class=\"document-author-affiliation\" id=\"~a\">"
 		 (string-canonicalize (markup-ident n)))
 	 (output affiliation e)
 	 (display "</span>\n"))
       (when (pair? address)
-	 (printf "<span class=\"document-author-address\" id=\"~a\">"
+	 (format #t "<span class=\"document-author-address\" id=\"~a\">"
 		 (string-canonicalize (markup-ident n)))
 	 (for-each (lambda (a)
 		      (output a e)
@@ -130,17 +145,17 @@
 		   address)
 	 (display "</span>\n"))
       (when phone
-	 (printf "<span class=\"document-author-phone\" id=\"~a\">"
+	 (format #t "<span class=\"document-author-phone\" id=\"~a\">"
 		 (string-canonicalize (markup-ident n)))
 	 (output phone e)
 	 (display "</span>\n"))
       (when email
-	 (printf "<span class=\"document-author-email\" id=\"~a\">"
+	 (format #t "<span class=\"document-author-email\" id=\"~a\">"
 		 (string-canonicalize (markup-ident n)))
 	 (output email e)
 	 (display "</span>\n"))
       (when url
-	 (printf "<span class=\"document-author-url\" id=\"~a\">"
+	 (format #t "<span class=\"document-author-url\" id=\"~a\">"
 		 (string-canonicalize (markup-ident n)))
 	 (output url e)
 	 (display "</span>\n"))))
@@ -164,7 +179,7 @@
 		       (markup-writer 'section e1
 			  :options 'all
 			  :action (lambda (n e2) (output n e sec)))
-		       (skribe-eval
+		       (evaluate-document
 			(center (color :width (web-article-body-width e)
 				   :margin 5 :bg bg n))
 			e1))))
@@ -180,7 +195,7 @@
 			  :options 'all
 			  :action (lambda (n e2)
 				     (invoke (writer-action ft) n e)))
-		       (skribe-eval
+		       (evaluate-document
 			(center (color :width (web-article-body-width e)
 				   :margin 5 :bg bg :fg fg n))
 			e1))))))
@@ -194,7 +209,7 @@
       ;; &html-document-title
       (markup-writer '&html-document-title he
 	 :before (lambda (n e)
-		    (printf "<div id=\"~a\" class=\"document-title\">\n"
+		    (format #t "<div id=\"~a\" class=\"document-title\">\n"
 			    (string-canonicalize (markup-ident n))))
 	 :action web-article-css-document-title
 	 :after "</div>\n")
@@ -202,7 +217,7 @@
       (markup-writer 'author he
 	 :options '(:name :title :affiliation :email :url :address :phone :photo :align)
 	 :before (lambda (n e)
-		    (printf "<span id=\"~a\" class=\"document-author\">\n"
+		    (format #t "<span id=\"~a\" class=\"document-author\">\n"
 			    (string-canonicalize (markup-ident n))))
 	 :action web-article-css-author
 	 :after "</span\n")
@@ -210,7 +225,7 @@
       (markup-writer 'section he
 	 :options 'all
 	 :before (lambda (n e)
-		    (printf "<div class=\"section\" id=\"~a\">"
+		    (format #t "<div class=\"section\" id=\"~a\">"
 			    (string-canonicalize (markup-ident n))))
 	 :action (lambda (n e) (output n e sec))
 	 :after "</div>\n")
@@ -218,7 +233,7 @@
       (markup-writer '&html-footnotes he
 	 :options 'all
 	 :before (lambda (n e)
-		    (printf "<div class=\"footnotes\" id=\"~a\">"
+		    (format #t "<div class=\"footnotes\" id=\"~a\">"
 			    (string-canonicalize (markup-ident n))))
 	 :action (lambda (n e)
 		    (output n e ft))

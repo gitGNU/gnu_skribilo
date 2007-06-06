@@ -1,6 +1,7 @@
-;;; web-book.scm  --  The Skribe web book style.
+;;; web-book.scm  --  The web book style.
 ;;;
 ;;; Copyright 2003, 2004  Manuel Serrano
+;;; Copyright 2007  Ludovic Courtès <ludo@chbouib.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -18,8 +19,17 @@
 ;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 ;;; USA.
 
-(define-skribe-module (skribilo package web-book))
+(define-module (skribilo package web-book)
+  :use-module (skribilo utils syntax)
 
+  :use-module (skribilo ast)
+  :use-module (skribilo engine)
+  :use-module (skribilo package base))
+
+(fluid-set! current-reader %skribilo-module-reader)
+
+
+
 ;*---------------------------------------------------------------------*/
 ;*    html customization                                               */
 ;*---------------------------------------------------------------------*/

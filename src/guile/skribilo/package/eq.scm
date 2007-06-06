@@ -25,7 +25,6 @@
   :use-module (skribilo engine)
   :use-module (skribilo lib)
   :use-module (skribilo utils syntax)
-  :use-module (skribilo module)
   :use-module (skribilo utils keywords) ;; `the-options', etc.
   :autoload   (skribilo package base) (it symbol sub sup)
   :autoload   (skribilo engine lout) (lout-illustration)
@@ -253,6 +252,7 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
   ;; If no `:div-style' is specified here, obey the top-level one.
   (new markup
        (markup 'eq:/)
+       (loc &invocation-location)
        (ident (or ident (symbol->string (gensym "eq:/"))))
        (class #f)
        (options `((:div-style ,div-style)
@@ -263,6 +263,7 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
   ;; If no `:mul-style' is specified here, obey the top-level one.
   (new markup
        (markup 'eq:*)
+       (loc &invocation-location)
        (ident (or ident (symbol->string (gensym "eq:*"))))
        (class #f)
        (options `((:mul-style ,mul-style)
@@ -288,6 +289,7 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
 		                       (from #f) (to #f))
   (new markup
        (markup 'eq:sum)
+       (loc &invocation-location)
        (ident (or ident (symbol->string (gensym "eq:sum"))))
        (options (the-options opts))
        (body (the-body opts))))
@@ -296,6 +298,7 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
 			                   (from #f) (to #f))
   (new markup
        (markup 'eq:product)
+       (loc &invocation-location)
        (ident (or ident (symbol->string (gensym "eq:product"))))
        (options (the-options opts))
        (body (the-body opts))))
@@ -304,6 +307,7 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
 			                  (sub #f) (sup #f))
   (new markup
        (markup 'eq:script)
+       (loc &invocation-location)
        (ident (or ident (symbol->string (gensym "eq:script"))))
        (options (the-options opts))
        (body (the-body opts))))
@@ -317,6 +321,7 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
   ;; non-list arguments but the last one has to be a list.
   (new markup
        (markup 'eq:apply)
+       (loc &invocation-location)
        (ident (or ident (symbol->string (gensym "eq:apply"))))
        (options (the-options opts))
        (body (let loop ((body (the-body opts))
@@ -336,6 +341,7 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
 (define-markup (eq:limit var lim :rest body :key (ident #f))
   (new markup
        (markup 'eq:limit)
+       (loc &invocation-location)
        (ident (or ident (symbol->string (gensym "eq:limit"))))
        (options `((:var ,var) (:limit ,lim)
                   ,@(the-options body :ident)))
@@ -344,6 +350,7 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
 (define-markup (eq:combinations x y :rest opts :key (ident #f))
   (new markup
        (markup 'eq:combinations)
+       (loc &invocation-location)
        (ident (or ident (symbol->string (gensym "eq:combinations"))))
        (options `((:of ,x) (:among ,y)
                   ,@(the-options opts :ident)))
@@ -352,6 +359,7 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
 (define-markup (eq:set :rest opts :key (ident #f))
   (new markup
        (markup 'eq:set)
+       (loc &invocation-location)
        (ident (or ident (symbol->string (gensym "eq:set"))))
        (options '())
        (body (the-body opts))))

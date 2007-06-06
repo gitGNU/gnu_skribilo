@@ -26,7 +26,7 @@
   :use-module (skribilo lib)
   :autoload   (skribilo output)          (output)
   :autoload   (skribilo utils keywords)  (the-body the-options)
-  :use-module (skribilo package base)
+  :use-module ((skribilo package base) :renamer (symbol-prefix-proc 'skr:))
   :use-module (srfi srfi-1)
 
   :use-module (skribilo utils syntax)
@@ -38,8 +38,6 @@
 ;*---------------------------------------------------------------------*/
 ;*    document                                                         */
 ;*---------------------------------------------------------------------*/
-(define %letter-document document)
-
 (define-markup (document :rest opt
 		  :key (ident #f) (class "letter")
 		  where date author
@@ -52,7 +50,7 @@
 				    (:date ,date)
 				    (:author ,author))))
 		      ubody)))
-      (apply %letter-document
+      (apply skr:document
 	     :author #f :title #f
 	     (append (concatenate
 		      (the-options opt :where :date :author :title))
@@ -77,7 +75,8 @@
 			(ne (copy-engine 'author e)))
 		    ;; author
 		    (markup-writer 'author ne
-		       :options '(:name :title :affiliation :email :url :address :phone :photo :align :header)
+		       :options '(:name :title :affiliation :email :url
+                                  :address :phone :photo :align :header)
 		       :action (lambda (n e)
 				  (let ((name (markup-option n :name))
 					(title (markup-option n :title))

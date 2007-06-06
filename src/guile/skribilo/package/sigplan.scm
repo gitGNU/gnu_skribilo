@@ -33,7 +33,7 @@
   :use-module (skribilo utils syntax)
   :use-module (ice-9 optargs)
 
-  :export (abstract references))
+  :export (abstract references acm-copyright))
 
 (fluid-set! current-reader %skribilo-module-reader)
 
@@ -172,7 +172,8 @@
 ;*---------------------------------------------------------------------*/
 ;*    acm-copyright ...                                                */
 ;*---------------------------------------------------------------------*/
-(define-markup (acm-copyright :rest opt :key conference location year crdata)
+(define* (acm-copyright :key conference location year crdata
+                       :rest opt)
    (let* ((le (find-engine 'latex))
 	  (cop (format #f "\\conferenceinfo{~a,} {~a}
 \\CopyrightYear{~a}
