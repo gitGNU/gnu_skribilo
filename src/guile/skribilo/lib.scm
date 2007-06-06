@@ -118,7 +118,7 @@
      (new markup
 	  (markup ',markup)
 	  (ident (or ident (symbol->string
-			    (gensym ',(symbol->string markup)))))
+			    (gensym ,(symbol->string markup)))))
 	  (loc (or loc &invocation-location))
 	  (class class)
 	  (required-options '())
@@ -134,7 +134,7 @@
        (new container
 	  (markup ',markup)
 	  (ident (or ident (symbol->string
-			    (gensym ',(symbol->string markup)))))
+			    (gensym ,(symbol->string markup)))))
 	  (loc (or loc &invocation-location))
 	  (class class)
 	  (required-options '())
@@ -146,8 +146,9 @@
 ;;; DEFINE-PROCESSOR-MARKUP
 ;;;
 (define-macro (define-processor-markup proc)
-  `(define-markup (,proc #:rest opts)
+  `(define-markup (,proc #:rest opts :key loc)
      (new processor
+          (loc     (or loc &invocation-location))
 	  (engine  (find-engine ',proc))
 	  (body    (the-body opts))
 	  (options (the-options opts)))))
