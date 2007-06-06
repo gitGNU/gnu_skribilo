@@ -2,6 +2,45 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-06-06 13:19:02 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-104
+
+    Summary:
+      Cleaned up the source code fontifiers (under `coloring').
+    Revision:
+      skribilo--devo--1.2--patch-104
+
+    This brings `(skribilo coloring c)' to life!
+
+    new files:
+     src/guile/skribilo/coloring/parameters.scm
+
+    modified files:
+     ChangeLog src/guile/skribilo/coloring/Makefile.am
+     src/guile/skribilo/coloring/c-lex.scm
+     src/guile/skribilo/coloring/c.scm
+     src/guile/skribilo/coloring/lisp-lex.scm
+     src/guile/skribilo/coloring/lisp.scm
+     src/guile/skribilo/coloring/xml-lex.scm
+     src/guile/skribilo/coloring/xml.scm
+
+    renamed files:
+     src/guile/skribilo/coloring/.arch-ids/c-lex.l.scm.id
+       ==> src/guile/skribilo/coloring/.arch-ids/c-lex.scm.id
+     src/guile/skribilo/coloring/.arch-ids/lisp-lex.l.scm.id
+       ==> src/guile/skribilo/coloring/.arch-ids/lisp-lex.scm.id
+     src/guile/skribilo/coloring/.arch-ids/xml-lex.l.scm.id
+       ==> src/guile/skribilo/coloring/.arch-ids/xml-lex.scm.id
+     src/guile/skribilo/coloring/c-lex.l.scm
+       ==> src/guile/skribilo/coloring/c-lex.scm
+     src/guile/skribilo/coloring/lisp-lex.l.scm
+       ==> src/guile/skribilo/coloring/lisp-lex.scm
+     src/guile/skribilo/coloring/xml-lex.l.scm
+       ==> src/guile/skribilo/coloring/xml-lex.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-63
+
+
 2007-06-06 13:18:03 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-103
 
     Summary:

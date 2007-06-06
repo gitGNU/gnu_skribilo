@@ -20,9 +20,7 @@
 
 (define-module (skribilo coloring xml)
   :export (xml)
-  :use-module (skribilo source)
   :use-module (skribilo lib)
-  :use-module (ice-9 rdelim)
   :use-module (ice-9 regex))
 
 

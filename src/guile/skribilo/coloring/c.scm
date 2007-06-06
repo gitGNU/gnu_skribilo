@@ -1,67 +1,59 @@
-;;;;
-;;;; c.stk	-- C fontifier for Skribe
-;;;; 
-;;;; Copyright © 2004 Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
-;;;; 
-;;;; 
-;;;; This program is free software; you can redistribute it and/or modify
-;;;; it under the terms of the GNU General Public License as published by
-;;;; the Free Software Foundation; either version 2 of the License, or
-;;;; (at your option) any later version.
-;;;; 
-;;;; This program is distributed in the hope that it will be useful,
-;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;;;; GNU General Public License for more details.
-;;;; 
-;;;; You should have received a copy of the GNU General Public License
-;;;; along with this program; if not, write to the Free Software
-;;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, 
-;;;; USA.
-;;;; 
-;;;;           Author: Erick Gallesio [eg@essi.fr]
-;;;;    Creation date:  6-Mar-2004 15:35 (eg)
-;;;; Last file update:  7-Mar-2004 00:12 (eg)
-;;;;
-
-(require "lex-rt")		;; to avoid module problems
+;;; c.scm -- C fontifier.
+;;;
+;;; Copyright 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
+;;; Copyright 2007  Ludovic Courtès <ludo@chbouib.org>
+;;;
+;;;
+;;; This program is free software; you can redistribute it and/or modify
+;;; it under the terms of the GNU General Public License as published by
+;;; the Free Software Foundation; either version 2 of the License, or
+;;; (at your option) any later version.
+;;;
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;;
+;;; You should have received a copy of the GNU General Public License
+;;; along with this program; if not, write to the Free Software
+;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+;;; USA.
 
 (define-module (skribilo c)
-   :export (c java)
-   :import (skribe runtime))
+  :use-module (skribilo lib)
+  :use-module (skribilo utils syntax)
+  :use-module (skribilo coloring c-lex)		;; SILex generated
+  :use-module (skribilo coloring parameters)
+  :use-module (srfi srfi-39)
+  :export (c java))
 
-(include "c-lex.stk")		;; SILex generated
+(fluid-set! current-reader %skribilo-module-reader)
 
-
-(define *the-keys*	    #f)
-
-(define *c-keys*	    #f)
-(define *java-keys*	    #f)
-
+
+;;;
+;;; Generic fontifier.
+;;;
 
 (define (fontifier s)
-  (let ((lex (c-lex (open-input-string s))))
-    (let Loop ((token (lexer-next-token lex))
-	       (res   '()))
-      (if (eq? token 'eof)
-	  (reverse! res)
-	  (Loop (lexer-next-token lex)
-		(cons token res))))))
-  
-;;;; ======================================================================
-;;;;
-;;;; 				C
-;;;;
-;;;; ======================================================================
-(define (init-c-keys)
-  (unless *c-keys*
-    (set! *c-keys* '(for while return break continue void
-		     do if else typedef struct union goto switch case
-		     static extern default)))
-  *c-keys*)
+  (lexer-init 'port (open-input-string s))
+  (let loop ((token (lexer))
+             (res   '()))
+    (if (eq? token 'eof)
+        (reverse! res)
+        (loop (lexer)
+              (cons token res)))))
+
+
+;;;
+;;; C.
+;;;
+
+(define %c-keys
+  '(for while return break continue void do if else typedef struct union
+    goto switch case static extern default))
 
 (define (c-fontifier s)
-  (fluid-let ((*the-keys* (init-c-keys)))
+  (parameterize ((*the-keys* %c-keys))
     (fontifier s)))
 
 (define c
@@ -70,19 +62,17 @@
        (fontifier c-fontifier)
        (extractor #f)))
 
-;;;; ======================================================================
-;;;;
-;;;; 				JAVA
-;;;;
-;;;; ======================================================================
-(define (init-java-keys)
-  (unless *java-keys*
-    (set! *java-keys* (append (init-c-keys)
-			      '(public final class throw catch))))
-  *java-keys*)
+
+;;;
+;;; Java.
+;;;
+
+(define %java-keys
+  (append %c-keys
+          '(public final class throw catch)))
 
 (define (java-fontifier s)
-  (fluid-let ((*the-keys* (init-java-keys)))
+  (parameterize ((*the-keys* %java-keys))
     (fontifier s)))
 
 (define java
@@ -90,4 +80,3 @@
        (name "java")
        (fontifier java-fontifier)
        (extractor #f)))
-

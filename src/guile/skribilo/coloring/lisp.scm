@@ -1,40 +1,36 @@
-;;;; lisp.scm	-- Lisp Family Fontification
-;;;;
-;;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
-;;;; Copyright 2005, 2006  Ludovic Courtès  <ludovic.courtes@laas.fr>
-;;;;
-;;;;
-;;;; This program is free software; you can redistribute it and/or modify
-;;;; it under the terms of the GNU General Public License as published by
-;;;; the Free Software Foundation; either version 2 of the License, or
-;;;; (at your option) any later version.
-;;;;
-;;;; This program is distributed in the hope that it will be useful,
-;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;;;; GNU General Public License for more details.
-;;;;
-;;;; You should have received a copy of the GNU General Public License
-;;;; along with this program; if not, write to the Free Software
-;;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
-;;;; USA.
+;;; lisp.scm -- Lisp Family Fontification
+;;;
+;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
+;;; Copyright 2005, 2006, 2007  Ludovic Courtès  <ludovic.courtes@laas.fr>
+;;;
+;;;
+;;; This program is free software; you can redistribute it and/or modify
+;;; it under the terms of the GNU General Public License as published by
+;;; the Free Software Foundation; either version 2 of the License, or
+;;; (at your option) any later version.
+;;;
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;;
+;;; You should have received a copy of the GNU General Public License
+;;; along with this program; if not, write to the Free Software
+;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+;;; USA.
 
 
 (define-module (skribilo coloring lisp)
   :use-module (skribilo utils syntax)
   :use-module (skribilo source)
+  :use-module (skribilo coloring parameters)
   :use-module (skribilo lib)
-  :use-module (skribilo utils strings)
   :use-module (srfi srfi-39)
   :use-module (ice-9 match)
-  :autoload   (ice-9 regex)      (make-regexp)
-  :autoload   (skribilo reader)  (make-reader)
+  :autoload   (skribilo reader)            (make-reader)
+  :autoload   (skribilo coloring lisp-lex) (lexer-init)
   :export (skribe scheme stklos bigloo lisp))
 
-
-(define *bracket-highlight* (make-parameter #t))
-(define *class-highlight*   (make-parameter #t))
-(define *the-keys*	    (make-parameter '()))
 
 (define %lisp-keys	    #f)
 (define %scheme-keys        #f)
@@ -43,9 +39,11 @@
 (define %lisp-keys	    #f)
 
 
+
 ;;;
-;;; DEFINITION-SEARCH
+;;; definition-search
 ;;;
+
 (define (definition-search inp read tab def?)
   (let Loop ((exp (read inp)))
     (unless (eof-object? exp)
@@ -54,9 +52,6 @@
 		(stop  (port-line inp)))
 	    (source-read-lines (port-filename inp) start stop tab))
 	  (Loop (read inp))))))
-
-;; Load the SILex-generated lexer.
-(load-from-path "skribilo/coloring/lisp-lex.l.scm")
 
 (define (lisp-family-fontifier s)
   (lexer-init 'port (open-input-string s))
@@ -68,11 +63,10 @@
 	      (cons token res)))))
 
 
-;;;; ======================================================================
-;;;;
-;;;;				LISP
-;;;;
-;;;; ======================================================================
+;;;
+;;; Lisp.
+;;;
+
 (define (lisp-extractor iport def tab)
   (definition-search
     iport
@@ -111,11 +105,10 @@
        (extractor lisp-extractor)))
 
 
-;;;; ======================================================================
-;;;;
-;;;;				SCHEME
-;;;;
-;;;; ======================================================================
+;;;
+;;; Scheme.
+;;;
+
 (define (scheme-extractor iport def tab)
   (definition-search
     iport
@@ -156,11 +149,10 @@
        (extractor scheme-extractor)))
 
 
-;;;; ======================================================================
-;;;;
-;;;;				STKLOS
-;;;;
-;;;; ======================================================================
+;;;
+;;; STkLos.
+;;;
+
 (define (stklos-extractor iport def tab)
   (definition-search
     iport
@@ -211,11 +203,10 @@
        (extractor stklos-extractor)))
 
 
-;;;; ======================================================================
-;;;;
-;;;;				SKRIBE
-;;;;
-;;;; ======================================================================
+;;;
+;;; Skribe.
+;;;
+
 (define (skribe-extractor iport def tab)
   (definition-search
     iport
@@ -274,11 +265,10 @@
        (extractor skribe-extractor)))
 
 
-;;;; ======================================================================
-;;;;
-;;;;				BIGLOO
-;;;;
-;;;; ======================================================================
+;;;
+;;; Bigloo.
+;;;
+
 (define (bigloo-extractor iport def tab)
   (definition-search
     iport

@@ -1,3 +1,11 @@
+(define-module (skribilo coloring lisp-lex)
+  :use-module (skribilo lib)
+  :use-module (skribilo coloring parameters)
+  :export (lexer-init lexer
+           lexer-get-func-column
+           lexer-get-func-offset
+           lexer-get-line lexer-getc
+           lexer-ungetc))
 ; *** This file starts with a copy of the file multilex.scm ***
 ; SILex - Scheme Implementation of Lex
 ; Copyright (C) 2001  Danny Dube'
@@ -14,7 +22,7 @@
 ; 
 ; You should have received a copy of the GNU General Public License
 ; along with this program; if not, write to the Free Software
-; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 ;
 ; Gestion des Input Systems
@@ -1132,7 +1140,7 @@
 	     (lexer-make-code-lexer tables IS))))))
 
 ;
-; Table generated from the file c-lex.l by SILex 1.0
+; Table generated from the file lisp-lex.l by SILex 1.0
 ;
 
 (define lexer-default-table
@@ -1145,6 +1153,9 @@
    (lambda (yycontinue yygetc yyungetc)
      (lambda (yytext yyline)
          		(skribe-error 'lisp-fontifier "Parse error" yytext)
+
+
+; LocalWords:  fontify
        ))
    (vector
     #t
@@ -1153,14 +1164,8 @@
           		(new markup
 			     (markup '&source-string)
 			     (body yytext))
-;;Comments
-        ))
-    #t
-    (lambda (yycontinue yygetc yyungetc)
-      (lambda (yytext yyline)
-        		(new markup
-			     (markup '&source-line-comment)
-			     (body   yytext))
+
+;;Comment
         ))
     #t
     (lambda (yycontinue yygetc yyungetc)
@@ -1169,42 +1174,69 @@
 			     (markup '&source-line-comment)
 			     (body   yytext))
 
-;; Identifiers (only letters since we are interested in keywords only)
+;; Skribe text (i.e. [....])
         ))
     #t
     (lambda (yycontinue yygetc yyungetc)
       (lambda (yytext yyline)
-          		(let* ((ident (string->symbol yytext))
-			       (tmp   (memq  ident *the-keys*)))
-			  (if tmp
-			      (new markup
-				   (markup '&source-module)
-				   (body yytext))
-			      yytext))
+     		        (if (*bracket-highlight*)
+			    (new markup
+				 (markup '&source-bracket)
+				 (body   yytext))
+			    yytext)
+;; Spaces & parenthesis
+        ))
+    #t
+    (lambda (yycontinue yygetc yyungetc)
+      (lambda (yytext yyline)
+            		(begin
+			  yytext)
 
-;; Regular text
+;; Identifier (real syntax is slightly more complicated but we are
+;; interested here in the identifiers that we will fontify)
         ))
     #t
     (lambda (yycontinue yygetc yyungetc)
       (lambda (yytext yyline)
-            		(begin yytext)
+                     	(let ((c (string-ref yytext 0)))
+			  (cond
+			    ((or (char=? c #\:)
+				 (char=? (string-ref yytext
+						     (- (string-length yytext) 1))
+					 #\:))
+			     ;; Scheme keyword
+			     (new markup
+				  (markup '&source-type)
+				  (body yytext)))
+			    ((char=? c #\<)
+			       ;; STklos class
+			       (let* ((len (string-length yytext))
+				      (c   (string-ref yytext (- len 1))))
+				 (if (char=? c #\>)
+				     (if (*class-highlight*)
+					 (new markup
+					      (markup '&source-module)
+					      (body yytext))
+					 yytext)		; no
+				     yytext)))			; no
+			    (else
+			       (let ((tmp (assoc (string->symbol yytext)
+						 (*the-keys*))))
+				 (if tmp
+				     (new markup
+					  (markup (cdr tmp))
+					  (body yytext))
+				     yytext)))))
         )))
    'decision-trees
    0
    0
-   '#((65 (35 (34 1 5) (= 47 4 1)) (96 (91 3 (95 1 2)) (97 1 (123 3 1))))
-    (65 (= 34 err 1) (97 (91 err 1) (123 err 1))) (91 (35 (34 1 err) (65 1
-    3)) (96 (95 1 2) (97 1 (123 3 1)))) (95 (65 err (91 3 err)) (97 (96 3
-    err) (123 3 err))) (47 (35 (34 1 err) (= 42 7 1)) (91 (48 6 (65 1 err))
-    (97 1 (123 err 1)))) (= 34 8 5) (35 (11 (10 6 1) (34 6 9)) (91 (65 6 9)
-    (97 6 (123 9 6)))) (42 (11 (10 7 1) (= 34 10 7)) (91 (43 11 (65 7 10))
-    (97 7 (123 10 7)))) err (= 10 err 9) (11 (10 10 err) (= 42 12 10)) (43
-    (34 (= 10 1 7) (35 10 (42 7 11))) (65 (= 47 13 7) (97 (91 10 7) (123 10
-    7)))) (42 (= 10 err 10) (47 (43 12 10) (48 14 10))) (42 (11 (10 7 1) (=
-    34 10 7)) (91 (43 11 (65 7 10)) (97 7 (123 10 7)))) (11 (10 10 err) (=
-    42 12 10)))
-   '#((#f . #f) (4 . 4) (3 . 3) (3 . 3) (4 . 4) (#f . #f) (2 . 2) (4 . 4)
-    (0 . 0) (2 . 2) (#f . #f) (4 . 4) (#f . #f) (1 . 1) (1 . 1))))
+   '#((40 (32 (9 1 (11 2 1)) (34 (33 2 1) (35 5 1))) (91 (59 (42 2 1) (60 4
+    1)) (93 (92 3 1) (94 3 1)))) (40 (32 (9 1 (11 err 1)) (34 (33 err 1)
+    (35 err 1))) (91 (59 (42 err 1) (60 err 1)) (93 (92 err 1) (94 err
+    1)))) (32 (9 err (11 2 err)) (40 (33 2 err) (42 2 err))) err (= 10 err
+    4) (= 34 6 5) err)
+   '#((#f . #f) (4 . 4) (3 . 3) (2 . 2) (1 . 1) (#f . #f) (0 . 0))))
 
 ;
 ; User functions
