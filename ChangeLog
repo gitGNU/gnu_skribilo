@@ -2,6 +2,27 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-06-06 13:15:03 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-100
+
+    Summary:
+      Removed useless file.
+    Revision:
+      skribilo--devo--1.2--patch-100
+
+    * src/guile/skribilo/package/Makefile.am (dist_guilemodule_DATA): Removed
+      `skribe.scm'.
+
+    removed files:
+     src/guile/skribilo/package/.arch-ids/skribe.scm.id
+     src/guile/skribilo/package/skribe.scm
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/Makefile.am
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-59
+
+
 2007-06-06 13:14:06 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-99
 
     Summary:
