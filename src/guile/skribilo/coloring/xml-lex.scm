@@ -1,3 +1,11 @@
+(define-module (skribilo coloring xml-lex)
+  :use-module (skribilo lib)
+  :use-module (skribilo coloring parameters)
+  :export (lexer-init lexer
+           lexer-get-func-column
+           lexer-get-func-offset
+           lexer-get-line lexer-getc
+           lexer-ungetc))
 ; *** This file starts with a copy of the file multilex.scm ***
 ; SILex - Scheme Implementation of Lex
 ; Copyright (C) 2001  Danny Dube'
@@ -14,7 +22,7 @@
 ; 
 ; You should have received a copy of the GNU General Public License
 ; along with this program; if not, write to the Free Software
-; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 ;
 ; Gestion des Input Systems
