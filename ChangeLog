@@ -2,6 +2,25 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-06-06 13:16:02 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-101
+
+    Summary:
+      lib: Minor fixes that make Guile-Lint happy.
+    Revision:
+      skribilo--devo--1.2--patch-101
+
+    * src/guile/skribilo/lib.scm (define-simple-markup): Don't quote strings.
+      (define-simple-container): Likewise.
+      (define-processor-markup): Likewise.  Added a `loc' argument.  Pass
+      location information to `new'.
+
+    modified files:
+     ChangeLog src/guile/skribilo/lib.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-60
+
+
 2007-06-06 13:15:03 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-100
 
     Summary:
