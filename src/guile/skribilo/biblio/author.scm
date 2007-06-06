@@ -20,7 +20,6 @@
 
 (define-module (skribilo biblio author)
   :use-module (srfi srfi-13)
-  :use-module (srfi srfi-14)
   :use-module (skribilo biblio abbrev)
   :autoload   (skribilo ast)     (markup-option markup-body markup-ident)
   :autoload   (skribilo lib)     (skribe-error)
@@ -58,7 +57,7 @@
   ;; return a string where author names are separated by " and " (suitable
   ;; for BibTeX).
   (string-join (comma-separated->author-list authors)
-	       " and " 'infix))
+	       " and "))
 
 
 (define (extract-first-author-name names)
@@ -72,7 +71,7 @@
    ;; Abbreviate author first names
    (let* ((components (string-split name #\space))
 	  (component-number (length components)))
-      (apply string-append
+      (string-concatenate
 	     (append
 	      (map (lambda (c)
 		      (string-append (abbreviate-word c) " "))
@@ -139,13 +138,13 @@
 			      #t))))
       (sort entries
 	    (lambda (e1 e2)
-	    (let* ((x1 (check-author e1))
-		   (x2 (check-author e2))
-		   (a1 (first-author-last-name
-			(markup-body (markup-option e1 'author))))
-		   (a2 (first-author-last-name
-			(markup-body (markup-option e2 'author)))))
-	       (string-ci<=? a1 a2))))))
+              (and (check-author e1)
+                   (check-author e2)
+                   (let* ((a1 (first-author-last-name
+                               (markup-body (markup-option e1 'author))))
+                          (a2 (first-author-last-name
+                               (markup-body (markup-option e2 'author)))))
+                     (string-ci<=? a1 a2)))))))
 
 
 ;;; arch-tag: c9a1ef10-a2cd-4a06-bd35-fbdee1abf09a

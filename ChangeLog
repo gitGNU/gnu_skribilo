@@ -2,6 +2,24 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-06-06 13:19:59 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-105
+
+    Summary:
+      Cleaned up the `biblio' modules.
+    Revision:
+      skribilo--devo--1.2--patch-105
+
+
+    modified files:
+     ChangeLog src/guile/skribilo/biblio/abbrev.scm
+     src/guile/skribilo/biblio/author.scm
+     src/guile/skribilo/biblio/bibtex.scm
+     src/guile/skribilo/biblio/template.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-64
+
+
 2007-06-06 13:19:02 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-104
 
     Summary:

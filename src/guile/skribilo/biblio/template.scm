@@ -25,7 +25,6 @@
   :use-module (srfi srfi-35)
 
   :use-module (skribilo ast)
-  :autoload   (skribilo lib)    (skribe-error)
   :autoload   (skribilo output) (output)
   :use-module (skribilo biblio)
 

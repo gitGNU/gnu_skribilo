@@ -96,7 +96,7 @@
           ((list? markup)
            (map loop markup))
           ((markup? markup)
-           (markup-body-set! markup (loop (markup-body title)))
+           (markup-body-set! markup (loop (markup-body markup)))
            markup)
           (else markup))))
 
