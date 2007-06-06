@@ -39,10 +39,10 @@
      ((null? opt*)
       (reverse! res))
      ((not (pair? opt*))
-      (skribe-error 'the-body "Illegal body" opt*))
+      (error "illegal body" opt*))
      ((keyword? (car opt*))
       (if (null? (cdr opt*))
-          (skribe-error 'the-body "Illegal option" (car opt*))
+          (error "illegal option" (car opt*))
           (loop (cddr opt*) res)))
      (else
       (loop (cdr opt*) (cons (car opt*) res))))))
@@ -58,11 +58,11 @@
      ((null? opt*)
       (reverse! res))
      ((not (pair? opt*))
-      (skribe-error 'the-options "Illegal options" opt*))
+      (error "illegal options" opt*))
      ((keyword? (car opt*))
       (cond
        ((null? (cdr opt*))
-        (skribe-error 'the-options "Illegal option" (car opt*)))
+        (error "illegal option" (car opt*)))
        ((memq (car opt*) out)
         (loop (cdr opt*) res))
        (else

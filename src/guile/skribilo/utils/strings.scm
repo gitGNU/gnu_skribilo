@@ -22,7 +22,6 @@
   :export (strip-ref-base string-canonicalize
 	   make-string-replace)
   :autoload   (skribilo parameters) (*ref-base*)
-  :use-module (skribilo lib)
   :use-module (srfi srfi-13))
 
 

@@ -215,9 +215,9 @@
 ;*---------------------------------------------------------------------*/
 ;*    prgm ...                                                         */
 ;*---------------------------------------------------------------------*/
-(define (prgm :key lnum lnumwidth language bg frame (width 1.)
-		     colors (monospace #t)
-		     :rest opts)
+(define* (prgm :key lnum lnumwidth language bg frame (width 1.)
+                    colors (monospace #t)
+               :rest opts)
    (let* ((w (cond
 		((real? width) (* width 100.))
 		((number? width) width)

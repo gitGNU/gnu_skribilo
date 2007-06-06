@@ -21,7 +21,7 @@
 
 (define-module (skribilo utils images)
   :export (convert-image
-	   *fig-convert-program* *bitmap-convert-program*)
+	   *fig-convert-program* *generic-convert-program*)
 
   :autoload (skribilo utils files) (file-suffix file-prefix)
   :autoload (skribilo parameters)  (*image-path* *verbose*)
