@@ -1,7 +1,7 @@
 ;;; strings.scm	-- Convenience functions to manipulate strings.
 ;;;
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
-;;; Copyright 2005, 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2005, 2006, 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
 ;;; it under the terms of the GNU General Public License as published by
@@ -86,31 +86,10 @@
 ;;; String writing.
 ;;;
 
-;;
-;; (define (%make-html-replace)
-;;   ;; Ad-hoc version for HTML, a little bit faster than the
-;;   ;; make-general-string-replace define later (particularily if there
-;;   ;; is nothing to replace since, it does not allocate a new string
-;;   (let ((specials (string->regexp "&|\"|<|>")))
-;;     (lambda (str)
-;;       (if (regexp-match specials str)
-;;	  (begin
-;;	    (let ((out (open-output-string)))
-;;	      (dotimes (i (string-length str))
-;;		(let ((ch (string-ref str i)))
-;;		  (case ch
-;;		    ((#\") (display "&quot;" out))
-;;		    ((#\&) (display "&amp;" out))
-;;		    ((#\<) (display "&lt;" out))
-;;		    ((#\>) (display "&gt;" out))
-;;		    (else  (write-char ch out)))))
-;;	      (get-output-string out)))
-;;	  str))))
-
-
 (define (%make-general-string-replace lst)
   ;; The general version
-  (let ((chars (make-hash-table 200)))
+  (let ((chars (make-hash-table 200))
+        (set   (apply char-set (map car lst))))
 
     ;; Setup a hash table equivalent to LST.
     (for-each (lambda (chr)
@@ -121,12 +100,25 @@
     (set! lst #f)
 
     (lambda (str)
-      (let ((out (open-output-string)))
-	(string-for-each (lambda (ch)
-                           (display (or (hashq-ref chars ch #f) ch)
-                                    out))
-			 str)
-	(get-output-string out)))))
+      ;; Note: This implementation is optimized for Guile 1.8 where
+      ;; `string-index' is implemented in C and where `string-length' and
+      ;; `string-ref' are O(1).  Consult the repository's history for a more
+      ;; UTF-friendly implementation.
+      (let ((len (string-length str)))
+        (let loop ((pos 0)
+                   (result '()))
+          (if (>= pos len)
+              (string-concatenate (reverse! result))
+              (let ((idx (string-index str set pos)))
+                (if idx
+                    (loop (+ 1 idx)
+                          (cons* (hashq-ref chars (string-ref str idx)
+                                            #f)
+                                 (substring str pos idx)
+                                 result))
+                    (loop len
+                          (cons (substring str pos len)
+                                result))))))))))
 
 (define %html-replacements
   '((#\" "&quot;") (#\& "&amp;") (#\< "&lt;") (#\> "&gt;")))
