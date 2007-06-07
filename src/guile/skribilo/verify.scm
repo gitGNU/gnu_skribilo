@@ -1,7 +1,7 @@
 ;;; verify.scm  --  Skribe AST verification.
 ;;;
 ;;; Copyright 2003-2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
-;;; Copyright 2005  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2005, 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -20,16 +20,15 @@
 ;;; USA.
 
 (define-module (skribilo verify)
-  :autoload (skribilo engine) (engine-ident processor-get-engine)
-  :autoload (skribilo writer) (writer? writer-options lookup-markup-writer)
-  :autoload (skribilo lib)    (skribe-warning/ast skribe-warning
-			       skribe-error)
+  :autoload   (skribilo engine) (engine-ident processor-get-engine)
+  :autoload   (skribilo writer) (writer? writer-options lookup-markup-writer)
+  :autoload   (skribilo lib)    (skribe-warning/ast skribe-error)
+  :use-module (skribilo debug)
+  :use-module (skribilo ast)
+  :use-module (skribilo utils syntax)
+  :use-module (oop goops)
   :export (verify))
 
-(use-modules (skribilo debug)
-	     (skribilo ast)
-	     (skribilo utils syntax)
-	     (oop goops))
 
 (fluid-set! current-reader %skribilo-module-reader)
 
@@ -134,7 +133,7 @@
 	 (let ((validate (slot-ref w 'validate)))
 	   (when (procedure? validate)
 	     (unless (validate node e)
-	       (skribe-warning
+	       (skribe-warning/ast
 		     1
 		     node
 		     (format #f "node `~a' forbidden here by ~a engine"
