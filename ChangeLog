@@ -2,6 +2,24 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-06-07 14:34:59 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-108
+
+    Summary:
+      Fixed location reporting for `verify' warnings.
+    Revision:
+      skribilo--devo--1.2--patch-108
+
+    * src/guile/skribilo/verify.scm: Concatenated `use-modules' to
+      `define-module'.
+      (verify<markup>): Use `skribe-warning/ast' instead of `skribe-warning'.
+
+    modified files:
+     ChangeLog src/guile/skribilo/verify.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-67
+
+
 2007-06-07 14:33:54 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-107
 
     Summary:
