@@ -510,7 +510,7 @@
   (let loop ((obj (markup-body obj)))
     (cond
      ((pair? obj)
-      (concatenate (map (lambda (o) (loop o)) obj)))
+      (concatenate (map loop obj)))
      ((container? obj)
       (let ((rest (loop (markup-body obj))))
         (if (pred obj)
@@ -525,7 +525,7 @@
   (let loop ((obj (markup-body obj)))
     (cond
      ((pair? obj)
-      (concatenate (map (lambda (o) (loop o)) obj)))
+      (concatenate (map loop obj)))
      ((markup? obj)
       (let ((rest (loop (markup-body obj))))
         (if (pred obj)
@@ -540,7 +540,7 @@
   (let loop ((obj obj))
     (cond
      ((pair? obj)
-      (concatenate (map (lambda (o) (loop o)) obj)))
+      (concatenate (map loop obj)))
      ((markup? obj)
       (if (pred obj)
           (list (cons obj (loop (markup-body obj))))

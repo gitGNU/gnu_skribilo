@@ -2,6 +2,25 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-06-08 15:08:50 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-109
+
+    Summary:
+      Slight optimization/cleanup of AST traversal functions.
+    Revision:
+      skribilo--devo--1.2--patch-109
+
+    * src/guile/skribilo/ast.scm (container-search-down): Use `(map loop
+      obj)', thereby removing an indirection.
+      (search-down): Likewise.
+      (find-down): Likewise.
+
+    modified files:
+     ChangeLog src/guile/skribilo/ast.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-68
+
+
 2007-06-07 14:34:59 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-108
 
     Summary:
