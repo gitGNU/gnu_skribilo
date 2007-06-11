@@ -1,31 +1,41 @@
-;;;;
-;;;; html4.skr				-- HTML 4.01 Engine
-;;;;
-;;;; Copyright © 2004 Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
-;;;;
-;;;;
-;;;; This program is free software; you can redistribute it and/or modify
-;;;; it under the terms of the GNU General Public License as published by
-;;;; the Free Software Foundation; either version 2 of the License, or
-;;;; (at your option) any later version.
-;;;;
-;;;; This program is distributed in the hope that it will be useful,
-;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;;;; GNU General Public License for more details.
-;;;;
-;;;; You should have received a copy of the GNU General Public License
-;;;; along with this program; if not, write to the Free Software
-;;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
-;;;; USA.
-;;;;
-;;;;           Author: Erick Gallesio [eg@essi.fr]
-;;;;    Creation date: 18-Feb-2004 11:58 (eg)
-;;;; Last file update: 26-Feb-2004 21:09 (eg)
-;;;;
+;;; html4.scm  --  HTML 4.01 engine.
+;;;
+;;; Copyright 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
+;;; Copyright 2007  Ludovic Courtès <ludo@chbouib.org>
+;;;
+;;;
+;;; This program is free software; you can redistribute it and/or modify
+;;; it under the terms of the GNU General Public License as published by
+;;; the Free Software Foundation; either version 2 of the License, or
+;;; (at your option) any later version.
+;;;
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;;
+;;; You should have received a copy of the GNU General Public License
+;;; along with this program; if not, write to the Free Software
+;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+;;; USA.
 
-(define-skribe-module (skribilo engine html4))
+(define-module (skribilo engine html4)
+  :use-module (skribilo ast)
+  :use-module (skribilo config)
+  :use-module (skribilo engine)
+  :use-module (skribilo writer)
+  :use-module (skribilo utils syntax)
+  :use-module (skribilo package base)
+  :use-module (skribilo engine html)
+  :autoload   (skribilo evaluator)     (evaluate-document)
+  :autoload   (skribilo output)        (output)
+  :autoload   (skribilo lib)           (skribe-error)
+  :use-module (srfi srfi-1)
+  :use-module ((srfi srfi-19) :renamer (symbol-prefix-proc 's19:)))
 
+(fluid-set! current-reader %skribilo-module-reader)
+
+
 (define (find-children node)
   (define (flat l)
     (cond
@@ -65,21 +75,25 @@
 		      (table :width 100.
 			 (tr
 			    (td :align 'left
-			       (font :size -1 [
-				 This ,(sc "Html") page has been produced by
-				      ,(ref :url (skribe-url) :text "Skribe").
-				      ,(linebreak)
-				      Last update ,(it (date)).]))
+			       (font :size -1
+                                     "This HTML page was produced by "
+                                     (ref :url (skribilo-url)
+                                          :text "Skribilo") ".  "
+                                     (linebreak)
+                                     "Last update: "
+                                     (s19:date->string
+                                      (s19:current-date))))
 			    (td :align 'right :valign 'top
 			       (ref :url url
-				  :text (image :url img :width 88 :height 31))))))))
+				  :text (image :url img :width 88
+                                               :height 31))))))))
     (markup-writer '&html-ending le
        :before "<div class=\"skribe-ending\">"
        :action (lambda (n e)
 		 (let ((body (markup-body n)))
 		   (if body
 		       (output body #t)
-		       (skribe-eval bottom e))))
+		       (evaluate-document bottom e))))
        :after "</div>\n"))
 
   ;;----------------------------------------------------------------------
@@ -95,8 +109,8 @@
 		 (when bg
 		   (display "<table cellspacing=\"0\"")
 		   (html-class n)
-		   (printf " cellpadding=\"~a\"" (if m m 0))
-		   (if w (printf " width=\"~a\"" (html-width w)))
+		   (format #t " cellpadding=\"~a\"" (if m m 0))
+		   (if w (format #t " width=\"~a\"" (html-width w)))
 		   (display "><tbody>\n<tr>")
 		   (display "<td bgcolor=\"")
 		   (output bg e)
@@ -136,8 +150,8 @@
 		 (display "<span ")
 		 (html-class n)
 		 (display "style=\"")
-		 (if size (printf "font-size: ~a; " size))
-		 (if face (printf "font-family:'~a'; " face))
+		 (if size (format #t "font-size: ~a; " size))
+		 (if face (format #t "font-family:'~a'; " face))
 		 (display "\">")))
      :after "</span>")
 
@@ -161,8 +175,7 @@
   ;;----------------------------------------------------------------------
   ;;	table ...
   ;;----------------------------------------------------------------------
-  (let ((old-writer (markup-writer-get 'table le)))
-    (copy-markup-writer 'table le
-	:validate (lambda (n e)
-		    (not (null? (markup-body n))))))
+  (copy-markup-writer 'table le
+      :validate (lambda (n e)
+                  (not (null? (markup-body n)))))
 )

@@ -1,7 +1,7 @@
 ;;; html.scm  --  HTML engine.
 ;;;
 ;;; Copyright 2003, 2004  Manuel Serrano
-;;; Copyright 2005, 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2005, 2006, 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -19,11 +19,36 @@
 ;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 ;;; USA.
 
-(define-skribe-module (skribilo engine html)
-  :autoload   (skribilo parameters) (*destination-file*)
-  :use-module ((srfi srfi-19) :renamer (symbol-prefix-proc 's19:)))
+(define-module (skribilo engine html)
+  :use-module (skribilo lib)
+  :use-module (skribilo ast)
+  :use-module (skribilo config)
+  :use-module (skribilo engine)
+  :use-module (skribilo writer)
+  :use-module (skribilo location)
+  :use-module (skribilo utils strings)
+  :use-module (skribilo utils syntax)
+  :use-module (skribilo package base)
+  :autoload   (skribilo utils images)  (convert-image)
+  :autoload   (skribilo utils files)   (file-prefix file-suffix)
+  :autoload   (skribilo parameters)    (*destination-file*)
+  :autoload   (skribilo evaluator)     (evaluate-document)
+  :autoload   (skribilo output)        (output)
+  :autoload   (skribilo debug)         (*debug*)
+  :autoload   (ice-9 rdelim)           (read-line)
+  :autoload   (ice-9 regex)            (regexp-substitute/global)
+  :use-module (srfi srfi-13)
+  :use-module (srfi srfi-14)
+  :use-module ((srfi srfi-19) :renamer (symbol-prefix-proc 's19:))
+
+  :export (html-engine
+           html-width html-class html-markup-class
+           html-title-authors))
+
+(fluid-set! current-reader %skribilo-module-reader)
 
 
+
 ;; Keep a reference to the base engine.
 (define base-engine (find-engine 'base))
 
@@ -65,10 +90,10 @@
 		   (and (is-markup? node 'subsubsection)
 			(engine-custom e 'subsubsection-file)))
 	       (let* ((b (or (and (string? (*destination-file*))
-				  (prefix (*destination-file*)))
+				  (file-prefix (*destination-file*)))
 			     ""))
 		      (s (or (and (string? (*destination-file*))
-				  (suffix (*destination-file*)))
+				  (file-suffix (*destination-file*)))
 			     "html"))
 		      (nm (get-file-name b s)))
 		  (markup-option-add! node filename nm)
@@ -89,7 +114,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    html-engine ...                                                  */
 ;*---------------------------------------------------------------------*/
-(define-public html-engine
+(define html-engine
    ;; setup the html engine
    (default-engine-set!
       (make-engine 'html
@@ -472,7 +497,7 @@
 	    ((is-markup? p 'chapter)
 	     (string-append (html-chapter-number p) "." s))
 	    (else
-	     (string-append s)))))
+	     s))))
    (define (html-subsection-number c)
       (let ((p (ast-parent c))
 	    (s (html-number (markup-option c :number)
@@ -512,29 +537,11 @@
 				"Not a container"
 				(markup-markup c))))))))
 
-;*---------------------------------------------------------------------*/
-;*    html-counter ...                                                 */
-;*---------------------------------------------------------------------*/
-(define (html-counter cnts)
-   (cond
-      ((not cnts)
-       "")
-      ((null? cnts)
-       "")
-      ((not (pair? cnts))
-       cnts)
-      ((null? (cdr cnts))
-       (format #f "~a." (car cnts)))
-      (else
-       (let loop ((cnts cnts))
-	  (if (null? (cdr cnts))
-	      (format #f "~a" (car cnts))
-	      (format #f "~a.~a" (car cnts) (loop (cdr cnts))))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    html-width ...                                                   */
 ;*---------------------------------------------------------------------*/
-(define-public (html-width width)
+(define (html-width width)
    (cond
       ((and (integer? width) (exact? width))
        (format #f "~A" width))
@@ -548,18 +555,18 @@
 ;*---------------------------------------------------------------------*/
 ;*    html-class ...                                                   */
 ;*---------------------------------------------------------------------*/
-(define-public (html-class m)
+(define (html-class m)
    (if (markup? m)
        (let ((c (markup-class m)))
 	  (if (or (string? c) (symbol? c) (number? c))
-	      (printf " class=\"~a\"" c)))))
+	      (format #t " class=\"~a\"" c)))))
 
 ;*---------------------------------------------------------------------*/
 ;*    html-markup-class ...                                            */
 ;*---------------------------------------------------------------------*/
-(define-public (html-markup-class m)
+(define (html-markup-class m)
    (lambda (n e)
-      (printf "<~a" m)
+      (format #t "<~a" m)
       (html-class n)
       (display ">")))
 
@@ -604,9 +611,9 @@
 ;*---------------------------------------------------------------------*/
 (markup-writer '&html-head
    :before (lambda (n e)
-             (printf "<head>\n")
-             (printf "<meta http-equiv=\"Content-Type\" content=\"text/html;")
-             (printf "charset=~A\">\n" (engine-custom (find-engine 'html)
+             (display "<head>\n")
+             (display "<meta http-equiv=\"Content-Type\" content=\"text/html;")
+             (format #t "charset=~A\">\n" (engine-custom (find-engine 'html)
                                                       'charset)))
    :after "</head>\n\n")
 
@@ -628,7 +635,7 @@
 	      (let ((bg (engine-custom e 'background)))
 		 (display "<body")
 		 (html-class n)
-		 (when (html-color-spec? bg) (printf " bgcolor=\"~a\"" bg))
+		 (when (html-color-spec? bg) (format #t " bgcolor=\"~a\"" bg))
 		 (display ">\n")))
    :after "</body>\n")
 
@@ -638,22 +645,22 @@
 (markup-writer '&html-page
    :action (lambda (n e)
 	      (define (html-margin m fn size bg fg cla)
-		 (printf "<td align=\"left\" valign=\"top\" class=\"~a\"" cla)
+		 (format #t "<td align=\"left\" valign=\"top\" class=\"~a\"" cla)
 		 (if size
-		     (printf " width=\"~a\"" (html-width size)))
+		     (format #t " width=\"~a\"" (html-width size)))
 		 (if (html-color-spec? bg)
-		     (printf " bgcolor=\"~a\">" bg)
+		     (format #t " bgcolor=\"~a\">" bg)
 		     (display ">"))
-		 (printf "<div class=\"~a\">\n" cla)
+		 (format #t "<div class=\"~a\">\n" cla)
 		 (cond
 		    ((and (string? fg) (string? fn))
-		     (printf "<font color=\"~a\" \"~a\">" fg fn))
+		     (format #t "<font color=\"~a\" \"~a\">" fg fn))
 		    ((string? fg)
-		     (printf "<font color=\"~a\">" fg))
+		     (format #t "<font color=\"~a\">" fg))
 		    ((string? fn)
-		     (printf "<font \"~a\">" fn)))
+		     (format #t "<font \"~a\">" fn)))
 		 (if (procedure? m)
-		     (skribe-eval (m n e) e)
+		     (evaluate-document (m n e) e)
 		     (output m e))
 		 (if (or (string? fg) (string? fn))
 		     (display "</font>"))
@@ -673,7 +680,7 @@
 		    ((and lm rm)
 		     (let* ((ep (engine-custom e 'margin-padding))
 			    (ac (if (number? ep) ep 0)))
-			(printf "<table cellpadding=\"~a\" cellspacing=\"0\" width=\"100%\" class=\"skribilo-margins\"><tr>\n" ac))
+			(format #t "<table cellpadding=\"~a\" cellspacing=\"0\" width=\"100%\" class=\"skribilo-margins\"><tr>\n" ac))
 		     (html-margin lm lmfn lms lmbg lmfg "skribilo-left-margin")
 		     (html-margin body #f #f #f #f "skribilo-body")
 		     (html-margin rm rmfn rms rmbg rmfg "skribilo-right-margin")
@@ -681,14 +688,12 @@
 		    (lm
 		     (let* ((ep (engine-custom e 'margin-padding))
 			    (ac (if (number? ep) ep 0)))
-			(printf "<table cellpadding=\"~a\" cellspacing=\"0\" width=\"100%\" class=\"skribilo-margins\"><tr>\n" ac))
+			(format #t "<table cellpadding=\"~a\" cellspacing=\"0\" width=\"100%\" class=\"skribilo-margins\"><tr>\n" ac))
 		     (html-margin lm lmfn lms lmbg lmfg "skribilo-left-margin")
 		     (html-margin body #f #f #f #f "skribilo-body")
 		     (display "</tr></table>"))
 		    (rm
-		     (let* ((ep (engine-custom e 'margin-padding))
-			    (ac (if (number? ep) ep 0)))
-			(printf "<table cellpadding=\"~a\" cellspacing=\"0\" width=\"100%\" class=\"skribilo-margins\"><tr>\n"))
+                     (display "<table cellpadding=\"~a\" cellspacing=\"0\" width=\"100%\" class=\"skribilo-margins\"><tr>\n")
 		     (html-margin body #f #f #f #f "skribilo-body")
 		     (html-margin rm rmfn rms rmbg rmfg "skribilo-right-margin")
 		     (display "</tr></table>"))
@@ -724,7 +729,7 @@
 			  ((string? ic)
 			   ic)
 			  ((procedure? ic)
-			   (ic d e))
+			   (ic id e))
 			  (else #f))))
 	      e)
       ;; style
@@ -761,14 +766,14 @@
    :action (lambda (n e)
 	      (let ((i (markup-body n)))
 		 (when i
-		    (printf " <link rel=\"shortcut icon\" href=~s>\n" i)))))
+		    (format #t " <link rel=\"shortcut icon\" href=~s>\n" i)))))
 
 (markup-writer '&html-header-css
    :action (lambda (n e)
 	      (let ((css (markup-body n)))
 		 (when (pair? css)
 		    (for-each (lambda (css)
-				 (printf " <link href=~s rel=\"stylesheet\" type=\"text/css\">\n" css))
+				 (format #t " <link href=~s rel=\"stylesheet\" type=\"text/css\">\n" css))
 			      css)))))
 
 (markup-writer '&html-header-style
@@ -830,7 +835,7 @@
 			    (else
 			     '()))))
 		 (for-each (lambda (s)
-			      (printf "<script type=\"text/javascript\" src=\"~a\"></script>" s))
+			      (format #t "<script type=\"text/javascript\" src=\"~a\"></script>" s))
 			   js))))
 
 
@@ -852,7 +857,7 @@
 	      (let ((body (markup-body n)))
 		 (if body
 		     (output body #t)
-		     (skribe-eval
+		     (evaluate-document
 		      (list (hrule)
 			    (p :class "ending"
 			       (font :size -1
@@ -880,21 +885,21 @@
       (when title
 	 (display "<table width=\"100%\" class=\"skribilo-title\" cellspacing=\"0\" cellpadding=\"0\"><tbody>\n<tr>")
 	 (if (html-color-spec? tbg)
-	     (printf "<td align=\"center\"~A>"
+	     (format #t "<td align=\"center\"~A>"
                      (if (html-color-spec? tbg)
                          (string-append "bgcolor=\"" tbg "\"")
                          ""))
 	     (display "<td align=\"center\">"))
 	 (if (string? tfg)
-	     (printf "<font color=\"~a\">" tfg))
+	     (format #t "<font color=\"~a\">" tfg))
 	 (when title
 	    (if (string? tfont)
 		(begin
-		   (printf "<font ~a><strong>" tfont)
+		   (format #t "<font ~a><strong>" tfont)
 		   (output title e)
 		   (display "</strong></font>"))
 		(begin
-		   (printf "<div class=\"skribilo-title\"><strong><big>")
+		   (display "<div class=\"skribilo-title\"><strong><big>")
 		   (output title e)
 		   (display "</big></strong></div>"))))
 	 (if (not authors)
@@ -929,10 +934,10 @@
 		    (let loop ((fns footnotes))
 		       (if (pair? fns)
 			   (let ((fn (car fns)))
-			      (printf "<a name=\"footnote-~a\">"
+			      (format #t "<a name=\"footnote-~a\">"
 				      (string-canonicalize
 				       (container-ident fn)))
-			      (printf "<sup><small>~a</small></sup></a>: "
+			      (format #t "<sup><small>~a</small></sup></a>: "
 				      (markup-option fn :number))
 			      (output (markup-body fn) e)
 			      (display "\n<br>\n")
@@ -942,7 +947,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    html-title-authors ...                                           */
 ;*---------------------------------------------------------------------*/
-(define-public (html-title-authors authors e)
+(define (html-title-authors authors e)
    (define (html-authorsN authors cols first)
       (define (make-row authors . opt)
 	 (tr (map (lambda (v)
@@ -995,9 +1000,9 @@
 (define (document-sui n e)
    (define (sui)
       (display "(sui \"")
-      (skribe-eval (markup-option n :title) html-title-engine)
+      (evaluate-document (markup-option n :title) html-title-engine)
       (display "\"\n")
-      (printf "  :file ~s\n" (sui-referenced-file n e))
+      (format #t "  :file ~s\n" (sui-referenced-file n e))
       (sui-marks n e)
       (sui-blocks 'chapter n e)
       (sui-blocks 'section n e)
@@ -1005,7 +1010,7 @@
       (sui-blocks 'subsubsection n e)
       (display "  )\n"))
    (if (string? (*destination-file*))
-       (let ((f (format #f "~a.sui" (prefix (*destination-file*)))))
+       (let ((f (format #f "~a.sui" (file-prefix (*destination-file*)))))
 	  (with-output-to-file f sui))
        (sui)))
 
@@ -1014,21 +1019,21 @@
 ;*---------------------------------------------------------------------*/
 (define (sui-referenced-file n e)
    (let ((file (html-file n e)))
-      (if (member (suffix file) '("skb" "sui" "skr" "html"))
-	  (string-append (strip-ref-base (prefix file)) ".html")
+      (if (member (file-suffix file) '("skb" "sui" "skr" "html"))
+	  (string-append (strip-ref-base (file-prefix file)) ".html")
 	  file)))
 
 ;*---------------------------------------------------------------------*/
 ;*    sui-marks ...                                                    */
 ;*---------------------------------------------------------------------*/
 (define (sui-marks n e)
-   (printf "  (marks")
+   (display "  (marks")
    (for-each (lambda (m)
-		(printf "\n    (~s" (markup-ident m))
-		(printf " :file ~s" (sui-referenced-file m e))
-		(printf " :mark ~s" (markup-ident m))
+		(format #t "\n    (~s" (markup-ident m))
+		(format #t " :file ~s" (sui-referenced-file m e))
+		(format #t " :mark ~s" (markup-ident m))
 		(when (markup-class m)
-		   (printf " :class ~s" (markup-class m)))
+		   (format #t " :class ~s" (markup-class m)))
 		(display ")"))
 	     (search-down (lambda (n) (is-markup? n 'mark)) n))
    (display ")\n"))
@@ -1037,14 +1042,14 @@
 ;*    sui-blocks ...                                                   */
 ;*---------------------------------------------------------------------*/
 (define (sui-blocks kind n e)
-   (printf "  (~as" kind)
+   (format #t "  (~as" kind)
    (for-each (lambda (chap)
 		(display "\n    (\"")
-		(skribe-eval (markup-option chap :title) html-title-engine)
-		(printf "\" :file ~s" (sui-referenced-file chap e))
-		(printf " :mark ~s" (markup-ident chap))
+		(evaluate-document (markup-option chap :title) html-title-engine)
+		(format #t "\" :file ~s" (sui-referenced-file chap e))
+		(format #t " :mark ~s" (markup-ident chap))
 		(when (markup-class chap)
-		   (printf " :class ~s" (markup-class chap)))
+		   (format #t " :class ~s" (markup-class chap)))
 		(display ")"))
 	     (container-search-down (lambda (n) (is-markup? n kind)) n))
    (display ")\n"))
@@ -1069,14 +1074,14 @@
 		    (nfn (engine-custom e 'author-font))
 		    (align (markup-option n :align)))
 		 (define (row n)
-		    (printf "<tr><td align=\"~a\">" align)
+		    (format #t "<tr><td align=\"~a\">" align)
 		    (output n e)
 		    (display "</td></tr>"))
 		 ;; name
-		 (printf "<tr><td align=\"~a\">" align)
-		 (if nfn (printf "<font ~a>\n" nfn))
+		 (format #t "<tr><td align=\"~a\">" align)
+		 (if nfn (format #t "<font ~a>\n" nfn))
 		 (output name e)
-		 (if nfn (printf "</font>\n"))
+		 (if nfn (display "</font>\n"))
 		 (display "</td></tr>")
 		 ;; title
 		 (if title (row title))
@@ -1129,7 +1134,6 @@
 	      (define (toc-entry fe level)
 		 (let* ((c (car fe))
 			(ch (cdr fe))
-			(t (markup-option c :title))
 			(id (markup-ident c))
 			(f (html-file c e)))
 		    (unless (string? id)
@@ -1140,12 +1144,12 @@
 		    ;; blank columns
 		    (col level)
 		    ;; number
-		    (printf "<td valign=\"top\" align=\"left\">~a</td>"
+		    (format #t "<td valign=\"top\" align=\"left\">~a</td>"
 			    (html-container-number c e))
 		    ;; title
-		    (printf "<td colspan=\"~a\" width=\"100%\">"
+		    (format #t "<td colspan=\"~a\" width=\"100%\">"
 			    (- 4 level))
-		    (printf "<a href=\"~a#~a\">"
+		    (format #t "<a href=\"~a#~a\">"
 			    (if (and (*destination-file*)
 				     (string=? f (*destination-file*)))
 				""
@@ -1344,13 +1348,13 @@
       (display (string-canonicalize ident))
       (display "\"></a>\n")
       (if c
-	  (printf "<div class=\"~a-title\">" c)
-	  (printf "<div class=\"skribilo-~a-title\">" (markup-markup n)))
+	  (format #t "<div class=\"~a-title\">" c)
+	  (format #t "<div class=\"skribilo-~a-title\">" (markup-markup n)))
       (when (html-color-spec? tbg)
 	 (display "<table width=\"100%\">")
-	 (printf "<tr><td bgcolor=\"~a\">" tbg))
+	 (format #t "<tr><td bgcolor=\"~a\">" tbg))
       (display tstart)
-      (if tfg (printf "<font color=\"~a\">" tfg))
+      (if tfg (format #t "<font color=\"~a\">" tfg))
       (if number
 	  (begin
 	     (output (html-container-number n e) e)
@@ -1419,9 +1423,9 @@
 ;*---------------------------------------------------------------------*/
 (markup-writer 'paragraph
    :before (lambda (n e)
-	      (when (and (>= (skribe-debug) 2) (location? (ast-loc n)))
-		 (printf "<span style=\"display: block; position: relative; left: -2cm; font-size: x-small; font-style: italic; color: ff8e1e;\">~a</span>"
-			 (ast-location n)))
+	      (when (and (>= (*debug*) 2) (location? (ast-loc n)))
+		 (format #t "<span style=\"display: block; position: relative; left: -2cm; font-size: x-small; font-style: italic; color: ff8e1e;\">~a</span>"
+			 (ast-loc n)))
 	      ((html-markup-class "p") n e))
    :after "</p>")
 
@@ -1439,7 +1443,7 @@
 (markup-writer 'footnote
    :options '(:label)
    :action (lambda (n e)
-	      (printf "<a href=\"#footnote-~a\"><sup><small>~a</small></sup></a>"
+	      (format #t "<a href=\"#footnote-~a\"><sup><small>~a</small></sup></a>"
 		      (string-canonicalize (container-ident n))
 		      (markup-option n :label))))
 
@@ -1463,9 +1467,9 @@
 		 (display "<hr")
 		 (html-class n)
 		 (if (< width 100)
-		     (printf " width=\"~a\"" (html-width width)))
+		     (format #t " width=\"~a\"" (html-width width)))
 		 (if (> height 1)
-		     (printf " size=\"~a\"" height))
+		     (format #t " size=\"~a\"" height))
 		 (display ">"))))
 
 ;*---------------------------------------------------------------------*/
@@ -1481,8 +1485,8 @@
 		 (when (html-color-spec? bg)
 		    (display "<table cellspacing=\"0\"")
 		    (html-class n)
-		    (printf " cellpadding=\"~a\"" (if m m 0))
-		    (if w (printf " width=\"~a\"" (html-width w)))
+		    (format #t " cellpadding=\"~a\"" (if m m 0))
+		    (if w (format #t " width=\"~a\"" (html-width w)))
 		    (display "><tbody>\n<tr>")
 		    (display "<td bgcolor=\"")
 		    (output bg e)
@@ -1508,9 +1512,9 @@
 		    (w (markup-option n :width)))
 		 (display "<table cellspacing=\"0\"")
 		 (html-class n)
-		 (printf " cellpadding=\"~a\"" (if m m 0))
-		 (printf " border=\"~a\"" (if b b 0))
-		 (if w (printf " width=\"~a\"" (html-width w)))
+		 (format #t " cellpadding=\"~a\"" (if m m 0))
+		 (format #t " border=\"~a\"" (if b b 0))
+		 (if w (format #t " width=\"~a\"" (html-width w)))
 		 (display "><tbody>\n<tr><td>")))
    :after "</td></tr>\n</tbody></table>")
 
@@ -1532,8 +1536,8 @@
 		    (display "<font")
 		    (html-class n)
 		    (when (and (number? size) (exact? size) (not (= size 0)))
-		       (printf " size=\"~a\"" size))
-		    (when face (printf " face=\"~a\"" face))
+		       (format #t " size=\"~a\"" size))
+		    (when face (format #t " face=\"~a\"" face))
 		    (display ">"))))
    :after (lambda (n e)
 	     (let ((size (markup-option n :size))
@@ -1614,7 +1618,7 @@
 			   (html-class item)
 			   (display ">")
 			    (if ident  ;; produce an anchor
-				(printf "\n<a name=\"~a\"></a>\n"
+				(format #t "\n<a name=\"~a\"></a>\n"
 					(string-canonicalize ident)))
 			   (output item e)
 			    (display "</li>\n")))
@@ -1635,7 +1639,7 @@
 			   (html-class item)
 			   (display ">")
 			    (if ident  ;; produce an anchor
-				(printf "\n<a name=\"~a\"></a>\n" ident))
+				(format #t "\n<a name=\"~a\"></a>\n" ident))
 			   (output item e)
 			    (display "</li>\n")))
 			(markup-body n)))
@@ -1724,11 +1728,10 @@
    :options '(:number)
    :before (lambda (n e)
 	      (display "<center>")
-	      (let ((number (markup-option n :number))
-		    (legend (markup-option n :legend)))
+	      (let ((number (markup-option n :number)))
 		 (if number
-		     (printf "<strong>Fig. ~a:</strong> " number)
-		     (printf "<strong>Fig. :</strong> "))))
+		     (format #t "<strong>Fig. ~a:</strong> " number)
+		     (display "<strong>Fig. :</strong> "))))
    :after "</center>")
 
 ;*---------------------------------------------------------------------*/
@@ -1746,24 +1749,24 @@
 		    (cs (markup-option n :cellspacing)))
 		 (display "<table")
 		 (html-class n)
-		 (if width (printf " width=\"~a\"" (html-width width)))
-		 (if border (printf " border=\"~a\"" border))
+		 (if width (format #t " width=\"~a\"" (html-width width)))
+		 (if border (format #t " border=\"~a\"" border))
 		 (if (and (number? cp) (>= cp 0))
-		     (printf " cellpadding=\"~a\"" cp))
+		     (format #t " cellpadding=\"~a\"" cp))
 		 (if (and (number? cs) (>= cs 0))
-		     (printf " cellspacing=\"~a\"" cs))
+		     (format #t " cellspacing=\"~a\"" cs))
 		 (cond
 		    ((symbol? cstyle)
-		     (printf " style=\"border-collapse: ~a;\"" cstyle))
+		     (format #t " style=\"border-collapse: ~a;\"" cstyle))
 		    ((string? cstyle)
-		     (printf " style=\"border-collapse: separate; border-spacing=~a\"" cstyle))
+		     (format #t " style=\"border-collapse: separate; border-spacing=~a\"" cstyle))
 		    ((number? cstyle)
-		     (printf " style=\"border-collapse: separate; border-spacing=~apt\"" cstyle)))
+		     (format #t " style=\"border-collapse: separate; border-spacing=~apt\"" cstyle)))
 		 (if frame
-		     (printf " frame=\"~a\""
+		     (format #t " frame=\"~a\""
 			     (if (eq? frame 'none) "void" frame)))
 		 (if (and rules (not (eq? rules 'header)))
-		     (printf " rules=\"~a\"" rules))
+		     (format #t " rules=\"~a\"" rules))
 		 (display "><tbody>\n")))
    :after "</tbody></table>\n")
 
@@ -1776,7 +1779,7 @@
 	      (let ((bg (markup-option n :bg)))
 		 (display "<tr")
 		 (html-class n)
-		 (when (html-color-spec? bg) (printf " bgcolor=\"~a\"" bg))
+		 (when (html-color-spec? bg) (format #t " bgcolor=\"~a\"" bg))
 		 (display ">")))
    :after "</tr>\n")
 
@@ -1799,19 +1802,19 @@
 		    (colspan (markup-option n :colspan))
 		    (rowspan (markup-option n :rowspan))
 		    (bg (markup-option n :bg)))
-		 (printf "<~a" markup)
+		 (format #t "<~a" markup)
 		 (html-class n)
-		 (if width (printf " width=\"~a\"" (html-width width)))
-		 (if align (printf " align=\"~a\"" align))
-		 (if valign (printf " valign=\"~a\"" valign))
-		 (if colspan (printf " colspan=\"~a\"" colspan))
-		 (if rowspan (printf " rowspan=\"~a\"" rowspan))
+		 (if width (format #t " width=\"~a\"" (html-width width)))
+		 (if align (format #t " align=\"~a\"" align))
+		 (if valign (format #t " valign=\"~a\"" valign))
+		 (if colspan (format #t " colspan=\"~a\"" colspan))
+		 (if rowspan (format #t " rowspan=\"~a\"" rowspan))
 		 (when (html-color-spec? bg)
-		    (printf " bgcolor=\"~a\"" bg))
+		    (format #t " bgcolor=\"~a\"" bg))
 		 (display ">")))
    :after (lambda (n e)
 	     (let ((markup (or (markup-option n 'markup) 'td)))
-		(printf "</~a>" markup))))
+		(format #t "</~a>" markup))))
 
 ;*---------------------------------------------------------------------*/
 ;*    image ... @label image@                                          */
@@ -1832,16 +1835,16 @@
 		 (if (not (string? img))
 		     (skribe-error 'html "Illegal image" file)
 		     (begin
-			(printf "<img src=\"~a\" border=\"0\"" img)
+			(format #t "<img src=\"~a\" border=\"0\"" img)
 			(html-class n)
 			(if body
 			    (begin
 			       (display " alt=\"")
 			       (output body e)
 			       (display "\""))
-			    (printf " alt=\"~a\"" file))
-			(if width (printf " width=\"~a\"" (html-width width)))
-			(if height (printf " height=\"~a\"" height))
+			    (format #t " alt=\"~a\"" file))
+			(if width (format #t " width=\"~a\"" (html-width width)))
+			(if height (format #t " height=\"~a\"" height))
 			(display ">"))))))
 
 ;*---------------------------------------------------------------------*/
@@ -1884,12 +1887,16 @@
 		 (display #\>)
 		 (if text
 		     (output text e)
-		     (skribe-eval (tt (markup-body n)) e))
+		     (evaluate-document (tt (markup-body n)) e))
 		 (display "</a>"))))
 
 ;*---------------------------------------------------------------------*/
 ;*    mailto ... @label mailto@                                        */
 ;*---------------------------------------------------------------------*/
+(define %non-at
+  ;; Char-set not containing the `@' character.
+  (char-set-complement (char-set #\@)))
+
 (markup-writer 'mailto
    :options '(:text)
    :predicate (lambda (n e)
@@ -1901,17 +1908,19 @@
    :action (lambda (n e)
 	      (let* ((body (markup-body n))
 		     (email (if (string? body) body (car body)))
-		     (split (pregexp-split "@" email))
+		     (split (string-tokenize email %non-at))
 		     (na (car split))
 		     (do (if (pair? (cdr split)) (cadr split) ""))
-		     (nn (pregexp-replace* "[.]" na " "))
-		     (dd (pregexp-replace* "[.]" do " "))
+		     (nn (regexp-substitute/global #f "\\." na
+                                                   'pre " " 'post))
+		     (dd (regexp-substitute/global #f "\\." do
+                                                   'pre " " 'post))
 		     (text (markup-option n :text)))
 		(display "<script language=\"JavaScript\" type=\"text/javascript\"")
 		(if (not text)
-		    (printf ">skribenospam( ~s, ~s, true )" nn dd)
+		    (format #t ">skribenospam( ~s, ~s, true )" nn dd)
 		    (begin
-		      (printf ">skribenospam( ~s, ~s, false )" nn dd)
+		      (format #t ">skribenospam( ~s, ~s, false )" nn dd)
 		      (display "</script>")
 		      (output text e)
 		      (display "<script language=\"JavaScript\" type=\"text/javascript\">document.write(\"</\" + \"a>\")")))
@@ -1922,7 +1931,7 @@
 ;*---------------------------------------------------------------------*/
 (markup-writer 'mark
    :before (lambda (n e)
-	      (printf "<a name=\"~a\"" (string-canonicalize (markup-ident n)))
+	      (format #t "<a name=\"~a\"" (string-canonicalize (markup-ident n)))
 	      (html-class n)
 	      (display ">"))
    :after "</a>")
@@ -1939,7 +1948,7 @@
 		     (class (if (markup-class n)
 				(markup-class n)
 				"skribilo-ref")))
-		 (printf "<a href=\"~a#~a\" class=\"~a\""
+		 (format #t "<a href=\"~a#~a\" class=\"~a\""
 			 (if (and (*destination-file*)
 				  (string=? f (*destination-file*)))
 			     ""
@@ -2072,7 +2081,7 @@
 		 (display "<a href=\"")
 		 (output url html-title-engine)
 		 (display "\"")
-		 (when class (printf " class=\"~a\"" class))
+		 (when class (format #t " class=\"~a\"" class))
 		 (display ">")))
    :action (lambda (n e)
 	      (let ((v (markup-option n :text)))
@@ -2109,7 +2118,7 @@
 (markup-writer '&bib-entry-label
    :options '(:title)
    :before (lambda (n e)
-	      (printf "<a name=\"~a\"" (string-canonicalize (markup-ident n)))
+	      (format #t "<a name=\"~a\"" (string-canonicalize (markup-ident n)))
 	      (html-class n)
 	      (display ">"))
    :action (lambda (n e)
@@ -2126,7 +2135,7 @@
 		     (url (or (markup-option en 'url)
 			      (markup-option en 'documenturl)))
 		     (ht (if url (ref :url (markup-body url) :text t) t)))
-		 (skribe-eval ht e))))
+		 (evaluate-document ht e))))
 
 ;*---------------------------------------------------------------------*/
 ;*    &bib-entry-url ...                                               */
@@ -2136,7 +2145,7 @@
 	      (let* ((en (handle-ast (ast-parent n)))
 		     (url (markup-option en 'url))
 		     (t (bold (markup-body url))))
-		 (skribe-eval (ref :url (markup-body url) :text t) e))))
+		 (evaluate-document (ref :url (markup-body url) :text t) e))))
 
 ;*---------------------------------------------------------------------*/
 ;*    &the-index-header ...                                            */
@@ -2149,12 +2158,12 @@
 	      (for-each (lambda (h)
 			   (let ((f (engine-custom e 'index-header-font-size)))
 			      (if f
-				  (skribe-eval (font :size f (bold (it h))) e)
+				  (evaluate-document (font :size f (bold (it h))) e)
 				  (output h e))
 			      (display " ")))
 			(markup-body n))
 	      (display "</center>")
-	      (skribe-eval (linebreak 2) e)))
+	      (evaluate-document (linebreak 2) e)))
 
 ;*---------------------------------------------------------------------*/
 ;*    &source-comment ...                                              */
@@ -2166,7 +2175,7 @@
 		     (n2 (if (and (engine-custom e 'source-color) cc)
 			     (color :fg cc n1)
 			     n1)))
-		 (skribe-eval n2 e))))
+		 (evaluate-document n2 e))))
 
 ;*---------------------------------------------------------------------*/
 ;*    &source-line-comment ...                                         */
@@ -2178,14 +2187,14 @@
 		     (n2 (if (and (engine-custom e 'source-color) cc)
 			     (color :fg cc n1)
 			     n1)))
-		 (skribe-eval n2 e))))
+		 (evaluate-document n2 e))))
 
 ;*---------------------------------------------------------------------*/
 ;*    &source-keyword ...                                              */
 ;*---------------------------------------------------------------------*/
 (markup-writer '&source-keyword
    :action (lambda (n e)
-	      (skribe-eval (bold (markup-body n)) e)))
+	      (evaluate-document (bold (markup-body n)) e)))
 
 ;*---------------------------------------------------------------------*/
 ;*    &source-error ...                                                */
@@ -2197,7 +2206,7 @@
 		     (n2 (if (and (engine-custom e 'source-color) cc)
 			     (color :fg cc n1)
 			     n1)))
-		 (skribe-eval n2 e))))
+		 (evaluate-document n2 e))))
 
 ;*---------------------------------------------------------------------*/
 ;*    &source-define ...                                               */
@@ -2209,7 +2218,7 @@
 		     (n2 (if (and (engine-custom e 'source-color) cc)
 			     (color :fg cc n1)
 			     n1)))
-		 (skribe-eval n2 e))))
+		 (evaluate-document n2 e))))
 
 ;*---------------------------------------------------------------------*/
 ;*    &source-module ...                                               */
@@ -2221,7 +2230,7 @@
 		     (n2 (if (and (engine-custom e 'source-color) cc)
 			     (color :fg cc n1)
 			     n1)))
-		 (skribe-eval n2 e))))
+		 (evaluate-document n2 e))))
 
 ;*---------------------------------------------------------------------*/
 ;*    &source-markup ...                                               */
@@ -2233,7 +2242,7 @@
 		     (n2 (if (and (engine-custom e 'source-color) cc)
 			     (color :fg cc n1)
 			     n1)))
-		 (skribe-eval n2 e))))
+		 (evaluate-document n2 e))))
 
 ;*---------------------------------------------------------------------*/
 ;*    &source-thread ...                                               */
@@ -2245,7 +2254,7 @@
 		     (n2 (if (and (engine-custom e 'source-color) cc)
 			     (color :fg cc n1)
 			     n1)))
-		 (skribe-eval n2 e))))
+		 (evaluate-document n2 e))))
 
 ;*---------------------------------------------------------------------*/
 ;*    &source-string ...                                               */
@@ -2257,7 +2266,7 @@
 		     (n2 (if (and (engine-custom e 'source-color) cc)
 			     (color :fg cc n1)
 			     n1)))
-		 (skribe-eval n2 e))))
+		 (evaluate-document n2 e))))
 
 ;*---------------------------------------------------------------------*/
 ;*    &source-bracket ...                                               */
@@ -2269,7 +2278,7 @@
 		     (n2 (if (and (engine-custom e 'source-color) cc)
 			     (color :fg cc (bold n1))
 			     (bold n1))))
-		 (skribe-eval n2 e))))
+		 (evaluate-document n2 e))))
 
 ;*---------------------------------------------------------------------*/
 ;*    &source-type ...                                                 */
@@ -2281,7 +2290,7 @@
 		     (n2 (if (and (engine-custom e 'source-color) cc)
 			     (color :fg cc n1)
 			     (it n1))))
-		 (skribe-eval n2 e))))
+		 (evaluate-document n2 e))))
 
 ;*---------------------------------------------------------------------*/
 ;*    &source-key ...                                                  */
@@ -2293,7 +2302,7 @@
 		     (n2 (if (and (engine-custom e 'source-color) cc)
 			     (color :fg cc (bold n1))
 			     (it n1))))
-		 (skribe-eval n2 e))))
+		 (evaluate-document n2 e))))
 
 ;*---------------------------------------------------------------------*/
 ;*    &source-type ...                                                 */
@@ -2305,7 +2314,7 @@
 		     (n2 (if (and (engine-custom e 'source-color) cc)
 			     (color :fg "red" (bold n1))
 			     (bold n1))))
-		 (skribe-eval n2 e))))
+		 (evaluate-document n2 e))))
 
 ;*---------------------------------------------------------------------*/
 ;*    Restore the base engine                                          */

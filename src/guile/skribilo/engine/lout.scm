@@ -19,25 +19,50 @@
 ;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 ;;; USA.
 
+(define-module (skribilo engine lout)
+  :use-module (skribilo lib)
+  :use-module (skribilo ast)
+  :use-module (skribilo config)
+  :use-module (skribilo engine)
+  :use-module (skribilo writer)
+  :use-module (skribilo utils keywords)
+  :use-module (skribilo utils strings)
+  :use-module (skribilo utils syntax)
+  :use-module (skribilo package base)
+  :autoload   (skribilo utils images)  (convert-image)
+  :autoload   (skribilo evaluator)     (evaluate-document)
+  :autoload   (skribilo output)        (output)
+  :autoload   (skribilo color)         (skribe-color->rgb)
+  :use-module (srfi srfi-1)
+  :use-module (srfi srfi-2)
+  :use-module (srfi srfi-11)
+  :use-module (srfi srfi-13)
+  :use-module (srfi srfi-14)
+  :autoload   (ice-9 popen)   (open-output-pipe)
+  :autoload   (ice-9 rdelim)  (read-line)
+
+  :export (lout-engine
+           lout-illustration !lout
+
+           lout-verbatim-encoding lout-encoding
+           lout-french-encoding
+           lout-tagify lout-embedded-postscript-code
+           lout-color-specification lout-make-url-breakable))
+
 ;;;    Taken from `lcourtes@laas.fr--2004-libre',
 ;;;               `skribe-lout--main--0.2--patch-15'.
 ;;;    Based on `latex.skr', copyright 2003, 2004 Manuel Serrano.
 ;;;
 ;;;    For more information on Lout, see http://lout.sf.net/ .
 
-
-(define-skribe-module (skribilo engine lout)
-  :use-module (srfi srfi-13)
-  :use-module (srfi srfi-14)
-  :autoload (ice-9 popen)   (open-output-pipe)
-  :autoload (ice-9 rdelim)  (read-line))
+(fluid-set! current-reader %skribilo-module-reader)
 
 
-
+
 ;*---------------------------------------------------------------------*/
 ;*    lout-verbatim-encoding ...                                       */
 ;*---------------------------------------------------------------------*/
-(define-public lout-verbatim-encoding
+(define lout-verbatim-encoding
    '((#\/ "\"/\"")
      (#\\ "\"\\\\\"")
      (#\| "\"|\"")
@@ -54,7 +79,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    lout-encoding ...                                                */
 ;*---------------------------------------------------------------------*/
-(define-public lout-encoding
+(define lout-encoding
   `(,@lout-verbatim-encoding
     (#\ç "{ @Char ccedilla }")
     (#\Ç "{ @Char Ccdeilla }")
@@ -351,11 +376,11 @@
   `(if *lout-debug?*
        (with-output-to-port (current-error-port)
 	  (lambda ()
-	     (printf (string-append ,fmt "~%") ,@args
+	     (format #t (string-append ,fmt "~%") ,@args
 		     (current-error-port))))
        #t))
 
-(define-public (lout-tagify ident)
+(define (lout-tagify ident)
   ;; Return an "clean" identifier (a string) based on `ident' (a string),
   ;; suitable for Lout as an `@Tag' value.
   (let ((tag-encoding '((#\, "-")
@@ -382,7 +407,7 @@
   ;; be inserted at the beginning of the output document.
   (let ((leader (engine-custom engine 'toc-leader))
 	(leader-space (engine-custom engine 'toc-leader-space)))
-    (apply string-append
+    (string-concatenate
 	   `("# @SkribiloMark implements Skribe's marks "
 	     "(i.e. cross-references)\n"
 	     "def @SkribiloMark\n"
@@ -425,7 +450,6 @@
   (let ((title (markup-option doc :title))
 	(author (markup-option doc :author))
 	(date-line (engine-custom engine 'date-line))
-	(cover-sheet? (engine-custom engine 'cover-sheet?))
 	(multi-column? (> (engine-custom engine 'column-number) 1)))
 
     (if multi-column?
@@ -502,12 +526,11 @@
   ;; Default implementation of the `toc-entry-proc' custom that produces the
   ;; number and title of `node' for use in the table of contents.
   (let ((num (markup-option node :number))
-	(title (markup-option node :title))
-	(lang (engine-custom engine 'initial-language)))
+	(title (markup-option node :title)))
     (if num
 	(begin
 	  (if (is-markup? node 'chapter) (display "@B { "))
-	  (printf "~a. |2s " (markup-number-string node))
+	  (format #t "~a. |2s " (markup-number-string node))
 	  (output title engine)
 	  (if (is-markup? node 'chapter) (display " }")))
 	(if (is-markup? node 'chapter)
@@ -526,8 +549,8 @@
           (and (number? n1) (number? n2)
                (< n1 n2)))
 	(begin
-	  (fprint (current-error-port) "i1: " ident1 ", " entry1)
-	  (fprint (current-error-port) "i2: " ident2 ", " entry2)))))
+	  (format (current-error-port) "i1: ~a, ~a" ident1 entry1)
+	  (format (current-error-port) "i2: ~a, ~a" ident2 entry2)))))
 
 (define (lout-pdf-bookmark-title node engine)
   ;; Default implementation of the `pdf-bookmark-title-proc' custom that
@@ -687,7 +710,7 @@
 			 ;; Extra PDF information, an alist of key-value
 			 ;; pairs (string pairs).
 			 (pdf-extra-info (("SkribeVersion"
-					   ,(skribe-release))))
+					   ,(skribilo-release))))
 
 			 ;; Tells whether to produce PDF "docinfo"
 			 ;; (meta-information with title, author,
@@ -813,7 +836,7 @@
 	 (nodes (if (document? node)
 		    (filter choose-node? (markup-body node))
 		    children)))
-    (apply string-append
+    (string-concatenate
 	   (map (lambda (node)
 		  (let* ((children (filter choose-node? (markup-body node)))
 			 (closed? ((engine-custom engine
@@ -825,7 +848,7 @@
 					     `(,node ,engine ,@children)))))
 		nodes))))
 
-(define-public (lout-embedded-postscript-code postscript)
+(define (lout-embedded-postscript-code postscript)
   ;; Return a string embedding PostScript code `postscript' into Lout code.
   (string-append "\n"
 		 "{ @BackEnd @Case {\n"
@@ -834,7 +857,7 @@
 		 "        }\n"
 		 "} } @Graphic { }\n"))
 
-(define-public (lout-pdf-docinfo doc engine)
+(define (lout-pdf-docinfo doc engine)
   ;; Produce PostScript code that will produce PDF document information once
   ;; converted to PDF.
   (let* ((filter-string (make-string-replace `(,@lout-verbatim-encoding
@@ -874,7 +897,7 @@
 		       "")
 		   (if (pair? keywords)
 		       (docinfo-field "Keywords"
-                                      (apply string-append
+                                      (string-concatenate
                                              (keyword-list->comma-separated
                                               keywords)))
 		       "")
@@ -882,13 +905,13 @@
 		   ;; dictionary" of the `pdfmark' reference.
 		   (if (or (not extra-fields) (null? extra-fields))
 		       ""
-		       (apply string-append
+		       (string-concatenate
 			      (map (lambda (p)
 				     (docinfo-field (car p) (cadr p)))
 				   extra-fields)))
 		   "\"/\"DOCINFO pdfmark\n")))
 
-(define-public (lout-output-pdf-meta-info doc engine)
+(define (lout-output-pdf-meta-info doc engine)
   ;; Produce PDF bookmarks (aka. "outline") for document `doc', as well as
   ;; document meta-information (or "docinfo").  This function makes sure that
   ;; both are only produced once, and only if the relevant customs ask for
@@ -911,7 +934,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    lout ...                                                         */
 ;*---------------------------------------------------------------------*/
-(define-markup (!lout fmt #!rest opt)
+(define (!lout fmt . opt)
    (if (engine-format? "lout")
        (apply ! fmt opt)
        #f))
@@ -959,7 +982,7 @@
 		(if (< size 0) "0.3f" "1.5f")
 		"1.0f"))))
 
-(define-public (lout-color-specification skribe-color)
+(define (lout-color-specification skribe-color)
   ;; Return a Lout color name, ie. a string which is either an English color
   ;; name or something like "rgb 0.5 0.2 0.6".  `skribe-color' is a string
   ;; representing a Skribe color such as "black" or "#ffffff".
@@ -972,17 +995,17 @@
 					 (string-length skribe-color))
 			      16)
 	      skribe-color)))
-      (receive (r g b)
-	 (skribe-color->rgb actual-color)
-	 (apply format #f
-		(cons "rgb ~a ~a ~a"
-		      (map (if b&w?
-			       (let ((avg (exact->inexact (/ (+ r g b)
-							     (* 256 3)))))
-				  (lambda (x) avg))
-			       (lambda (x)
-				 (exact->inexact (/ x 256))))
-			   (list r g b)))))))
+     (let-values (((r g b)
+                   (skribe-color->rgb actual-color)))
+       (apply format #f
+              (cons "rgb ~a ~a ~a"
+                    (map (if b&w?
+                             (let ((avg (exact->inexact (/ (+ r g b)
+                                                           (* 256 3)))))
+                               (lambda (x) avg))
+                             (lambda (x)
+                               (exact->inexact (/ x 256))))
+                         (list r g b)))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    ~ ...                                                           */
@@ -1049,10 +1072,10 @@
 				'lout
 				"`document-type' should be one of `book', `report', `doc' or `slides'"
 				doc-type)))
-		   (printf "# Custom document includes\n~a\n" doc-include))
+		   (format #t "# Custom document includes\n~a\n" doc-include))
 
 	       (if includes
-		   (printf "# Additional user includes\n~a\n" includes)
+		   (format #t "# Additional user includes\n~a\n" includes)
 		   (display "@SysInclude { tbl }\n"))
 
 	       ;; Write additional Lout definitions
@@ -1091,9 +1114,9 @@
 							     :affiliation)))
 			     (if institution
 				 (begin
-				   (printf "  @Institution { ")
+				   (display "  @Institution { ")
 				   (output institution e)
-				   (printf " }\n"))))))))
+				   (display " }\n"))))))))
 
                (if (memq doc-type '(report slides))
                    (let ((date-line (engine-custom e 'date-line)))
@@ -1129,11 +1152,11 @@
 			   (output abstract e)
 			   (display "\n}\n")))))
 
-	       (printf "  @OptimizePages { ~a }\n"
+	       (format #t "  @OptimizePages { ~a }\n"
 		       (if (engine-custom e 'optimize-pages?)
 			   "Yes" "No"))
 
-	       (printf "  @InitialFont { ~a }\n"
+	       (format #t "  @InitialFont { ~a }\n"
 		       (cond ((string? font) font)
 			     ((symbol? font)
 			      (string-append (symbol->string font)
@@ -1146,18 +1169,18 @@
 			      (skribe-error
 			       'lout 'initial-font
 			       "Should be a Lout font name, a symbol, or a number"))))
-	       (printf "  @InitialBreak { ~a }\n"
+	       (format #t "  @InitialBreak { ~a }\n"
 		       (if break break "adjust 1.2fx hyphen"))
 	       (if (not slides?)
-		   (printf "  @ColumnNumber { ~a }\n"
+		   (format #t "  @ColumnNumber { ~a }\n"
 			   (if (number? column-number)
 			       column-number 1)))
-	       (printf "  @FirstPageNumber { ~a }\n"
+	       (format #t "  @FirstPageNumber { ~a }\n"
 		       (if (number? first-page-number)
 			   first-page-number 1))
-	       (printf "  @PageOrientation { ~a }\n"
+	       (format #t "  @PageOrientation { ~a }\n"
 		       (lout-page-orientation page-orientation))
-	       (printf "  @InitialLanguage { ~a }\n"
+	       (format #t "  @InitialLanguage { ~a }\n"
 		       (if lang lang "English"))
 
 	       ;; FIXME: Insert a preface for text preceding the first ch.
@@ -1247,17 +1270,17 @@
 	  (display "@LP\n")
 	  (if ident
 	      ;; create an internal for PDF navigation
-	      (printf "{ ~a } @LinkSource { " (lout-tagify ident)))
+	      (format #t "{ ~a } @LinkSource { " (lout-tagify ident)))
 
 	  (if (> depth 0)
-	      (printf "|~as " (number->string (* 6 depth))))
+	      (format #t "|~as " (number->string (* 6 depth))))
 	  (display " @HExpand { ")
 
 	  ;; output the number and title of this node
 	  (entry-proc node engine)
 
 	  (display " &1rt @OneCol { ")
-	  (printf " @SkribiloLeaders & @PageOf { ~a }"
+	  (format #t " @SkribiloLeaders & @PageOf { ~a }"
 		  (lout-tagify (markup-ident node)))
 	  (display " &0io } }")
 
@@ -1333,12 +1356,6 @@
 		     "`document-type' should be one of `book', `report', `doc' or `slides'"
 		     doc-type)))))
 
-(define-public (lout-structure-number-string markup)
-  ;; FIXME: External code has started to rely on this before this was moved
-  ;; to the `ast' module as `markup-number-string'.  Thus, we'll have to keep it
-  ;; here for some time.
-  (markup-number-string markup "."))
-
 
 ;*---------------------------------------------------------------------*/
 ;*    lout-block-before ...                                            */
@@ -1361,16 +1378,16 @@
 	   (display (lout-tagify ident))
 	   (display " }\n//0.8vx\n\n"))
 	(begin
-	   (printf "\n@~a\n  @Title { " lout-markup)
+	   (format #t "\n@~a\n  @Title { " lout-markup)
 	   (output title e)
-	   (printf " }\n")
+	   (display " }\n")
 
 	   (if (number? number)
-	       (printf "  @BypassNumber { ~a }\n"
+	       (format #t "  @BypassNumber { ~a }\n"
 		       (markup-number-string n))
 	       (if (not number)
 		   ;; this trick hides the section number
-		   (printf "  @BypassNumber { } # unnumbered\n")))
+		   (display "  @BypassNumber { } # unnumbered\n")))
 
 	   (cond ((string? ident)
 		  (begin
@@ -1394,8 +1411,8 @@
   ;; structure (chapter, section, etc.).
   (let ((lout-markup (lout-structure-markup (markup-markup n) e)))
      (if (not lout-markup)
-	 (printf "\n\n//0.3vx\n\n") ;; fallback method
-	 (printf "\n\n@End @~a\n\n" lout-markup))))
+	 (display "\n\n//0.3vx\n\n") ;; fallback method
+	 (format #t "\n\n@End @~a\n\n" lout-markup))))
 
 
 (define (lout-markup-child-type skribe-markup)
@@ -1431,7 +1448,7 @@
 	      ;; produce an `@BeginSubSections' or equivalent; `doc'-style
 	      ;; documents need to preprend an `@BeginSections' before the
 	      ;; first section while other styles don't.
-	      (printf "\n@Begin~as\n" lout-markup-name))
+	      (format #t "\n@Begin~as\n" lout-markup-name))
 
 	  ;; FIXME: We need to make sure that PARENT is a large-scale
 	  ;; structure, otherwise it won't have the `&substructs-started?'
@@ -1465,7 +1482,7 @@
 	  ;; documents need to issue an `@EndSections' after the last section
 	  ;; while other types of documents don't.
 	  (lout-debug "end-struct: closing substructs for ~a" markup)
-	  (printf "\n@End~as\n"
+	  (format #t "\n@End~as\n"
 		  (lout-structure-markup (lout-markup-child-type markup-type)
 					 engine))
 	  (markup-option-set! markup '&substructs-started? #f)))
@@ -1546,10 +1563,10 @@
 		   (use-number?
 		    (engine-custom e 'use-skribe-footnote-numbers?)))
 	       (if (or (and (number? label) use-number?) label)
-		   (printf "{ @FootNote @Label { ~a } { "
+		   (format #t "{ @FootNote @Label { ~a } { "
 			   (if label label ""))
-		   (printf "{ @FootNote ~a{ "
-			   (if (not number) "@Label { } " "")))))
+		   (format #t "{ @FootNote ~a{ "
+			   (if (not label) "@Label { } " "")))))
    :after (lambda (n e)
 	    (display " } }")))
 
@@ -1576,10 +1593,9 @@
    ;; FIXME: `:width' is not supported either.  Rather use `frame' for that
    ;; kind of options.
    :before (lambda (n e)
-	     (let* ((w (markup-option n :width))
-		    (fg (markup-option n :fg)))
+	     (let ((fg (markup-option n :fg)))
                ;; Skip a line to avoid hitting Basser Lout's length limit.
-	       (printf "{ { ~a }\n@Color { " (lout-color-specification fg))))
+	       (format #t "{ { ~a }\n@Color { " (lout-color-specification fg))))
 
    :after (lambda (n e)
 	    (display " } }")))
@@ -1602,19 +1618,19 @@
 	       ;; linebreak.  However, the LaTeX engine doesn't seem to
 	       ;; agree.
 	       ;(display "\n@LP")
-	       (printf (string-append "\n@Tbl # frame\n"
+	       (format #t (string-append "\n@Tbl # frame\n"
 				      "  rule { yes }\n"))
-	       (if border (printf     "  rulewidth { ~a }\n"
+	       (if border (format #t     "  rulewidth { ~a }\n"
 				      (lout-width border)))
-	       (if width  (printf     "  width { ~a }\n"
+	       (if width  (format #t     "  width { ~a }\n"
 				      (lout-width width)))
-	       (if margin (printf     "  margin { ~a }\n"
+	       (if margin (format #t     "  margin { ~a }\n"
 				      (lout-width margin)))
-	       (if bg     (printf     "  paint { ~a }\n"
+	       (if bg     (format #t     "  paint { ~a }\n"
 				      (lout-color-specification bg)))
 	       (display "{ @Row format { @Cell A } A { "))
 
-; 	     (printf "\n@Box linewidth { ~a } margin { ~a } { "
+; 	     (format #t "\n@Box linewidth { ~a } margin { ~a } { "
 ; 		     (lout-width (markup-option n :width))
 ; 		     (lout-width (markup-option n :margin)))
 	     )
@@ -1627,9 +1643,8 @@
 (markup-writer 'font
    :options '(:size :face)
    :before (lambda (n e)
-	     (let ((face (markup-option n :face))
-		   (size (lout-font-size (markup-option n :size))))
-	       (printf "\n~a @Font { " size)))
+	     (let ((size (lout-font-size (markup-option n :size))))
+	       (format #t "\n~a @Font { " size)))
    :after (lambda (n e)
 	    (display " }\n")))
 
@@ -1689,7 +1704,7 @@
    :before (lambda (n e)
              (let ((num (markup-option n :number)))
                (if (number? num)
-                   (skribe-eval
+                   (evaluate-document
                     (it (string-append (string-pad (number->string num) 3)
                                        ": "))
                     e))))
@@ -1718,7 +1733,7 @@
    :before (lambda (n e)
 	     (let ((symbol (markup-option n :symbol)))
 	       (if symbol
-		   (printf "\n@List style { ~a } # enumerate\n"
+		   (format #t "\n@List style { ~a } # enumerate\n"
 			   symbol)
 		   (display "\n@NumberedList # enumerate\n"))))
    :after "\n@EndList\n")
@@ -1772,7 +1787,7 @@
 		 (display "  @Tag { ")
 		 (display (lout-tagify ident))
 		 (display " }\n")
-		 (printf  "  @BypassNumber { ~a }\n"
+		 (format #t  "  @BypassNumber { ~a }\n"
 			  (cond ((number? number) number)
 				((not number)     "")
 				(else             number)))
@@ -1783,36 +1798,20 @@
 		 (if legend
 		     (begin
 		       (lout-debug "figure: ~a, \"~a\"" ident legend)
-		       (printf  "  @Caption { ")
+		       (display  "  @Caption { ")
 		       (output legend e)
-		       (printf  " }\n")))
-		 (printf "  @Location { ~a }\n"
+		       (display  " }\n")))
+		 (format #t "  @Location { ~a }\n"
 			 (if mc? "PageTop" "ColTop"))
-		 (printf  "{\n")
+		 (display  "{\n")
 		 (output (markup-body n) e)))
    :after (lambda (n e)
 	    (display "}\n")))
 
 
-;*---------------------------------------------------------------------*/
-;*    lout-table-column-number ...                                          */
-;*    -------------------------------------------------------------    */
-;*    This function computes how columns are contained by the table.   */
-;*---------------------------------------------------------------------*/
-(define (lout-table-column-number t)
-   (define (row-columns row)
-      (let loop ((cells (markup-body row))
-		 (nbcols 0))
-	 (if (null? cells)
-	     nbcols
-	     (loop (cdr cells)
-		   (+ nbcols (markup-option (car cells) :colspan))))))
-   (let loop ((rows (markup-body t))
-	      (nbcols 0))
-      (if (null? rows)
-	  nbcols
-	  (loop (cdr rows)
-		(max (row-columns (car rows)) nbcols)))))
+;;;
+;;; Table layout.
+;;;
 
 (define (lout-table-cell-indent align)
   ;; Return the Lout name (a string) for cell alignment `align' (a symbol).
@@ -1893,21 +1892,20 @@
 	"@VSpan"
 	(let* ((cell-fmt (string-append "@Cell " cell-options
 					(string cell-letter))))
-	  (string-append
-	   (if (> colspan 1)
-	       (string-append (if (and vspan-start? vspan-alist)
-				  "@StartHVSpan " "@StartHSpan ")
-			      cell-fmt
-			      (let pool ((cnt (- colspan 1))
-					 (span-cells ""))
-				(if (= cnt 0)
-				    span-cells
-				    (pool (- cnt 1)
-					  (string-append span-cells
-							 " | @HSpan")))))
-	       (string-append (if (and vspan-alist vspan-start?)
-				  "@StartVSpan " "")
-			      cell-fmt)))))))
+          (if (> colspan 1)
+              (string-append (if (and vspan-start? vspan-alist)
+                                 "@StartHVSpan " "@StartHSpan ")
+                             cell-fmt
+                             (let pool ((cnt (- colspan 1))
+                                        (span-cells ""))
+                               (if (= cnt 0)
+                                   span-cells
+                                   (pool (- cnt 1)
+                                         (string-append span-cells
+                                                        " | @HSpan")))))
+              (string-append (if (and vspan-alist vspan-start?)
+                                 "@StartVSpan " "")
+                             cell-fmt))))))
 
 
 (define (lout-table-row-format-string row)
@@ -2191,34 +2189,8 @@
    ;; XXX: `:cellstyle' `separate' and `:cellspacing' not supported
    ;; by Lout's @Tbl.
    :before (lambda (n e)
-	      (let ((width (markup-option n :width))
-		    (border (markup-option n :border))
-		    (cp (markup-option n :cellpadding))
-		    (rows (markup-body n)))
-
-		 (define (cell-width row col)
-		    (let ((cells (markup-body row))
-			  (bg (markup-option row :bg)))
-		       (let loop ((cells cells)
-				  (c 0))
-			  (if (pair? cells)
-			      (let* ((ce (car cells))
-				     (width (markup-option ce :width))
-				     (colspan (markup-option ce :colspan)))
-				 (if (= col c)
-				     (if (number? width) width 0)
-				     (loop (cdr cells) (+ c colspan))))
-			      0))))
-
-		 (define (col-width col)
-		    (let loop ((rows rows)
-			       (width 0))
-		       (if (null? rows)
-			   (if (= width 0)
-			       0
-			       width)
-			   (loop (cdr rows)
-				 (max width (cell-width (car rows) col))))))
+	      (let ((border (markup-option n :border))
+		    (cp (markup-option n :cellpadding)))
 
 		 (if (pair? (markup-body n))
 		     ;; Mark the first row as such
@@ -2231,10 +2203,10 @@
 		 (display "\n@Tbl # table\n")
 
 		 (if (number? border)
-		     (printf "  rulewidth { ~a }\n"
+		     (format #t "  rulewidth { ~a }\n"
 			     (lout-width (markup-option n :border))))
 		 (if (number? cp)
-		     (printf "  margin { ~ap }\n"
+		     (format #t "  margin { ~ap }\n"
 			     (number->string cp)))
 
 		 (display "{\n")))
@@ -2272,7 +2244,7 @@
 	       ;; row.  `@HeaderFirstRow' seems to be buggy though.
 	       ;; (see section 6.1, p.119 of the User's Guide).
 
-	       (printf "\n@~aRow ~aformat { ~a }"
+	       (format #t "\n@~aRow ~aformat { ~a }"
 		       (if first-row? "First" "")
 		       bg-color fmt)
 	       (display (string-append " " rules))
@@ -2290,7 +2262,7 @@
 			 (skribe-error 'lout
 				       "tr's parent not a table!" tab))
 		     (markup-option-add! tab '&header-rows (+ hrows 1))
-		     (printf "\n@Header~aRow ~aformat { ~a }"
+		     (format #t "\n@Header~aRow ~aformat { ~a }"
 			     ""   ; (if first-row? "First" "")
 			     bg-color fmt)
 		     (display (string-append " " rules))
@@ -2304,9 +2276,10 @@
 (markup-writer 'tc
    :options '(markup :width :align :valign :colspan :rowspan :bg)
    :before (lambda (cell e)
-	     (printf "\n  ~a { " (markup-option cell '&cell-name)))
+	     (format #t "\n  ~a { " (markup-option cell '&cell-name)))
    :after (lambda (cell e)
 	    (display " }")))
+
 
 
 ;*---------------------------------------------------------------------*/
@@ -2320,7 +2293,6 @@
 		     (width (markup-option n :width))
 		     (height (markup-option n :height))
 		     (zoom (markup-option n :zoom))
-		     (body (markup-body n))
 		     (efmt (engine-custom e 'image-format))
 		     (img (or url (convert-image file
 						 (if (list? efmt)
@@ -2332,12 +2304,12 @@
 		    (skribe-error 'lout "Illegal image" file)
 		    (begin
 		      (if width
-			  (printf "\n~a @Wide" (lout-width width)))
+			  (format #t "\n~a @Wide" (lout-width width)))
 		      (if height
-			  (printf "\n~a @High" (lout-width height)))
+			  (format #t "\n~a @High" (lout-width height)))
 		      (if zoom
-			  (printf "\n~a @Scale" zoom))
-		      (printf "\n@IncludeGraphic { \"~a\" }\n" img))))))
+			  (format #t "\n~a @Scale" zoom))
+		      (format #t "\n@IncludeGraphic { \"~a\" }\n" img))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    Ornaments ...                                                    */
@@ -2373,7 +2345,7 @@
 		 (map (lambda (b)
 			 (markup-option-add! b '&italics #t))
 		      bold-children)
-		 (printf "{ ~a { "
+		 (format #t "{ ~a { "
 		      (if (markup-option node '&bold)
 			  "@BI" "@I"))))
    :after " } }")
@@ -2395,7 +2367,7 @@
 		 (map (lambda (i)
 			 (markup-option-add! i '&bold #t))
 		      it-children)
-		 (printf "{ ~a { "
+		 (format #t "{ ~a { "
 			 (if (markup-option node '&italics)
 			     "@BI" "@B"))))
    :after " } }")
@@ -2451,16 +2423,15 @@
 		   (text           (markup-option n :text))
 		   (show-page-num? (markup-option n :page)))
 
-                   ;; A handle to the target is passed as the body of each
-                   ;; `ref' instance (see `package/base.scm').
-		(let* ((target (handle-ast (markup-body n)))
-		       (title  (markup-option target :title)))
+               ;; A handle to the target is passed as the body of each `ref'
+               ;; instance (see `package/base.scm').
+		(let ((target (handle-ast (markup-body n))))
 		   (lout-debug "ref: target=~a ident=~a" target ident)
 		   (if text (output text e))
 
 		   ;; Marks don't have a number
 		   (if (eq? kind 'mark)
-		       (printf (lout-page-of ident))
+		       (format #t (lout-page-of ident))
 		       (begin
 			  ;; Don't output a section/whatever number
 			  ;; when text is provided in order to be
@@ -2476,7 +2447,7 @@
                                 (display " ")
                                 (display number))
                               (if show-page-num?
-                                  (printf (lout-page-of ident))))))))))
+                                  (format #t (lout-page-of ident))))))))))
 
 
 ;*---------------------------------------------------------------------*/
@@ -2543,7 +2514,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    lout-make-url-breakable ...                                      */
 ;*---------------------------------------------------------------------*/
-(define-public lout-make-url-breakable
+(define lout-make-url-breakable
   ;; Make the given string (which is assumed to be a URL) breakable.
   (make-string-replace `((#\/ "\"/\"&0ik{}")
                          (#\. ".&0ik{}")
@@ -2565,11 +2536,11 @@
 	       (if (or (not transform)
 		       (markup-option n '&transformed))
 		   (begin
-		     (printf "{ \"~a\" @ExternalLink { " url)
+		     (format #t "{ \"~a\" @ExternalLink { " url)
 		     (if text
                          (output text e)
                          (display (lout-make-url-breakable url) e))
-		     (printf " } }"))
+		     (display " } }"))
 		   (begin
 		     (markup-option-add! n '&transformed #t)
 		     (output (transform n) e))))))
@@ -2606,7 +2577,7 @@
                   (if (null? entries)
                       ;; usually, the tag with be something like "[7]", hence
                       ;; the `+ 1' below (`[]' is narrower than 2f)
-                      (printf  "@TaggedList labelwidth { ~af }\n"
+                      (format #t "@TaggedList labelwidth { ~af }\n"
                                (+ 1 label-width))
                       (loop (cdr entries)
                             (let ((entry-length
@@ -2672,7 +2643,7 @@
 		     (en (handle-ast (ast-parent n)))
 		     (url (markup-option en 'url))
 		     (ht (if url (ref :url (markup-body url) :text t) t)))
-		 (skribe-eval ht e))))
+		 (evaluate-document ht e))))
 
 ;*---------------------------------------------------------------------*/
 ;*    &bib-entry-label ...                                             */
@@ -2691,7 +2662,7 @@
 	      (let* ((en (handle-ast (ast-parent n)))
 		     (url (markup-option en 'url))
 		     (t (it (markup-body url))))
-		 (skribe-eval (ref :url (markup-body url) :text t) e))))
+		 (evaluate-document (ref :url (markup-body url) :text t) e))))
 
 ;*---------------------------------------------------------------------*/
 ;*    &the-index-header ...                                            */
@@ -2702,12 +2673,12 @@
 	      (for-each (lambda (h)
 			   (let ((f (engine-custom e 'index-header-font-size)))
 			      (if f
-				  (skribe-eval (font :size f (bold (it h))) e)
+				  (evaluate-document (font :size f (bold (it h))) e)
 				  (output h e))
 			      (display " ")))
 			(markup-body n))
 	      (display " }")
-	      (skribe-eval (linebreak 2) e)))
+	      (evaluate-document (linebreak 2) e)))
 
 ;*---------------------------------------------------------------------*/
 ;*    &source-comment ...                                              */
@@ -2719,7 +2690,7 @@
 		     (n2 (if (and (engine-custom e 'source-color) cc)
 			     (color :fg cc n1)
 			     n1)))
-		 (skribe-eval n2 e))))
+		 (evaluate-document n2 e))))
 
 ;*---------------------------------------------------------------------*/
 ;*    &source-line-comment ...                                         */
@@ -2731,14 +2702,14 @@
 		     (n2 (if (and (engine-custom e 'source-color) cc)
 			     (color :fg cc n1)
 			     n1)))
-		 (skribe-eval n2 e))))
+		 (evaluate-document n2 e))))
 
 ;*---------------------------------------------------------------------*/
 ;*    &source-keyword ...                                              */
 ;*---------------------------------------------------------------------*/
 (markup-writer '&source-keyword
    :action (lambda (n e)
-	      (skribe-eval (bold (markup-body n)) e)))
+	      (evaluate-document (bold (markup-body n)) e)))
 
 ;*---------------------------------------------------------------------*/
 ;*    &source-define ...                                               */
@@ -2750,7 +2721,7 @@
 		     (n2 (if (and (engine-custom e 'source-color) cc)
 			     (color :fg cc n1)
 			     n1)))
-		 (skribe-eval n2 e))))
+		 (evaluate-document n2 e))))
 
 ;*---------------------------------------------------------------------*/
 ;*    &source-module ...                                               */
@@ -2762,7 +2733,7 @@
 		     (n2 (if (and (engine-custom e 'source-color) cc)
 			     (color :fg cc n1)
 			     n1)))
-		 (skribe-eval n2 e))))
+		 (evaluate-document n2 e))))
 
 ;*---------------------------------------------------------------------*/
 ;*    &source-markup ...                                               */
@@ -2774,7 +2745,7 @@
 		     (n2 (if (and (engine-custom e 'source-color) cc)
 			     (color :fg cc n1)
 			     n1)))
-		 (skribe-eval n2 e))))
+		 (evaluate-document n2 e))))
 
 ;*---------------------------------------------------------------------*/
 ;*    &source-thread ...                                               */
@@ -2786,7 +2757,7 @@
 		     (n2 (if (and (engine-custom e 'source-color) cc)
 			     (color :fg cc n1)
 			     n1)))
-		 (skribe-eval n2 e))))
+		 (evaluate-document n2 e))))
 
 ;*---------------------------------------------------------------------*/
 ;*    &source-string ...                                               */
@@ -2798,7 +2769,7 @@
 		     (n2 (if (and (engine-custom e 'source-color) cc)
 			     (color :fg cc n1)
 			     n1)))
-		 (skribe-eval n2 e))))
+		 (evaluate-document n2 e))))
 
 ;*---------------------------------------------------------------------*/
 ;*    &source-bracket ...                                              */
@@ -2810,7 +2781,7 @@
 		     (n2 (if (and (engine-custom e 'source-color) cc)
 			     (color :fg cc (bold n1))
 			     (it n1))))
-		 (skribe-eval n2 e))))
+		 (evaluate-document n2 e))))
 
 ;*---------------------------------------------------------------------*/
 ;*    &source-type ...                                                 */
@@ -2822,7 +2793,7 @@
 		     (n2 (if (and (engine-custom e 'source-color) cc)
 			     (color :fg cc n1)
 			     (it n1))))
-		 (skribe-eval n2 e))))
+		 (evaluate-document n2 e))))
 
 ;*---------------------------------------------------------------------*/
 ;*    &source-key ...                                                  */
@@ -2834,7 +2805,7 @@
 		     (n2 (if (and (engine-custom e 'source-color) cc)
 			     (color :fg cc (bold n1))
 			     (it n1))))
-		 (skribe-eval n2 e))))
+		 (evaluate-document n2 e))))
 
 ;*---------------------------------------------------------------------*/
 ;*    &source-bracket ...                                              */
@@ -2846,13 +2817,13 @@
 		     (n2 (if (and (engine-custom e 'source-color) cc)
 			     (color :fg "red" (bold n1))
 			     (bold n1))))
-		 (skribe-eval n2 e))))
+		 (evaluate-document n2 e))))
 
 
 ;*---------------------------------------------------------------------*/
 ;*    Illustrations                                                    */
 ;*---------------------------------------------------------------------*/
-(define-public (lout-illustration . args)
+(define (lout-illustration . args)
   ;; FIXME: This should be a markup.
 
   ;; Introduce a Lout illustration (such as a diagram) whose code is either
@@ -2911,7 +2882,7 @@
 	  (let* ((lout (find-engine 'lout))
 		 (output (string-append (or ident
 					    (symbol->string
-					     (gensym 'lout-illustration)))
+					     (gensym "lout-illustration")))
 					".eps"))
 		 (port (open-output-pipe
 			(apply string-append

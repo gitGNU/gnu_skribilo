@@ -1,6 +1,7 @@
 ;;; xml.scm  --  Generic XML engine.
 ;;;
 ;;; Copyright 2003, 2004  Manuel Serrano
+;;; Copyright 2007  Ludovic Courtès <ludo@chbouib.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -18,28 +19,41 @@
 ;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 ;;; USA.
 
-(define-skribe-module (skribilo engine xml))
+(define-module (skribilo engine xml)
+  :use-module (skribilo ast)
+  :use-module (skribilo engine)
+  :use-module (skribilo writer)
+  :use-module (skribilo utils strings)
+  :use-module (skribilo utils syntax)
+  :autoload   (skribilo output)         (output)
+  :use-module (srfi srfi-1)
+  :export (xml-engine))
 
+(fluid-set! current-reader %skribilo-module-reader)
+
+
+
 ;*---------------------------------------------------------------------*/
 ;*    xml-engine ...                                                   */
 ;*---------------------------------------------------------------------*/
 (define xml-engine
    ;; setup the xml engine
-   (default-engine-set!
-      (make-engine 'xml
-		   :version 1.0
-		   :format "html"
-		   :delegate (find-engine 'base)
-		   :filter (make-string-replace '((#\< "&lt;")
-						  (#\> "&gt;")
-						  (#\& "&amp;")
-						  (#\" "&quot;")
-						  (#\@ "&#x40;"))))))
+  (make-engine 'xml
+               :version 1.0
+               :format "html"
+               :delegate (find-engine 'base)
+               :filter (make-string-replace '((#\< "&lt;")
+                                              (#\> "&gt;")
+                                              (#\& "&amp;")
+                                              (#\" "&quot;")
+                                              (#\@ "&#x40;")))))
 
 ;*---------------------------------------------------------------------*/
 ;*    markup ...                                                       */
 ;*---------------------------------------------------------------------*/
 (let ((xml-margin 0))
+   (define (keyword->string kw)
+     (symbol->string (keyword->symbol kw)))
    (define (make-margin)
       (make-string xml-margin #\space))
    (define (xml-attribute? val)
@@ -47,12 +61,12 @@
 	 ((or (string? val) (number? val) (boolean? val))
 	  #t)
 	 ((list? val)
-	  (every? xml-attribute? val))
+	  (every xml-attribute? val))
 	 (else
 	  #f)))
    (define (xml-attribute att val)
       (let ((s (keyword->string att)))
-	 (printf " ~a=\"" (substring s 1 (string-length s)))
+	 (format #t " ~a=\"" s)
 	 (let loop ((val val))
 	    (cond
 	       ((or (string? val) (number? val))
@@ -65,12 +79,11 @@
 		#f)))
 	 (display #\")))
    (define (xml-option opt val e)
-      (let* ((m (make-margin))
-	     (ks (keyword->string opt))
-	     (s (substring ks 1 (string-length ks))))
-	 (printf "~a<~a>\n" m s)
+      (let ((m (make-margin))
+            (s (keyword->string opt)))
+	 (format #t "~a<~a>\n" m s)
 	 (output val e)
-	 (printf "~a</~a>\n" m s)))
+	 (format #t "~a</~a>\n" m s)))
    (define (xml-options n e)
       ;; display the true options
       (let ((opts (filter (lambda (o)
@@ -88,10 +101,10 @@
 		(set! xml-margin (- xml-margin 1))
 		(display m)
 		(display "</options>\n")))))
-   (markup-writer #t
+   (markup-writer #t xml-engine
       :options 'all
       :before (lambda (n e)
-		 (printf "~a<~a" (make-margin) (markup-markup n))
+		 (format #t "~a<~a" (make-margin) (markup-markup n))
 		 ;; display the xml attributes
 		 (for-each (lambda (o)
 			      (if (and (keyword? (car o))
@@ -106,10 +119,6 @@
 		 ;; body
 		 (output (markup-body n) e))
       :after (lambda (n e)
-		(printf "~a</~a>\n" (make-margin) (markup-markup n))
+		(format #t "~a</~a>\n" (make-margin) (markup-markup n))
 		(set! xml-margin (- xml-margin 1)))))
 
-;*---------------------------------------------------------------------*/
-;*    Restore the base engine                                          */
-;*---------------------------------------------------------------------*/
-(default-engine-set! (find-engine 'base))
