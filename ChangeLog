@@ -2,6 +2,29 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-06-11 15:57:17 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-110
+
+    Summary:
+      Added a `:&location' argument to `table'.
+    Revision:
+      skribilo--devo--1.2--patch-110
+
+    * doc/modules/skribilo/documentation/api.scm (%undocumented-options):
+      New.
+      (doc-check-arguments): Use it to allow `:&location' to not be
+      documented.
+    
+    * src/guile/skribilo/package/base.scm (table): Added a `&location'
+      argument.
+
+    modified files:
+     ChangeLog doc/modules/skribilo/documentation/api.scm
+     src/guile/skribilo/package/base.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-69
+
+
 2007-06-08 15:08:50 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-109
 
     Summary:

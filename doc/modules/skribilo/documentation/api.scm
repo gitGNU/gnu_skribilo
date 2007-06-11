@@ -269,12 +269,24 @@
 ;*---------------------------------------------------------------------*/
 ;*    doc-check-arguments ...                                          */
 ;*---------------------------------------------------------------------*/
+(define %undocumented-options
+  ;; Special markup options that don't need to be documented.
+  (list (symbol->keyword '&location)
+        (string->symbol ":&location")
+        '&location))
+
 (define (doc-check-arguments id args dargs)
    (if (not args)
        (skribe-error 'doc-check-arguments id args))
    (if (not dargs)
        (skribe-error 'doc-check-arguments id dargs))
-   (let* ((s1 (map (lambda (x) (if (pair? x) (car x) x)) args))
+   (let* ((s1 (reverse! (fold (lambda (x res)
+                                (let ((x (if (pair? x) (car x) x)))
+                                  (if (memq x %undocumented-options)
+                                      res
+                                      (cons x res))))
+                              '()
+                              args)))
 	  (s2 (map (lambda (x)
 		      (let ((i (car x)))
 			 (if (keyword? i)

@@ -693,7 +693,7 @@
 (define-markup (table :rest
 		      opts
 		      :key
-		      (ident #f) (class #f)
+		      (ident #f) (class #f) (&location #f)
 		      (border #f) (width #f)
 		      (frame 'none) (rules 'none)
 		      (cellstyle 'collapse) (cellpadding #f) (cellspacing #f))
@@ -734,7 +734,7 @@
 	     (markup 'table)
 	     (ident (or ident (symbol->string (gensym "table"))))
 	     (class class)
-             (loc   &invocation-location)
+             (loc   (or &location &invocation-location))
 	     (required-options '(:width :frame :rules))
 	     (options `((:frame ,frame)
 			(:rules ,rules)
