@@ -2,6 +2,32 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-06-11 16:01:23 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-114
+
+    Summary:
+      Updated the top-level documentation files.
+    Revision:
+      skribilo--devo--1.2--patch-114
+
+    * configure.ac: Changed the bug report address to
+      `skribilo-users@nongnu.org'.
+
+    new files:
+     .arch-ids/README.id .arch-ids/TODO.id README TODO
+
+    modified files:
+     ChangeLog configure.ac
+
+    renamed files:
+     .arch-ids/README.id
+       ==> .arch-ids/README.Skribe.id
+     README
+       ==> README.Skribe
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-73
+
+
 2007-06-11 16:00:19 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-113
 
     Summary:

@@ -1,69 +1,79 @@
-What is Skribe
-**************
+Skribilo
+========
 
-Skribe is programming language design for the production of electronic 
-documents. With Skribe one can:
-  
-   - Produce HTML web pages.
-   - Produce PS files.
-   - ...
+Skribilo is a document authoring system allowing users to produce
+documents in a variety of formats (HTML, PostScript, PDF, XML, etc.)
+from a single source document, while still retaining fine-grain control
+over the output.
 
-One may also:
+Beside rudimentary features provided by the `base' package, Skribilo
+provides packages for the production of colored program source code,
+bibliographies, pie charts, mathematical equations, and more.
 
-   - Translate Texinfo files into HTML.
+Skribilo is based on the Scheme programming language and is highly
+extensible: it is easy to define new documentation primitives (called
+"markups") and their rendering in each output format.
 
-   - re-use BibTex bibliography databases.
+Skribilo's core is written in mostly-portable Scheme (i.e., uses
+standard APIs such as SRFIs rather than Guile-specific APIs whenever
+that is possible), making it intelligible and hackable for most Scheme
+programmers.
 
+For more information, see:
 
-Obtaining Skribe
-****************
-
-New versions of Skribe may downloaded from:
-
-    ftp://ftp-sop.inria.fr/mimosa/fp/Skribe
-
-
-Skribe distrubtion
-******************
-
-The Skribe distribution consists of several directories:
-
-  INSTALL	installation instructions.
-
-  Makefile 	the Makefile to compile Skribe.
-
-  README 	this document.
-
-  README.java 	specific information regarding the JVM port of Skribe.
-
-  etc		private directory.
-
-  bin		the directory where binary files are compiled to.
-
-  lib		the directory where Skribe libraries are compiled to.
-
-  configure	configuration driver script.
-    
-  emacs		Skribe emacs mode.
-
-  examples	Various example of Skribe texts.
-
-  doc		the Skribe sources for Skribe manuals. 
-
-  src		the Scheme source code for Skribe.
-
-  skr		the Skribe source code for the Skribe engines and styles.
-
-  tools		the Bigloo source code for the Texi->Skribe and BibTex->Skribe
-		compilers.
+  http://www.nongnu.org/skribilo/
 
 
-Acknowledgements
-****************
+Requirements
+............
 
-We thank all the people who helped me while writing Skribe. My first
-though goes to Frederic Boussinot who's the first pre-alpha-tester of
-Skribe always volunteering for new testing new features ;-) I then
-thanks all the people that send me fixes, suggestions and
-improvements, that is, all the people that appear in the ChangeLog
-file. Many thanks to all of you.
+You need at least:
+
+  * GNU Guile >= 1.8.x
+    http://www.gnu.org/software/guile/
+
+  * Guile-Reader >= 0.3
+    http://www.nongnu.org/guile-reader/
+
+  * Guile-Lib (any version)
+    http://home.gna.org/guile-lib/
+
+Optionally, you may want to install one of the following document layout
+programs to produce PS/PDF files:
+
+  * Lout
+    http://lout.sourceforge.net/
+
+  * LaTeX
+    http://www.latex-project.org/
+
+  * ConTeXt
+    http://www.pragma-ade.nl/
+
+Optionally, to produce pie charts, you may want to use:
+
+  * Ploticus
+    http://ploticus.sourceforge.net/
+
+This is it!
+
+
+History
+.......
+
+Skribilo is based on the Skribe code base, written by Manuel Serrano and
+Erick Gallesio.  See `README.Skribe' for the original Skribe `README'
+file, or visit:
+
+  http://www-sop.inria.fr/mimosa/fp/Skribe/
+
+I am thankful to them for implementing Skribe!
+
+
+June 2007,
+Ludovic Courtès <ludo@chbouib.org>.
+
+;;; Local Variables:
+;;; mode: text
+;;; coding: utf-8
+;;; End:
