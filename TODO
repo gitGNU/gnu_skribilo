@@ -1,0 +1,32 @@
+-*- Outline -*-
+
+* Important Items (Release Blockers)
+
+** Have both a Skribe compat module and a "native"
+In `(skribilo module)', it should be possible to create either a Skribe
+compatibility module that pulls all the compatibility bindings, or a
+Skribilo "native" module, with fewer bindings.  This should translate
+into a `--compat=XXX' command-line option.
+
+** Update the documentation, remove Skribe legacy stuff
+** Have a PS/PDF version of the documentation (preferably using Lout)
+** Remove calls to `skribe-error', use SRFI-35 exceptions
+** Fix the HTML engine for `html-left-margin'
+Left margin doesn't display well when CSS is being used.
+
+
+* Longer-Term Items
+
+** Add a `if-engine' markup to avoid hacks with `engine-format?'
+Expressions like `(if (engine-format? "lout") xxx yyy)' are wrong,
+because they look at the value of `*current-engine*' rather than the
+engine actually used during resolution and output.
+
+** Write an Info engine based on Scribe's one
+** Write an XHTML engine
+** Write a nice GUI based on Andy's STexi browser
+** Render equations using MathML when rendering to HTML
+** Add stand-alone tools
+Such as `skribilo-to-bibtex', `bibtex-to-skribilo', etc.
+** Provide better internationalization
+

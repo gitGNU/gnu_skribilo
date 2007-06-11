@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT(skribilo, 1.2, ludovic.courtes@laas.fr)
+AC_INIT(skribilo, 1.2, skribilo-users@nongnu.org)
 AM_INIT_AUTOMAKE(skribilo, 1.2)
 
 AC_CONFIG_SRCDIR([src/guile/skribilo/reader.scm])
@@ -27,12 +27,12 @@ GUILE_MODULE_REQUIRED([system reader])
 GUILE_MODULE_REQUIRED([srfi srfi-35])
 
 # Look for Lout.
-AC_PATH_PROG([LOUT], [lout], [not-found])
-AM_CONDITIONAL([HAVE_LOUT], [test "x$LOUT" != "xnot-found"])
+AC_PATH_PROG([LOUT], [lout])
+AM_CONDITIONAL([HAVE_LOUT], [test "x$LOUT" != "x"])
 
 # Look for Ploticus.
-AC_PATH_PROGS([PLOTICUS], [ploticus pl], [not-found])
-AM_CONDITIONAL([HAVE_PLOTICUS], [test "x$PLOTICUS" != "xnot-found"])
+AC_PATH_PROGS([PLOTICUS], [ploticus pl])
+AM_CONDITIONAL([HAVE_PLOTICUS], [test "x$PLOTICUS" != "x"])
 
 
 AC_SUBST([SKRIBILO_DOC_DIR], ["$datadir/doc/skribilo"])
