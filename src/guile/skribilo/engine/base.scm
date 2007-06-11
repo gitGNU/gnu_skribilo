@@ -23,15 +23,18 @@
   :use-module (skribilo ast)
   :use-module (skribilo engine)
   :use-module (skribilo writer)
-  :autoload   (skribilo output) (output)
   :use-module (skribilo evaluator)
+  :autoload   (skribilo output) (output)
+  :autoload   (skribilo lib)    (skribe-error)
   :autoload   (skribilo package base) (color it bold ref)
   :autoload   (skribilo utils keywords) (list-split)
   :autoload   (skribilo biblio template) (make-bib-entry-template/default
                                           output-bib-entry-template)
   ;; syntactic sugar
   :use-module (skribilo reader)
-  :use-module (skribilo utils syntax))
+  :use-module (skribilo utils syntax)
+
+  :export (base-engine))
 
 (fluid-set! current-reader (make-reader 'skribe))
 
@@ -405,13 +408,9 @@
 		     (t (cond
 			   ((null? ie)
 			    "")
-			   ;; FIXME: Since we don't support
-			   ;; `:&skribe-eval-location', we could set up a
-			   ;; `parameterize' thing around `skribe-eval' to
-			   ;; provide it with the right location information.
 			   ((or (not (integer? nc)) (= nc 1))
 			    (table :width 100.
-			       ;;:&skribe-eval-location loc
+			       :&location loc
 			       :class "index-table"
 			       (make-column ie pref)))
 			   (else

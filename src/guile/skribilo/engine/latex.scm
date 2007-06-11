@@ -19,9 +19,33 @@
 ;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 ;;; USA.
 
-(define-skribe-module (skribilo engine latex)
-  :use-module (srfi srfi-13))
+(define-module (skribilo engine latex)
+  :use-module (skribilo lib)
+  :use-module (skribilo ast)
+  :use-module (skribilo engine)
+  :use-module (skribilo writer)
+  :use-module (skribilo location)
+  :use-module (skribilo utils strings)
+  :use-module (skribilo utils syntax)
+  :use-module (skribilo package base)
+  :autoload   (skribilo utils images)  (convert-image)
+  :autoload   (skribilo evaluator)     (evaluate-document)
+  :autoload   (skribilo output)        (output)
+  :autoload   (skribilo debug)         (*debug*)
+  :autoload   (skribilo color)         (skribe-color->rgb
+                                        skribe-use-color!)
+  :use-module (srfi srfi-13)
+  :use-module (ice-9 optargs)
+  :use-module (ice-9 receive)
 
+  :export (latex-engine
+           LaTeX TeX !latex
+           skribe-get-latex-color))
+
+(fluid-set! current-reader %skribilo-module-reader)
+
+
+
 ;*---------------------------------------------------------------------*/
 ;*    latex-verbatim-encoding ...                                      */
 ;*---------------------------------------------------------------------*/
@@ -381,7 +405,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    LaTeX ...                                                        */
 ;*---------------------------------------------------------------------*/
-(define-markup (LaTeX #!key (space #t))
+(define* (LaTeX :key (space #t))
    (if (engine-format? "latex")
        (! (if space "\\LaTeX\\ " "\\LaTeX"))
        "LaTeX"))
@@ -389,7 +413,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    TeX ...                                                          */
 ;*---------------------------------------------------------------------*/
-(define-markup (TeX #!key (space #t))
+(define* (TeX :key (space #t))
    (if (engine-format? "latex")
        (! (if space "\\TeX\\ " "\\TeX"))
        "TeX"))
@@ -397,11 +421,11 @@
 ;*---------------------------------------------------------------------*/
 ;*    latex ...                                                        */
 ;*---------------------------------------------------------------------*/
-(define-markup (!latex fmt #!rest opt)
+(define* (!latex fmt :rest opt)
    (if (engine-format? "latex")
        (apply ! fmt opt)
        #f))
-   
+
 ;*---------------------------------------------------------------------*/
 ;*    latex-width ...                                                  */
 ;*---------------------------------------------------------------------*/
@@ -437,14 +461,14 @@
 ;*    latex-declare-color ...                                          */
 ;*---------------------------------------------------------------------*/
 (define (latex-declare-color name rgb)
-   (printf "\\definecolor{~a}{rgb}{~a}\n" name rgb))
+   (format #t "\\definecolor{~a}{rgb}{~a}\n" name rgb))
 
 ;*---------------------------------------------------------------------*/
 ;*    skribe-get-latex-color ...                                       */
 ;*---------------------------------------------------------------------*/
-(define-public (skribe-get-latex-color spec)
-   (let ((c (and (hashtable? *skribe-latex-color-table*)
-		 (hashtable-get *skribe-latex-color-table* spec))))
+(define (skribe-get-latex-color spec)
+   (let ((c (and (hash-table? *skribe-latex-color-table*)
+		 (hash-ref *skribe-latex-color-table* spec))))
       (if (not (string? c))
 	  (skribe-error 'latex "Can't find color" spec)
 	  c)))
@@ -471,13 +495,13 @@
 ;*    skribe-latex-declare-colors ...                                  */
 ;*---------------------------------------------------------------------*/
 (define (skribe-latex-declare-colors colors)
-   (set! *skribe-latex-color-table* (make-hashtable))
+   (set! *skribe-latex-color-table* (make-hash-table))
    (for-each (lambda (spec)
-		(let ((old (hashtable-get *skribe-latex-color-table* spec)))
+		(let ((old (hash-ref *skribe-latex-color-table* spec)))
 		   (if (not (string? old))
-		       (let ((name (symbol->string (gensym 'c))))
+		       (let ((name (symbol->string (gensym "c"))))
 			  ;; bind the color 
-			  (hashtable-put! *skribe-latex-color-table* spec name)
+			  (hash-set! *skribe-latex-color-table* spec name)
 			  ;; and emit a latex declaration
 			  (latex-declare-color 
 			   name 
@@ -506,7 +530,7 @@
    :action (lambda (n e)
 	      (let ((width (markup-option n 'width)))
 		 (if (number? width)
-		     (printf "\\begin{tabular*}{~a}" (latex-width width))
+		     (format #t "\\begin{tabular*}{~a}" (latex-width width))
 		     (display "\\begin{tabular}")))))
 
 ;*---------------------------------------------------------------------*/
@@ -558,19 +582,21 @@
 	      ;; title
 	      (let ((t (markup-option n :title)))
 		 (when t
-		    (skribe-eval (new markup
-				    (markup '&latex-title)
-				    (body t))
-				 e
-				 :env `((parent ,n)))))
+		    (evaluate-document
+                     (new markup
+                          (markup '&latex-title)
+                          (body t))
+                     e
+                     :env `((parent ,n)))))
 	      ;; author
 	      (let ((a (markup-option n :author)))
 		 (when a
-		    (skribe-eval (new markup
-				    (markup '&latex-author)
-				    (body a))
-				 e
-				 :env `((parent ,n)))))
+		    (evaluate-document
+                     (new markup
+                          (markup '&latex-author)
+                          (body a))
+                     e
+                     :env `((parent ,n)))))
 	      ;; document
 	      (display "\\begin{document}\n")
 	      ;; postdocument
@@ -604,7 +630,7 @@
 				   (markup '&latex-table-start)
 				   (class "&latex-author-table"))
 				e)
-			(printf "{~a}\n" (make-string (length body) #\c))
+			(format #t "{~a}\n" (make-string (length body) #\c))
 			(let loop ((as body))
 			   (output (car as) e)
 			   (if (pair? (cdr as))
@@ -629,7 +655,7 @@
 			 (markup '&latex-table-start)
 			 (class "author"))
 		      e)
-	      (printf "{~a}\n"
+	      (format #t "{~a}\n"
 		      (case (markup-option n :align)
 			 ((left) "l")
 			 ((right) "r")
@@ -680,7 +706,7 @@
 			 (markup '&latex-table-start)
 			 (class "author"))
 		      e)
-	      (printf "{cc}\n"))
+	      (display "{cc}\n"))
    :action (lambda (n e)
 	      (let ((photo (markup-option n :photo)))
 		 (output photo e)
@@ -725,12 +751,12 @@
                                  %chapter-mapping
                                  %chapterless-mapping))
              (latex-markup (cdr (assq m markup-mapping))))
-	 (printf "\n\n%% ~a\n" (string-canonicalize (markup-ident n)))
-	 (printf "\\~a~a{" latex-markup (if (not num) "*" ""))
+	 (format #t "\n\n%% ~a\n" (string-canonicalize (markup-ident n)))
+	 (format #t "\\~a~a{" latex-markup (if (not num) "*" ""))
 	 (output (markup-option n :title) latex-title-engine)
 	 (display "}\n")
 	 (when num
-	    (printf "\\label{~a}\n" (string-canonicalize (markup-ident n)))))))
+	    (format #t "\\label{~a}\n" (string-canonicalize (markup-ident n)))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    section ... .. @label chapter@                                   */
@@ -766,8 +792,8 @@
 (markup-writer 'paragraph
    :options '(:title :number :toc :env)
    :before (lambda (n e)
-	      (when (and (>= (skribe-debug) 2) (location? (ast-loc n)))
-		 (printf "\n\\makebox[\\linewidth][l]{\\hspace{-1.5cm}\\footnotesize{$\\triangleright$\\textit{~a}}}\n" 
+	      (when (and (>= (*debug*) 2) (location? (ast-loc n)))
+		 (format #t "\n\\makebox[\\linewidth][l]{\\hspace{-1.5cm}\\footnotesize{$\\triangleright$\\textit{~a}}}\n" 
 			 (ast-location n)))
 	      (display "\\noindent "))
    :after "\\par\n")
@@ -808,17 +834,17 @@
 	  (output n e)
 	  (begin
 	     (if bg
-		 (printf "\\setbox~a \\vbox \\bgroup " latex-color-counter))
+		 (format #t "\\setbox~a \\vbox \\bgroup " latex-color-counter))
 	     (set! latex-color-counter (+ latex-color-counter 1))
 	     (if fg
 		 (begin
-		    (printf "\\textcolor{~a}{" (skribe-get-latex-color fg))
+		    (format #t "\\textcolor{~a}{" (skribe-get-latex-color fg))
 		    (output n e)
 		    (display "}"))
 		 (output n e))
 	     (set! latex-color-counter (- latex-color-counter 1))
 	     (if bg
-		 (printf "\\egroup\\colorbox{~a}{\\box~a}%\n"
+		 (format #t "\\egroup\\colorbox{~a}{\\box~a}%\n"
 			 (skribe-get-latex-color bg) latex-color-counter))))))
    
 ;*---------------------------------------------------------------------*/
@@ -841,15 +867,15 @@
 		 (when bg 
 		    (display "\\setlength{\\oldcolortabcolsep}{\\tabcolsep}\n\\addtolength{\\tabcolsep}{-\\tabcolsep}\n")
 		    (when m
-		       (printf "\\addtolength{\\tabcolsep}{~a}" 
+		       (format #t "\\addtolength{\\tabcolsep}{~a}" 
 			       (latex-width m)))
 		    (output (new markup
 			       (markup '&latex-table-start)
 			       (class "color"))
 			    e)
 		    (if tw
-			(printf "{p{~a}}\n" tw)
-			(printf "{l}\n")))
+			(format #t "{p{~a}}\n" tw)
+			(display "{l}\n")))
 		 (latex-color bg fg (markup-body n) e)
 		 (when bg 
 		    (output (new markup
@@ -867,7 +893,7 @@
 	      (display "\\setlength{\\oldframetabcolsep}{\\tabcolsep}\n\\addtolength{\\tabcolsep}{-\\tabcolsep}")
 	      (let ((m (markup-option n :margin)))
 		 (when m
-		    (printf "\\addtolength{\\tabcolsep}{~a}" (latex-width m))))
+		    (format #t "\\addtolength{\\tabcolsep}{~a}" (latex-width m))))
 	      (newline))
    :action (lambda (n e) 
 	      (let* ((b (markup-option n :border))
@@ -885,11 +911,11 @@
 			 e)
 		 (if (and (integer? b) (> b 0))
 		     (begin
-			(printf "{|p{~a}|}\\hline\n" tw)
+			(format #t "{|p{~a}|}\\hline\n" tw)
 			(output (markup-body n) e)
 			(display "\\\\\\hline\n"))
 		     (begin
-			(printf "{p{~a}}\n" tw)
+			(format #t "{p{~a}}\n" tw)
 			(output (markup-body n) e)))
 		 (output (new markup
 			    (markup '&latex-table-stop)
@@ -923,13 +949,13 @@
 				     (format #f "Illegal font size ~s" size)
 				     nb)
 				    (+ cs nb))))))
-		     (ne (make-engine (gensym 'latex)
+		     (ne (make-engine (gensym "latex")
 				      :delegate e
 				      :filter (engine-filter e)
 				      :symbol-table (engine-symbol-table e)
 				      :custom `((%font-size ,ns)
 						,@(engine-customs e)))))
-		 (printf "{\\~a{" (latex-font-size ns))
+		 (format #t "{\\~a{" (latex-font-size ns))
 		 (output (markup-body n) ne)
 		 (display "}}"))))
 
@@ -967,7 +993,7 @@
 ;*---------------------------------------------------------------------*/
 (markup-writer 'pre
    :before (lambda (n e)
-	      (printf "\\setlength{\\oldpretabcolsep}{\\tabcolsep}\n\\addtolength{\\tabcolsep}{-\\tabcolsep}\n{\\setbox~a \\vbox \n\\bgroup\n{\\noindent \\texttt{"
+	      (format #t "\\setlength{\\oldpretabcolsep}{\\tabcolsep}\n\\addtolength{\\tabcolsep}{-\\tabcolsep}\n{\\setbox~a \\vbox \n\\bgroup\n{\\noindent \\texttt{"
 		      latex-color-counter)
 	      (output (new markup
 			 (markup '&latex-table-start)
@@ -977,7 +1003,7 @@
 	      (set! latex-color-counter (+ latex-color-counter 1)))
    :action (lambda (n e)
 	      (let ((ne (make-engine
-			   (gensym 'latex)
+			   (gensym "latex")
 			   :delegate e
 			   :filter (make-string-replace latex-pre-encoding)
 			   :symbol-table (engine-symbol-table e)
@@ -989,7 +1015,7 @@
 			(markup '&latex-table-stop)
 			(class "pre"))
 		     e)
-	     (printf "}}\n\\egroup{\\box~a}}%\n\\setlength{\\tabcolsep}{\\oldpretabcolsep}\n" latex-color-counter)))
+	     (format #t "}}\n\\egroup{\\box~a}}%\n\\setlength{\\tabcolsep}{\\oldpretabcolsep}\n" latex-color-counter)))
 
 ;*---------------------------------------------------------------------*/
 ;*    prog ...                                                         */
@@ -997,7 +1023,7 @@
 (markup-writer 'prog
    :options '(:line :mark)
    :before (lambda (n e)
-	      (printf "\\setlength{\\oldpretabcolsep}{\\tabcolsep}\n\\addtolength{\\tabcolsep}{-\\tabcolsep}\n{\\setbox~a \\vbox \\bgroup\n{\\noindent \\texttt{"
+	      (format #t "\\setlength{\\oldpretabcolsep}{\\tabcolsep}\n\\addtolength{\\tabcolsep}{-\\tabcolsep}\n{\\setbox~a \\vbox \\bgroup\n{\\noindent \\texttt{"
 		      latex-color-counter)
 	      (output (new markup
 			 (markup '&latex-table-start)
@@ -1007,7 +1033,7 @@
 	      (set! latex-color-counter (+ latex-color-counter 1)))
    :action (lambda (n e)
 	      (let ((ne (make-engine
-			   (gensym 'latex)
+			   (gensym "latex")
 			   :delegate e
 			   :filter (make-string-replace latex-pre-encoding)
 			   :symbol-table (engine-symbol-table e)
@@ -1019,7 +1045,7 @@
 			(markup '&latex-table-stop)
 			(class "prog"))
 		     e)
-	     (printf "}}\n\\egroup{\\box~a}}%\n\\setlength{\\tabcolsep}{\\oldpretabcolsep}\n" latex-color-counter)))
+	     (format #t "}}\n\\egroup{\\box~a}}%\n\\setlength{\\tabcolsep}{\\oldpretabcolsep}\n" latex-color-counter)))
 
 ;*---------------------------------------------------------------------*/
 ;*    &prog-line ...                                                   */
@@ -1028,7 +1054,7 @@
    :before (lambda (n e)
              (let ((num (markup-option n :number)))
                (if (number? num)
-                   (skribe-eval
+                   (evaluate-document
                     (it (string-append (string-pad (number->string num) 3)
                                        ": "))
                     e))))
@@ -1124,14 +1150,13 @@
    :options '(:legend :number :multicolumns)
    :action (lambda (n e)
 	      (let ((ident (markup-ident n))
-		    (number (markup-option n :number))
 		    (legend (markup-option n :legend))
 		    (mc (markup-option n :multicolumns)))
 		 (display (if mc
 			      "\\begin{figure*}[!th]\n"
 			      "\\begin{figure}[ht]\n"))
 		 (output (markup-body n) e)
-		 (printf "\\caption{\\label{~a}" (string-canonicalize ident))
+		 (format #t "\\caption{\\label{~a}" (string-canonicalize ident))
 		 (output legend e)
 		 (display (if mc
 			      "}\\end{figure*}\n"
@@ -1173,7 +1198,6 @@
 		    (cstyle (markup-option n :cellstyle))
 		    (nbcols (table-column-number n))
 		    (id (markup-ident n))
-		    (cla (markup-class n))
 		    (rows (markup-body n)))
 		 ;; the table header
 		 (output (new markup
@@ -1195,13 +1219,13 @@
 				 (let ((v (make-vector 
 					   (- nbcols 1)
 					   "@{\\extracolsep{\\fill}}c")))
-				    (apply string-append
+				    (string-concatenate
 					   (cons "c" (vector->list v))))))))
 		    (case frame
 		       ((none)
-			(printf "{~a}\n" cols))
+			(format #t "{~a}\n" cols))
 		       ((border box)
-			(printf "{|~a|}" cols)
+			(format #t "{|~a|}" cols)
 			(markup-option-add! n '&lhs #t)
 			(markup-option-add! n '&rhs #t)
 			(output (new markup
@@ -1211,7 +1235,7 @@
 				   (class "table-line-above"))
 				e))
 		       ((above hsides)
-			(printf "{~a}" cols)
+			(format #t "{~a}" cols)
 			(output (new markup
 				   (markup '&latex-table-hline)
 				   (parent n)
@@ -1221,15 +1245,15 @@
 		       ((vsides)
 			(markup-option-add! n '&lhs #t)
 			(markup-option-add! n '&rhs #t)
-			(printf "{|~a|}\n" cols))
+			(format #t "{|~a|}\n" cols))
 		       ((lhs)
 			(markup-option-add! n '&lhs #t)
-			(printf "{|~a}\n" cols))
+			(format #t "{|~a}\n" cols))
 		       ((rhs)
 			(markup-option-add! n '&rhs #t)
-			(printf "{~a|}\n" cols))
+			(format #t "{~a|}\n" cols))
 		       (else
-			(printf "{~a}\n" cols)))
+			(format #t "{~a}\n" cols)))
 		    ;; mark each row with appropriate '&tl (top-line)
 		    ;; and &bl (bottom-line) options
 		    (when (pair? rows)
@@ -1283,10 +1307,11 @@
 (markup-writer 'tr
    :options '()
    :action (lambda (n e)
+              (if (not (is-markup? (ast-parent n) 'table))
+                  (skribe-type-error 'tr "Illegal parent, " (ast-parent n)
+                                     "#<table>"))
+
 	      (let* ((parent (ast-parent n))
-		     (_ (if (not (is-markup? parent 'table))
-			    (skribe-type-error 'tr "Illegal parent, " parent
-					       "#<table>")))
 		     (nbcols (markup-option parent '&nbcols))
 		     (lhs (markup-option parent '&lhs))
 		     (rhs (markup-option parent '&rhs))
@@ -1394,9 +1419,8 @@
 ;*---------------------------------------------------------------------*/
 (markup-writer '&latex-tc-parbox
    :before (lambda (n e)
-	      (let ((width (markup-option n :width))
-		    (valign (markup-option n :valign)))
-		 (printf "\\parbox{~a}{" (latex-width width))))
+	      (let ((width (markup-option n :width)))
+		 (format #t "\\parbox{~a}{" (latex-width width))))
    :after "}")
 		 
 ;*---------------------------------------------------------------------*/
@@ -1412,7 +1436,7 @@
 			      ((center) #\c)
 			      ((right) #\r)
 			      (else #\c))))
-		 (printf "\\multicolumn{~a}{~a~a~a}{" colspan lhs align rhs)))
+		 (format #t "\\multicolumn{~a}{~a~a~a}{" colspan lhs align rhs)))
    :after "}")
 
 ;*---------------------------------------------------------------------*/
@@ -1426,7 +1450,6 @@
 		     (width (markup-option n :width))
 		     (height (markup-option n :height))
 		     (zoom (markup-option n :zoom))
-		     (body (markup-body n))
 		     (efmt (engine-custom e 'image-format))
 		     (img (or url (convert-image file 
 						 (if (list? efmt) 
@@ -1435,10 +1458,10 @@
 		 (if (not (string? img))
 		     (skribe-error 'latex "Illegal image" file)
 		     (begin
-			(printf "\\epsfig{file=~a" (strip-ref-base img))
-			(if width (printf ", width=~a" (latex-width width)))
-			(if height (printf ", height=~apt" height))
-			(if zoom (printf ", zoom=\"~a\"" zoom))
+			(format #t "\\epsfig{file=~a" (strip-ref-base img))
+			(if width (format #t ", width=~a" (latex-width width)))
+			(if height (format #t ", height=~apt" height))
+			(if zoom (format #t ", zoom=\"~a\"" zoom))
 			(display "}"))))))
 
 ;*---------------------------------------------------------------------*/
@@ -1460,7 +1483,7 @@
    :before "{\\texttt{"
    :action (lambda (n e)
 	      (let ((ne (make-engine
-			   (gensym 'latex)
+			   (gensym "latex")
 			   :delegate e
 			   :filter (make-string-replace latex-tt-encoding)
 			   :custom (engine-customs e)
@@ -1491,7 +1514,7 @@
 ;*---------------------------------------------------------------------*/
 (markup-writer 'mark
    :before (lambda (n e)
-	      (printf "\\label{~a}" (string-canonicalize (markup-ident n)))))
+	      (format #t "\\label{~a}" (string-canonicalize (markup-ident n)))))
 
 ;*---------------------------------------------------------------------*/
 ;*    ref ... @label ref@                                              */
@@ -1505,21 +1528,20 @@
                             (i (markup-ident c))
                             (hyper? (engine-custom e 'hyperref)))
                        (if (and hyper? i)
-                           (printf "\\hyperref[~a]{" i))
+                           (format #t "\\hyperref[~a]{" i))
                        (output t e)
                        (if (and hyper? i)
-                           (printf "}"))))))
+                           (display "}"))))))
    :after (lambda (n e)
 	     (let* ((c (handle-ast (markup-body n)))
-		    (id (markup-ident c))
-                    (t (markup-option n :text)))
+		    (id (markup-ident c)))
 		(cond ((markup-option n :page)
-                       (printf "~\\begin{math}{\\pageref{~a}}\\end{math}"
+                       (format #t "~~\\begin{math}{\\pageref{~a}}\\end{math}"
                                (string-canonicalize id)))
                       ((markup-option n :text)
                        #t)
                       (else
-                       (printf "\\ref{~a}"
+                       (format #t "\\ref{~a}"
                                (string-canonicalize id)))))))
 
 ;*---------------------------------------------------------------------*/
@@ -1587,7 +1609,7 @@
 		     (begin
 			(display "\\href{")
 			(display url)
-			(printf "}{~a}" url))))))
+			(format #t "}{~a}" url))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    line-ref ...                                                     */
@@ -1648,7 +1670,7 @@
 		     (en (handle-ast (ast-parent n)))
 		     (url (markup-option en 'url))
 		     (ht (if url (ref :url (markup-body url) :text t) t)))
-		 (skribe-eval ht e))))
+		 (evaluate-document ht e))))
 
 ;*---------------------------------------------------------------------*/
 ;*    &bib-entry-label ...                                             */
@@ -1667,7 +1689,7 @@
 	      (let* ((en (handle-ast (ast-parent n)))
 		     (url (markup-option en 'url))
 		     (t (it (markup-body url))))
-		 (skribe-eval (ref :url (markup-body url) :text t) e))))
+		 (evaluate-document (ref :url (markup-body url) :text t) e))))
 
 ;*---------------------------------------------------------------------*/
 ;*    &source-comment ...                                              */
@@ -1679,7 +1701,7 @@
 		     (n2 (if (and (engine-custom e 'source-color) cc)
 			     (color :fg cc n1)
 			     n1)))
-		 (skribe-eval n2 e))))
+		 (evaluate-document n2 e))))
 	      
 ;*---------------------------------------------------------------------*/
 ;*    &source-line-comment ...                                         */
@@ -1691,14 +1713,14 @@
 		     (n2 (if (and (engine-custom e 'source-color) cc)
 			     (color :fg cc n1)
 			     n1)))
-		 (skribe-eval n2 e))))
+		 (evaluate-document n2 e))))
 	      
 ;*---------------------------------------------------------------------*/
 ;*    &source-keyword ...                                              */
 ;*---------------------------------------------------------------------*/
 (markup-writer '&source-keyword
    :action (lambda (n e)
-	      (skribe-eval (underline (markup-body n)) e)))
+	      (evaluate-document (underline (markup-body n)) e)))
 
 ;*---------------------------------------------------------------------*/
 ;*    &source-error ...                                                */
@@ -1710,7 +1732,7 @@
 		     (n2 (if (and (engine-custom e 'error-color) cc)
 			     (color :fg cc (underline n1))
 			     (underline n1))))
-		 (skribe-eval n2 e))))
+		 (evaluate-document n2 e))))
 
 ;*---------------------------------------------------------------------*/
 ;*    &source-define ...                                               */
@@ -1722,7 +1744,7 @@
 		     (n2 (if (and (engine-custom e 'source-color) cc)
 			     (color :fg cc n1)
 			     n1)))
-		 (skribe-eval n2 e))))
+		 (evaluate-document n2 e))))
 
 ;*---------------------------------------------------------------------*/
 ;*    &source-module ...                                               */
@@ -1734,7 +1756,7 @@
 		     (n2 (if (and (engine-custom e 'source-color) cc)
 			     (color :fg cc n1)
 			     n1)))
-		 (skribe-eval n2 e))))
+		 (evaluate-document n2 e))))
 
 ;*---------------------------------------------------------------------*/
 ;*    &source-markup ...                                               */
@@ -1746,7 +1768,7 @@
 		     (n2 (if (and (engine-custom e 'source-color) cc)
 			     (color :fg cc n1)
 			     n1)))
-		 (skribe-eval n2 e))))
+		 (evaluate-document n2 e))))
 
 ;*---------------------------------------------------------------------*/
 ;*    &source-thread ...                                               */
@@ -1758,7 +1780,7 @@
 		     (n2 (if (and (engine-custom e 'source-color) cc)
 			     (color :fg cc n1)
 			     n1)))
-		 (skribe-eval n2 e))))
+		 (evaluate-document n2 e))))
 
 ;*---------------------------------------------------------------------*/
 ;*    &source-string ...                                               */
@@ -1770,7 +1792,7 @@
 		     (n2 (if (and (engine-custom e 'source-color) cc)
 			     (color :fg cc n1)
 			     n1)))
-		 (skribe-eval n2 e))))
+		 (evaluate-document n2 e))))
 
 ;*---------------------------------------------------------------------*/
 ;*    &source-bracket ...                                              */
@@ -1782,7 +1804,7 @@
 		     (n2 (if (and (engine-custom e 'source-color) cc)
 			     (color :fg cc (bold n1))
 			     (it n1))))
-		 (skribe-eval n2 e))))
+		 (evaluate-document n2 e))))
 
 ;*---------------------------------------------------------------------*/
 ;*    &source-type ...                                                 */
@@ -1794,7 +1816,7 @@
 		     (n2 (if (and (engine-custom e 'source-color) cc)
 			     (color :fg cc n1)
 			     (it n1))))
-		 (skribe-eval n2 e))))
+		 (evaluate-document n2 e))))
 
 ;*---------------------------------------------------------------------*/
 ;*    &source-key ...                                                  */
@@ -1806,7 +1828,7 @@
 		     (n2 (if (and (engine-custom e 'source-color) cc)
 			     (color :fg cc (bold n1))
 			     (it n1))))
-		 (skribe-eval n2 e))))
+		 (evaluate-document n2 e))))
 
 ;*---------------------------------------------------------------------*/
 ;*    &source-type ...                                                 */
@@ -1818,7 +1840,7 @@
 		     (n2 (if (and (engine-custom e 'source-color) cc)
 			     (color :fg "red" (bold n1))
 			     (bold n1))))
-		 (skribe-eval n2 e))))
+		 (evaluate-document n2 e))))
 
 ;*---------------------------------------------------------------------*/
 ;*    Restore the base engine                                          */

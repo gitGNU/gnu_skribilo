@@ -2,6 +2,32 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-06-11 15:58:22 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-111
+
+    Summary:
+      Switched all engines to a native Guile module.
+    Revision:
+      skribilo--devo--1.2--patch-111
+
+
+    removed files:
+     src/guile/skribilo/engine/.arch-ids/latex-simple.scm.id
+     src/guile/skribilo/engine/latex-simple.scm
+
+    modified files:
+     ChangeLog src/guile/skribilo/engine/Makefile.am
+     src/guile/skribilo/engine/base.scm
+     src/guile/skribilo/engine/context.scm
+     src/guile/skribilo/engine/html.scm
+     src/guile/skribilo/engine/html4.scm
+     src/guile/skribilo/engine/latex.scm
+     src/guile/skribilo/engine/lout.scm
+     src/guile/skribilo/engine/xml.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-70
+
+
 2007-06-11 15:57:17 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-110
 
     Summary:
