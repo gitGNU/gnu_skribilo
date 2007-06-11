@@ -1,7 +1,7 @@
 ;;; engine.scm	-- Skribilo engines.
 ;;;
-;;; Copyright 2003-2004  Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
-;;; Copyright 2005  Ludovic Courtès  <ludovic.courtes@laas.fr>
+;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
+;;; Copyright 2005, 2007  Ludovic Courtès  <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -370,11 +370,7 @@ otherwise the requested engine is returned."
 ;;; Current engine.
 ;;;
 
-;;; `(skribilo module)' must be loaded before the first `find-engine' call.
-(use-modules (skribilo module))
-
 ;; At this point, we're almost done with the bootstrap process.
-;(format #t "base engine: ~a~%" (lookup-engine 'base))
 
 (define *current-engine*
   ;; By default, use the HTML engine.
