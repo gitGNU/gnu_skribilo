@@ -2,6 +2,24 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-06-11 16:02:21 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-115
+
+    Summary:
+      Fixed top-level Makefile.
+    Revision:
+      skribilo--devo--1.2--patch-115
+
+    * Makefile.am (EXTRA_DIST): Added `TODO' and `*.Skribe'.
+    
+    * po/fr.po: Updated.
+
+    modified files:
+     ChangeLog Makefile.am po/fr.po
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-74
+
+
 2007-06-11 16:01:23 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-114
 
     Summary:
