@@ -2200,6 +2200,14 @@
 		 ;; Mark each row with vertical spanning information
 		 (lout-table-mark-vspan! n)
 
+                 (if (find1-up (lambda (n)
+                                 (is-markup? n 'figure))
+                               n)
+                     ;; Work around a bug preventing `@VSpan' from working
+                     ;; properly within floating figures:
+                     ;; http://article.gmane.org/gmane.comp.type-setting.lout/1090 .
+                     (display "\n@OneRow"))
+
 		 (display "\n@Tbl # table\n")
 
 		 (if (number? border)
