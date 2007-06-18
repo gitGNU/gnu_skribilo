@@ -240,7 +240,10 @@
                                           ",")))))
 
       (markup-writer '&the-bibliography latex
-         :before "\\begin{thebibliography}{}\n"
+         :before (lambda (n e)
+                   (let ((count (length (markup-body n))))
+                     (format #t "\\begin{thebibliography}{~a}\n"
+                             count)))
          :after  "\\end{thebibliography}\n")
 
       (markup-writer '&bib-entry-body
