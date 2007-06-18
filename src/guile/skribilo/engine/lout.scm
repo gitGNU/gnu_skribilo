@@ -47,7 +47,8 @@
            lout-verbatim-encoding lout-encoding
            lout-french-encoding
            lout-tagify lout-embedded-postscript-code
-           lout-color-specification lout-make-url-breakable))
+           lout-color-specification lout-make-url-breakable
+           lout-output-pdf-meta-info))
 
 ;;;    Taken from `lcourtes@laas.fr--2004-libre',
 ;;;               `skribe-lout--main--0.2--patch-15'.
