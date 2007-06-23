@@ -2,6 +2,24 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-06-23 07:41:59 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-117
+
+    Summary:
+      `lncs' package: Prettified bibliography output.
+    Revision:
+      skribilo--devo--1.2--patch-117
+
+    * src/guile/skribilo/package/lncs.scm (&the-bibliography): The
+      `\thebibliography' the number of entries so that all entries are
+      properly aligned.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/lncs.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-76
+
+
 2007-06-23 07:41:25 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-116
 
     Summary:
