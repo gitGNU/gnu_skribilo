@@ -2,6 +2,23 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-06-23 07:41:25 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-116
+
+    Summary:
+      lout engine: Export `lout-output-pdf-meta-info'.
+    Revision:
+      skribilo--devo--1.2--patch-116
+
+    * src/guile/skribilo/engine/lout.scm: Export `lout-output-pdf-meta-info',
+      needed by the `slide' package.
+
+    modified files:
+     ChangeLog src/guile/skribilo/engine/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-75
+
+
 2007-06-11 16:02:21 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-115
 
     Summary:
