@@ -1,6 +1,6 @@
 ;;; eq.skb  --  Equation formatting.
 ;;;
-;;; Copyright 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2006, 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -96,6 +96,11 @@ Otherwise, it should be a boolean indicating whether the equation is to
 appear "in-line", i.e., within a paragraph.  If the engine supports it,
 it may adjust various parameters such as in-equation spacing
 accordingly.])
+		    (:number [If true, then a number is automatically
+assigned to the equation and displayed.  If it is a string, then that
+string is used as the equation's number.  If ,(code [#f]), then the
+equation is left unnumbered.  Note that this option is only taken into
+account for displayed equations.])
 	            (:renderer [The engine that should be used to render
 the equation.  This allows, for instance, to use the Lout engine to
 render equations in HTML.])

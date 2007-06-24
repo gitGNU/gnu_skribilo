@@ -2,6 +2,21 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-06-24 19:53:32 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-120
+
+    Summary:
+      eq: Updated doc for `:number'.
+    Revision:
+      skribilo--devo--1.2--patch-120
+
+
+    modified files:
+     ChangeLog TODO doc/user/eq.skb
+
+    new patches:
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-108
+
+
 2007-06-24 19:53:02 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-119
 
     Summary:

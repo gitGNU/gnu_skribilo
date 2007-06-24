@@ -15,6 +15,11 @@ into a `--compat=XXX' command-line option.
 Left margin doesn't display well when CSS is being used.
 
 
+* Small Items, Known Bugs
+
+** `eq' package: Handle `:number' in the HTML back-end
+
+
 * Longer-Term Items
 
 ** Add a `if-engine' markup to avoid hacks with `engine-format?'
