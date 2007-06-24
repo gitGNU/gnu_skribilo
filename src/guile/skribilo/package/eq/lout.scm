@@ -66,9 +66,9 @@
                (if (and displayed? (not (*embedded-renderer*)))
                    (display (if (string? number)
                                 (string-append "@CAND @BypassNumber { \""
-                                               number "\" }")
-                                "@CAD")))
-               (display " { ")))
+                                               number "\" } ")
+                                "@CAD ")))
+               (display "{ ")))
    :action (lambda (node engine)
              (display (if (inline-equation? node)
                           "@OneRow @OneCol @E { "

@@ -2,6 +2,23 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-06-24 19:53:56 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-121
+
+    Summary:
+      eq/lout: Fixed spacing around in-line equations.
+    Revision:
+      skribilo--devo--1.2--patch-121
+
+    * src/guile/skribilo/package/eq/lout.scm (eq): Don't output a space
+      in front of in-line equations.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/eq/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-109
+
+
 2007-06-24 19:53:32 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-120
 
     Summary:
