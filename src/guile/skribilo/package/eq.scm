@@ -27,7 +27,8 @@
   :use-module (skribilo utils syntax)
   :use-module (skribilo utils keywords) ;; `the-options', etc.
   :autoload   (skribilo package base) (it symbol sub sup)
-  :autoload   (skribilo engine lout) (lout-illustration)
+  :autoload   (skribilo engine lout)  (lout-illustration)
+  :autoload   (skribilo resolve)      (resolve-counter)
 
   :use-module (srfi srfi-1)
   :use-module (srfi srfi-39)
@@ -207,6 +208,18 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
 	(current-module)))
 
 
+(define-public (equation-number-string equation)
+  "Return an appropriate document-wide number for @var{equation}."
+  (and (is-markup? equation 'eq)
+       (not (inline-equation? equation))
+       (let ((num (markup-option equation :number)))
+         (and (number? num)
+              (let ((chapter (ast-chapter equation)))
+                (and (markup? chapter)
+                     (string-append
+                      (number->string (markup-option chapter :number)) "."
+                      (number->string num))))))))
+
 
 ;;;
 ;;; Markup.
@@ -224,7 +237,8 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
 (define-markup (eq :rest opts :key (ident #f) (class "eq")
                                    (inline? 'auto) (align-with #f)
 		                   (renderer #f) (div-style 'over)
-                                   (mul-style 'space))
+                                   (mul-style 'space)
+                                   (number #f))
   (new container
        (markup 'eq)
        (ident (or ident (symbol->string (gensym "eq"))))
@@ -232,9 +246,23 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
        (loc   &invocation-location)
        (options `((:div-style ,div-style) (:align-with ,align-with)
                   (:mul-style ,mul-style) (:inline? ,inline?)
+                  (:number ,(cond ((not number)     #f)
+                                  ((string? number) number)
+                                  (else
+                                   (new unresolved
+                                      (proc (lambda (n e env)
+                                              (let* ((p? (assq 'parent env))
+                                                     (p  (and (pair? p?)
+                                                              (cadr p?))))
+                                                (and (is-markup? p 'eq)
+                                                     (not (inline-equation? p))
+                                                     (resolve-counter n env
+                                                                      'equation
+                                                                      number)))))))))
                   ,@(the-options opts
                                  :ident :class :inline?
-                                 :div-style :mul-style :align-with)))
+                                 :div-style :mul-style :align-with
+                                 :number)))
        (body (let loop ((body (the-body opts))
 			(result '()))
 	       (if (null? body)

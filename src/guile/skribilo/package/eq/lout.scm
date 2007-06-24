@@ -57,20 +57,23 @@
    :after  "\n@EndAlignedDisplays\n")
 
 (markup-writer 'eq (find-engine 'lout)
-   :options '(:inline? :align-with :div-style :mul-style)
+   :options '(:inline? :align-with :div-style :mul-style :number)
    :before (lambda (node engine)
              (let* ((parent (ast-parent node))
-                    (displayed? (is-markup? parent 'eq-display)))
+                    (displayed? (is-markup? parent 'eq-display))
+                    ;;(number (equation-number-string node))
+                    )
+               ;; FIXME: Use NUMBER when `@BypassNumber' is available.
                (format #t "~a{ "
                        (if (and displayed? (not (*embedded-renderer*)))
                            "\n@IAD " ""))))
    :action (lambda (node engine)
-	     (display (if (inline-equation? node)
-			  "@OneRow @OneCol @E { "
-			  "@Eq { "))
-	     (let ((eq (markup-body node)))
-	       ;;(fprint (current-error-port) "eq=" eq)
-	       (output eq engine)))
+             (display (if (inline-equation? node)
+                          "@OneRow @OneCol @E { "
+                          "@Eq { "))
+             (let ((eq (markup-body node)))
+               ;;(fprint (current-error-port) "eq=" eq)
+               (output eq engine)))
    :after  " } }")
 
 

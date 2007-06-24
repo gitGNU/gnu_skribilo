@@ -2,6 +2,39 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-06-24 19:52:01 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-118
+
+    Summary:
+      eq: Implemented equation numbering.
+    Revision:
+      skribilo--devo--1.2--patch-118
+
+    * src/guile/skribilo/package/base.scm (chapter): Augmented environment to
+      include `equation-env' and `equation-counter'.
+    
+    * src/guile/skribilo/package/eq.scm: Use `(skribilo resolve)'.
+      (equation-number-string): New.
+      (eq)[:number]: New option.
+      Handle it.
+    
+    * src/guile/skribilo/package/eq/lout.scm (eq): Prepare to handle
+      `:number'.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/base.scm
+     src/guile/skribilo/package/eq.scm
+     src/guile/skribilo/package/eq/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-100
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-101
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-102
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-103
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-104
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-105
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-106
+
+
 2007-06-23 07:41:59 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-117
 
     Summary:
