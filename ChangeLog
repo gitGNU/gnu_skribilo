@@ -2,6 +2,26 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-06-24 19:53:02 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-119
+
+    Summary:
+      eq/lout: Use the new `@BypassNumber' option for numbered displays.
+    Revision:
+      skribilo--devo--1.2--patch-119
+
+    * src/guile/skribilo/package/eq.scm (eq)[number]: Default to `#t'.
+    
+    * src/guile/skribilo/package/eq/lout.scm (eq): Use `@CAND'/`@CAD' instead
+      of `@IAD' (because `@IAND' is broken).  Handle `:number'.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/eq.scm
+     src/guile/skribilo/package/eq/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-107
+
+
 2007-06-24 19:52:01 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-118
 
     Summary:

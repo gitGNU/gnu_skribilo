@@ -61,12 +61,14 @@
    :before (lambda (node engine)
              (let* ((parent (ast-parent node))
                     (displayed? (is-markup? parent 'eq-display))
-                    ;;(number (equation-number-string node))
-                    )
-               ;; FIXME: Use NUMBER when `@BypassNumber' is available.
-               (format #t "~a{ "
-                       (if (and displayed? (not (*embedded-renderer*)))
-                           "\n@IAD " ""))))
+                    (number (equation-number-string node)))
+               ;; Note: The `@BypassNumber' option appeared in Lout 3.36.
+               (if (and displayed? (not (*embedded-renderer*)))
+                   (display (if (string? number)
+                                (string-append "@CAND @BypassNumber { \""
+                                               number "\" }")
+                                "@CAD")))
+               (display " { ")))
    :action (lambda (node engine)
              (display (if (inline-equation? node)
                           "@OneRow @OneCol @E { "

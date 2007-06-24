@@ -238,7 +238,7 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
                                    (inline? 'auto) (align-with #f)
 		                   (renderer #f) (div-style 'over)
                                    (mul-style 'space)
-                                   (number #f))
+                                   (number #t))
   (new container
        (markup 'eq)
        (ident (or ident (symbol->string (gensym "eq"))))
