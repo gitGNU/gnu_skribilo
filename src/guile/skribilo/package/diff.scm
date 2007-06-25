@@ -367,7 +367,8 @@
            (unchanged :loc (ast-loc ast2) ast1))
 
           (else
-           (insertion :loc (ast-loc ast2) ast2)))))
+           (let ((loc (and (ast? ast2) (ast-loc ast2))))
+             (insertion :loc loc  ast2))))))
 
 
 
