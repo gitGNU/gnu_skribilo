@@ -203,7 +203,8 @@
 		 ,@(the-options opts :ident :class)))
       (body (the-body opts))
       (env (list (list 'section-counter 0) (list 'section-env '())
-		 (list 'footnote-counter 0) (list 'footnote-env '())))))
+		 (list 'footnote-counter 0) (list 'footnote-env '())
+                 (list 'equation-counter 0) (list 'equation-env '())))))
 
 ;*---------------------------------------------------------------------*/
 ;*    section-number ...                                               */

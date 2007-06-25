@@ -57,20 +57,25 @@
    :after  "\n@EndAlignedDisplays\n")
 
 (markup-writer 'eq (find-engine 'lout)
-   :options '(:inline? :align-with :div-style :mul-style)
+   :options '(:inline? :align-with :div-style :mul-style :number)
    :before (lambda (node engine)
              (let* ((parent (ast-parent node))
-                    (displayed? (is-markup? parent 'eq-display)))
-               (format #t "~a{ "
-                       (if (and displayed? (not (*embedded-renderer*)))
-                           "\n@IAD " ""))))
+                    (displayed? (is-markup? parent 'eq-display))
+                    (number (equation-number-string node)))
+               ;; Note: The `@BypassNumber' option appeared in Lout 3.36.
+               (if (and displayed? (not (*embedded-renderer*)))
+                   (display (if (string? number)
+                                (string-append "@CAND @BypassNumber { \""
+                                               number "\" } ")
+                                "@CAD ")))
+               (display "{ ")))
    :action (lambda (node engine)
-	     (display (if (inline-equation? node)
-			  "@OneRow @OneCol @E { "
-			  "@Eq { "))
-	     (let ((eq (markup-body node)))
-	       ;;(fprint (current-error-port) "eq=" eq)
-	       (output eq engine)))
+             (display (if (inline-equation? node)
+                          "@OneRow @OneCol @E { "
+                          "@Eq { "))
+             (let ((eq (markup-body node)))
+               ;;(fprint (current-error-port) "eq=" eq)
+               (output eq engine)))
    :after  " } }")
 
 

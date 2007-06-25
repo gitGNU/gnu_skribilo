@@ -2,6 +2,1339 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-06-24 19:53:56 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-121
+
+    Summary:
+      eq/lout: Fixed spacing around in-line equations.
+    Revision:
+      skribilo--devo--1.2--patch-121
+
+    * src/guile/skribilo/package/eq/lout.scm (eq): Don't output a space
+      in front of in-line equations.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/eq/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-109
+
+
+2007-06-24 19:53:32 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-120
+
+    Summary:
+      eq: Updated doc for `:number'.
+    Revision:
+      skribilo--devo--1.2--patch-120
+
+
+    modified files:
+     ChangeLog TODO doc/user/eq.skb
+
+    new patches:
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-108
+
+
+2007-06-24 19:53:02 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-119
+
+    Summary:
+      eq/lout: Use the new `@BypassNumber' option for numbered displays.
+    Revision:
+      skribilo--devo--1.2--patch-119
+
+    * src/guile/skribilo/package/eq.scm (eq)[number]: Default to `#t'.
+    
+    * src/guile/skribilo/package/eq/lout.scm (eq): Use `@CAND'/`@CAD' instead
+      of `@IAD' (because `@IAND' is broken).  Handle `:number'.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/eq.scm
+     src/guile/skribilo/package/eq/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-107
+
+
+2007-06-24 19:52:01 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-118
+
+    Summary:
+      eq: Implemented equation numbering.
+    Revision:
+      skribilo--devo--1.2--patch-118
+
+    * src/guile/skribilo/package/base.scm (chapter): Augmented environment to
+      include `equation-env' and `equation-counter'.
+    
+    * src/guile/skribilo/package/eq.scm: Use `(skribilo resolve)'.
+      (equation-number-string): New.
+      (eq)[:number]: New option.
+      Handle it.
+    
+    * src/guile/skribilo/package/eq/lout.scm (eq): Prepare to handle
+      `:number'.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/base.scm
+     src/guile/skribilo/package/eq.scm
+     src/guile/skribilo/package/eq/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-100
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-101
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-102
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-103
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-104
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-105
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-106
+
+
+2007-06-23 07:41:59 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-117
+
+    Summary:
+      `lncs' package: Prettified bibliography output.
+    Revision:
+      skribilo--devo--1.2--patch-117
+
+    * src/guile/skribilo/package/lncs.scm (&the-bibliography): The
+      `\thebibliography' the number of entries so that all entries are
+      properly aligned.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/lncs.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-76
+
+
+2007-06-23 07:41:25 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-116
+
+    Summary:
+      lout engine: Export `lout-output-pdf-meta-info'.
+    Revision:
+      skribilo--devo--1.2--patch-116
+
+    * src/guile/skribilo/engine/lout.scm: Export `lout-output-pdf-meta-info',
+      needed by the `slide' package.
+
+    modified files:
+     ChangeLog src/guile/skribilo/engine/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-75
+
+
+2007-06-11 16:02:21 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-115
+
+    Summary:
+      Fixed top-level Makefile.
+    Revision:
+      skribilo--devo--1.2--patch-115
+
+    * Makefile.am (EXTRA_DIST): Added `TODO' and `*.Skribe'.
+    
+    * po/fr.po: Updated.
+
+    modified files:
+     ChangeLog Makefile.am po/fr.po
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-74
+
+
+2007-06-11 16:01:23 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-114
+
+    Summary:
+      Updated the top-level documentation files.
+    Revision:
+      skribilo--devo--1.2--patch-114
+
+    * configure.ac: Changed the bug report address to
+      `skribilo-users@nongnu.org'.
+
+    new files:
+     .arch-ids/README.id .arch-ids/TODO.id README TODO
+
+    modified files:
+     ChangeLog configure.ac
+
+    renamed files:
+     .arch-ids/README.id
+       ==> .arch-ids/README.Skribe.id
+     README
+       ==> README.Skribe
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-73
+
+
+2007-06-11 16:00:19 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-113
+
+    Summary:
+      Lout engine: Work around bug with tables within floating figures.
+    Revision:
+      skribilo--devo--1.2--patch-113
+
+    * src/guile/skribilo/engine/lout.scm (table): Check whether N is within a
+      figure, in which case `@OneRow' must be preprended.
+
+    modified files:
+     ChangeLog src/guile/skribilo/engine/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-72
+
+
+2007-06-11 15:59:21 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-112
+
+    Summary:
+      Reduced dependency on `(skribilo module)'.
+    Revision:
+      skribilo--devo--1.2--patch-112
+
+    * src/guile/skribilo/engine.scm: Don't `(use-modules (skribilo module))'
+      before initializing `*current-engine*' (no longer needed).
+
+    modified files:
+     ChangeLog src/guile/skribilo/engine.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-71
+
+
+2007-06-11 15:58:22 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-111
+
+    Summary:
+      Switched all engines to a native Guile module.
+    Revision:
+      skribilo--devo--1.2--patch-111
+
+
+    removed files:
+     src/guile/skribilo/engine/.arch-ids/latex-simple.scm.id
+     src/guile/skribilo/engine/latex-simple.scm
+
+    modified files:
+     ChangeLog src/guile/skribilo/engine/Makefile.am
+     src/guile/skribilo/engine/base.scm
+     src/guile/skribilo/engine/context.scm
+     src/guile/skribilo/engine/html.scm
+     src/guile/skribilo/engine/html4.scm
+     src/guile/skribilo/engine/latex.scm
+     src/guile/skribilo/engine/lout.scm
+     src/guile/skribilo/engine/xml.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-70
+
+
+2007-06-11 15:57:17 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-110
+
+    Summary:
+      Added a `:&location' argument to `table'.
+    Revision:
+      skribilo--devo--1.2--patch-110
+
+    * doc/modules/skribilo/documentation/api.scm (%undocumented-options):
+      New.
+      (doc-check-arguments): Use it to allow `:&location' to not be
+      documented.
+    
+    * src/guile/skribilo/package/base.scm (table): Added a `&location'
+      argument.
+
+    modified files:
+     ChangeLog doc/modules/skribilo/documentation/api.scm
+     src/guile/skribilo/package/base.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-69
+
+
+2007-06-08 15:08:50 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-109
+
+    Summary:
+      Slight optimization/cleanup of AST traversal functions.
+    Revision:
+      skribilo--devo--1.2--patch-109
+
+    * src/guile/skribilo/ast.scm (container-search-down): Use `(map loop
+      obj)', thereby removing an indirection.
+      (search-down): Likewise.
+      (find-down): Likewise.
+
+    modified files:
+     ChangeLog src/guile/skribilo/ast.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-68
+
+
+2007-06-07 14:34:59 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-108
+
+    Summary:
+      Fixed location reporting for `verify' warnings.
+    Revision:
+      skribilo--devo--1.2--patch-108
+
+    * src/guile/skribilo/verify.scm: Concatenated `use-modules' to
+      `define-module'.
+      (verify<markup>): Use `skribe-warning/ast' instead of `skribe-warning'.
+
+    modified files:
+     ChangeLog src/guile/skribilo/verify.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-67
+
+
+2007-06-07 14:33:54 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-107
+
+    Summary:
+      Optimized `make-general-string-replace'.
+    Revision:
+      skribilo--devo--1.2--patch-107
+
+    * src/guile/skribilo/utils/strings.scm (%make-general-string-replace):
+      Rewritten in a way that is more efficient with Guile 1.8.
+
+    modified files:
+     ChangeLog src/guile/skribilo/utils/strings.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-66
+
+
+2007-06-06 13:20:57 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-106
+
+    Summary:
+      Cleaned up the core modules.
+    Revision:
+      skribilo--devo--1.2--patch-106
+
+
+    modified files:
+     ChangeLog src/guile/skribilo/ast.scm
+     src/guile/skribilo/biblio.scm src/guile/skribilo/debug.scm
+     src/guile/skribilo/evaluator.scm src/guile/skribilo/index.scm
+     src/guile/skribilo/lib.scm src/guile/skribilo/location.scm
+     src/guile/skribilo/module.scm src/guile/skribilo/prog.scm
+     src/guile/skribilo/reader.scm src/guile/skribilo/resolve.scm
+     src/guile/skribilo/source.scm
+     src/guile/skribilo/utils/compat.scm
+     src/guile/skribilo/verify.scm src/guile/skribilo/writer.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-65
+
+
+2007-06-06 13:19:59 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-105
+
+    Summary:
+      Cleaned up the `biblio' modules.
+    Revision:
+      skribilo--devo--1.2--patch-105
+
+
+    modified files:
+     ChangeLog src/guile/skribilo/biblio/abbrev.scm
+     src/guile/skribilo/biblio/author.scm
+     src/guile/skribilo/biblio/bibtex.scm
+     src/guile/skribilo/biblio/template.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-64
+
+
+2007-06-06 13:19:02 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-104
+
+    Summary:
+      Cleaned up the source code fontifiers (under `coloring').
+    Revision:
+      skribilo--devo--1.2--patch-104
+
+    This brings `(skribilo coloring c)' to life!
+
+    new files:
+     src/guile/skribilo/coloring/parameters.scm
+
+    modified files:
+     ChangeLog src/guile/skribilo/coloring/Makefile.am
+     src/guile/skribilo/coloring/c-lex.scm
+     src/guile/skribilo/coloring/c.scm
+     src/guile/skribilo/coloring/lisp-lex.scm
+     src/guile/skribilo/coloring/lisp.scm
+     src/guile/skribilo/coloring/xml-lex.scm
+     src/guile/skribilo/coloring/xml.scm
+
+    renamed files:
+     src/guile/skribilo/coloring/.arch-ids/c-lex.l.scm.id
+       ==> src/guile/skribilo/coloring/.arch-ids/c-lex.scm.id
+     src/guile/skribilo/coloring/.arch-ids/lisp-lex.l.scm.id
+       ==> src/guile/skribilo/coloring/.arch-ids/lisp-lex.scm.id
+     src/guile/skribilo/coloring/.arch-ids/xml-lex.l.scm.id
+       ==> src/guile/skribilo/coloring/.arch-ids/xml-lex.scm.id
+     src/guile/skribilo/coloring/c-lex.l.scm
+       ==> src/guile/skribilo/coloring/c-lex.scm
+     src/guile/skribilo/coloring/lisp-lex.l.scm
+       ==> src/guile/skribilo/coloring/lisp-lex.scm
+     src/guile/skribilo/coloring/xml-lex.l.scm
+       ==> src/guile/skribilo/coloring/xml-lex.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-63
+
+
+2007-06-06 13:18:03 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-103
+
+    Summary:
+      More linting.
+    Revision:
+      skribilo--devo--1.2--patch-103
+
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/scribe.scm
+     src/guile/skribilo/utils/compat.scm
+     src/guile/skribilo/utils/images.scm
+     src/guile/skribilo/utils/keywords.scm
+     src/guile/skribilo/utils/strings.scm
+     src/guile/skribilo/utils/syntax.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-62
+
+
+2007-06-06 13:17:02 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-102
+
+    Summary:
+      More package cleanups.
+    Revision:
+      skribilo--devo--1.2--patch-102
+
+    Various additional package cleanups, thanks to Guile-Lint.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/acmproc.scm
+     src/guile/skribilo/package/base.scm
+     src/guile/skribilo/package/diff.scm
+     src/guile/skribilo/package/eq.scm
+     src/guile/skribilo/package/letter.scm
+     src/guile/skribilo/package/pie.scm
+     src/guile/skribilo/package/scribe.scm
+     src/guile/skribilo/package/sigplan.scm
+     src/guile/skribilo/package/slide.scm
+     src/guile/skribilo/package/web-article.scm
+     src/guile/skribilo/package/web-book.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-61
+
+
+2007-06-06 13:16:02 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-101
+
+    Summary:
+      lib: Minor fixes that make Guile-Lint happy.
+    Revision:
+      skribilo--devo--1.2--patch-101
+
+    * src/guile/skribilo/lib.scm (define-simple-markup): Don't quote strings.
+      (define-simple-container): Likewise.
+      (define-processor-markup): Likewise.  Added a `loc' argument.  Pass
+      location information to `new'.
+
+    modified files:
+     ChangeLog src/guile/skribilo/lib.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-60
+
+
+2007-06-06 13:15:03 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-100
+
+    Summary:
+      Removed useless file.
+    Revision:
+      skribilo--devo--1.2--patch-100
+
+    * src/guile/skribilo/package/Makefile.am (dist_guilemodule_DATA): Removed
+      `skribe.scm'.
+
+    removed files:
+     src/guile/skribilo/package/.arch-ids/skribe.scm.id
+     src/guile/skribilo/package/skribe.scm
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/Makefile.am
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-59
+
+
+2007-06-06 13:14:06 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-99
+
+    Summary:
+      Tiny Automake fix.
+    Revision:
+      skribilo--devo--1.2--patch-99
+
+    * Makefile.am (EXTRA_DIST): Added `guile-lint.am'.
+
+    modified files:
+     ChangeLog Makefile.am
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-58
+
+
+2007-06-05 17:09:02 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-98
+
+    Summary:
+      Started cleaning up packages using Guile-Lint.
+    Revision:
+      skribilo--devo--1.2--patch-98
+
+    Most of the changes involve:
+    
+      * using a native module rather than `define-skribe-module'.
+    
+      * using `:'-style keywords instead of DSSSL keywords so that Guile-Lint
+        can handle them.
+    
+      * fixing unbound variables and the likes.
+
+    modified files:
+     ChangeLog src/guile/skribilo/engine/latex.scm
+     src/guile/skribilo/package/acmproc.scm
+     src/guile/skribilo/package/eq/lout.scm
+     src/guile/skribilo/package/french.scm
+     src/guile/skribilo/package/jfp.scm
+     src/guile/skribilo/package/letter.scm
+     src/guile/skribilo/package/lncs.scm
+     src/guile/skribilo/package/pie/lout.scm
+     src/guile/skribilo/package/scribe.scm
+     src/guile/skribilo/package/sigplan.scm
+     src/guile/skribilo/package/skribe.scm
+     src/guile/skribilo/package/slide.scm
+     src/guile/skribilo/package/slide/base.scm
+     src/guile/skribilo/package/slide/html.scm
+     src/guile/skribilo/package/slide/latex.scm
+     src/guile/skribilo/package/slide/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-57
+
+
+2007-06-05 17:08:05 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-97
+
+    Summary:
+      Added support for Guile-Lint.
+    Revision:
+      skribilo--devo--1.2--patch-97
+
+    * configure.ac: Look for `guile-lint'.
+    
+    * */Makefile.am: Include `guile-lint.am'.
+
+    new files:
+     .arch-ids/guile-lint.am.id guile-lint.am
+
+    modified files:
+     ChangeLog configure.ac src/guile/skribilo/Makefile.am
+     src/guile/skribilo/biblio/Makefile.am
+     src/guile/skribilo/coloring/Makefile.am
+     src/guile/skribilo/engine/Makefile.am
+     src/guile/skribilo/package/Makefile.am
+     src/guile/skribilo/package/eq/Makefile.am
+     src/guile/skribilo/package/pie/Makefile.am
+     src/guile/skribilo/package/slide/Makefile.am
+     src/guile/skribilo/reader/Makefile.am
+     src/guile/skribilo/utils/Makefile.am
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-56
+
+
+2007-06-05 17:05:42 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-96
+
+    Summary:
+      Fixed handling of figure numbering in `ref'.
+    Revision:
+      skribilo--devo--1.2--patch-96
+
+    * src/guile/skribilo/ast.scm (markup-number-string): Don't use a
+      hierarchical numbering scheme for figures.
+    
+    * src/guile/skribilo/engine/lout.scm (ref): Use `markup-number-string'
+      rather than `@NumberOf' to determine the number of a figure.  This
+      guarantees numbering consistency.
+
+    modified files:
+     ChangeLog src/guile/skribilo/ast.scm
+     src/guile/skribilo/engine/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-55
+
+
+2007-06-01 17:59:55 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-95
+
+    Summary:
+      eq/biblio: Small additions.
+    Revision:
+      skribilo--devo--1.2--patch-95
+
+    * src/guile/skribilo/biblio/template.scm
+      (make-bib-entry-template/default): Issue `institution' for `misc'
+      entries.
+    
+    * src/guile/skribilo/package/eq.scm (%operators): Added `modulo'.
+      (eq:modulo): New.
+    
+    * src/guile/skribilo/package/eq/lout.scm (eq:modulo): New writer.
+
+    modified files:
+     ChangeLog src/guile/skribilo/biblio/template.scm
+     src/guile/skribilo/package/eq.scm
+     src/guile/skribilo/package/eq/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-54
+
+
+2007-05-22 13:56:04 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-94
+
+    Summary:
+      Resolve <command>s too.
+    Revision:
+      skribilo--devo--1.2--patch-94
+
+    * src/guile/skribilo/resolve.scm (do-resolve!<command>): New method.
+      Allows arguments of a command (the command body) to be properly
+      resolved.
+
+    modified files:
+     ChangeLog src/guile/skribilo/resolve.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-53
+
+
+2007-05-04 13:48:29 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-93
+
+    Summary:
+      doc: Documented the `:labels' option of `the-bibliography'.
+    Revision:
+      skribilo--devo--1.2--patch-93
+
+
+    modified files:
+     ChangeLog doc/user/bib.skb
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-52
+
+
+2007-05-04 13:47:41 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-92
+
+    Summary:
+      biblio: Implemented the `name+year' label style.
+    Revision:
+      skribilo--devo--1.2--patch-92
+
+    * src/guile/skribilo/biblio.scm: Use `biblio author'.
+      (assign-entries-numbers!): New (formerly `count!' in `resolve-the-bib').
+      (assign-entries-name+years!): New.
+      (resolve-the-bib): New optional `assign-entries-identifiers!' argument.
+      Use it.
+    
+    * src/guile/skribilo/biblio/author.scm (short-author-names): New.
+    
+    * src/guile/skribilo/engine/lout.scm (lout-bib-refs-sort/number): Accept
+      non-number identifiers.
+      (&the-bibliography): Use simply `@TaggedList' when a style other than
+      `number' is used.
+      (&bib-entry): Use `@DropTagItem' when the bibliography style is not
+      `number'.
+    
+    * src/guile/skribilo/package/base.scm (the-bibliography): New `:labels'
+      option.  Pass the right label assignment function to `resolve-the-bib'.
+    
+    --This line, and those below, will be ignored--
+    Files to commit:
+       src/guile/skribilo/package/base.scm
+       src/guile/skribilo/engine/lout.scm
+       src/guile/skribilo/biblio.scm
+       doc/user/bib.skb
+       src/guile/skribilo/biblio/author.scm
+    
+    This list might be incomplete or outdated if editing the log
+    message was not invoked from an up-to-date changes buffer!
+
+    modified files:
+     ChangeLog src/guile/skribilo/biblio.scm
+     src/guile/skribilo/biblio/author.scm
+     src/guile/skribilo/engine/lout.scm
+     src/guile/skribilo/package/base.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-51
+
+
+2007-05-04 13:46:55 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-91
+
+    Summary:
+      Fixed `index'.
+    Revision:
+      skribilo--devo--1.2--patch-91
+
+    * src/guile/skribilo/Makefile.am (dist_guilemodule_DATA): Added
+      `index.scm'.
+    
+    * src/guile/skribilo/package/base.scm: Autoload `(skribilo index)' upon
+      `default-index'.
+
+    modified files:
+     ChangeLog src/guile/skribilo/Makefile.am
+     src/guile/skribilo/package/base.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-50
+
+
+2007-04-10 07:48:46 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-90
+
+    Summary:
+      `diff': Included Aubrey Jaffer's fix for `diff:edits'.
+    Revision:
+      skribilo--devo--1.2--patch-90
+
+    * src/guile/diff.scm: Updated from Aubrey Jaffer's latest upstream
+      version which includes a fix for bug in `diff:edits' that showed up in
+      `(diff:edits "Conclusion" "Related Work")' (SLIB changes dated
+      2007-04-07).
+
+    modified files:
+     ChangeLog src/guile/diff.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-49
+
+
+2007-04-10 07:47:58 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-89
+
+    Summary:
+      `eq' package: Added support for Lout's new `eq2'.
+    Revision:
+      skribilo--devo--1.2--patch-89
+
+    * src/guile/skribilo/package/eq.scm (*use-lout-eq2?*): New.
+      (direct-equation-child?): New.
+    
+    * src/guile/skribilo/package/eq/lout.scm (Initialization): Use `eq2' if
+      asked to.
+      (simple-lout-markup-writer): Use `direct-equation-child?' to decide on
+      whether the issue the `^' character.  This is to avoid issuing too many
+      `^', which could result in broken layout.
+      (eq:limit): Adapated.
+      (range-lout-markup-writer): Likewise.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/eq.scm
+     src/guile/skribilo/package/eq/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-48
+
+
+2007-04-10 07:47:03 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-88
+
+    Summary:
+      `lncs' package: Fixed for non-LaTeX engines.
+    Revision:
+      skribilo--devo--1.2--patch-88
+
+    * src/guile/skribilo/package/lncs.scm (abstract): Use `chapter' instead
+      of `section'.
+      (references): Likewise.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/lncs.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-47
+
+
+2007-04-04 17:18:18 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-87
+
+    Summary:
+      `eq' package: Properly handle auto-inlining.
+    Revision:
+      skribilo--devo--1.2--patch-87
+
+    * src/guile/skribilo/package/eq.scm (inline-equation?): Use `find1-up'
+      instead of `find-up'.  This fixes a bug.
+      (eq): Properly pass the `:inline?' options through the `options' slot.
+    
+    * src/guile/skribilo/package/eq/lout.scm (eq): When inline, enclose
+      equation in `@OneRow @OneCol' so that it is not breakable.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/eq.scm
+     src/guile/skribilo/package/eq/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-46
+
+
+2007-04-04 17:17:32 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-86
+
+    Summary:
+      Fixed `find-up'.
+    Revision:
+      skribilo--devo--1.2--patch-86
+
+    * src/guile/skribilo/ast.scm (find-up): Don't cons OBJ when it doesn't
+      match PRED.
+
+    modified files:
+     ChangeLog src/guile/skribilo/ast.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-45
+
+
+2007-04-04 17:16:45 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-85
+
+    Summary:
+      Renamed module `(differ)' to `(diff)'.
+    Revision:
+      skribilo--devo--1.2--patch-85
+
+
+    modified files:
+     ChangeLog src/guile/Makefile.am src/guile/diff.scm
+     src/guile/skribilo/package/diff.scm
+
+    renamed files:
+     src/guile/differ.scm
+       ==> src/guile/diff.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-44
+
+
+2007-04-04 17:15:48 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-84
+
+    Summary:
+      `diff' package: Added basic source location support.
+    Revision:
+      skribilo--devo--1.2--patch-84
+
+    * src/guile/skribilo/package/diff.scm (deletion, insertion, replacement,
+      unchanged): Added a `:loc' parameter.
+      (make-diff-document): When creating new ASTs, keep the location of
+      AST2.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/diff.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-43
+
+
+2007-04-03 14:58:13 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-83
+
+    Summary:
+      Fixed computation of `&invocation-location'.
+    Revision:
+      skribilo--devo--1.2--patch-83
+
+    * src/guile/skribilo/location.scm (invocation-location): Make sure we
+      always return the exact invocation location, no matter how
+      `invocation-location' is implemented.
+    
+    * src/guile/skribilo/lib.scm (define-markup): Updated DEPTH argument to
+      `invocation-location' due to previous change in the implementation of
+      `invocation-location'.
+
+    modified files:
+     ChangeLog src/guile/skribilo/lib.scm
+     src/guile/skribilo/location.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-42
+
+
+2007-04-03 14:57:19 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-82
+
+    Summary:
+      Reduced reliance on the debugging evaluator (improves performance).
+    Revision:
+      skribilo--devo--1.2--patch-82
+
+    * src/guile/skribilo.scm (skribilo): Do not impose use of the debugging
+      evaluator, allowing for significant performance improvements.
+    
+    * src/guile/skribilo/evaluator.scm (%evaluate): Use the debugging
+      evaluator when evaluating EXPR.
+    
+    * src/guile/skribilo/location.scm (invocation-location): Return `#f' when
+      the debugging evaluator is not being used.
+
+    modified files:
+     ChangeLog src/guile/skribilo.scm
+     src/guile/skribilo/evaluator.scm
+     src/guile/skribilo/location.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-41
+
+
+2007-04-03 11:58:43 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-81
+
+    Summary:
+      Moved legacy source location code to `compat'.
+    Revision:
+      skribilo--devo--1.2--patch-81
+
+    * src/guile/skribilo/lib.scm (skribe-eval-location): Removed.
+    
+    * src/guile/skribilo/location.scm (location-pos): Removed.
+    
+    * src/guile/skribilo/utils/compat.scm: Use `(skribilo location)'.
+      (location-pos, skribe-eval-location): New.
+
+    modified files:
+     ChangeLog src/guile/skribilo/lib.scm
+     src/guile/skribilo/location.scm
+     src/guile/skribilo/utils/compat.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-40
+
+
+2007-04-03 11:57:56 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-80
+
+    Summary:
+      Added source location tracking to various packages.
+    Revision:
+      skribilo--devo--1.2--patch-80
+
+    * src/guile/skribilo/package/base.scm: Autoload `parameters'.
+      (ref)[skribe-ref]: Use `search-path' and `*document-path*' instead of
+      `find-file/path' and `skribe-path'.
+    
+      Initialize the `loc' field of markups.
+    
+    * src/guile/skribilo/package/eq.scm: Likewise.
+    
+    * src/guile/skribilo/package/pie.scm: Likewise.
+    
+    * src/guile/skribilo/package/slide.scm: Likewise.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/base.scm
+     src/guile/skribilo/package/eq.scm
+     src/guile/skribilo/package/pie.scm
+     src/guile/skribilo/package/slide.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-39
+
+
+2007-04-03 11:57:10 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-79
+
+    Summary:
+      Added support for source location tracking.
+    Revision:
+      skribilo--devo--1.2--patch-79
+
+    * src/guile/skribilo/ast.scm (<ast>): Added the `:loc' init-keyword.
+    
+    * src/guile/skribilo/lib.scm: Re-export `invocation-location'.
+      (define-markup): Locally define `&invocation-location' for use by
+      markups.
+      (define-simple-markup): Initialize `loc'.
+      (define-simple-container): Likewise.
+      (%skribe-warn): New `col'. parameter.
+      (skribe-warning): Updated.
+      (skribe-warning/ast): Likewise.
+    
+    * src/guile/skribilo/location.scm (<location>): Removed slot `pos'.
+      Added slot `column'.  Export `location-column'.
+      (location-pos): Kept for compatibility.
+      (write): New method.
+      (invocation-location): New function.
+
+    modified files:
+     ChangeLog src/guile/skribilo/ast.scm
+     src/guile/skribilo/lib.scm src/guile/skribilo/location.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-38
+
+
+2007-04-03 11:55:49 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-78
+
+    Summary:
+      biblio template: Small fix.
+    Revision:
+      skribilo--devo--1.2--patch-78
+
+    * src/guile/skribilo/biblio/template.scm
+      (make-bib-entry-template/default): Fixed `books'.
+
+    modified files:
+     ChangeLog src/guile/skribilo/biblio/template.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-37
+
+
+2007-03-28 09:26:08 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-77
+
+    Summary:
+      `diff' package: Fixed off-by-one in string diff.
+    Revision:
+      skribilo--devo--1.2--patch-77
+
+    * src/guile/skribilo/package/diff.scm (add-unchanged): When `(null?
+      edits)', check whether `(< str-pos str-len)' (was `(< str-pos (-
+      str-len 1))').  This fixes off-by-one when diffing strings (last
+      character didn't appear).
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/diff.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-36
+
+
+2007-03-28 09:25:20 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-76
+
+    Summary:
+      `diff' package: Use `breakable-space' instead of `~' in `annotated-string-diff'.
+    Revision:
+      skribilo--devo--1.2--patch-76
+
+    * src/guile/skribilo/package/diff.scm: Autoload `(skribilo utils
+      keywords)'.
+      (annotated-string-diff)[space-preserving-substring]: Use
+      `breakable-space' instead of `~'.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/diff.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-35
+
+
+2007-03-28 09:24:33 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-75
+
+    Summary:
+      doc: Documented spacing.
+    Revision:
+      skribilo--devo--1.2--patch-75
+
+    * NEWS: Mention `breakable-space'.
+    
+    * doc/user/markup.skb: Include "spacing.skb".
+
+    new files:
+     doc/user/spacing.skb
+
+    modified files:
+     ChangeLog NEWS doc/user/markup.skb
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-34
+
+
+2007-03-28 09:23:47 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-74
+
+    Summary:
+      `base' package: Introduced `breakable-space'.
+    Revision:
+      skribilo--devo--1.2--patch-74
+
+    * src/guile/skribilo/engine/base.scm (breakable-space): New writer.
+    
+    * src/guile/skribilo/engine/latex.scm (breakable-space): New writer.
+    
+    * src/guile/skribilo/engine/lout.scm (breakable-space): New writer.
+    
+    * src/guile/skribilo/package/base.scm (breakable-space): New markup.
+
+    modified files:
+     ChangeLog src/guile/skribilo/engine/base.scm
+     src/guile/skribilo/engine/latex.scm
+     src/guile/skribilo/engine/lout.scm
+     src/guile/skribilo/package/base.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-33
+
+
+2007-03-28 09:23:01 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-73
+
+    Summary:
+      `lout' engine: Fixed space handling with `color'.
+    Revision:
+      skribilo--devo--1.2--patch-73
+
+    * src/guile/skribilo/engine/lout.scm (color): Insert the linebreak
+      between the left parameter of `@Color' and `@Color' itself, so as to
+      never insert additional spaces.
+
+    modified files:
+     ChangeLog src/guile/skribilo/engine/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-32
+
+
+2007-03-28 09:22:14 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-72
+
+    Summary:
+      `diff' package: Handle commands appropriately.
+    Revision:
+      skribilo--devo--1.2--patch-72
+
+    * src/guile/skribilo/package/diff.scm (make-diff-document): Don't touch
+      commands.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/diff.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-31
+
+
+2007-03-28 09:21:28 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-71
+
+    Summary:
+      `diff' package: Preserve space around diff'd strings.
+    Revision:
+      skribilo--devo--1.2--patch-71
+
+    * src/guile/skribilo/package/diff.scm: Use `srfi-14'.
+      (annotated-string-diff)[space-preserving-substring]: New.
+      Use it.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/diff.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-30
+
+
+2007-03-28 08:48:01 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-70
+
+    Summary:
+      `diff' package: Compute diffs on selected options.
+    Revision:
+      skribilo--devo--1.2--patch-70
+
+    * src/guile/skribilo/package/diff.scm (%diffable-options): New.
+      (make-diff-document)[make-diff-options]: New.
+      Use it.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/diff.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-29
+
+
+2007-03-28 08:45:48 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-69
+
+    Summary:
+      Slightly optimized `make-string-replace'.
+    Revision:
+      skribilo--devo--1.2--patch-69
+
+    * src/guile/skribilo/utils/strings.scm (%make-general-string-replace):
+      Removed the `let'...
+
+    modified files:
+     ChangeLog src/guile/skribilo/utils/strings.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-28
+
+
+2007-03-28 08:44:53 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-68
+
+    Summary:
+      `diff' package: Use actual markups and writers.
+    Revision:
+      skribilo--devo--1.2--patch-68
+
+    * src/guile/skribilo/package/diff.scm: Use `output' and `writer'.
+      (deletion, insertion, replacement, unchanged): Return a specific markup
+      object.  Add the corresponding writers for the `base' engine.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/diff.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-27
+
+
+2007-03-16 17:11:30 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-67
+
+    Summary:
+      `eq' package: Added `eq:set'.
+    Revision:
+      skribilo--devo--1.2--patch-67
+
+    * src/guile/skribilo/package/eq.scm: Use `(srfi srfi-1)'.
+      (%operators): Added `set'.
+      (eq:set): New.  New writer.
+    
+    * src/guile/skribilo/package/eq/lout.scm: Use `srfi-1'.
+      (eq:set): New writer.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/eq.scm
+     src/guile/skribilo/package/eq/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-26
+
+
+2007-03-16 17:10:38 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-66
+
+    Summary:
+      `diff' package: Various fixes.
+    Revision:
+      skribilo--devo--1.2--patch-66
+
+    * src/guile/skribilo/package/diff.scm (%undiffable-markups): Added
+      `numref' and `eq'.
+      (make-diff-document)[undiffable?]: New.
+      For containers, check whether they are undiffable.
+      For lists, iterate until AST2 is empty, not until the smallest is
+      empty.
+      Added an `(equal? ast1 ast2)' cond clause.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/diff.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-25
+
+
+2007-03-16 17:09:41 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-65
+
+    Summary:
+      `lout' engine: Skip lines in `color'.
+    Revision:
+      skribilo--devo--1.2--patch-65
+
+    * src/guile/skribilo/engine/lout.scm (color): Skip a line at the end.
+
+    modified files:
+     ChangeLog src/guile/skribilo/engine/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-24
+
+
+2007-03-08 18:17:42 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-64
+
+    Summary:
+      `diff' package: Fixes and hacking.
+    Revision:
+      skribilo--devo--1.2--patch-64
+
+    * src/guile/skribilo/package/diff.scm (add-unchanged): Fixed (hopefully).
+      (annotated-string-diff): New.
+      (make-diff-document): Moved code to `annotated-string-diff'.
+      (make-diff-document-from-files): Cleaned up.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/diff.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-23
+
+
+2007-03-08 18:16:51 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-63
+
+    Summary:
+      Added an experimental `diff' package.
+    Revision:
+      skribilo--devo--1.2--patch-63
+
+    * src/guile/Makefile.am (dist_guilemodule_DATA): Added `differ.scm'.
+    
+    * src/guile/skribilo/package/Makefile.am (dist_guilemodule_DATA): Added
+      `diff.scm'.
+
+    new files:
+     src/guile/differ.scm src/guile/skribilo/package/diff.scm
+
+    modified files:
+     ChangeLog src/guile/Makefile.am
+     src/guile/skribilo/package/Makefile.am
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-22
+
+
+2007-03-08 18:15:59 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-62
+
+    Summary:
+      biblio: Adding missing `use-module'.
+    Revision:
+      skribilo--devo--1.2--patch-62
+
+    * src/guile/skribilo/biblio.scm: Autoload `(skribilo lib)'.
+
+    modified files:
+     ChangeLog src/guile/skribilo/biblio.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-21
+
+
+2007-03-08 18:15:01 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-61
+
+    Summary:
+      evaluator: Modularized the evaluation process.
+    Revision:
+      skribilo--devo--1.2--patch-61
+
+    * src/guile/skribilo/evaluator.scm (evaluate-ast-from-port): New.  Based
+      on code formerly in `evaluate-document-from-port'.  Pass
+      `(current-module)' instead of `module' when invoking `%evaluate'.
+      (evaluate-document-from-port): Use it.
+
+    modified files:
+     ChangeLog src/guile/skribilo/evaluator.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-20
+
+
+2007-03-08 18:13:30 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-60
+
+    Summary:
+      `base' engine: Fixed autoload issue.
+    Revision:
+      skribilo--devo--1.2--patch-60
+
+    * src/guile/skribilo/engine/base.scm: Autoload `(skribilo package base)'
+      upon `it', `bold' and `ref' as well.
+
+    modified files:
+     ChangeLog src/guile/skribilo/engine/base.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-18
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-19
+
+
 2007-02-19 23:31:50 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-59
 
     Summary:
