@@ -2,6 +2,21 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-06-29 11:45:08 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-125
+
+    Summary:
+      Updated documentation of `ref'.
+    Revision:
+      skribilo--devo--1.2--patch-125
+
+
+    modified files:
+     ChangeLog doc/user/links.skb
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-81
+
+
 2007-06-29 11:44:40 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-124
 
     Summary:

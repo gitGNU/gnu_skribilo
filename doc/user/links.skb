@@ -99,6 +99,14 @@ section, to bibliographic entries, to source code line number, etc.])
 	      (:bib-table ,[The 
                  ,(ref :chapter "Bibliographies" :text "bibliography") where 
                  searching the entry.])
+	      (:sort-bib-refs ,[In case where multiple bibliography
+                 entries are referenced, as in ,(code [(ref :bib
+                 '("smith81:disintegration" "corgan07:zeitgeist"))]),
+                 this should be a two-argument procedure suitable
+                 for sorting.  The default procedure sorts references
+                 by number, when ,(markup-ref "the-bibliography") uses
+                 the ,(code [number]) labeling style.  If it is
+                 ,(code [#f]), then references will not be sorted.])
 	      (:line [A reference to a ,(ref :mark "prog" :text "program")
                 line number.])
 	      (:skribe [The name of a 
@@ -109,7 +117,7 @@ section, to bibliographic entries, to source code line number, etc.])
                 a ,(tt "mark") located in the Skribe document 
                 described by the ,(var "file") ,(sc "sui").]))
 	    :force-args '(:url :bib :line :skribe)
-	    :see-also '(index numref))
+	    :see-also '(index numref the-bibliography))
 
 (p [Sometimes, it is useful to produce phrases that refer a section by
 its number, as in ``See Section 2.3''.  This is especially useful on
