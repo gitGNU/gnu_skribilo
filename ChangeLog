@@ -2,6 +2,22 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-06-29 11:44:12 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-123
+
+    Summary:
+      Updated `TODO'.
+    Revision:
+      skribilo--devo--1.2--patch-123
+
+    * TODO: Added `(skribilo color)'.
+
+    modified files:
+     ChangeLog TODO
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-79
+
+
 2007-06-29 11:43:30 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-122
 
     Summary:
