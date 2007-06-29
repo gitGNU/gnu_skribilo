@@ -34,7 +34,7 @@
 
   ;; optional ``sub-packages''
   :autoload   (skribilo biblio)    (*bib-table* resolve-bib
-                                    bib-load! bib-add!)
+                                    bib-load! bib-add! bib-sort-refs/number)
   :autoload   (skribilo color)     (skribe-use-color!)
   :autoload   (skribilo source)    (language? source-read-lines source-fontify)
   :autoload   (skribilo prog)      (make-prog-body resolve-line)
@@ -1063,7 +1063,8 @@
 		    (handle #f)
 		    (line #f)
 		    (skribe #f)
-		    (page #f))
+		    (page #f)
+                    (sort-bib-refs bib-sort-refs/number))
    (define (unref ast text kind)
       (let ((msg (format #f "can't find `~a': " kind)))
 	 (if (ast? ast)
@@ -1188,8 +1189,8 @@
 		    (o (markup-option s 'used)))
 		(markup-option-add! s 'used (if (pair? o) (cons h o) (list h)))
 		n)
-	     (unref #f v 'bib)))) ; FIXME: This prevents source location
-				  ; info to be provided in the warning msg
+	     (unref #f v 'bib)))) ; FIXME: This prevents source location info
+				  ; from being provided in the warning msg
    (define (bib-ref text)
       (if (pair? text)
 	  (new markup
@@ -1197,7 +1198,8 @@
 	     (ident (symbol->string (gensym "bib-ref+")))
 	     (class class)
              (loc   &invocation-location)
-	     (options (the-options opts :ident :class))
+	     (options `((:sort-bib-refs ,sort-bib-refs)
+                        ,@(the-options opts :ident :class)))
 	     (body (map make-bib-ref text)))
 	  (make-bib-ref text)))
    (define (url-ref)

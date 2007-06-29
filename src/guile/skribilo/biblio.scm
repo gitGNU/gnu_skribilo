@@ -48,8 +48,11 @@
            ;; entry labels
            assign-entries-numbers! assign-entries-name+years!
 
-           ;; sorting entries
+           ;; sorting the bibliography
            bib-sort/authors bib-sort/idents bib-sort/dates
+
+           ;; sorting consecutive entries in a `ref'
+           bib-sort-refs/number
 
            ;; error conditions
            &biblio-error &biblio-entry-error &biblio-template-error
@@ -307,7 +310,7 @@
 
 
 ;;;
-;;; Sorting.
+;;; Sorting the bibliography.
 ;;;
 
 ;*---------------------------------------------------------------------*/
@@ -400,12 +403,38 @@
 
 
 ;;;
+;;; Sorting consecutive entries in a `ref'.
+;;;
+
+;; The following procedure handles sorting entries in a `ref' with multiple
+;; entries:
+;;
+;;   (ref :bib '("smith81:disintegration" "corgan07:zeitgeist"))
+;;
+;; This is pleasant when entries are numbered since it allows them to appear
+;; in the right order, e.g., "[2,5]".
+
+(define (bib-sort-refs/number entry1 entry2)
+  ;; Default implementation of the `bib-refs-sort-proc' custom.  Compare
+  ;; bibliography entries `entry1' and `entry2' (of type `&bib-entry') for
+  ;; use by `sort' in `bib-ref+'.
+  (let ((ident1 (markup-option entry1 :title))
+	(ident2 (markup-option entry2 :title)))
+    (and (markup? ident1) (markup? ident2)
+         (let ((n1 (markup-option ident1 'number))
+               (n2 (markup-option ident2 'number)))
+           (and (number? n1) (number? n2)
+                (< n1 n2))))))
+
+
+
+;;;
 ;;; Bibliography creation and entry name assignment.
 ;;;
 
 (define (assign-entries-numbers! entries)
   ;; Traverse `&bib-entry' markups in ENTRIES and add them a `:title' option
-  ;; whose content is a `&bib-entry-ident' markup suitable numbered.
+  ;; whose content is a `&bib-entry-ident' markup suitably numbered.
   (let loop ((es entries)
              (i 1))
     (if (pair? es)
@@ -491,7 +520,7 @@
 			   es)))
 
           ;; XXX: Assigning identifiers through side-effects is somewhat
-          ;; broken since it precludes the production of more several
+          ;; flawed since it precludes the production of several
           ;; bibliographies with different styles in a single document (e.g.,
           ;; the user manual cannot illustrate more than one style).
 	  (assign-entries-identifiers! (if (eq? count 'full) es fes))

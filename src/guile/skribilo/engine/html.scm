@@ -2032,28 +2032,9 @@
 (markup-writer 'bib-ref
    :options '(:text :bib)
    :before "["
-   :action (lambda (n e) (output n e (markup-writer-get 'ref e)))
-   :after "]")
-
-;*---------------------------------------------------------------------*/
-;*    bib-ref+ ...                                                     */
-;*---------------------------------------------------------------------*/
-(markup-writer 'bib-ref+
-   :options '(:text :bib)
-   :before "["
    :action (lambda (n e)
-	      (let loop ((rs (markup-body n)))
-		 (cond
-		    ((null? rs)
-		     #f)
-		    (else
-		     (if (is-markup? (car rs) 'bib-ref)
-			 (output (car rs) e (markup-writer-get 'ref e))
-			 (output (car rs) e))
-		     (if (pair? (cdr rs))
-			 (begin
-			    (display ",")
-			    (loop (cdr rs))))))))
+             ;; Produce a hyperlink.
+             (output n e (markup-writer-get 'ref e)))
    :after "]")
 
 ;*---------------------------------------------------------------------*/
