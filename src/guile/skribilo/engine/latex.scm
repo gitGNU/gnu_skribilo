@@ -1545,39 +1545,6 @@
                                (string-canonicalize id)))))))
 
 ;*---------------------------------------------------------------------*/
-;*    bib-ref ...                                                      */
-;*---------------------------------------------------------------------*/
-(markup-writer 'bib-ref
-   :options '(:text :bib)
-   :before "["
-   :action (lambda (n e)
-	      (output (markup-option (handle-ast (markup-body n)) :title) e))
-   :after "]")
-
-;*---------------------------------------------------------------------*/
-;*    bib-ref+ ...                                                     */
-;*---------------------------------------------------------------------*/
-(markup-writer 'bib-ref+
-   :options '(:text :bib)
-   :before "["
-   :action (lambda (n e) 
-	      (let loop ((rs (markup-body n)))
-		 (cond
-		    ((null? rs)
-		     #f)
-		    (else
-		     (if (is-markup? (car rs) 'bib-ref)
-			 (invoke (writer-action (markup-writer-get 'bib-ref e))
-				 (car rs)
-				 e)
-			 (output (car rs) e))
-		     (if (pair? (cdr rs))
-			 (begin
-			    (display ",")
-			    (loop (cdr rs))))))))
-   :after "]")
-
-;*---------------------------------------------------------------------*/
 ;*    url-ref ...                                                      */
 ;*---------------------------------------------------------------------*/
 (markup-writer 'url-ref

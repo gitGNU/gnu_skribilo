@@ -538,21 +538,6 @@
 	    (output (bold title) engine)
 	    (output title engine)))))
 
-(define (lout-bib-refs-sort/number entry1 entry2)
-  ;; Default implementation of the `bib-refs-sort-proc' custom.  Compare
-  ;; bibliography entries `entry1' and `entry2' (of type `&bib-entry') for
-  ;; use by `sort' in `bib-ref+'.
-  (let ((ident1 (markup-option entry1 :title))
-	(ident2 (markup-option entry2 :title)))
-    (if (and (markup? ident1) (markup? ident2))
-        (let ((n1 (markup-option ident1 'number))
-              (n2 (markup-option ident2 'number)))
-          (and (number? n1) (number? n2)
-               (< n1 n2)))
-	(begin
-	  (format (current-error-port) "i1: ~a, ~a" ident1 entry1)
-	  (format (current-error-port) "i2: ~a, ~a" ident2 entry2)))))
-
 (define (lout-pdf-bookmark-title node engine)
   ;; Default implementation of the `pdf-bookmark-title-proc' custom that
   ;; returns a title (a string) for the PDF bookmark of `node'.
@@ -636,14 +621,8 @@
 			 (doc-cover-sheet-proc
 			  ,lout-make-doc-cover-sheet)
 
-			 ;; Procedure used to sort bibliography
-			 ;; references when several are referred to at
-			 ;; the same time, as in:
-			 ;;  (ref :bib '("smith03" "jones98")) .
-			 ;; By default they are sorted by number.  If
-			 ;; `#f' is given, they are left as is.
-			 (bib-refs-sort-proc
-			  ,lout-bib-refs-sort/number)
+                         ;; Kept for backward compability, do not use.
+			 (bib-refs-sort-proc #f)
 
 			 ;; Lout code for paragraph gaps (similar to
 			 ;; `@PP' with `@ParaGap' equal to `1.0vx' by
@@ -2457,68 +2436,6 @@
                                 (display number))
                               (if show-page-num?
                                   (format #t (lout-page-of ident))))))))))
-
-
-;*---------------------------------------------------------------------*/
-;*    bib-ref ...                                                      */
-;*---------------------------------------------------------------------*/
-(markup-writer 'bib-ref
-   :options '(:text :bib)
-   :before "["
-   :action (lambda (n e)
-	     (let ((entry (handle-ast (markup-body n))))
-	       (output (markup-option entry :title) e)))
-   :after "]")
-
-;*---------------------------------------------------------------------*/
-;*    bib-ref+ ...                                                     */
-;*---------------------------------------------------------------------*/
-(markup-writer 'bib-ref+
-   ;; When several references are passed.  Strangely enough, the list of
-   ;; entries passed to this writer (as its body) contains both `bib-ref' and
-   ;; `bib-entry' objects, hence the `canonicalize-entry' function below.
-   :options '(:text :bib)
-   :before "["
-   :action (lambda (n e)
-	     (let* ((entries (markup-body n))
-		    (canonicalize-entry (lambda (x)
-					  (cond
-					   ((is-markup? x 'bib-entry) x)
-					   ((is-markup? x 'bib-ref)
-					    (handle-ast (markup-body x)))
-                                           ((is-markup? x 'unref) #f)
-					   (else
-					    (skribe-error
-					     'lout
-					     "bib-ref+: invalid entry type"
-					     x)))))
-		    (help-proc (lambda (proc)
-				 (lambda (e1 e2)
-                                   (let ((e1 (canonicalize-entry e1))
-                                         (e2 (canonicalize-entry e2)))
-                                     ;; don't pass `unref's to PROC
-                                     (if (and e1 e2)
-                                         (proc e1 e2)
-                                         #f)))))
-		    (sort-proc (engine-custom e 'bib-refs-sort-proc)))
-
-	       (let loop ((rs (if sort-proc
-				  (sort entries (help-proc sort-proc))
-				  entries)))
-		 (cond
-		  ((null? rs)
-		   #f)
-		  (else
-		   (if (is-markup? (car rs) 'bib-ref)
-		       (invoke (writer-action (markup-writer-get 'bib-ref e))
-			       (car rs)
-			       e)
-		       (output (car rs) e))
-		   (if (pair? (cdr rs))
-		       (begin
-			 (display ", ")
-			 (loop (cdr rs)))))))))
-   :after "]")
 
 ;*---------------------------------------------------------------------*/
 ;*    lout-make-url-breakable ...                                      */

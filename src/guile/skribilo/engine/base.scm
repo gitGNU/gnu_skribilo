@@ -31,12 +31,11 @@
   :autoload   (skribilo biblio template) (make-bib-entry-template/default
                                           output-bib-entry-template)
   ;; syntactic sugar
-  :use-module (skribilo reader)
   :use-module (skribilo utils syntax)
 
   :export (base-engine))
 
-(fluid-set! current-reader (make-reader 'skribe))
+(fluid-set! current-reader %skribilo-module-reader)
 
 
 ;*---------------------------------------------------------------------*/
@@ -193,6 +192,57 @@
 (markup-writer 'breakable-space
    :before " "
    :action #f)
+
+;*---------------------------------------------------------------------*/
+;*    bib-ref ...                                                      */
+;*---------------------------------------------------------------------*/
+(markup-writer 'bib-ref
+   :options '(:text :bib)
+   :before "["
+   :action (lambda (n e)
+             (let* ((ref   (markup-body n))
+                    (entry (handle-ast ref)))
+               (output (markup-option entry :title) e)))
+   :after "]")
+
+;*---------------------------------------------------------------------*/
+;*    bib-ref+ ...                                                     */
+;*---------------------------------------------------------------------*/
+(markup-writer 'bib-ref+
+   :options '(:text :bib :sort-bib-refs)
+   :before "["
+   :action (lambda (n e)
+             (define (make-sort-proc proc)
+               ;; Return a safe sort procedure that passes PROC two
+               ;; `&bib-entry' markups.
+               (lambda (r1 r2)
+                 ;; don't pass `unref's to PROC
+                 (and (is-markup? r1 'bib-ref)
+                      (is-markup? r2 'bib-ref)
+                      (let ((e1 (handle-ast (markup-body r1)))
+                            (e2 (handle-ast (markup-body r2))))
+                        (proc e1 e2)))))
+
+             (define sort-refs (markup-option n :sort-bib-refs))
+
+             (let loop ((refs (if (procedure? sort-refs)
+                                  (sort (markup-body n)
+                                        (make-sort-proc sort-refs))
+                                  (markup-body n))))
+               (cond
+                ((null? refs)
+                 #f)
+                (else
+                 (if (is-markup? (car refs) 'bib-ref)
+                     (invoke (writer-action (markup-writer-get 'bib-ref e))
+                             (car refs)
+                             e)
+                     (output (car refs) e))
+                 (if (pair? (cdr refs))
+                     (begin
+                       (display ", ")
+                       (loop (cdr refs))))))))
+   :after "]")
 
 ;*---------------------------------------------------------------------*/
 ;*    &the-bibliography ...                                            */

@@ -2,6 +2,47 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-06-29 11:44:40 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-124
+
+    Summary:
+      Factorized `bib-ref+', add a `:sort-bib-refs' options to `ref'.
+    Revision:
+      skribilo--devo--1.2--patch-124
+
+    * src/guile/skribilo/biblio.scm (bib-sort-refs/number): New.
+    
+    * src/guile/skribilo/engine/base.scm: Use `%skribilo-module-reader'
+      instead of the Skribe reader.
+      (bib-ref, bib-ref+): New writer.  Handle `:sort-bib-refs' in
+      `bib-ref+'.
+    
+    * src/guile/skribilo/engine/context.scm (bib-ref+): Removed.
+    
+    * src/guile/skribilo/engine/html.scm (bib-ref+): Removed.
+    
+    * src/guile/skribilo/engine/latex.scm (bib-ref, bib-ref+): Removed.
+    
+    * src/guile/skribilo/engine/lout.scm (lout-bib-refs-sort/number):
+      Removed.
+      (lout-engine): Documented `bib-refs-sort-proc' as unused.
+      (bib-ref, bib-ref+): Removed.
+    
+    * src/guile/skribilo/package/base.scm (ref): New `:sort-bib-refs' option.
+      [bib-ref]: Add it to the markup's option list.
+
+    modified files:
+     ChangeLog src/guile/skribilo/biblio.scm
+     src/guile/skribilo/engine/base.scm
+     src/guile/skribilo/engine/context.scm
+     src/guile/skribilo/engine/html.scm
+     src/guile/skribilo/engine/latex.scm
+     src/guile/skribilo/engine/lout.scm
+     src/guile/skribilo/package/base.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-80
+
+
 2007-06-29 11:44:12 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-123
 
     Summary:

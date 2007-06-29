@@ -1051,28 +1051,6 @@
 	       (format #t "\\goto{~a}[~a]" ref (string-canonicalize ident))))
    :after (lambda (n e) (output "]" e)))
 
-;;; ======================================================================
-;;;   bib-ref+ ...
-;;; ======================================================================
-(markup-writer 'bib-ref+
-   :options '(:text :bib)
-   :before (lambda (n e) (output "[" e))
-   :action (lambda (n e)
-	      (let loop ((rs (markup-body n)))
-		 (cond
-		    ((null? rs)
-		     #f)
-		    (else
-		     (if (is-markup? (car rs) 'bib-ref)
-			 (invoke (writer-action (markup-writer-get 'bib-ref e))
-				 (car rs)
-				 e)
-			 (output (car rs) e))
-		     (if (pair? (cdr rs))
-			 (begin
-			    (display ",")
-			    (loop (cdr rs))))))))
-   :after (lambda (n e) (output "]" e)))
 
 ;;; ======================================================================
 ;;;	url-ref ...
