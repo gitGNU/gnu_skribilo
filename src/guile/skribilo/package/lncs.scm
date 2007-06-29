@@ -230,13 +230,17 @@
                      (format #t "\\cite{~a}" (markup-ident entry)))))
 
       (markup-writer 'bib-ref+ latex
-         :options '(:text :bib)
+         :options '(:text :bib :sort-bib-refs)
          :action (lambda (n e)
-                   (let ((entries (map (lambda (bib-ref)
-                                         (handle-ast (markup-body bib-ref)))
-                                       (markup-body n))))
+                   (let ((entries   (map (lambda (bib-ref)
+                                           (handle-ast (markup-body bib-ref)))
+                                         (markup-body n)))
+                         (sort-proc (markup-option n :sort-bib-refs)))
                      (format #t "\\cite{~a}"
-                             (string-join (map markup-ident entries)
+                             (string-join (map markup-ident
+                                               (if (procedure? sort-proc)
+                                                   (sort entries sort-proc)
+                                                   entries))
                                           ",")))))
 
       (markup-writer '&the-bibliography latex
