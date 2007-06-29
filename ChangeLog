@@ -2,6 +2,22 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-06-29 11:45:36 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-126
+
+    Summary:
+      `lncs' package: Honor `:sort-bib-refs'.
+    Revision:
+      skribilo--devo--1.2--patch-126
+
+    * src/guile/skribilo/package/lncs.scm (bib-ref+): Honor `:sort-bib-refs'.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/lncs.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-82
+
+
 2007-06-29 11:45:08 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-125
 
     Summary:
