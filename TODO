@@ -9,6 +9,7 @@ Skribilo "native" module, with fewer bindings.  This should translate
 into a `--compat=XXX' command-line option.
 
 ** Update the documentation, remove Skribe legacy stuff
+** Review and clean up `(skribilo color)'
 ** Have a PS/PDF version of the documentation (preferably using Lout)
 ** Remove calls to `skribe-error', use SRFI-35 exceptions
 ** Fix the HTML engine for `html-left-margin'
