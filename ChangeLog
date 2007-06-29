@@ -2,6 +2,24 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-06-29 11:43:30 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-122
+
+    Summary:
+      `diff' package: Small bug fix.
+    Revision:
+      skribilo--devo--1.2--patch-122
+
+    * src/guile/skribilo/package/diff.scm (make-diff-document): Don't use
+      `ast-loc' when AST2 is not `ast?'.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/diff.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-77
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-78
+
+
 2007-06-24 19:53:56 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-121
 
     Summary:
