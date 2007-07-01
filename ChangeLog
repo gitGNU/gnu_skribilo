@@ -2,6 +2,35 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-07-01 23:47:37 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-127
+
+    Summary:
+      Fixed (or almost so) the C lexer.
+    Revision:
+      skribilo--devo--1.2--patch-127
+
+    * src/guile/skribilo/coloring/Makefile.am (.l.scm): Have the generated
+      module use `srfi-1'.
+    
+    * src/guile/skribilo/coloring/c-lex.l: Support multi-line comments and
+      properly use `*the-keys*'.
+    
+    * src/guile/skribilo/coloring/c-lex.scm: Updated.
+    
+    * src/guile/skribilo/coloring/c.scm: Fixed module name.
+      (c-language): New.
+
+    modified files:
+     ChangeLog src/guile/skribilo/coloring/Makefile.am
+     src/guile/skribilo/coloring/c-lex.l
+     src/guile/skribilo/coloring/c-lex.scm
+     src/guile/skribilo/coloring/c.scm
+
+    new patches:
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-110
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-111
+
+
 2007-06-29 11:45:36 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-126
 
     Summary:

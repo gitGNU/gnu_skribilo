@@ -19,13 +19,13 @@
 ;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 ;;; USA.
 
-(define-module (skribilo c)
+(define-module (skribilo coloring c)
   :use-module (skribilo lib)
   :use-module (skribilo utils syntax)
   :use-module (skribilo coloring c-lex)		;; SILex generated
   :use-module (skribilo coloring parameters)
   :use-module (srfi srfi-39)
-  :export (c java))
+  :export (c c-language java))
 
 (fluid-set! current-reader %skribilo-module-reader)
 
@@ -61,6 +61,10 @@
        (name "C")
        (fontifier c-fontifier)
        (extractor #f)))
+
+(define c-language
+  ;; This alias is defined for the user's convenience.
+  c)
 
 
 ;;;

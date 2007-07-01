@@ -1,6 +1,7 @@
 (define-module (skribilo coloring c-lex)
   :use-module (skribilo lib)
   :use-module (skribilo coloring parameters)
+  :use-module (srfi srfi-1)
   :export (lexer-init lexer
            lexer-get-func-column
            lexer-get-func-offset
@@ -1152,7 +1153,7 @@
        ))
    (lambda (yycontinue yygetc yyungetc)
      (lambda (yytext yyline)
-         		(skribe-error 'lisp-fontifier "Parse error" yytext)
+         		(skribe-error 'c-fontifier "Parse error" yytext)
        ))
    (vector
     #t
@@ -1161,14 +1162,29 @@
           		(new markup
 			     (markup '&source-string)
 			     (body yytext))
-;;Comments
+;; Comments
+;; FIXME: We shouldn't exclude `/' from comments but we do so to match the
+;; shortest multi-line comment.
         ))
     #t
     (lambda (yycontinue yygetc yyungetc)
       (lambda (yytext yyline)
-        		(new markup
-			     (markup '&source-line-comment)
-			     (body   yytext))
+                	(let* ((not-line (char-set-complement (char-set #\newline)))
+                               (lines    (string-tokenize yytext not-line)))
+                          (reverse!
+                           (pair-fold (lambda (line* result)
+                                        (let* ((line  (car line*))
+                                               (last? (null? (cdr line*)))
+                                               (markup
+                                                (new markup
+                                                   (markup '&source-line-comment)
+                                                   (body   line))))
+                                          (if last?
+                                              (cons markup result)
+                                              (cons* (string #\newline)
+                                                     markup result))))
+                                      '()
+                                      lines)))
         ))
     #t
     (lambda (yycontinue yygetc yyungetc)
@@ -1183,36 +1199,44 @@
     (lambda (yycontinue yygetc yyungetc)
       (lambda (yytext yyline)
           		(let* ((ident (string->symbol yytext))
-			       (tmp   (memq  ident *the-keys*)))
+			       (tmp   (memq ident (*the-keys*))))
 			  (if tmp
 			      (new markup
 				   (markup '&source-module)
 				   (body yytext))
 			      yytext))
 
-;; Regular text
+;; Regular text (excluding `/' and `*')
         ))
     #t
     (lambda (yycontinue yygetc yyungetc)
       (lambda (yytext yyline)
-            		(begin yytext)
+              		(begin yytext)
+
+;; `/' and `*' alone.
+        ))
+    #t
+    (lambda (yycontinue yygetc yyungetc)
+      (lambda (yytext yyline)
+                        (begin yytext)
+        ))
+    #t
+    (lambda (yycontinue yygetc yyungetc)
+      (lambda (yytext yyline)
+                        (begin yytext)
         )))
    'decision-trees
    0
    0
-   '#((65 (35 (34 1 5) (= 47 4 1)) (96 (91 3 (95 1 2)) (97 1 (123 3 1))))
-    (65 (= 34 err 1) (97 (91 err 1) (123 err 1))) (91 (35 (34 1 err) (65 1
-    3)) (96 (95 1 2) (97 1 (123 3 1)))) (95 (65 err (91 3 err)) (97 (96 3
-    err) (123 3 err))) (47 (35 (34 1 err) (= 42 7 1)) (91 (48 6 (65 1 err))
-    (97 1 (123 err 1)))) (= 34 8 5) (35 (11 (10 6 1) (34 6 9)) (91 (65 6 9)
-    (97 6 (123 9 6)))) (42 (11 (10 7 1) (= 34 10 7)) (91 (43 11 (65 7 10))
-    (97 7 (123 10 7)))) err (= 10 err 9) (11 (10 10 err) (= 42 12 10)) (43
-    (34 (= 10 1 7) (35 10 (42 7 11))) (65 (= 47 13 7) (97 (91 10 7) (123 10
-    7)))) (42 (= 10 err 10) (47 (43 12 10) (48 14 10))) (42 (11 (10 7 1) (=
-    34 10 7)) (91 (43 11 (65 7 10)) (97 7 (123 10 7)))) (11 (10 10 err) (=
-    42 12 10)))
-   '#((#f . #f) (4 . 4) (3 . 3) (3 . 3) (4 . 4) (#f . #f) (2 . 2) (4 . 4)
-    (0 . 0) (2 . 2) (#f . #f) (4 . 4) (#f . #f) (1 . 1) (1 . 1))))
+   '#((48 (42 (= 34 6 2) (43 1 (47 2 5))) (95 (65 2 (91 4 2)) (97 (96 3 2)
+    (123 4 2)))) (= 47 err 7) (47 (35 (34 2 err) (= 42 err 2)) (91 (48 err
+    (65 2 err)) (97 2 (123 err 2)))) (48 (42 (= 34 err 2) (43 err (47 2
+    err))) (95 (65 2 (91 4 2)) (97 (96 3 2) (123 4 2)))) (95 (65 err (91 4
+    err)) (97 (96 4 err) (123 4 err))) (43 (42 8 10) (= 47 9 8)) (= 34 11
+    6) err err (= 10 err 12) (43 (42 10 13) (= 47 err 10)) err (= 10 err
+    12) (43 (42 10 13) (= 47 14 10)) err)
+   '#((#f . #f) (#f . #f) (4 . 4) (3 . 3) (3 . 3) (#f . #f) (#f . #f) (6 .
+    6) (5 . 5) (2 . 2) (#f . #f) (0 . 0) (2 . 2) (#f . #f) (1 . 1))))
 
 ;
 ; User functions
