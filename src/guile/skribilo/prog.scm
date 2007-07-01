@@ -1,7 +1,7 @@
 ;;; prog.scm  --  All the stuff for the prog markup
 ;;;
-;;; Copyright 2003 Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
-;;; Copyright 2006 Ludovic Courtès  <ludovic.courtes@laas.fr>
+;;; Copyright 2003  Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
+;;; Copyright 2006, 2007  Ludovic Courtès  <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -21,7 +21,8 @@
 
 (define-module (skribilo prog)
   :use-module (ice-9 regex)
-  :autoload   (ice-9 receive) (receive)
+  :use-module (srfi srfi-11)
+
   :use-module (skribilo lib)  ;; `new'
   :use-module (skribilo ast)
   :use-module (skribilo utils syntax)
@@ -32,11 +33,10 @@
 (fluid-set! current-reader %skribilo-module-reader)
 
 
-;;; ======================================================================
 ;;;
-;;; COMPATIBILITY
+;;; Bigloo compatibility.
 ;;;
-;;; ======================================================================
+
 (define pregexp-match 	string-match)
 (define pregexp-replace (lambda (rx str what)
 			  (regexp-substitute/global #f rx str
@@ -54,7 +54,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    *lines* ...                                                      */
 ;*---------------------------------------------------------------------*/
-;; FIXME: Removed that global.  Rework the thing.
+;; FIXME: Remove that global.  Rework the thing.
 (define *lines* (make-hash-table))
 
 ;*---------------------------------------------------------------------*/
@@ -99,14 +99,14 @@
 		  (res '()))
 	  (if (null? ls)
 	      (values #f line)
-	      (receive (m l)
-		 (extract-mark (car ls) mark regexp)
+	      (let-values (((m l)
+                            (extract-mark (car ls) mark regexp)))
 		 (if (not m)
 		     (loop (cdr ls) (cons l res))
 		     (values m (append (reverse! res) (cons l (cdr ls)))))))))
       ((node? line)
-       (receive (m l)
-	  (extract-mark (node-body line) mark regexp)
+       (let-values (((m l)
+                     (extract-mark (node-body line) mark regexp)))
 	  (if (not m)
 	      (values #f line)
 	      (begin
@@ -200,17 +200,17 @@
 				    lnum)
 				(length lines)))))
      (let loop ((lines lines)
-		 (lnum lnum)
-		 (res '()))
+                (lnum lnum)
+                (res '()))
 	 (if (null? lines)
 	     (reverse! res)
-	     (receive (m l)
-		      (extract-mark (car lines) mark regexp)
+             (let-values (((m l)
+                           (extract-mark (car lines) mark regexp)))
 		(let* ((line-ident (symbol->string (gensym "&prog-line")))
 		       (n (new markup
 			     (markup  '&prog-line)
 			     (ident   line-ident)
-                             (options `((:number ,lnum)))
+                             (options `((:number ,(and lnum-init lnum))))
 			     (body (if m (make-line-mark m line-ident l) l)))))
  		   (loop (cdr lines)
  			 (+ lnum 1)

@@ -2,6 +2,24 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-07-01 23:49:09 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-130
+
+    Summary:
+      `base' package: Honor `:line #f' in `prog'.
+    Revision:
+      skribilo--devo--1.2--patch-130
+
+    * src/guile/skribilo/prog.scm: Use `srfi-11' instead of `receive'.
+      (make-prog-body): When creating a `&prog-line', set the `:number'
+      option only if `lnum-init' is true.
+
+    modified files:
+     ChangeLog src/guile/skribilo/prog.scm
+
+    new patches:
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-114
+
+
 2007-07-01 23:48:43 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-129
 
     Summary:
