@@ -2811,13 +2811,14 @@
 					     (gensym "lout-illustration")))
 					".eps"))
 		 (port (open-output-pipe
-			(apply string-append
-                               (or (engine-custom lout 'lout-program-name)
-                                   "lout")
-                               " -o " output
-                               " -EPS "
-                               (engine-custom lout
-                                              'lout-program-arguments)))))
+			(string-append
+                         (or (engine-custom lout 'lout-program-name)
+                             "lout")
+                         " -o " output
+                         " -EPS "
+                         (string-join
+                          (engine-custom lout
+                                         'lout-program-arguments))))))
 
 	    ;; send the illustration to Lout's standard input
 	    (display (illustration-header) port)
