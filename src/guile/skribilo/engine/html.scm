@@ -2069,6 +2069,21 @@
 		 (output (or v (markup-option n :url)) e)))
    :after "</a>")
 
+
+;*---------------------------------------------------------------------*/
+;*    &prog-line ...                                                   */
+;*---------------------------------------------------------------------*/
+(markup-writer '&prog-line
+   :before (lambda (n e)
+             (let ((before (writer-before
+                            (markup-writer-get '&prog-line base-engine))))
+               (format #t "<a name=\"~a\""
+                       (string-canonicalize (markup-ident n)))
+               (html-class n)
+               (display ">")
+               (before n e)))
+   :after "</a>\n")
+
 ;*---------------------------------------------------------------------*/
 ;*    line-ref ...                                                     */
 ;*---------------------------------------------------------------------*/
@@ -2077,12 +2092,14 @@
    :before (html-markup-class "i")
    :action (lambda (n e)
 	      (let ((o (markup-option n :offset))
-		    (v (string->number (markup-option n :text))))
-		 (if (and (number? o) (number? v))
-		     (markup-option-add! n :text (+ o v)))
+		    (v (markup-option (handle-ast (markup-body n)) :number)))
+		 (cond ((and (number? o) (number? v))
+                        (markup-option-set! n :text (+ o v)))
+                       ((number? v)
+                        (markup-option-set! n :text v)))
 		 (output n e (markup-writer-get 'ref e))
 		 (if (and (number? o) (number? v))
-		     (markup-option-add! n :text v))))
+		     (markup-option-set! n :text v))))
    :after "</i>")
 
 ;*---------------------------------------------------------------------*/

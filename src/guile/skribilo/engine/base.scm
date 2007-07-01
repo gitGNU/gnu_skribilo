@@ -498,7 +498,8 @@
 (markup-writer 'line-ref
    :options '(:offset)
    :action (lambda (n e)
-	      (let ((o (markup-option n :offset))
-		    (n (markup-ident (handle-body (markup-body n)))))
-		 (evaluate-document (it (if (integer? o) (+ o n) n)) e))))
+             (let ((o (markup-option n :offset))
+                   (n (markup-option (handle-ast (markup-body n)) :number)))
+               (if (integer? n)
+                   (display (if (integer? o) (+ o n) n))))))
 

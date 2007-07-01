@@ -2472,22 +2472,6 @@
 		     (output (transform n) e))))))
 
 ;*---------------------------------------------------------------------*/
-;*    line-ref ...                                                     */
-;*---------------------------------------------------------------------*/
-(markup-writer 'line-ref
-   :options '(:offset)
-   :before "{ @I {" ;; FIXME: Not tested
-   :action (lambda (n e)
-	      (let ((o (markup-option n :offset))
-		    (v (string->number (markup-option n :text))))
-		 (cond
-		    ((and (number? o) (number? v))
-		     (display (+ o v)))
-		    (else
-		     (display v)))))
-   :after "} }")
-
-;*---------------------------------------------------------------------*/
 ;*    &the-bibliography ...                                            */
 ;*---------------------------------------------------------------------*/
 (markup-writer '&the-bibliography

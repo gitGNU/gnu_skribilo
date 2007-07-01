@@ -27,7 +27,6 @@
   :use-module (skribilo lib)  ;; `new'
   :use-module (skribilo ast)
   :use-module (skribilo utils syntax)
-  :autoload   (skribilo package base) (mark)
 
   :export (make-prog-body resolve-line))
 
@@ -51,12 +50,6 @@
 ;;; FIXME: Tout le module peut se factoriser
 ;;;        définir en bigloo  node-body-set
 
-
-;*---------------------------------------------------------------------*/
-;*    make-line-mark ...                                               */
-;*---------------------------------------------------------------------*/
-(define (make-line-mark ident b)
-  (list (mark ident) b))
 
 ;*---------------------------------------------------------------------*/
 ;*    resolve-line ...                                                 */
@@ -200,9 +193,9 @@
 		(let* ((line-ident (symbol->string (gensym "&prog-line")))
 		       (n (new markup
 			     (markup  '&prog-line)
-			     (ident   line-ident)
+			     (ident   (or m line-ident))
                              (options `((:number ,(and lnum-init lnum))))
-			     (body (if m (make-line-mark m l) l)))))
+			     (body    l))))
  		   (loop (cdr lines)
  			 (+ lnum 1)
  			 (cons n res))))))))
