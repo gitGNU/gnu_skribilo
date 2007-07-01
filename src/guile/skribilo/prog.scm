@@ -21,6 +21,7 @@
 
 (define-module (skribilo prog)
   :use-module (ice-9 regex)
+  :use-module (srfi srfi-1)
   :use-module (srfi srfi-11)
 
   :use-module (skribilo lib)  ;; `new'
@@ -52,37 +53,27 @@
 
 
 ;*---------------------------------------------------------------------*/
-;*    *lines* ...                                                      */
-;*---------------------------------------------------------------------*/
-;; FIXME: Remove that global.  Rework the thing.
-(define *lines* (make-hash-table))
-
-;*---------------------------------------------------------------------*/
 ;*    make-line-mark ...                                               */
 ;*---------------------------------------------------------------------*/
-(define (make-line-mark m line-ident b)
-   (let* ((n (list (mark line-ident) b)))
-      (hash-set! *lines* m n)
-      n))
+(define (make-line-mark ident b)
+  (list (mark ident) b))
 
 ;*---------------------------------------------------------------------*/
 ;*    resolve-line ...                                                 */
 ;*---------------------------------------------------------------------*/
-(define (resolve-line id)
-   (hash-ref *lines* id))
+(define (resolve-line doc id)
+  (document-lookup-node doc id))
 
 ;*---------------------------------------------------------------------*/
 ;*    extract-string-mark ...                                          */
 ;*---------------------------------------------------------------------*/
 (define (extract-string-mark line mark regexp)
-   (let ((m (pregexp-match regexp line)))
-      (if (pair? m)
-	  (values (substring (car m)
-			     (string-length mark)
-			     (string-length (car m)))
-		  (pregexp-replace regexp line ""))
-	  (values #f line))))
-   
+  (let ((match (pregexp-match regexp line)))
+    (if match
+        (values (match:substring match 1)
+                (pregexp-replace regexp line ""))
+        (values #f line))))
+
 ;*---------------------------------------------------------------------*/
 ;*    extract-mark ...                                                 */
 ;*    -------------------------------------------------------------    */
@@ -153,7 +144,7 @@
 ;*    flat-lines ...                                                   */
 ;*---------------------------------------------------------------------*/
 (define (flat-lines lines)
-   (apply append (map split-line lines)))
+   (concatenate (map split-line lines)))
 
 ;*---------------------------------------------------------------------*/
 ;*    collect-lines ...                                                */
@@ -181,13 +172,13 @@
 	  (loop (cdr lines)
 		res
 		(cons (car lines) tmp))))))
-      
+
 ;*---------------------------------------------------------------------*/
 ;*    make-prog-body ...                                               */
 ;*---------------------------------------------------------------------*/
 (define (make-prog-body src lnum-init ldigit mark)
    (let* ((regexp (and mark
-		       (format #f "~a[-a-zA-Z_][-0-9a-zA-Z_]+"
+		       (format #f "~a([-a-zA-Z_][-0-9a-zA-Z_]+)"
 			       (pregexp-quote mark))))
 	  (src (cond
 		  ((not (pair? src)) (list src))
@@ -211,7 +202,7 @@
 			     (markup  '&prog-line)
 			     (ident   line-ident)
                              (options `((:number ,(and lnum-init lnum))))
-			     (body (if m (make-line-mark m line-ident l) l)))))
+			     (body (if m (make-line-mark m l) l)))))
  		   (loop (cdr lines)
  			 (+ lnum 1)
  			 (cons n res))))))))

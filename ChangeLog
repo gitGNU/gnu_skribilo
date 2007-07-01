@@ -2,6 +2,36 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-07-01 23:49:58 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-132
+
+    Summary:
+      Removed global hash tables for marks and program lines.
+    Revision:
+      skribilo--devo--1.2--patch-132
+
+    * src/guile/skribilo/package/base.scm (*mark-table*): Removed.
+      (mark): Return the new mark without touching `*mark-table*'.  Use `bs'
+      as the mark's identifier.
+      (ref)[mark-ref]: Simplified using `do-ident-ref'.
+      [line-ref]: Use the new `resolve-line'.
+    
+    * src/guile/skribilo/prog.scm: Use `srfi-1'.
+      (*lines*): Removed.
+      (make-line-mark): Don't use `*lines*'.  Removed `m' parameter.
+      (resolve-line): Take an additional `doc' argument.
+      (extract-string-mark): Fixed.
+      (flat-lines): Use `concatenate' instead of `apply append'.
+      (make-prog-body)[regexp]: Use brackets.
+      Fixed invocation of `make-line-mark'.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/base.scm
+     src/guile/skribilo/prog.scm
+
+    new patches:
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-116
+
+
 2007-07-01 23:49:34 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-131
 
     Summary:
