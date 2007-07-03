@@ -18,6 +18,7 @@ EXTRA_DIST = lisp-lex.l xml-lex.l c-lex.l
 	echo '  :use-module (skribilo lib)' >> "$@" &&			\
 	echo '  :use-module (skribilo coloring parameters)'		\
 		>> "$@" &&						\
+	echo '  :use-module (srfi srfi-1)' >> "$@" &&			\
 	echo '  :export (lexer-init lexer' >> "$@" &&			\
 	echo '           lexer-get-func-column' >> "$@" &&		\
 	echo '           lexer-get-func-offset' >> "$@" &&		\

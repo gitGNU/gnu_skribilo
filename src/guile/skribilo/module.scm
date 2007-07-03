@@ -65,11 +65,7 @@
 
 (define %skribilo-user-autoloads
   ;; List of auxiliary modules that may be lazily autoloaded.
-  '(((skribilo engine lout)   . (!lout
-				 lout-illustration
-				 ;; FIXME: The following should eventually be
-				 ;;        removed from here.
-				 lout-structure-number-string))
+  '(((skribilo engine lout)   . (!lout lout-illustration))
     ((skribilo engine latex)  . (!latex LaTeX TeX))
     ((skribilo engine html)   . (html-markup-class html-class
 				 html-width))
@@ -81,6 +77,7 @@
 				 language-fontifier source-fontify))
     ((skribilo coloring lisp) . (skribe scheme lisp))
     ((skribilo coloring xml)  . (xml))
+    ((skribilo coloring c)    . (c java))
     ((skribilo prog)          . (make-prog-body resolve-line))
     ((skribilo color) .
      (skribe-color->rgb skribe-get-used-colors skribe-use-color!))

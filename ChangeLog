@@ -2,6 +2,275 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-07-01 23:50:22 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-133
+
+    Summary:
+      Fixed and simplified `(ref :line ...)', aka. `line-ref'.
+    Revision:
+      skribilo--devo--1.2--patch-133
+
+    * src/guile/skribilo/engine/base.scm (line-ref): Changed the way the
+      number is obtained.
+    
+    * src/guile/skribilo/engine/context.scm (line-ref): Removed.
+    
+    * src/guile/skribilo/engine/html.scm (&prog-line): New.  Produce an
+      anchor.  Needed because `mark' are no longer produced by
+      `make-prog-body'.
+      (line-ref): Changed the way the number is obtained.
+    
+    * src/guile/skribilo/engine/latex.scm (line-ref): Removed.
+    
+    * src/guile/skribilo/engine/lout.scm (line-ref): Removed.
+    
+    * src/guile/skribilo/prog.scm (make-line-mark): Removed.
+      (make-prog-body): No longer use it.
+
+    modified files:
+     ChangeLog src/guile/skribilo/engine/base.scm
+     src/guile/skribilo/engine/context.scm
+     src/guile/skribilo/engine/html.scm
+     src/guile/skribilo/engine/latex.scm
+     src/guile/skribilo/engine/lout.scm src/guile/skribilo/prog.scm
+
+    new patches:
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-117
+
+
+2007-07-01 23:49:58 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-132
+
+    Summary:
+      Removed global hash tables for marks and program lines.
+    Revision:
+      skribilo--devo--1.2--patch-132
+
+    * src/guile/skribilo/package/base.scm (*mark-table*): Removed.
+      (mark): Return the new mark without touching `*mark-table*'.  Use `bs'
+      as the mark's identifier.
+      (ref)[mark-ref]: Simplified using `do-ident-ref'.
+      [line-ref]: Use the new `resolve-line'.
+    
+    * src/guile/skribilo/prog.scm: Use `srfi-1'.
+      (*lines*): Removed.
+      (make-line-mark): Don't use `*lines*'.  Removed `m' parameter.
+      (resolve-line): Take an additional `doc' argument.
+      (extract-string-mark): Fixed.
+      (flat-lines): Use `concatenate' instead of `apply append'.
+      (make-prog-body)[regexp]: Use brackets.
+      Fixed invocation of `make-line-mark'.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/base.scm
+     src/guile/skribilo/prog.scm
+
+    new patches:
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-116
+
+
+2007-07-01 23:49:34 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-131
+
+    Summary:
+      Tiny doc fix.
+    Revision:
+      skribilo--devo--1.2--patch-131
+
+    * doc/user/package.skb (document): Use `document/letter' as the
+      identifier, to avoid collision with `document'.
+
+    modified files:
+     ChangeLog doc/user/package.skb
+
+    new patches:
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-115
+
+
+2007-07-01 23:49:09 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-130
+
+    Summary:
+      `base' package: Honor `:line #f' in `prog'.
+    Revision:
+      skribilo--devo--1.2--patch-130
+
+    * src/guile/skribilo/prog.scm: Use `srfi-11' instead of `receive'.
+      (make-prog-body): When creating a `&prog-line', set the `:number'
+      option only if `lnum-init' is true.
+
+    modified files:
+     ChangeLog src/guile/skribilo/prog.scm
+
+    new patches:
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-114
+
+
+2007-07-01 23:48:43 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-129
+
+    Summary:
+      `lout' engine: Fixed argument passing for `lout-illustration'.
+    Revision:
+      skribilo--devo--1.2--patch-129
+
+    * src/guile/skribilo/engine/lout.scm (lout-illustration): Better compute
+      argument string for `lout'.
+
+    modified files:
+     ChangeLog src/guile/skribilo/engine/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-113
+
+
+2007-07-01 23:48:19 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-128
+
+    Summary:
+      Autoload `(skribilo coloring c)' in the default module.
+    Revision:
+      skribilo--devo--1.2--patch-128
+
+    * src/guile/skribilo/module.scm (%skribilo-user-autoloads): Fixed the
+      `lout' autoload list.  Added `(skribilo coloring c)'.
+
+    modified files:
+     ChangeLog src/guile/skribilo/module.scm
+
+    new patches:
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-112
+
+
+2007-07-01 23:47:37 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-127
+
+    Summary:
+      Fixed (or almost so) the C lexer.
+    Revision:
+      skribilo--devo--1.2--patch-127
+
+    * src/guile/skribilo/coloring/Makefile.am (.l.scm): Have the generated
+      module use `srfi-1'.
+    
+    * src/guile/skribilo/coloring/c-lex.l: Support multi-line comments and
+      properly use `*the-keys*'.
+    
+    * src/guile/skribilo/coloring/c-lex.scm: Updated.
+    
+    * src/guile/skribilo/coloring/c.scm: Fixed module name.
+      (c-language): New.
+
+    modified files:
+     ChangeLog src/guile/skribilo/coloring/Makefile.am
+     src/guile/skribilo/coloring/c-lex.l
+     src/guile/skribilo/coloring/c-lex.scm
+     src/guile/skribilo/coloring/c.scm
+
+    new patches:
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-110
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-111
+
+
+2007-06-29 11:45:36 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-126
+
+    Summary:
+      `lncs' package: Honor `:sort-bib-refs'.
+    Revision:
+      skribilo--devo--1.2--patch-126
+
+    * src/guile/skribilo/package/lncs.scm (bib-ref+): Honor `:sort-bib-refs'.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/lncs.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-82
+
+
+2007-06-29 11:45:08 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-125
+
+    Summary:
+      Updated documentation of `ref'.
+    Revision:
+      skribilo--devo--1.2--patch-125
+
+
+    modified files:
+     ChangeLog doc/user/links.skb
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-81
+
+
+2007-06-29 11:44:40 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-124
+
+    Summary:
+      Factorized `bib-ref+', add a `:sort-bib-refs' options to `ref'.
+    Revision:
+      skribilo--devo--1.2--patch-124
+
+    * src/guile/skribilo/biblio.scm (bib-sort-refs/number): New.
+    
+    * src/guile/skribilo/engine/base.scm: Use `%skribilo-module-reader'
+      instead of the Skribe reader.
+      (bib-ref, bib-ref+): New writer.  Handle `:sort-bib-refs' in
+      `bib-ref+'.
+    
+    * src/guile/skribilo/engine/context.scm (bib-ref+): Removed.
+    
+    * src/guile/skribilo/engine/html.scm (bib-ref+): Removed.
+    
+    * src/guile/skribilo/engine/latex.scm (bib-ref, bib-ref+): Removed.
+    
+    * src/guile/skribilo/engine/lout.scm (lout-bib-refs-sort/number):
+      Removed.
+      (lout-engine): Documented `bib-refs-sort-proc' as unused.
+      (bib-ref, bib-ref+): Removed.
+    
+    * src/guile/skribilo/package/base.scm (ref): New `:sort-bib-refs' option.
+      [bib-ref]: Add it to the markup's option list.
+
+    modified files:
+     ChangeLog src/guile/skribilo/biblio.scm
+     src/guile/skribilo/engine/base.scm
+     src/guile/skribilo/engine/context.scm
+     src/guile/skribilo/engine/html.scm
+     src/guile/skribilo/engine/latex.scm
+     src/guile/skribilo/engine/lout.scm
+     src/guile/skribilo/package/base.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-80
+
+
+2007-06-29 11:44:12 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-123
+
+    Summary:
+      Updated `TODO'.
+    Revision:
+      skribilo--devo--1.2--patch-123
+
+    * TODO: Added `(skribilo color)'.
+
+    modified files:
+     ChangeLog TODO
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-79
+
+
+2007-06-29 11:43:30 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-122
+
+    Summary:
+      `diff' package: Small bug fix.
+    Revision:
+      skribilo--devo--1.2--patch-122
+
+    * src/guile/skribilo/package/diff.scm (make-diff-document): Don't use
+      `ast-loc' when AST2 is not `ast?'.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/diff.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-77
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-78
+
+
 2007-06-24 19:53:56 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-121
 
     Summary:

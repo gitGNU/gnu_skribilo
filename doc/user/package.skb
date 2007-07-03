@@ -123,6 +123,7 @@ This package is to be used to authoring simple letters. It redefines the
       `((:where [The location where the letter is posted.])
 	(:date [The date of the letter.])
 	(:author [The author of the letter.]))
+      :ident "document/letter"
       :idx-note "letter"
       :idx-suffix " (letter)"
       :force-engines *api-engines*

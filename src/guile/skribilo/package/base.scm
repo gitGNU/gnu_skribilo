@@ -1001,11 +1001,6 @@
       (body (the-body opts))))
 
 ;*---------------------------------------------------------------------*/
-;*    *mark-table* ...                                                 */
-;*---------------------------------------------------------------------*/
-(define *mark-table* (make-hash-table))
-
-;*---------------------------------------------------------------------*/
 ;*    mark ...                                                         */
 ;*    -------------------------------------------------------------    */
 ;*    doc:                                                             */
@@ -1028,12 +1023,11 @@
 	  (let* ((bs (ast->string bd))
 		 (n (new markup
 		       (markup 'mark)
-		       (ident (symbol->string (gensym bs)))
+		       (ident bs)
 		       (class class)
                        (loc   &invocation-location)
 		       (options (the-options opts :ident :class :text))
 		       (body text))))
-	     (hash-set! *mark-table* bs n)
 	     n)))))
 
 ;*---------------------------------------------------------------------*/
@@ -1154,25 +1148,7 @@
 					 (ast s))))
 			     (unref n text (or kind 'ident)))))))))
    (define (mark-ref mark)
-      (if (not (string? mark))
-	  (skribe-type-error 'mark "Illegal mark, " mark "string")
-	  (new unresolved
-             (loc  &invocation-location)
-	     (proc (lambda (n e env)
-		      (let ((s (hash-ref *mark-table* mark)))
-			 (if s
-			     (new markup
-				(markup 'ref)
-				(ident (symbol->string (gensym "mark-ref")))
-				(class class)
-                                (loc   &invocation-location)
-				(required-options '(:text))
-				(options `((kind mark)
-					   (mark ,mark)
-					   ,@(the-options opts :ident :class)))
-				(body (new handle
-					 (ast s))))
-			     (unref n mark 'mark))))))))
+     (do-ident-ref mark 'mark))
    (define (make-bib-ref v)
       (let ((s (resolve-bib bib-table v)))
 	 (if s
@@ -1214,17 +1190,17 @@
       (new unresolved
          (loc   &invocation-location)
 	 (proc  (lambda (n e env)
-		   (let ((l (resolve-line line)))
-		      (if (pair? l)
+		   (let ((l (resolve-line (ast-document n) line)))
+		      (if l
 			  (new markup
 			     (markup 'line-ref)
 			     (ident (symbol->string (gensym "line-ref")))
 			     (class class)
                              (loc   &invocation-location)
-			     (options `((:text ,(markup-ident (car l)))
+			     (options `((:text ,(markup-ident l))
 					,@(the-options opts :ident :class)))
 			     (body (new handle
-				      (ast (car l)))))
+				      (ast l))))
 			  (unref n line 'line)))))))
    (let ((b (the-body opts)))
       (if (not (null? b))

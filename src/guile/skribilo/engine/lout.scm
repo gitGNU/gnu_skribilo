@@ -2472,22 +2472,6 @@
 		     (output (transform n) e))))))
 
 ;*---------------------------------------------------------------------*/
-;*    line-ref ...                                                     */
-;*---------------------------------------------------------------------*/
-(markup-writer 'line-ref
-   :options '(:offset)
-   :before "{ @I {" ;; FIXME: Not tested
-   :action (lambda (n e)
-	      (let ((o (markup-option n :offset))
-		    (v (string->number (markup-option n :text))))
-		 (cond
-		    ((and (number? o) (number? v))
-		     (display (+ o v)))
-		    (else
-		     (display v)))))
-   :after "} }")
-
-;*---------------------------------------------------------------------*/
 ;*    &the-bibliography ...                                            */
 ;*---------------------------------------------------------------------*/
 (markup-writer '&the-bibliography
@@ -2811,13 +2795,14 @@
 					     (gensym "lout-illustration")))
 					".eps"))
 		 (port (open-output-pipe
-			(apply string-append
-                               (or (engine-custom lout 'lout-program-name)
-                                   "lout")
-                               " -o " output
-                               " -EPS "
-                               (engine-custom lout
-                                              'lout-program-arguments)))))
+			(string-append
+                         (or (engine-custom lout 'lout-program-name)
+                             "lout")
+                         " -o " output
+                         " -EPS "
+                         (string-join
+                          (engine-custom lout
+                                         'lout-program-arguments))))))
 
 	    ;; send the illustration to Lout's standard input
 	    (display (illustration-header) port)
