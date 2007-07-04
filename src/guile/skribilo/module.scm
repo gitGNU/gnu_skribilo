@@ -75,9 +75,9 @@
     ((skribilo source)        . (source-read-lines source-fontify
 				 language? language-extractor
 				 language-fontifier source-fontify))
-    ((skribilo coloring lisp) . (skribe scheme lisp))
-    ((skribilo coloring xml)  . (xml))
-    ((skribilo coloring c)    . (c java))
+    ((skribilo source lisp)   . (skribe scheme stklos bigloo lisp))
+    ((skribilo source xml)    . (xml))
+    ((skribilo source c)      . (c java))
     ((skribilo prog)          . (make-prog-body resolve-line))
     ((skribilo color) .
      (skribe-color->rgb skribe-get-used-colors skribe-use-color!))

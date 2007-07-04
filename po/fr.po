@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: ludovic.courtes@laas.fr\n"
-"POT-Creation-Date: 2007-06-11 16:37+0200\n"
+"POT-Creation-Date: 2007-07-04 18:24+0200\n"
 "PO-Revision-Date: 2007-02-05 16:02+0100\n"
 "Last-Translator: Ludovic Courtès <ludovic.courtes@laas.fr>\n"
 "Language-Team: fr <LL@li.org>\n"
@@ -55,27 +55,27 @@ msgstr "erreur de fichier : ~a~%"
 msgid "undefined skribilo error: ~S~%"
 msgstr "erreur skribilo indéfinie : ~S~%"
 
-#: src/guile/skribilo/biblio.scm:107
+#: src/guile/skribilo/biblio.scm:110
 #, scheme-format
 msgid "~a:~a:~a: invalid bibliography entry: ~a~%"
 msgstr "~a:~a:~a: entrée de bibliographie incorrecte : ~a~%"
 
-#: src/guile/skribilo/biblio.scm:110
+#: src/guile/skribilo/biblio.scm:113
 #, scheme-format
 msgid "invalid bibliography entry: ~a~%"
 msgstr "entrée de bibliographie incorrecte : ~a~%"
 
-#: src/guile/skribilo/biblio.scm:114
+#: src/guile/skribilo/biblio.scm:117
 #, scheme-format
 msgid "invalid bibliography entry template: `~a', in `~a'~%"
 msgstr "patron de bibliographie incorrect : `~a', dans `~a'~%"
 
-#: src/guile/skribilo/biblio.scm:119
+#: src/guile/skribilo/biblio.scm:122
 #, fuzzy, scheme-format
 msgid "invalid bibliography entry s-exp: `~a'~%"
 msgstr "entrée de bibliographie incorrecte : ~a~%"
 
-#: src/guile/skribilo/biblio.scm:123
+#: src/guile/skribilo/biblio.scm:126
 #, scheme-format
 msgid "undefined bibliography error: ~a~%"
 msgstr "erreur de bibliographie indéfinie : ~a~%"

@@ -1,4 +1,4 @@
-guilemoduledir = $(GUILE_SITE)/skribilo/coloring
+guilemoduledir = $(GUILE_SITE)/skribilo/source
 dist_guilemodule_DATA = parameters.scm c.scm lisp.scm xml.scm	\
 			lisp-lex.scm xml-lex.scm c-lex.scm
 
@@ -14,9 +14,9 @@ EXTRA_DIST = lisp-lex.l xml-lex.l c-lex.l
 	$(GUILE) -L $(top_srcdir)/src/guile/silex			\
 	         -c '(load-from-path "lex.scm") (lex "$^" "$@")' &&	\
 	mv "$@" "$@.tmp" &&						\
-	echo '(define-module (skribilo coloring $(^:%.l=%))' > "$@" &&	\
+	echo '(define-module (skribilo source $(^:%.l=%))' > "$@" &&	\
 	echo '  :use-module (skribilo lib)' >> "$@" &&			\
-	echo '  :use-module (skribilo coloring parameters)'		\
+	echo '  :use-module (skribilo source parameters)'		\
 		>> "$@" &&						\
 	echo '  :use-module (srfi srfi-1)' >> "$@" &&			\
 	echo '  :export (lexer-init lexer' >> "$@" &&			\

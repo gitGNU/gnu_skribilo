@@ -1,6 +1,6 @@
-(define-module (skribilo coloring c-lex)
+(define-module (skribilo source lisp-lex)
   :use-module (skribilo lib)
-  :use-module (skribilo coloring parameters)
+  :use-module (skribilo source parameters)
   :use-module (srfi srfi-1)
   :export (lexer-init lexer
            lexer-get-func-column
@@ -1141,7 +1141,7 @@
 	     (lexer-make-code-lexer tables IS))))))
 
 ;
-; Table generated from the file c-lex.l by SILex 1.0
+; Table generated from the file lisp-lex.l by SILex 1.0
 ;
 
 (define lexer-default-table
@@ -1153,7 +1153,10 @@
        ))
    (lambda (yycontinue yygetc yyungetc)
      (lambda (yytext yyline)
-         		(skribe-error 'c-fontifier "Parse error" yytext)
+         		(skribe-error 'lisp-fontifier "Parse error" yytext)
+
+
+; LocalWords:  fontify
        ))
    (vector
     #t
@@ -1162,29 +1165,8 @@
           		(new markup
 			     (markup '&source-string)
 			     (body yytext))
-;; Comments
-;; FIXME: We shouldn't exclude `/' from comments but we do so to match the
-;; shortest multi-line comment.
-        ))
-    #t
-    (lambda (yycontinue yygetc yyungetc)
-      (lambda (yytext yyline)
-                	(let* ((not-line (char-set-complement (char-set #\newline)))
-                               (lines    (string-tokenize yytext not-line)))
-                          (reverse!
-                           (pair-fold (lambda (line* result)
-                                        (let* ((line  (car line*))
-                                               (last? (null? (cdr line*)))
-                                               (markup
-                                                (new markup
-                                                   (markup '&source-line-comment)
-                                                   (body   line))))
-                                          (if last?
-                                              (cons markup result)
-                                              (cons* (string #\newline)
-                                                     markup result))))
-                                      '()
-                                      lines)))
+
+;;Comment
         ))
     #t
     (lambda (yycontinue yygetc yyungetc)
@@ -1193,50 +1175,69 @@
 			     (markup '&source-line-comment)
 			     (body   yytext))
 
-;; Identifiers (only letters since we are interested in keywords only)
+;; Skribe text (i.e. [....])
         ))
     #t
     (lambda (yycontinue yygetc yyungetc)
       (lambda (yytext yyline)
-          		(let* ((ident (string->symbol yytext))
-			       (tmp   (memq ident (*the-keys*))))
-			  (if tmp
-			      (new markup
-				   (markup '&source-module)
-				   (body yytext))
-			      yytext))
+     		        (if (*bracket-highlight*)
+			    (new markup
+				 (markup '&source-bracket)
+				 (body   yytext))
+			    yytext)
+;; Spaces & parenthesis
+        ))
+    #t
+    (lambda (yycontinue yygetc yyungetc)
+      (lambda (yytext yyline)
+            		(begin
+			  yytext)
 
-;; Regular text (excluding `/' and `*')
+;; Identifier (real syntax is slightly more complicated but we are
+;; interested here in the identifiers that we will fontify)
         ))
     #t
     (lambda (yycontinue yygetc yyungetc)
       (lambda (yytext yyline)
-              		(begin yytext)
-
-;; `/' and `*' alone.
-        ))
-    #t
-    (lambda (yycontinue yygetc yyungetc)
-      (lambda (yytext yyline)
-                        (begin yytext)
-        ))
-    #t
-    (lambda (yycontinue yygetc yyungetc)
-      (lambda (yytext yyline)
-                        (begin yytext)
+                     	(let ((c (string-ref yytext 0)))
+			  (cond
+			    ((or (char=? c #\:)
+				 (char=? (string-ref yytext
+						     (- (string-length yytext) 1))
+					 #\:))
+			     ;; Scheme keyword
+			     (new markup
+				  (markup '&source-type)
+				  (body yytext)))
+			    ((char=? c #\<)
+			       ;; STklos class
+			       (let* ((len (string-length yytext))
+				      (c   (string-ref yytext (- len 1))))
+				 (if (char=? c #\>)
+				     (if (*class-highlight*)
+					 (new markup
+					      (markup '&source-module)
+					      (body yytext))
+					 yytext)		; no
+				     yytext)))			; no
+			    (else
+			       (let ((tmp (assoc (string->symbol yytext)
+						 (*the-keys*))))
+				 (if tmp
+				     (new markup
+					  (markup (cdr tmp))
+					  (body yytext))
+				     yytext)))))
         )))
    'decision-trees
    0
    0
-   '#((48 (42 (= 34 6 2) (43 1 (47 2 5))) (95 (65 2 (91 4 2)) (97 (96 3 2)
-    (123 4 2)))) (= 47 err 7) (47 (35 (34 2 err) (= 42 err 2)) (91 (48 err
-    (65 2 err)) (97 2 (123 err 2)))) (48 (42 (= 34 err 2) (43 err (47 2
-    err))) (95 (65 2 (91 4 2)) (97 (96 3 2) (123 4 2)))) (95 (65 err (91 4
-    err)) (97 (96 4 err) (123 4 err))) (43 (42 8 10) (= 47 9 8)) (= 34 11
-    6) err err (= 10 err 12) (43 (42 10 13) (= 47 err 10)) err (= 10 err
-    12) (43 (42 10 13) (= 47 14 10)) err)
-   '#((#f . #f) (#f . #f) (4 . 4) (3 . 3) (3 . 3) (#f . #f) (#f . #f) (6 .
-    6) (5 . 5) (2 . 2) (#f . #f) (0 . 0) (2 . 2) (#f . #f) (1 . 1))))
+   '#((40 (32 (9 1 (11 2 1)) (34 (33 2 1) (35 5 1))) (91 (59 (42 2 1) (60 4
+    1)) (93 (92 3 1) (94 3 1)))) (40 (32 (9 1 (11 err 1)) (34 (33 err 1)
+    (35 err 1))) (91 (59 (42 err 1) (60 err 1)) (93 (92 err 1) (94 err
+    1)))) (32 (9 err (11 2 err)) (40 (33 2 err) (42 2 err))) err (= 10 err
+    4) (= 34 6 5) err)
+   '#((#f . #f) (4 . 4) (3 . 3) (2 . 2) (1 . 1) (#f . #f) (0 . 0))))
 
 ;
 ; User functions

@@ -8,6 +8,6 @@ dist_guilemodule_DATA = biblio.scm color.scm config.scm		\
 			writer.scm ast.scm location.scm		\
 			condition.scm
 
-SUBDIRS = utils reader engine package coloring biblio
+SUBDIRS = utils reader engine package source biblio
 
 include $(top_srcdir)/guile-lint.am

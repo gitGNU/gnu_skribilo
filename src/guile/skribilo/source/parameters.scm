@@ -18,7 +18,7 @@
 ;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 ;;; USA.
 
-(define-module (skribilo coloring parameters)
+(define-module (skribilo source parameters)
   :use-module (srfi srfi-39)
   :export (*bracket-highlight* *class-highlight* *the-keys*))
 

@@ -2,6 +2,65 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-07-04 20:35:23 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-134
+
+    Summary:
+      Renamed the `coloring' module tree to `source' for consistency.
+    Revision:
+      skribilo--devo--1.2--patch-134
+
+
+    modified files:
+     ChangeLog configure.ac
+     doc/modules/skribilo/documentation/manual.scm po/fr.po
+     src/guile/skribilo/Makefile.am src/guile/skribilo/module.scm
+     src/guile/skribilo/source/Makefile.am
+     src/guile/skribilo/source/c-lex.scm
+     src/guile/skribilo/source/c.scm
+     src/guile/skribilo/source/lisp-lex.scm
+     src/guile/skribilo/source/lisp.scm
+     src/guile/skribilo/source/parameters.scm
+     src/guile/skribilo/source/xml-lex.scm
+     src/guile/skribilo/source/xml.scm
+
+    renamed files:
+     src/guile/skribilo/coloring/.arch-ids/=id
+       ==> src/guile/skribilo/source/.arch-ids/=id
+     src/guile/skribilo/coloring/.arch-ids/Makefile.am.id
+       ==> src/guile/skribilo/source/.arch-ids/Makefile.am.id
+     src/guile/skribilo/coloring/.arch-ids/c-lex.l.id
+       ==> src/guile/skribilo/source/.arch-ids/c-lex.l.id
+     src/guile/skribilo/coloring/.arch-ids/c-lex.scm.id
+       ==> src/guile/skribilo/source/.arch-ids/c-lex.scm.id
+     src/guile/skribilo/coloring/.arch-ids/c.scm.id
+       ==> src/guile/skribilo/source/.arch-ids/c.scm.id
+     src/guile/skribilo/coloring/.arch-ids/lisp-lex.l.id
+       ==> src/guile/skribilo/source/.arch-ids/lisp-lex.l.id
+     src/guile/skribilo/coloring/.arch-ids/lisp-lex.scm.id
+       ==> src/guile/skribilo/source/.arch-ids/lisp-lex.scm.id
+     src/guile/skribilo/coloring/.arch-ids/lisp.scm.id
+       ==> src/guile/skribilo/source/.arch-ids/lisp.scm.id
+     src/guile/skribilo/coloring/.arch-ids/xml-lex.l.id
+       ==> src/guile/skribilo/source/.arch-ids/xml-lex.l.id
+     src/guile/skribilo/coloring/.arch-ids/xml-lex.scm.id
+       ==> src/guile/skribilo/source/.arch-ids/xml-lex.scm.id
+     src/guile/skribilo/coloring/.arch-ids/xml.scm.id
+       ==> src/guile/skribilo/source/.arch-ids/xml.scm.id
+
+    new directories:
+     src/guile/skribilo/source/.arch-ids
+
+    removed directories:
+     src/guile/skribilo/coloring/.arch-ids
+
+    renamed directories:
+     src/guile/skribilo/coloring
+       ==> src/guile/skribilo/source
+
+    new patches:
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-118
+
+
 2007-07-01 23:50:22 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-133
 
     Summary:

@@ -20,15 +20,15 @@
 ;;; USA.
 
 
-(define-module (skribilo coloring lisp)
+(define-module (skribilo source lisp)
   :use-module (skribilo utils syntax)
   :use-module (skribilo source)
-  :use-module (skribilo coloring parameters)
+  :use-module (skribilo source parameters)
   :use-module (skribilo lib)
   :use-module (srfi srfi-39)
   :use-module (ice-9 match)
   :autoload   (skribilo reader)            (make-reader)
-  :autoload   (skribilo coloring lisp-lex) (lexer-init)
+  :autoload   (skribilo source lisp-lex)   (lexer-init)
   :export (skribe scheme stklos bigloo lisp))
 
 

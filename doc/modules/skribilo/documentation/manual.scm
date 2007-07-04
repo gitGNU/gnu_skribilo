@@ -33,8 +33,8 @@
   :use-module (skribilo documentation env)
   :use-module (skribilo package base)
   :use-module (skribilo prog)
-  :use-module (skribilo coloring lisp)
-  :use-module (skribilo coloring xml)
+  :use-module (skribilo source lisp)
+  :use-module (skribilo source xml)
 
   :use-module (ice-9 optargs))
 
