@@ -1,7 +1,7 @@
 ;;; api.scm  --  The style for documenting Scheme APIs.
 ;;;
 ;;; Copyright 2003, 2004  Manuel Serrano
-;;; Copyright 2005, 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2005, 2006, 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -26,7 +26,6 @@
   :use-module (skribilo ast)
   :use-module (skribilo output)
   :use-module (skribilo lib) ;; `define-markup'
-  :use-module (skribilo utils keywords)
   :use-module (skribilo utils compat)
   :use-module (skribilo utils syntax) ;; `%skribilo-module-reader'
 
@@ -38,7 +37,7 @@
   :use-module (ice-9 match)
   :use-module (ice-9 optargs))
 
-(fluid-set! current-reader (make-reader 'skribe))
+(fluid-set! current-reader %skribilo-module-reader)
 
 
 ;*---------------------------------------------------------------------*/
@@ -156,7 +155,7 @@
 	   o
 	   #f))
       ((exp ___)
-       (let loop ((exp exp))
+       (let ((exp exp))
 	 (cond ((null? exp)
 		#f)
 	       ((pair? exp)
@@ -179,9 +178,6 @@
        (primitive-eval custom))
       (else
        '()))))
-
-(define (sym/kw? x)
-  (or (symbol? x) (keyword? x)))
 
 ;*---------------------------------------------------------------------*/
 ;*    define-markup-formals ...                                        */
@@ -222,7 +218,7 @@
       ((_ (args ___) _ ___)
        (if (not (list? args))
 	   '()
-	   (let ((keys (memq #!key args)))
+	   (let ((keys (memq :key args)))
 	      (if (pair? keys)
 		  (cdr keys) ;; FIXME: do we need to filter ((key val)...)?
 		  '()))))
@@ -248,7 +244,7 @@
 	   (let ((l (last-pair args)))
 	      (if (symbol? (cdr l))
 		  (cdr l)
-		  (let ((rest (memq #!rest args)))
+		  (let ((rest (memq :rest args)))
 		     (if (pair? rest)
 			 (if (or (not (pair? (cdr rest)))
 				 (not (symbol? (cadr rest))))
@@ -321,7 +317,7 @@
 	  (tr (td :align 'left exp))))
       (else 
        (match exp
-	  ((quote (and ?sym (? symbol?)))
+	  ((and sym (? symbol?))
 	   (string-append "'" (symbol->string sym)))
 	  (else
 	   (with-output-to-string (lambda () (write exp))))))))
@@ -359,9 +355,9 @@
 ;*    doc-markup ...                                                   */
 ;*---------------------------------------------------------------------*/
 (define-markup (doc-markup id args
-			   #!rest
+			   :rest
 			   opts
-			   #!key
+			   :key
 			   (ident #f)
 			   (writer-id #f)
 			   (common-args '((:ident "The node identifier.")
@@ -443,10 +439,10 @@
 	      (doptions (filter (lambda (x) 
 				   (and (keyword? (car x))
 					;; useful for STklos only
-					(not (eq? (car x) #!rest))))
+					(not (eq? (car x) :rest))))
 				args))
 	      (drest (filter (lambda (x) 
-				(eq? #!rest (car x))) 
+				(eq? :rest (car x))) 
 			     args))
 	      (dargs (and (pair? drest) (cadr (car drest))))
 	      (p+ (cons (doc-markup-proto id options fformals dargs)
@@ -492,7 +488,8 @@
 				   (ref :mark s :text (code s))
 				   " ")))
 			    see-also)))
-		(table :border (if (engine-format? "latex") 1 0)
+		(table :&location &invocation-location
+                   :border (if (engine-format? "latex") 1 0)
 		   :width (if (engine-format? "latex") #f *prgm-width*)
 		   `(,(tr :class 'api-table-prototype
 			 (th :colspan 3 :align 'left :width *prgm-width*
@@ -546,7 +543,7 @@
 			       (let ((s (symbol->string x)))
 				  (list 
 				   (ref :mark s :page #t 
-				      :text [,(code s), p.])
+				      :text (list (code s) ", p."))
 				   " ")))
 			    see-also)))
 		(list (center 
@@ -591,9 +588,9 @@
 ;*    doc-engine ...                                                   */
 ;*---------------------------------------------------------------------*/
 (define-markup (doc-engine id args
-			   #!rest 
+			   :rest 
 			   opts
-			   #!key 
+			   :key 
 			   (idx *custom-index*)
 			   source
 			   (skribe-source? #t)
@@ -613,7 +610,8 @@
 	      #f)
 	     (else
 	      (center
-		 (apply table 
+		 (apply table
+                        :&location &invocation-location
 			:width *prgm-width*
 			(tr :class 'api-table-header
 			   (th :align 'left :width 20. "custom")

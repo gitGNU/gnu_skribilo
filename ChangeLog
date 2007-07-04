@@ -2,6 +2,26 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-07-04 20:36:43 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-137
+
+    Summary:
+      Linted documentation modules.
+    Revision:
+      skribilo--devo--1.2--patch-137
+
+    * doc/modules/skribilo/documentation/*.scm: Use the
+      `%skribilo-module-reader' and corresponding syntax, no longer use
+      `compat'.
+
+    modified files:
+     ChangeLog doc/modules/skribilo/documentation/api.scm
+     doc/modules/skribilo/documentation/extension.scm
+     doc/modules/skribilo/documentation/manual.scm
+
+    new patches:
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-121
+
+
 2007-07-04 20:36:19 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-136
 
     Summary:

@@ -1,6 +1,7 @@
-;;; extension.scm  --  The Skribe package for documenting extensions
+;;; extension.scm  --  The Skribilo package for documenting extensions.
 ;;;
 ;;; Copyright 2003, 2004  Manuel Serrano
+;;; Copyright 2007  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -19,17 +20,35 @@
 ;;; USA.
 
 (define-module (skribilo documentation extension)
-  :use-module (skribilo reader)
-  :use-module (skribilo utils compat))
+  :use-module (skribilo sui)
+  :use-module (skribilo config)
+  :use-module (skribilo parameters)
 
-(fluid-set! current-reader (make-reader 'skribe))
+  :use-module (skribilo lib)
+  :use-module (skribilo ast)
+  :use-module (skribilo engine)
+  :use-module (skribilo writer)
+  :use-module (skribilo output)
+  :use-module (skribilo evaluator)
+
+  :use-module (skribilo package base)
+  :use-module (skribilo engine html)
+
+  :use-module (skribilo utils files)
+  :use-module (skribilo utils compat)
+  :use-module (skribilo utils syntax)
+  :use-module (skribilo utils keywords)
+
+  :use-module (ice-9 optargs))
+
+(fluid-set! current-reader %skribilo-module-reader)
 
 
 ;*---------------------------------------------------------------------*/
 ;*    extension                                                        */
 ;*---------------------------------------------------------------------*/
-(define-markup (extension #!rest opt 
-			  #!key (ident (symbol->string (gensym 'extension)))
+(define-markup (extension :rest opt 
+			  :key (ident (symbol->string (gensym 'extension)))
 			  (class "extension")
 			  title html-title ending author description 
 			  (env '()))
@@ -37,6 +56,7 @@
       (markup 'extension)
       (ident ident)
       (class class)
+      (loc &invocation-location)
       (options (the-options opt))
       (body (the-body opt))
       (env (append env
@@ -45,7 +65,7 @@
 			 (list 'section-counter 0) (list 'section-env '())
 			 (list 'footnote-counter 0) (list 'footnote-env '())
 			 (list 'figure-counter 0) (list 'figure-env '()))))))
-		  
+
 ;*---------------------------------------------------------------------*/
 ;*    html engine                                                      */
 ;*---------------------------------------------------------------------*/
@@ -56,24 +76,24 @@
 		     (and (pair? m) (car m)))))
 	    (if (not i)
 		(table :width 100. :border 0 :cellspacing 0 :cellpadding 0
-		   (tr (td :align 'left :valign 'top (bold "Skribe: "))
+		   (tr (td :align 'left :valign 'top (bold "Skribilo: "))
 		      (td :align 'right :valign 'top
-			 (ref :url *skribe-dir-doc-url* 
+			 (ref :url (skribilo-doc-directory)
 			    :text "Directory")))
 		   (tr (td)
 		      (td :align 'right :valign 'top
-			 (ref :url *skribe-user-doc-url* 
+			 (ref :url (skribilo-doc-directory)
 			    :text "User Manual"))))
 		(table :width 100. :border 0 :cellspacing 0 :cellpadding 0
 		   (tr (td :align 'left :valign 'top (bold "index:"))
 		      (td :align 'right (ref :handle (handle i))))
 		   (tr (td :align 'left :valign 'top (bold "Skribe: "))
 		      (td :align 'right :valign 'top
-			 (ref :url *skribe-dir-doc-url* 
+			 (ref :url (skribilo-doc-directory)
 			    :text "Directory")))
 		   (tr (td)
 		      (td :align 'right :valign 'top
-			 (ref :url *skribe-user-doc-url* 
+			 (ref :url (skribilo-doc-directory)
 			    :text "User Manual"))))))))
    (default-engine-set! he))
 
@@ -83,14 +103,14 @@
 (define (extension-sui n e)
    (define (sui)
       (display "(sui \"")
-      (skribe-eval (markup-option n :title) html-title-engine)
+      (evaluate-document (markup-option n :title) html-title-engine)
       (display "\"\n")
       (printf "  :file ~s\n" (sui-referenced-file n e))
       (printf "  :description ~s\n" (markup-option n :description))
       (sui-marks n e)
       (display "  )\n"))
-   (if (string? *skribe-dest*)
-       (let ((f (format "~a.sui" (prefix *skribe-dest*))))
+   (if (string? (*destination-file*))
+       (let ((f (string-append (file-prefix (*destination-file*)) ".sui")))
 	  (with-output-to-file f sui))
        (sui)))
 
@@ -99,8 +119,9 @@
 ;*---------------------------------------------------------------------*/
 (markup-writer 'extension
    :options '(:title :html-title :ending :author :description)
-   :action (lambda (n e)
-	      (output n e (markup-writer-get 'document he)))
+   :action (let ((he (find-engine 'html)))
+             (lambda (n e)
+               (output n e (markup-writer-get 'document he))))
    :after (lambda (n e)
 	     (if (engine-custom e 'emit-sui)
 		 (extension-sui n e))))
