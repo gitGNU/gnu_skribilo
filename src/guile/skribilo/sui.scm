@@ -1,7 +1,7 @@
 ;;; sui.scm
 ;;;
 ;;; Copyright 2003, 2004  Manuel Serrano
-;;; Copyright 2005, 2006  Ludovic Courtès  <ludovic.courtes@laas.fr>
+;;; Copyright 2005, 2006, 2007  Ludovic Courtès  <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -190,7 +190,7 @@
        (let loop ((refs refs)
 		  (res '()))
 	  (if (pair? refs)
-	      (if (and (pred1 (car refs)))
+	      (if (pred1 (car refs))
 		  (loop (cdr refs)
 			(cons (filter pred2 (cdar refs)) res))
 		  (loop (cdr refs) res))

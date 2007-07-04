@@ -2,6 +2,26 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-07-04 20:35:54 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-135
+
+    Summary:
+      Fixed the `sui' module.
+    Revision:
+      skribilo--devo--1.2--patch-135
+
+    * src/guile/skribilo/Makefile.am (dist_guilemodule_DATA): Added
+      `sui.scm'.
+    
+    * src/guile/skribilo/sui.scm (sui-filter): Removed single-operand `and'.
+
+    modified files:
+     ChangeLog src/guile/skribilo/Makefile.am
+     src/guile/skribilo/sui.scm
+
+    new patches:
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-119
+
+
 2007-07-04 20:35:23 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-134
 
     Summary:
