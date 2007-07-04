@@ -20,15 +20,23 @@
 ;;; USA.
 
 (define-module (skribilo sui)
-  :use-module (skribilo utils syntax)
   :use-module (skribilo lib)
-  :use-module (ice-9 match)
-  :use-module (srfi srfi-1)
+  :use-module (skribilo ast)
   :autoload   (skribilo parameters) (*verbose*)
   :autoload   (skribilo reader)     (make-reader)
+  :autoload   (skribilo engine)     (find-engine)
+  :autoload   (skribilo evaluator)  (evaluate-document)
+  :autoload   (skribilo engine html)(html-file)
+  :use-module (skribilo utils strings)
+  :use-module (skribilo utils syntax)
+  :use-module (skribilo utils files)
+
+  :use-module (ice-9 match)
+  :use-module (srfi srfi-1)
 
   :export (load-sui sui-ref->url sui-title sui-file sui-key
-           sui-find-ref sui-search-ref sui-filter))
+           sui-find-ref sui-search-ref sui-filter
+           document-sui sui-referenced-file sui-marks sui-blocks))
 
 (fluid-set! current-reader %skribilo-module-reader)
 
@@ -197,3 +205,64 @@
 	      (reverse! res))))
       (else
        (skribe-error 'sui-filter "Illegal `sui' format" sui))))
+
+;*---------------------------------------------------------------------*/
+;*    document-sui ...                                                 */
+;*---------------------------------------------------------------------*/
+(define (document-sui n e)
+   (define (sui)
+      (display "(sui \"")
+      (evaluate-document (markup-option n :title) (find-engine 'html))
+      (display "\"\n")
+      (format #t "  :file ~s\n" (sui-referenced-file n e))
+      (sui-marks n e)
+      (sui-blocks 'chapter n e)
+      (sui-blocks 'section n e)
+      (sui-blocks 'subsection n e)
+      (sui-blocks 'subsubsection n e)
+      (display "  )\n"))
+   (if (string? (*destination-file*))
+       (let ((f (format #f "~a.sui" (file-prefix (*destination-file*)))))
+	  (with-output-to-file f sui))
+       (sui)))
+
+;*---------------------------------------------------------------------*/
+;*    sui-referenced-file ...                                          */
+;*---------------------------------------------------------------------*/
+(define (sui-referenced-file n e)
+   (let ((file (html-file n e)))
+      (if (member (file-suffix file) '("skb" "sui" "skr" "html"))
+	  (string-append (strip-ref-base (file-prefix file)) ".html")
+	  file)))
+
+;*---------------------------------------------------------------------*/
+;*    sui-marks ...                                                    */
+;*---------------------------------------------------------------------*/
+(define (sui-marks n e)
+   (display "  (marks")
+   (for-each (lambda (m)
+		(format #t "\n    (~s" (markup-ident m))
+		(format #t " :file ~s" (sui-referenced-file m e))
+		(format #t " :mark ~s" (markup-ident m))
+		(when (markup-class m)
+		   (format #t " :class ~s" (markup-class m)))
+		(display ")"))
+	     (search-down (lambda (n) (is-markup? n 'mark)) n))
+   (display ")\n"))
+
+;*---------------------------------------------------------------------*/
+;*    sui-blocks ...                                                   */
+;*---------------------------------------------------------------------*/
+(define (sui-blocks kind n e)
+   (format #t "  (~as" kind)
+   (for-each (lambda (chap)
+		(display "\n    (\"")
+		(evaluate-document (markup-option chap :title)
+                                   (find-engine 'html))
+		(format #t "\" :file ~s" (sui-referenced-file chap e))
+		(format #t " :mark ~s" (markup-ident chap))
+		(when (markup-class chap)
+		   (format #t " :class ~s" (markup-class chap)))
+		(display ")"))
+	     (container-search-down (lambda (n) (is-markup? n kind)) n))
+   (display ")\n"))

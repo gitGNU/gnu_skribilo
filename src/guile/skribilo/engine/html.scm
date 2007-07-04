@@ -35,13 +35,14 @@
   :autoload   (skribilo evaluator)     (evaluate-document)
   :autoload   (skribilo output)        (output)
   :autoload   (skribilo debug)         (*debug*)
+  :autoload   (skribilo sui)           (document-sui)
   :autoload   (ice-9 rdelim)           (read-line)
   :autoload   (ice-9 regex)            (regexp-substitute/global)
   :use-module (srfi srfi-13)
   :use-module (srfi srfi-14)
   :use-module ((srfi srfi-19) :renamer (symbol-prefix-proc 's19:))
 
-  :export (html-engine
+  :export (html-engine html-title-engine html-file
            html-width html-class html-markup-class
            html-title-authors))
 
@@ -993,66 +994,6 @@
        (display "</center>\n"))
       (else
        (html-title-authors (list authors) e))))
-
-;*---------------------------------------------------------------------*/
-;*    document-sui ...                                                 */
-;*---------------------------------------------------------------------*/
-(define (document-sui n e)
-   (define (sui)
-      (display "(sui \"")
-      (evaluate-document (markup-option n :title) html-title-engine)
-      (display "\"\n")
-      (format #t "  :file ~s\n" (sui-referenced-file n e))
-      (sui-marks n e)
-      (sui-blocks 'chapter n e)
-      (sui-blocks 'section n e)
-      (sui-blocks 'subsection n e)
-      (sui-blocks 'subsubsection n e)
-      (display "  )\n"))
-   (if (string? (*destination-file*))
-       (let ((f (format #f "~a.sui" (file-prefix (*destination-file*)))))
-	  (with-output-to-file f sui))
-       (sui)))
-
-;*---------------------------------------------------------------------*/
-;*    sui-referenced-file ...                                          */
-;*---------------------------------------------------------------------*/
-(define (sui-referenced-file n e)
-   (let ((file (html-file n e)))
-      (if (member (file-suffix file) '("skb" "sui" "skr" "html"))
-	  (string-append (strip-ref-base (file-prefix file)) ".html")
-	  file)))
-
-;*---------------------------------------------------------------------*/
-;*    sui-marks ...                                                    */
-;*---------------------------------------------------------------------*/
-(define (sui-marks n e)
-   (display "  (marks")
-   (for-each (lambda (m)
-		(format #t "\n    (~s" (markup-ident m))
-		(format #t " :file ~s" (sui-referenced-file m e))
-		(format #t " :mark ~s" (markup-ident m))
-		(when (markup-class m)
-		   (format #t " :class ~s" (markup-class m)))
-		(display ")"))
-	     (search-down (lambda (n) (is-markup? n 'mark)) n))
-   (display ")\n"))
-
-;*---------------------------------------------------------------------*/
-;*    sui-blocks ...                                                   */
-;*---------------------------------------------------------------------*/
-(define (sui-blocks kind n e)
-   (format #t "  (~as" kind)
-   (for-each (lambda (chap)
-		(display "\n    (\"")
-		(evaluate-document (markup-option chap :title) html-title-engine)
-		(format #t "\" :file ~s" (sui-referenced-file chap e))
-		(format #t " :mark ~s" (markup-ident chap))
-		(when (markup-class chap)
-		   (format #t " :class ~s" (markup-class chap)))
-		(display ")"))
-	     (container-search-down (lambda (n) (is-markup? n kind)) n))
-   (display ")\n"))
 
 ;*---------------------------------------------------------------------*/
 ;*    author ...                                                       */
