@@ -1,6 +1,7 @@
-;;; manual.scm  --  Skribe manuals and documentation pages style
+;;; manual.scm  --  Skribilo manuals and documentation style.
 ;;;
 ;;; Copyright 2003, 2004  Manuel Serrano
+;;; Copyright 2007  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -19,7 +20,6 @@
 ;;; USA.
 
 (define-module (skribilo documentation manual)
-  :use-module (skribilo reader)
   :use-module (skribilo engine)
   :use-module (skribilo writer)
   :use-module (skribilo ast)
@@ -28,17 +28,16 @@
   :use-module (skribilo output)
   :use-module (skribilo utils keywords)
   :use-module (skribilo utils compat)
-  :use-module (skribilo utils syntax) ;; `when'
+  :use-module (skribilo utils syntax)
 
   :use-module (skribilo documentation env)
   :use-module (skribilo package base)
-  :use-module (skribilo prog)
-  :use-module (skribilo coloring lisp)
-  :use-module (skribilo coloring xml)
+  :use-module (skribilo source lisp)
+  :use-module (skribilo source xml)
 
   :use-module (ice-9 optargs))
 
-(fluid-set! current-reader (make-reader 'skribe))
+(fluid-set! current-reader %skribilo-module-reader)
 
 
 ;*---------------------------------------------------------------------*/
@@ -121,7 +120,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    prgm ...                                                         */
 ;*---------------------------------------------------------------------*/
-(define-markup (prgm #!rest opts #!key (language skribe) (line #f) (file #f) (definition #f))
+(define-markup (prgm :rest opts :key (language skribe) (line #f) (file #f) (definition #f))
    (let* ((c (cond
 		((eq? language skribe) *prgm-skribe-color*)
 		((eq? language xml) *prgm-xml-color*)
@@ -145,7 +144,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    disp ...                                                         */
 ;*---------------------------------------------------------------------*/
-(define-markup (disp #!rest opts #!key (verb #f) (line #f) (bg *disp-color*))
+(define-markup (disp :rest opts :key (verb #f) (line #f) (bg *disp-color*))
    (if (engine-format? "latex")
        (if verb 
 	   (pre (the-body opts))
@@ -188,7 +187,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    example ...                                                      */
 ;*---------------------------------------------------------------------*/
-(define-markup (example #!rest opts #!key legend class)
+(define-markup (example :rest opts :key legend class)
    (new container
       (markup 'example)
       (ident (symbol->string (gensym 'example)))
@@ -233,8 +232,7 @@
 			(list l)
 			(list (tr (td :colspan 2)) l))))
 	      (define (make-primary-entry n p)
-		 (let* ((note (markup-option n :note))
-			(b (markup-body n)))
+		 (let ((b (markup-body n)))
 		    (when p 
 		       (markup-option-add! b :text 
 					   (list (markup-option b :text) 
@@ -290,18 +288,14 @@
 		     (nc (markup-option n :column))
 		     (pref (eq? (engine-custom e 'index-page-ref) #t))
 		     (loc (ast-loc n))
-		     ;; FIXME: Since we don't support
-		     ;; `:&skribe-eval-location', we could set up a
-		     ;; `parameterize' thing around `skribe-eval' to provide
-		     ;; it with the right location information.
 		     (t (cond
 			   ((null? ie)
 			    "")
 			   ((or (not (integer? nc)) (= nc 1))
-			    (table :width 100. ;;:&skribe-eval-location loc
+			    (table :width 100. :&location loc
 			       (make-column ie pref)))
 			   (else
-			    (table :width 100. ;;:&skribe-eval-location loc
+			    (table :width 100. :&location loc
 			       (make-sub-tables ie nc pref))))))
 		 (output (skribe-eval t e) e))))
 

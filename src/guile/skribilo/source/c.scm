@@ -19,11 +19,11 @@
 ;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 ;;; USA.
 
-(define-module (skribilo coloring c)
+(define-module (skribilo source c)
   :use-module (skribilo lib)
   :use-module (skribilo utils syntax)
-  :use-module (skribilo coloring c-lex)		;; SILex generated
-  :use-module (skribilo coloring parameters)
+  :use-module (skribilo source c-lex)		;; SILex generated
+  :use-module (skribilo source parameters)
   :use-module (srfi srfi-39)
   :export (c c-language java))
 

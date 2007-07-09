@@ -1,6 +1,6 @@
 ;;; xml.scm -- XML syntax highlighting.
 ;;;
-;;; Copyright 2005  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2005, 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 ;;; Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 
-(define-module (skribilo coloring xml)
+(define-module (skribilo source xml)
   :export (xml)
   :use-module (skribilo lib)
   :use-module (ice-9 regex))

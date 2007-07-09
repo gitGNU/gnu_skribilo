@@ -55,7 +55,7 @@ AC_OUTPUT([Makefile
 	   src/guile/skribilo/package/slide/Makefile
 	   src/guile/skribilo/package/eq/Makefile
 	   src/guile/skribilo/package/pie/Makefile
-	   src/guile/skribilo/coloring/Makefile
+	   src/guile/skribilo/source/Makefile
 	   src/guile/skribilo/biblio/Makefile
 	   doc/Makefile
 	   doc/user/Makefile

@@ -1,6 +1,7 @@
-(define-module (skribilo coloring xml-lex)
+(define-module (skribilo source xml-lex)
   :use-module (skribilo lib)
-  :use-module (skribilo coloring parameters)
+  :use-module (skribilo source parameters)
+  :use-module (srfi srfi-1)
   :export (lexer-init lexer
            lexer-get-func-column
            lexer-get-func-offset
