@@ -2,6 +2,23 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-07-18 06:50:29 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-138
+
+    Summary:
+      sui: Small autoload fix.
+    Revision:
+      skribilo--devo--1.2--patch-138
+
+    * src/guile/skribilo/sui.scm: Autoload `parameters' on
+      `*destination-file*'.
+
+    modified files:
+     ChangeLog src/guile/skribilo/sui.scm
+
+    new patches:
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-122
+
+
 2007-07-04 20:36:43 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-137
 
     Summary:
