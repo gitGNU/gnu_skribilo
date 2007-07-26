@@ -2,6 +2,23 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-07-26 15:28:37 GMT	Ludovic Courtes <ludo@gnu.org>	patch-139
+
+    Summary:
+      `outline' reader: Fixed `append-trees'.
+    Revision:
+      skribilo--devo--1.2--patch-139
+
+    * src/guile/skribilo/reader/outline.scm (append-trees): Make sure only
+      symbols can appear as the head of the resulting list.
+
+    modified files:
+     ChangeLog src/guile/skribilo/reader/outline.scm
+
+    new patches:
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-123
+
+
 2007-07-18 06:50:29 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-138
 
     Summary:
