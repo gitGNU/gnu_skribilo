@@ -295,17 +295,19 @@
           :before (writer-before oldh)
           :action (lambda (n e)
                      ((writer-action oldh) n e)
-                     (for-each (lambda (m)
-                                  (output (new markup
-                                             (markup m)
-                                             (parent n))
-                                          e))
-                               '(&html-navtabs-css-title
-                                 &html-navtabs-css-tabs
-                                 &html-navtabs-css-bar
-                                 &html-navtabs-css-active
-                                 &html-navtabs-css-inactive
-                                 &html-navtabs-css-margins)))
+                     (let ((css? (engine-custom e 'html-navtabs-produce-css?)))
+                       (if (or css? (unspecified? css?))
+                           (for-each (lambda (m)
+                                       (output (new markup
+                                                    (markup m)
+                                                    (parent n))
+                                               e))
+                                     '(&html-navtabs-css-title
+                                       &html-navtabs-css-tabs
+                                       &html-navtabs-css-bar
+                                       &html-navtabs-css-active
+                                       &html-navtabs-css-inactive
+                                       &html-navtabs-css-margins)))))
           :after (writer-after oldh))
        (markup-writer '&html-document-title he :action &html-navtabs-generic-title)
        (markup-writer '&html-chapter-title he :action &html-navtabs-generic-title)

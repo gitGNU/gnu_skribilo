@@ -2,6 +2,23 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-07-29 10:29:53 GMT	Ludovic Courtes <ludo@gnu.org>	patch-141
+
+    Summary:
+      html-navtabs: Permit disabling of CSS output.
+    Revision:
+      skribilo--devo--1.2--patch-141
+
+    * src/guile/skribilo/package/html-navtabs.scm (&html-header-style):
+      Check whether `html-navtabs-produce-css?' is set.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/html-navtabs.scm
+
+    new patches:
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-125
+
+
 2007-07-29 10:29:16 GMT	Ludovic Courtes <ludo@gnu.org>	patch-140
 
     Summary:
