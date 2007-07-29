@@ -2,6 +2,24 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-07-29 10:30:23 GMT	Ludovic Courtes <ludo@gnu.org>	patch-142
+
+    Summary:
+      Allow arbitrary keyword arguments in `define-markup'.
+    Revision:
+      skribilo--devo--1.2--patch-142
+
+    * src/guile/skribilo/lib.scm (define-markup)[fix-rest-arg]: Add
+      `:allow-other-keys' so that package like `html-navtabs' can require
+      extra keyword arguments.
+
+    modified files:
+     ChangeLog src/guile/skribilo/lib.scm
+
+    new patches:
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-126
+
+
 2007-07-29 10:29:53 GMT	Ludovic Courtes <ludo@gnu.org>	patch-141
 
     Summary:
