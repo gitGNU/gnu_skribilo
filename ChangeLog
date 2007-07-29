@@ -2,6 +2,26 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-07-29 10:29:16 GMT	Ludovic Courtes <ludo@gnu.org>	patch-140
+
+    Summary:
+      Added `html-navtabs' by Manuel Serrano.
+    Revision:
+      skribilo--devo--1.2--patch-140
+
+    * src/guile/skribilo/package/Makefile.am (dist_guilemodule_DATA): Added
+      `html-navtabs.scm'.
+
+    new files:
+     src/guile/skribilo/package/html-navtabs.scm
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/Makefile.am
+
+    new patches:
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-124
+
+
 2007-07-26 15:28:37 GMT	Ludovic Courtes <ludo@gnu.org>	patch-139
 
     Summary:
