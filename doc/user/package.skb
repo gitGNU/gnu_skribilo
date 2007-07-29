@@ -1,7 +1,7 @@
 ;;; package.skb  --  Packages
 ;;;
-;;; Copyright 2004, 2005  Manuel Serrano
-;;; Copyright 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2001, 2004, 2005  Manuel Serrano
+;;; Copyright 2007  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -155,7 +155,52 @@ The ,(param :css) is a shorthand for ,(param :style). For instance:])
       (index :index *package-index* "web-book.skr" :note "package")
       (p [
 A convenient mode for rendering books (i.e., documents made of
-chapters and sections) in HTML.]))))
+chapters and sections) in HTML.]))
+   
+   (subsection :title [HTML Navigation Tabs]
+
+      (p [The ,(tt [html-navtabs]) package enables quick navigation
+inside HTML documents by means of tabs.  The produced HTML code uses CSS
+declarations.  The ,(tt [html-navtabs]) package does not introduce any
+new markups.  It is configured via additional ,(ref :text [engine
+customs.] :chapter "Engines")])
+      
+      (subsubsection :title [HTML Engine Customization]
+   
+	 (p [,(tt [html-navtabs]) is to be used in conjunction with the
+,(ref :text (code "html-engine") :mark "html-engine")
+engine.  Specifically, it adds the following new customization to this
+engine:])
+
+     (doc-engine 'html
+		 `((html-navtabs [The tabs.])
+		   (html-navtabs-padding [Padding above tabs.])
+		   (html-navtabs-bar-background [Bar background color.]))
+		 :def `(make-engine 'html
+			  :custom '((html-navtabs ,(it [Containers whose
+  option ,(param :file) is ,(code "#t")]))
+				    (html-navtabs-padding 20.)
+				    (html-navtabs-bar-background 
+				     ,(engine-custom (find-engine 'html)
+					 'left-margin-background))))))
+
+      (subsubsection :title [Additional Container Options]
+
+	 (p [,(tt [html-navtabs]) introduces two new ,(ref :text
+"containers" :section "Sectioning") (i.e., a ,(ref :text (code
+"document") :mark "document") ,(ref :text (code "chapter") :mark
+"chapter") ,(ref :text (code "section") :mark "subsection"), ...)
+attributes: ,(param :html-tabs-bar) and ,(param :no-tabs).  The
+attribute ,(param :html-tabs-bar) may contain any Skribe expression. It
+controls the content of the navtabs sub-bar (i.e., a small line above
+the tabs). The attribute ,(param :no-tabs) disable tabs for this
+container.]))
+
+      (subsubsection :title [Example]
+
+	 (p [Below is a full example using ,(tt [html-navtabs]).])
+
+	 (prgm :file "src/html-navtabs.skb")))))
 
 ;*---------------------------------------------------------------------*/
 ;*    Emacs indentation                                                */

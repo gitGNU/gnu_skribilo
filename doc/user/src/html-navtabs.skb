@@ -1,0 +1,118 @@
+;*---------------------------------------------------------------------*/
+;*    Skribilo's `html-navtabs' package                                */
+;*---------------------------------------------------------------------*/
+(use-modules (skribilo package html-navtabs)
+	     (srfi srfi-1))
+
+;*---------------------------------------------------------------------*/
+;*    HTML customization                                               */
+;*---------------------------------------------------------------------*/
+(let* ((he     (find-engine 'html))
+       (oldh   (markup-writer-get '&html-chapter-header he))
+       (colors (circular-list "#ffb643" "#de8bff")))
+   ;; re-bindings
+   (markup-writer '&html-chapter-header he
+      :options 'all
+      :predicate (lambda (n e)
+		    (is-markup? (ast-parent n) 'chapter))
+      :action (lambda (n e)
+		 (engine-custom-set! e 'left-margin-background (car colors))
+		 (set! colors (cdr colors))
+		 (output n e oldh))))
+
+;*---------------------------------------------------------------------*/
+;*    menu ...                                                         */
+;*---------------------------------------------------------------------*/
+(define-markup (menu e #!rest opt #!key title)
+   (table :width 95. :border 1 :cellpadding 0 :cellspacing 0
+      :class "menu"
+      (tr :bg (engine-custom e 'title-background) 
+	 (th (color :fg (engine-custom e 'background) (bold title))))
+      (tr :bg (engine-custom e 'background) 
+	 (td (the-body opt)))))
+
+;*---------------------------------------------------------------------*/
+;*    linux                                                            */
+;*---------------------------------------------------------------------*/
+(define (linux n e)
+   (menu e
+	 :title "Linux"
+	 (apply table :width 100. :border 0 :class "linux"
+		(tr (td :align 'left :valign 'top (bold "Linux")))
+		(map (lambda (l)
+			(tr (td :align 'left :valign 'top  l)))
+		     (list (ref :url "http://www.kernel.org/" 
+			      :text "Linux kernel")
+			   (ref :url "http://www.gentoo.org/"
+			      :text "Gentoo")
+			   (ref :url "http://www.debian.org/"
+			      :text "Debian")
+			   (ref :url "http://www.redhat.org/"
+			      :text "Red Hat")
+			   (ref :url "http://www.mandrake.org/"
+			      :text "Mandrake"))))))
+
+;*---------------------------------------------------------------------*/
+;*    HTML customizations                                              */
+;*---------------------------------------------------------------------*/
+(let ((he (find-engine 'html)))
+   (engine-custom-set! he 'favicon "icons/serrano.gif")
+   (engine-custom-set! he 'left-margin-size 25.)
+   (engine-custom-set! he 'left-margin
+		       (lambda (n e)
+			  (list (center (linux n e)))))
+   (engine-custom-set! he 'javascript #t)
+   (engine-custom-set! he 'head "div.skribetitle {
+    padding-top: 40;
+  }
+  div.skribetitle td {
+    font-size: xx-large;
+    font-weight: bold;
+    font-style: oblique;
+  }
+  body {
+    border: 1px;
+    border-color: black;
+    border-style: inset;
+    margin: 0;
+    padding: 0;
+  }
+  div.navtabs-bar form {
+    border: 0 0 0 0;
+    padding: 2px 2px 2px 2px;
+    margin: 2px 2px 2px 2px;
+    clear: none;
+    display: inline;
+  }
+  div.navtabs-bar select {
+    margin: 2px 2px 2px 2px;
+    font-family: Arial,Helvetica,sans-serif; 
+    font-size: small;
+  }
+"))
+
+;*---------------------------------------------------------------------*/
+;*    The title                                                        */
+;*---------------------------------------------------------------------*/
+(define title
+   (table :width 100. :cellpadding 10. 
+      (tr (td :align 'center (image :file "linux.png"))
+	 (td :align 'left [Skribilo ,(tt [html-navtabs]) Sample]))))
+
+;*---------------------------------------------------------------------*/
+;*    The document                                                     */
+;*---------------------------------------------------------------------*/
+(document :title title :html-title "html-navtabs"
+   :html-tabs-bar 
+   (table (tr (td :align 'right "a two-lines table"))
+      (tr (td :align 'right "yep")))
+   
+   (section :title "Foo" :number #f (p [The in-line foo section]))
+   
+   (chapter :title "Bar" :file #t
+      :html-tabs-bar [This is the bar chapter]
+      (p [Yehhh.]))
+   (chapter :title "Gee" :file #t
+      :html-tabs-bar [This is the gee chapter]
+      (p ":-)")))
+      

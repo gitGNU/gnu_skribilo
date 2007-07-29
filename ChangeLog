@@ -2,6 +2,27 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-07-29 10:30:53 GMT	Ludovic Courtes <ludo@gnu.org>	patch-143
+
+    Summary:
+      Documented `html-navtabs'.
+    Revision:
+      skribilo--devo--1.2--patch-143
+
+    * doc/user/package.skb (HTML Navigation Tabs): New subsection.  Borrowed
+      from Manuel Serrano's doc for `html-navtabs'.
+
+    new files:
+     doc/user/src/.arch-ids/html-navtabs.skb.id
+     doc/user/src/html-navtabs.skb
+
+    modified files:
+     ChangeLog doc/user/package.skb
+
+    new patches:
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-127
+
+
 2007-07-29 10:30:23 GMT	Ludovic Courtes <ludo@gnu.org>	patch-142
 
     Summary:
