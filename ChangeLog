@@ -2,6 +2,24 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-08-20 16:29:46 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-145
+
+    Summary:
+      Fixed `find-up'.
+    Revision:
+      skribilo--devo--1.2--patch-145
+
+    * src/guile/skribilo/ast.scm (find-up): Don't cons OBJ when it doesn't
+      match PRED.
+
+    modified files:
+     ChangeLog src/guile/skribilo/ast.scm
+     src/guile/skribilo/package/base.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-86
+
+
 2007-08-20 16:28:40 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-144
 
     Summary:
