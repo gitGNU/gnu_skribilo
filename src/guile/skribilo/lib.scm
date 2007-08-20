@@ -1,7 +1,7 @@
 ;;; lib.scm -- Utilities.
 ;;;
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
-;;; Copyright 2005, 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2005, 2007  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -73,29 +73,38 @@
 (define-macro (define-markup bindings . body)
   ;; This is just an `(ice-9 optargs)' kind of `lambda*', with DSSSL
   ;; keyword-style conversion enabled.  However, using `(ice-9 optargs)', the
-  ;; `#:rest' argument can only appear last, which is not what Skribe/DSSSL
-  ;; expect, hence `fix-rest-arg'.
+  ;; `:rest' argument can only appear last, which is not what Skribe/DSSSL
+  ;; expect, hence `fix-rest-arg'.  In addition, all keyword arguments are
+  ;; allowed (hence `:allow-other-keys'); they are then checked by `verify'.
   (define (fix-rest-arg args)
-    (let loop ((args args)
-	       (result '())
-	       (rest-arg #f))
+    (let loop ((args          args)
+	       (result        '())
+	       (rest-arg      '())
+               (has-keywords? #f))
       (cond ((null? args)
-	     (if rest-arg
-		 (append (reverse result) rest-arg)
-		 (reverse result)))
+             (let ((result (if has-keywords?
+                               (cons :allow-other-keys result)
+                               result)))
+               (append! (reverse! result) rest-arg)))
 
 	    ((list? args)
-	     (let ((is-rest-arg? (eq? (car args) #:rest)))
-	       (loop (if is-rest-arg? (cddr args) (cdr args))
-		     (if is-rest-arg? result (cons (car args) result))
-		     (if is-rest-arg?
-			 (list (car args) (cadr args))
-			 rest-arg))))
+	     (let ((is-rest-arg? (eq? (car args) :rest))
+                   (is-keyword?  (eq? (car args) :key)))
+               (if is-rest-arg?
+                   (loop (cddr args)
+                         result
+                         (list (car args) (cadr args))
+                         (or has-keywords? is-keyword?))
+                   (loop (cdr args)
+                         (cons (car args) result)
+                         rest-arg
+                         (or has-keywords? is-keyword?)))))
 
 	    ((pair? args)
 	     (loop '()
 		   (cons (car args) result)
-		   (list #:rest (cdr args)))))))
+		   (list #:rest (cdr args))
+                   has-keywords?)))))
 
   (let ((name (car bindings))
 	(opts (cdr bindings)))

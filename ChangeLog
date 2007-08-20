@@ -2,6 +2,116 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-07-29 10:30:53 GMT	Ludovic Courtes <ludo@gnu.org>	patch-143
+
+    Summary:
+      Documented `html-navtabs'.
+    Revision:
+      skribilo--devo--1.2--patch-143
+
+    * doc/user/package.skb (HTML Navigation Tabs): New subsection.  Borrowed
+      from Manuel Serrano's doc for `html-navtabs'.
+
+    new files:
+     doc/user/src/.arch-ids/html-navtabs.skb.id
+     doc/user/src/html-navtabs.skb
+
+    modified files:
+     ChangeLog doc/user/package.skb
+
+    new patches:
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-127
+
+
+2007-07-29 10:30:23 GMT	Ludovic Courtes <ludo@gnu.org>	patch-142
+
+    Summary:
+      Allow arbitrary keyword arguments in `define-markup'.
+    Revision:
+      skribilo--devo--1.2--patch-142
+
+    * src/guile/skribilo/lib.scm (define-markup)[fix-rest-arg]: Add
+      `:allow-other-keys' so that package like `html-navtabs' can require
+      extra keyword arguments.
+
+    modified files:
+     ChangeLog src/guile/skribilo/lib.scm
+
+    new patches:
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-126
+
+
+2007-07-29 10:29:53 GMT	Ludovic Courtes <ludo@gnu.org>	patch-141
+
+    Summary:
+      html-navtabs: Permit disabling of CSS output.
+    Revision:
+      skribilo--devo--1.2--patch-141
+
+    * src/guile/skribilo/package/html-navtabs.scm (&html-header-style):
+      Check whether `html-navtabs-produce-css?' is set.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/html-navtabs.scm
+
+    new patches:
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-125
+
+
+2007-07-29 10:29:16 GMT	Ludovic Courtes <ludo@gnu.org>	patch-140
+
+    Summary:
+      Added `html-navtabs' by Manuel Serrano.
+    Revision:
+      skribilo--devo--1.2--patch-140
+
+    * src/guile/skribilo/package/Makefile.am (dist_guilemodule_DATA): Added
+      `html-navtabs.scm'.
+
+    new files:
+     src/guile/skribilo/package/html-navtabs.scm
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/Makefile.am
+
+    new patches:
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-124
+
+
+2007-07-26 15:28:37 GMT	Ludovic Courtes <ludo@gnu.org>	patch-139
+
+    Summary:
+      `outline' reader: Fixed `append-trees'.
+    Revision:
+      skribilo--devo--1.2--patch-139
+
+    * src/guile/skribilo/reader/outline.scm (append-trees): Make sure only
+      symbols can appear as the head of the resulting list.
+
+    modified files:
+     ChangeLog src/guile/skribilo/reader/outline.scm
+
+    new patches:
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-123
+
+
+2007-07-18 06:50:29 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-138
+
+    Summary:
+      sui: Small autoload fix.
+    Revision:
+      skribilo--devo--1.2--patch-138
+
+    * src/guile/skribilo/sui.scm: Autoload `parameters' on
+      `*destination-file*'.
+
+    modified files:
+     ChangeLog src/guile/skribilo/sui.scm
+
+    new patches:
+     lcourtes@laas.fr--2005-mobile/skribilo--devel--1.2--patch-122
+
+
 2007-07-04 20:36:43 GMT	Ludovic Courtes <ludovic.courtes@laas.fr>	patch-137
 
     Summary:

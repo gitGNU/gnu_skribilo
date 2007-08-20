@@ -22,7 +22,7 @@
 (define-module (skribilo sui)
   :use-module (skribilo lib)
   :use-module (skribilo ast)
-  :autoload   (skribilo parameters) (*verbose*)
+  :autoload   (skribilo parameters) (*verbose* *destination-file*)
   :autoload   (skribilo reader)     (make-reader)
   :autoload   (skribilo engine)     (find-engine)
   :autoload   (skribilo evaluator)  (evaluate-document)

@@ -83,15 +83,21 @@ equal to @var{name}, a markup name."
   (let loop ((trees trees)
 	     (result '()))
     (if (null? trees)
-	result
+	(let ((result (reverse! result)))
+          (cond ((and (pair? result)
+                      (not (symbol? (car result))))
+                 ;; Make sure only symbols end up in the head.
+                 (cons 'list result))
+                (else
+                 result)))
 	(let ((tree (car trees)))
 	  (loop (cdr trees)
-		(append result
-			(if (list? tree)
-			    (cond ((null? tree) '())
-				  ((symbol? (car tree)) (list tree))
-				  (else tree))
-			    (list tree))))))))
+		(append (if (list? tree)
+                            (cond ((null? tree) '())
+                                  ((symbol? (car tree)) (list tree))
+                                  (else tree))
+                            (list tree))
+                        result))))))
 
 (define (null-string? s)
   (and (string? s) (string=? s "")))
