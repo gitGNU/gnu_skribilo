@@ -1,6 +1,7 @@
 ;;; sectioning.skb  --  Sectioning markups
 ;;;
 ;;; Copyright 2003, 2004  Manuel Serrano
+;;; Copyright 2007  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -40,10 +41,12 @@
 
 (doc-markup 'chapter
 	    `((:title [The title of the chapter.])
-	      (:html-title "The title of window of the HTML browser.")
+	      (:html-title [The title of window of the HTML browser.])
 	      (:number [This argument controls the chapter number.
-A value of ,(tt "#t") means that the Skribe compiler computes the chapter
-number. A value of ,(tt "#f") means that the chapter has no number.])
+A value of ,(tt "#t") means that Skribilo computes the chapter
+number. A value of ,(tt "#f") means that the chapter has no number.  A
+number or string specifies a number to be used in lieu of the
+automatically computed number.])
 	      (:toc ,[This argument controls if the chapter must
 be referenced in the ,(ref :mark "toc" :text "table of contents").])
 	      (:file [The argument must be a boolean. A value of
@@ -73,8 +76,10 @@ in the main target file.])
 (doc-markup 'section 
 	    `((:title [The title of the chapter.])
 	      (:number [This argument controls the chapter number.
-A value of ,(tt "#t") means that the Skribe compiler computes the chapter
-number. A value of ,(tt "#f") means that the chapter has no number.])
+A value of ,(tt "#t") means that Skribilo computes the chapter
+number. A value of ,(tt "#f") means that the chapter has no number.  A
+number or string specifies a number to be used in lieu of the
+automatically computed number.])
 	      (:toc ,[This argument controls if the chapter must
 be referenced in the ,(ref :mark "toc" :text "table of contents").])
 	      (:file [The argument must be a boolean. A value of
@@ -123,4 +128,6 @@ of text.])
 	    '((#!rest node... "The nodes of the quoted text.")))))
 
 
-
+;;; Local Variables:
+;;; coding: latin-1
+;;; End:

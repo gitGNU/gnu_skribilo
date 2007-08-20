@@ -2,6 +2,25 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-08-20 16:30:42 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-146
+
+    Summary:
+      doc: Updated documentation of `:number' for sections.
+    Revision:
+      skribilo--devo--1.2--patch-146
+
+    * doc/user/sectioning.skb (Chapter): Mention new behavior with
+      non-boolean `:number'.
+      (Sections): Likewise.
+
+    modified files:
+     ChangeLog doc/user/sectioning.skb
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-87
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-88
+
+
 2007-08-20 16:29:46 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-145
 
     Summary:
