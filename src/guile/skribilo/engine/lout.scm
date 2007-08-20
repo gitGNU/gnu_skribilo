@@ -1362,12 +1362,10 @@
 	   (output title e)
 	   (display " }\n")
 
-	   (if (number? number)
+	   (if number
 	       (format #t "  @BypassNumber { ~a }\n"
 		       (markup-number-string n))
-	       (if (not number)
-		   ;; this trick hides the section number
-		   (display "  @BypassNumber { } # unnumbered\n")))
+               (display "  @BypassNumber { } # unnumbered\n"))
 
 	   (cond ((string? ident)
 		  (begin
