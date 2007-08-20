@@ -174,6 +174,22 @@
 		   (skribe-error 'toc "Illegal argument" body)))))))
 
 ;*---------------------------------------------------------------------*/
+;*    section-number ...                                               */
+;*---------------------------------------------------------------------*/
+(define (section-number number markup)
+  (cond ((not number)
+         ;; number-less
+         #f)
+        ((or (string? number) (list? number) (ast? number))
+         ;; user-specified number
+         number)
+        (else
+         ;; automatic numbering
+         (new unresolved
+              (proc (lambda (n e env)
+                      (resolve-counter n env markup number)))))))
+
+;*---------------------------------------------------------------------*/
 ;*    chapter ... ...                                                  */
 ;*    -------------------------------------------------------------    */
 ;*    doc:                                                             */
@@ -193,27 +209,12 @@
       (loc   &invocation-location)
       (required-options '(:title :file :toc :number))
       (options `((:toc ,toc)
-		 (:number ,(and number
-				(new unresolved
-				   (proc (lambda (n e env)
-					    (resolve-counter n
-							     env
-							     'chapter
-							     number))))))
+		 (:number ,(section-number number 'chapter))
 		 ,@(the-options opts :ident :class)))
       (body (the-body opts))
       (env (list (list 'section-counter 0) (list 'section-env '())
 		 (list 'footnote-counter 0) (list 'footnote-env '())
                  (list 'equation-counter 0) (list 'equation-env '())))))
-
-;*---------------------------------------------------------------------*/
-;*    section-number ...                                               */
-;*---------------------------------------------------------------------*/
-(define (section-number number markup)
-   (and number
-	(new unresolved
-	   (proc (lambda (n e env)
-		    (resolve-counter n env markup number))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    section ...                                                      */
