@@ -60,9 +60,10 @@
   ;; native engine.
   (make-parameter #f))
 
-(define-public *use-lout-eq2?*
-  ;; Whether the use the new Lout `eq2' package instead of `eq'.
-  (make-parameter #f))
+(define-public *use-lout-math?*
+  ;; Whether the use the Lout's `math' package (new in Lout 3.36) instead
+  ;; of `eq'.
+  (make-parameter #t))
 
 
 (define %operators
