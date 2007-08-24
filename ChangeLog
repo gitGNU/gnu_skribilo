@@ -2,6 +2,25 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-08-24 08:31:38 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-148
+
+    Summary:
+      eq/lout: Use "strut @Font" within parenthesized expressions.
+    Revision:
+      skribilo--devo--1.2--patch-148
+
+    * src/guile/skribilo/package/eq/lout.scm (%left-paren): Use "strut
+      @Font"  for the expression that follows.
+      (%right-paren): Updated accordingly.
+      (combinations): Use "nostrut @Font".
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/eq/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-90
+
+
 2007-08-24 08:31:04 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-147
 
     Summary:
