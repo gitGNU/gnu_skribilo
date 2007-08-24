@@ -83,10 +83,19 @@
    :after  " } }")
 
 
-;; Scaled parenthesis.  We could use `pmatrix' here but it precludes
-;; line-breaking within equations.
-(define %left-paren  "{ Base @Font @VScale \"(\" }")
-(define %right-paren "{ Base @Font @VScale \")\" }")
+;; Scaled parenthesis.
+;;
+;;  * We could use `pmatrix' here but it precludes line-breaking within
+;;    equations, so we use our own variant.
+;;
+;;  * The use of `strut @Font' aims to produce balanced parentheses,
+;;    regardless of the ascender/descender of the numerator/denominator, so
+;;    that, e.g., "(a/b)" has parentheses similar to "(b/a)".
+;;
+(define %left-paren
+  "{ { Base \"nostrut\" } @Font @VScale \"(\" } \"strut\" @Font { ")
+(define %right-paren
+  " }{ { Base \"nostrut\" } @Font @VScale \")\" }")
 
 (define (div-style->lout style)
   (case style
@@ -258,7 +267,11 @@
    :action (lambda (node engine)
              (let ((of    (markup-option node :of))
                    (among (markup-option node :among)))
-               (display " ` { matrix atleft { lpar } atright { rpar } { ")
+               ;; Note: The `matrix' is enclosed in `nostrut' so that its
+               ;; brackets are not affected.  It also looks better to enclose
+               ;; the matrix contents in `nostrut'.
+               (display " ` { \"nostrut\" @Font ")
+               (display "matrix atleft { lpar } atright { rpar } { ")
                (display "row col { ")
                (output of engine)
                (display " } row col { ")
