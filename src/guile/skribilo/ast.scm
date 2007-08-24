@@ -219,12 +219,11 @@
 ;;;
 ;;; ======================================================================
 (define-class <command> (<ast>)
-  (fmt    :init-keyword :fmt)
-  (body   :init-keyword :body))
+  (fmt    :init-keyword :fmt  :getter command-fmt)
+  (body   :init-keyword :body :getter command-body))
 
 (define (command? obj)     (is-a? obj <command>))
-(define (command-fmt obj)  (slot-ref obj 'fmt))
-(define (command-body obj) (slot-ref obj 'body))
+
 
 ;;; ======================================================================
 ;;;
@@ -232,10 +231,9 @@
 ;;;
 ;;; ======================================================================
 (define-class <unresolved> (<ast>)
-  (proc :init-keyword :proc))
+  (proc :init-keyword :proc :getter unresolved-proc))
 
 (define (unresolved? obj)     (is-a? obj <unresolved>))
-(define (unresolved-proc obj) (slot-ref obj 'proc))
 
 ;;; ======================================================================
 ;;;
@@ -246,8 +244,7 @@
   (ast :init-keyword :ast :init-value #f :getter handle-ast))
 
 (define (handle? obj)     (is-a? obj <handle>))
-(define (handle-ast obj)  (slot-ref obj 'ast))
-(define (handle-body h)   (slot-ref h 'body))
+(define (handle-body h)   (slot-ref h 'body)) ;; FIXME: Looks suspicious!
 
 ;;; ======================================================================
 ;;;
@@ -281,13 +278,13 @@
 ;;;
 ;;; ======================================================================
 (define-class <processor> (<node>)
-  (combinator :init-keyword :combinator :init-value (lambda (e1 e2) e1))
-  (engine     :init-keyword :engine	 :init-value 'unspecified)
+  (combinator :init-keyword :combinator  :init-value (lambda (e1 e2) e1)
+              :getter processor-combinator)
+  (engine     :init-keyword :engine	 :init-value 'unspecified
+              :getter processor-engine)
   (procedure  :init-keyword :procedure	 :init-value (lambda (n e) n)))
 
 (define (processor? obj)           (is-a? obj <processor>))
-(define (processor-combinator obj) (slot-ref obj 'combinator))
-(define (processor-engine obj)     (slot-ref obj 'engine))
 
 
 
@@ -437,10 +434,9 @@
 ;;;
 ;;; ======================================================================
 (define-class <container> (<markup>)
-  (env :init-keyword :env :init-value '()))
+  (env :init-keyword :env :init-value '() :getter container-env))
 
 (define (container? obj)    (is-a? obj <container>))
-(define (container-env obj) (slot-ref obj 'env))
 (define container-options   markup-options)
 (define container-ident     markup-ident)
 (define container-body      node-body)
@@ -461,8 +457,8 @@
 
 
 (define (document? obj)      (is-a? obj <document>))
-(define (document-ident obj) (slot-ref obj 'ident))
-(define (document-body obj)  (slot-ref obj 'body))
+(define document-ident       container-ident)
+(define document-body        container-body)
 (define document-options     markup-options)
 (define document-env         container-env)
 
