@@ -2,6 +2,24 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-08-24 15:51:27 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-149
+
+    Summary:
+      eq/lout: Tiny fix.
+    Revision:
+      skribilo--devo--1.2--patch-149
+
+    * src/guile/skribilo/package/eq/lout.scm (in): Use `in' instead of
+      `element', which fixes spacing.
+      (notin): Likewise.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/eq/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-91
+
+
 2007-08-24 08:31:38 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-148
 
     Summary:
