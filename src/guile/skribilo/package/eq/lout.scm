@@ -228,8 +228,8 @@
 				   body))))))
 
 (binary-lout-markup-writer expt  "sup")
-(binary-lout-markup-writer in    "element")
-(binary-lout-markup-writer notin "notelement")
+(binary-lout-markup-writer in    "in")
+(binary-lout-markup-writer notin "notin")
 
 (markup-writer 'eq:apply (find-engine 'lout)
    :action (lambda (node engine)
