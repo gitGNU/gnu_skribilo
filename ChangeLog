@@ -2,6 +2,27 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-08-24 08:31:04 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-147
+
+    Summary:
+      `eq' package: Switched to Lout's `@Math'.
+    Revision:
+      skribilo--devo--1.2--patch-147
+
+    * src/guile/skribilo/package/eq.scm (*use-lout-eq2?*): Renamed to...
+      (*use-lout-math?*): Default to `#t' since `@Math' is now part of Lout,
+      from version 3.36.
+    
+    * src/guile/skribilo/package/eq/lout.scm: Updated accordingly.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/eq.scm
+     src/guile/skribilo/package/eq/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-89
+
+
 2007-08-20 16:30:42 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-146
 
     Summary:

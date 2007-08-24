@@ -44,7 +44,7 @@
 	(engine-custom-set! lout 'includes
 			    (string-append includes "\n"
 					   "@SysInclude { "
-                                           (if (*use-lout-eq2?*) "eq2" "eq")
+                                           (if (*use-lout-math?*) "math" "eq")
                                            " }\n")))))
 
 
@@ -71,8 +71,12 @@
                (display "{ ")))
    :action (lambda (node engine)
              (display (if (inline-equation? node)
-                          "@OneRow @OneCol @E { "
-                          "@Eq { "))
+                          (if (*use-lout-math?*)
+                              "@M { "
+                              "@OneRow @OneCol @E { ")
+                          (if (*use-lout-math?*)
+                              "@Math { "
+                              "@Eq { ")))
              (let ((eq (markup-body node)))
                ;;(fprint (current-error-port) "eq=" eq)
                (output eq engine)))
@@ -240,7 +244,7 @@
                    (var   (markup-option node :var))
                    (limit (markup-option node :limit)))
                (format #t "{ lim ~a { { "
-                       (if (*use-lout-eq2?*)
+                       (if (*use-lout-math?*)
                            "atop @SubScriptStyle"
                            "from"))
                (output var engine)
@@ -273,7 +277,7 @@
 		      (to (markup-option node :to))
 		      (body (markup-body node)))
 		  (display ,(string-append " { "
-                                           (if (*use-lout-eq2?*)
+                                           (if (*use-lout-math?*)
                                                ""
                                                "big ")
                                            lout-name
