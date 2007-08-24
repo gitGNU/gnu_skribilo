@@ -173,7 +173,8 @@
   (parent  :accessor ast-parent :init-keyword :parent :init-value 'unspecified)
 
   ;; Its source location.
-  (loc     :init-value #f :init-keyword :loc)
+  (loc     :init-value #f :init-keyword :loc
+           :getter ast-loc :setter ast-loc-set!)
 
   ;; This slot is used as an optimization when resolving an AST: sub-parts of
   ;; the tree are marked as resolved as soon as they are and don't need to be
@@ -182,10 +183,8 @@
 
 
 (define (ast? obj)		(is-a? obj <ast>))
-(define (ast-loc obj)		(slot-ref obj 'loc))
-(define (ast-loc-set! obj v)	(slot-set! obj 'loc v))
-(define (ast-parent n)
-  (slot-ref n 'parent))
+(define-method (equal? (a <ast>) (b <ast>))
+  (eq? (ast-parent a) (ast-parent b)))
 
 
 (define (ast->file-location ast)
@@ -257,12 +256,19 @@
 ;;; ======================================================================
 (define-class <node> (<ast>)
   (required-options :init-keyword :required-options :init-value '())
-  (options	     :init-keyword :options	     :init-value '())
+  (options          :init-keyword :options	    :init-value '()
+                    :getter node-options)
   (body	     :init-keyword :body	     :init-value #f
 	     :getter	   node-body))
 
 (define (node? obj)        (is-a? obj <node>))
-(define (node-options obj) (slot-ref obj 'options))
+(define-method (equal? (a <node>) (b <node>))
+  (and (next-method)
+       (equal? (slot-ref a 'required-options)
+               (slot-ref b 'required-options))
+       (equal? (node-body a)
+               (node-body b))))
+
 (define node-loc	   ast-loc)
 
 (define-method (ast->string (ast <node>))
@@ -296,8 +302,16 @@
 
 
 (define (markup? obj)		(is-a? obj <markup>))
-(define (markup-options obj)	(slot-ref obj 'options))
-(define markup-body    node-body)
+(define-method (equal? (a <markup>) (b <markup>))
+  (and (next-method)
+       ;; We don't check for equality of `ident' because most markups return
+       ;; a fresh identifier every time they are called (using `gensym'),
+       ;; unless an identifier is explicitly specified.
+       (equal? (markup-class a)  (markup-class b))
+       (eq?    (markup-markup a) (markup-markup b))))
+
+(define markup-options	        node-options)
+(define markup-body             node-body)
 (define (markup-body-set! m body)
   (slot-set! m 'resolved? #f)
   (slot-set! m 'body      body))

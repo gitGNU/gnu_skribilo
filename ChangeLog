@@ -2,6 +2,23 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-08-24 17:38:16 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-150
+
+    Summary:
+      Added `equal?' for ASTs.
+    Revision:
+      skribilo--devo--1.2--patch-150
+
+    * src/guile/skribilo/ast.scm (equal?): New methods, for <ast>, <node>
+      and <markup>.
+
+    modified files:
+     ChangeLog src/guile/skribilo/ast.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-92
+
+
 2007-08-24 15:51:27 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-149
 
     Summary:
