@@ -1769,6 +1769,7 @@
 			  (cond ((number? number) number)
 				((not number)     "")
 				(else             number)))
+                 (display "  @OnePage { Yes }\n")
 		 (display "  @InitialLanguage { ")
 		 (display (engine-custom e 'initial-language))
 		 (display " }\n")
