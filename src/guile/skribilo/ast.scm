@@ -123,41 +123,48 @@
 
 (define (handle-ast-error c)
   ;; Issue a user-friendly error message for error condition C.
+  (define (show-location obj)
+    (let ((location (and (ast? obj) (ast-loc obj))))
+      (if (location? location)
+          (format (current-error-port) "~a:~a:~a: "
+                  (location-file location)
+                  (location-line location)
+                  (location-column location)))))
+
   (cond ((ast-orphan-error? c)
-	 (let* ((node (ast-orphan-error:ast c))
-		(location (and (ast? node) (ast-loc node))))
-	   (format (current-error-port) "orphan node: ~a~a~%"
-		   node
-		   (if (location? location)
-		       (string-append " "
-				      (location-file location) ":"
-				      (location-line location))
-		       ""))))
+	 (let ((node (ast-orphan-error:ast c)))
+           (show-location node)
+	   (format (current-error-port) (_ "orphan node: ~a~%")
+		   node)))
 
 	((ast-cycle-error? c)
 	 (let ((object (ast-cycle-error:object c)))
+           (show-location object)
 	   (format (current-error-port)
-		   "cycle found in AST: ~a~%" object)))
+		   (_ "cycle found in AST: ~a~%") object)))
 
 	((markup-unknown-option-error? c)
 	 (let ((markup (markup-unknown-option-error:markup c))
 	       (option (markup-unknown-option-error:option c)))
+           (show-location markup)
 	   (format (current-error-port)
-		   "~a: unknown markup option for `~a'~%"
+		   (_ "~a: unknown markup option for `~a'~%")
 		   option markup)))
 
 	((markup-already-bound-error? c)
 	 (let ((markup (markup-already-bound-error:markup c))
 	       (ident  (markup-already-bound-error:ident  c)))
+           (show-location markup)
 	   (format (current-error-port)
-		   "`~a' (~a): markup identifier already bound~%"
+		   (_ "`~a' (~a): markup identifier already bound~%")
 		   ident
 		   (if (markup? markup)
 		       (markup-markup markup)
 		       markup))))
 
 	(else
-	 (format (current-error-port) "undefined resolution error: ~a~%"
+	 (format (current-error-port)
+                 (_ "undefined AST error: ~a~%")
 		 c))))
 
 (register-error-condition-handler! ast-error? handle-ast-error)
