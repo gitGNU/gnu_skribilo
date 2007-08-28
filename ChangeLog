@@ -2,6 +2,24 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-08-28 14:40:03 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-152
+
+    Summary:
+      lout: Use `@OnePage' for `figure'.
+    Revision:
+      skribilo--devo--1.2--patch-152
+
+    * src/guile/skribilo/engine/lout.scm (figure): Use "@OnePage { Yes }" so
+      that figure and caption are kept on the same page.  This looks like a
+      sane default, since multi-page figures are expected to be rare.
+
+    modified files:
+     ChangeLog src/guile/skribilo/engine/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-94
+
+
 2007-08-24 17:38:53 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-151
 
     Summary:
