@@ -630,6 +630,10 @@
 			 (paragraph-gap
 			  "\n//1.0vx @ParaIndent @Wide &{0i}\n")
 
+                         ;; Gap for the first paragraph within a container
+                         ;; (e.g., the first paragraph of a chapter).
+                         (first-paragraph-gap "\n@LP\n")
+
 			 ;; For multi-page tables, it may be
 			 ;; useful to set this to `#t'.  However,
 			 ;; this looks kind of buggy.
@@ -1528,7 +1532,18 @@
 			      (markup-markup (ast-parent n)))
 			 '(chapter section subsection subsubsection slide))))
    :before (lambda (n e)
-	     (let ((gap (engine-custom e 'paragraph-gap)))
+             (define (first-paragraph?)
+               ;; Return true if N is the first paragraph in this container.
+               (let* ((parent   (ast-parent n))
+                      (siblings (markup-body parent)))
+                 (and (pair? siblings)
+                      (eq? n (find (lambda (n)
+                                     (is-markup? n 'paragraph))
+                                   siblings)))))
+
+	     (let ((gap (if (first-paragraph?)
+                            (engine-custom e 'first-paragraph-gap)
+                            (engine-custom e 'paragraph-gap))))
 	       (display (if (string? gap) gap "\n@PP\n")))))
 
 ;*---------------------------------------------------------------------*/
