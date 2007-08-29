@@ -1,7 +1,7 @@
 ;;; bib.skb  --  The Skribilo bibliography.
 ;;;
 ;;; Copyright 2001, 2002, 2003, 2004  Manuel Serrano
-;;; Copyright 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2007  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -112,7 +112,7 @@ the ,(code "bibliography") Skribe function call before the call to the
 	      (#!rest entry... ,[If ,(param 'entry) is a string, it denotes
               a file containing the entry (see ,(ref :mark "skribe-bib-path" 
               :text "bibliograph path")). Otherwise, it is a list described
-              by the ,(ref :subsection "Bibliography syntax" :text "syntax") 
+              by the ,(ref :subsection "Bibliography Syntax" :text "syntax") 
               below.]))
 	    :see-also '(bib-table? make-bib-table *bib-table* the-bibliography)
 	    :force-engines *api-engines*
@@ -169,16 +169,40 @@ Here is an example of a simple Skribe database.])
                         the year of publication will be used.  For
                         instance: "\[Smith 1984\]",
                         "\[Smith & Johnson 1979\]", or
-                        "\[Smith et al. 1980\]".])
+                        "\[Smith ,(it [et al.]) 1980\]".])
 	      (:count ,[The symbol ,(code "partial") or ,(code "full")
                specifies the numbering to be applied. The value 
                ,(code "partial") tells Skribilo to count only the entries
                filtered in by ,(param :pred). The value ,(code "full")
                tells Skribilo to count all entries, event those filtered out
                by ,(param :pred).]))
-	    :see-also '(bib-table? make-bib-table *bib-table* bibliography)
+	    :see-also '(bib-table? make-bib-table *bib-table*
+	                bibliography noabbrev)
 	    :force-engines *api-engines*
 	    :common-args '())
+
+(p [Note that the ,(code "name+year") label style will only work if the
+following conventions are followed by the ,(code "author") field of your
+bibliography entries:
+
+,(itemize
+    (item [the ,(code [author]) fields of bibliographic entries should
+be a string containing a comma-separated list of full author names;])
+    (item [each ``full author name'' should have the form ,(code
+"first-name second-name ... last-name");]))
+
+When using the ,(code "name+year") label style, it is sometimes
+desirable to preclude automatic abbreviations for some authors, e.g.,
+when the author is the name of a consortium or company rather than that
+of a person.  In that case, you should enclose the value of your ,(code
+"author") field in a ,(ref :ident "noabbrev" :text (code "noabbrev"))
+markup.])
+   
+(doc-markup 'noabbrev
+	    '()
+	    :see-also '(the-bibliography bib-sort/first-author-last-name))
+   
+(p [The following example illustrates typical use of a bibliography.])
 
 (example-produce 
  (example :legend "Printing a Bibliography" (prgm :file "src/bib2.skb"))
@@ -233,6 +257,7 @@ pre-existing functions for sorting entries:])
 	    :force-engines *api-engines*
 	    :source "skribilo/biblio.scm"
 	    :others '(bib-sort/idents bib-sort/dates)
+	    :see-also '(bib-sort/first-author-last-name)
 	    :common-args '())
 
 (p [The first function sorts the entries according to an alphabetic ordering
@@ -242,7 +267,23 @@ entries identifier. The last one sorts according to entries date.])
 (example-produce 
  (example :legend "Sorting Bibliography Entries" 
 	  (prgm :file "skribilo/biblio.scm"
-	        :definition 'bib-sort/idents)))))
+	        :definition 'bib-sort/idents)))
+   
+(p [In addition, the ,(code [(skribilo biblio author)]) module exports
+a fourth procedure that sorts bibliography entries:])
+
+(doc-markup 'bib-sort/first-author-last-name
+            '((entries [The list of entries.]))
+            :force-engines *api-engines*
+            :source "skribilo/biblio/author.scm"
+            :see-also '(bib-sort/authors the-bibliography noabbrev)
+            :common-args '())
+	    
+(p [This procedure allows entries to be sorted according to the last
+name of the first author of each bibliography entry.  For this to work,
+the author field of bibliography entries must follow the same
+conventions as for the ,(code "name+year") label style of ,(ref :ident
+"the-bibliography" :text (code "the-bibliography")).])))
 
 ;*---------------------------------------------------------------------*/
 ;*    skribebibtex                                                     */

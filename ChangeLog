@@ -2,6 +2,28 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-08-29 13:22:11 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-157
+
+    Summary:
+      doc: Improved bibliography doc, documented `noabbrev'.
+    Revision:
+      skribilo--devo--1.2--patch-157
+
+    * doc/user/bib.skb (Bibliography): Better explain the constraints with
+      `name+year'.  Document `noabbrev'.
+      (Sorting Bibliography Entries): Document
+      `bib-sort/first-author-last-name'.
+    
+    * doc/user/src/bib1.sbib: Use proper `author' fields, including
+      `noabbrev'.
+
+    modified files:
+     ChangeLog doc/user/bib.skb doc/user/src/bib1.sbib
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-99
+
+
 2007-08-29 13:21:41 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-156
 
     Summary:
