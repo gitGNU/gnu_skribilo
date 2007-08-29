@@ -131,6 +131,14 @@
 (define (bib-sort/first-author-last-name entries)
   ;; May be passed as the `:sort' argument of `the-bibliography'.
 
+  (define (maybe-first-author-last-name author)
+    (cond ((string? author)
+           (first-author-last-name author))
+          (else
+           ;; AUTHOR cannot be abbreviated, maybe because it is enclosed in a
+           ;; `noabbrev' markup (e.g., because it's not a person name).
+           (string-trim (ast->string author)))))
+
   (define (entry-field entry name)
     (let ((o (markup-option entry name)))
       (and o (markup-body o))))
@@ -159,10 +167,10 @@
 	    (lambda (e1 e2)
               (and (check-author e1)
                    (check-author e2)
-                   (let* ((a1 (first-author-last-name
-                               (markup-body (markup-option e1 'author))))
-                          (a2 (first-author-last-name
-                               (markup-body (markup-option e2 'author)))))
+                   (let ((a1 (maybe-first-author-last-name
+                              (markup-body (markup-option e1 'author))))
+                         (a2 (maybe-first-author-last-name
+                              (markup-body (markup-option e2 'author)))))
                      (if (string-ci=? a1 a2)
                          (<=? e1 e2 'year
                               (lambda ()
