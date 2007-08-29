@@ -2,6 +2,24 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-08-29 13:23:11 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-159
+
+    Summary:
+      biblio: SRFI'd `author.scm'.
+    Revision:
+      skribilo--devo--1.2--patch-159
+
+    * src/guile/skribilo/biblio/author.scm: Use `srfi-14'.
+      (%no-comma): New.
+      (comma-separated->author-list): Use `string-tokenize'.
+
+    modified files:
+     ChangeLog src/guile/skribilo/biblio/author.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-101
+
+
 2007-08-29 13:22:43 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-158
 
     Summary:
