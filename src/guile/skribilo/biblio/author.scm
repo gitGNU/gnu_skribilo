@@ -20,6 +20,7 @@
 
 (define-module (skribilo biblio author)
   :use-module (srfi srfi-13)
+  :use-module (srfi srfi-14)
   :use-module (skribilo biblio abbrev)
   :autoload   (skribilo ast)     (markup-option markup-body markup-ident)
   :autoload   (skribilo lib)     (skribe-error)
@@ -44,13 +45,14 @@
 ;;;
 ;;; Code:
 
+(define %no-comma
+  (char-set-complement (char-set #\,)))
+
 (define (comma-separated->author-list authors)
   ;; Return a list of strings where each individual string is an author
   ;; name.  AUTHORS is a string representing a list of author names separated
   ;; by a comma.
-
-  ;; XXX: I should use SRFI-13 instead.
-  (string-split authors #\,))
+  (string-tokenize authors %no-comma))
 
 (define (comma-separated->and-separated-authors authors)
   ;; Take AUTHORS, a string containing comma-separated author names, and
