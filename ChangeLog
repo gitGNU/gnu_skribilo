@@ -2,6 +2,24 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-08-29 13:21:09 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-155
+
+    Summary:
+      biblio: Properly handle non-string authors.
+    Revision:
+      skribilo--devo--1.2--patch-155
+
+    * src/guile/skribilo/biblio/author.scm
+      (bib-sort/first-author-last-name)[maybe-first-author-last-name]: New.
+      Use it.
+
+    modified files:
+     ChangeLog src/guile/skribilo/biblio/author.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-97
+
+
 2007-08-29 13:20:34 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-154
 
     Summary:
