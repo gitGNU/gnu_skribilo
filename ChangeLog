@@ -2,6 +2,25 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-08-29 13:21:41 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-156
+
+    Summary:
+      `base' package: Introduced `noabbrev'.
+    Revision:
+      skribilo--devo--1.2--patch-156
+
+    * src/guile/skribilo/engine/base.scm (noabbrev): New writer.
+    
+    * src/guile/skribilo/package/base.scm (noabbrev): New markup.
+
+    modified files:
+     ChangeLog src/guile/skribilo/engine/base.scm
+     src/guile/skribilo/package/base.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-98
+
+
 2007-08-29 13:21:09 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-155
 
     Summary:
