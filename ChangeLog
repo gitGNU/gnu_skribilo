@@ -2,6 +2,25 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-08-29 13:20:34 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-154
+
+    Summary:
+      biblio: Improved `bib-sort/first-author-last-name'.
+    Revision:
+      skribilo--devo--1.2--patch-154
+
+    * src/guile/skribilo/biblio/author.scm
+      (bib-sort/first-author-last-name)[entry-field, <=?]: New.
+      Use them such that ordering also takes `year' and `title' into
+      account.
+
+    modified files:
+     ChangeLog src/guile/skribilo/biblio/author.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-96
+
+
 2007-08-28 14:40:42 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-153
 
     Summary:

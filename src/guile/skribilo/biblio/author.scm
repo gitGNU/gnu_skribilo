@@ -129,11 +129,30 @@
 
 
 (define (bib-sort/first-author-last-name entries)
-   ;; May be passed as the `:sort' argument of `the-bibliography'.
+  ;; May be passed as the `:sort' argument of `the-bibliography'.
+
+  (define (entry-field entry name)
+    (let ((o (markup-option entry name)))
+      (and o (markup-body o))))
+
+  (define (<=? e1 e2 field fail)
+    (let ((f1 (entry-field e1 field))
+          (f2 (entry-field e2 field)))
+      (cond ((and (string? f1) (string? f2))
+             (if (string-ci=? f1 f2)
+                 (fail)
+                 (string-ci<=? f1 f2)))
+            ((and (number? f1) (number? f2))
+             (if (= f1 f2)
+                 (fail)
+                 (<= f1 f2)))
+            (else
+             (fail)))))
+
    (let ((check-author (lambda (e)
 			  (if (not (markup-option e 'author))
-			      (skribe-error 'web
-					    "No author for this bib entry"
+			      (skribe-error 'bib-sort/first-author-last-name
+					    "no author for this bib entry"
 					    (markup-ident e))
 			      #t))))
       (sort entries
@@ -144,7 +163,13 @@
                                (markup-body (markup-option e1 'author))))
                           (a2 (first-author-last-name
                                (markup-body (markup-option e2 'author)))))
-                     (string-ci<=? a1 a2)))))))
+                     (if (string-ci=? a1 a2)
+                         (<=? e1 e2 'year
+                              (lambda ()
+                                (<=? e1 e2 'title
+                                     (lambda ()
+                                       #f))))
+                         (string-ci<=? a1 a2))))))))
 
 
 ;;; arch-tag: c9a1ef10-a2cd-4a06-bd35-fbdee1abf09a
