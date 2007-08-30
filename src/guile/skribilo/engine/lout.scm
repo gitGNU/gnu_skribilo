@@ -1534,15 +1534,6 @@
 ;*    support for paragraphs ...                                       */
 ;*---------------------------------------------------------------------*/
 
-(define (first-paragraph? n)
-  ;; Return true if N is the first paragraph in this container.
-  (let* ((parent   (ast-parent n))
-         (siblings (markup-body parent)))
-    (and (pair? siblings)
-         (eq? n (find (lambda (n)
-                        (is-markup? n 'paragraph))
-                      siblings)))))
-
 (define (make-drop-capital? n e)
   ;; Return true if the first letter of N's body should be output as a drop
   ;; capital.
