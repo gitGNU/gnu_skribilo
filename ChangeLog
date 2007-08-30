@@ -2,6 +2,26 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-08-30 16:56:12 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-160
+
+    Summary:
+      lout: Added support for drop capitals.
+    Revision:
+      skribilo--devo--1.2--patch-160
+
+    * src/guile/skribilo/engine/lout.scm (lout-engine)[drop-capital?,
+      drop-capital-lines]: New customs.
+      (first-paragraph?, make-drop-capital?, output-with-drop-capital): New.
+      (paragraph)[first-paragraph?]: Moved outside.
+      Use an `:action' to support drop capitals.
+
+    modified files:
+     ChangeLog src/guile/skribilo/engine/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-102
+
+
 2007-08-29 13:23:11 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-159
 
     Summary:
