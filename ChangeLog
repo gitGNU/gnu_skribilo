@@ -2,6 +2,25 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-08-30 16:56:46 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-161
+
+    Summary:
+      Moved `first-paragraph?' to `ast'.
+    Revision:
+      skribilo--devo--1.2--patch-161
+
+    * src/guile/skribilo/ast.scm (first-paragraph?): New.
+    
+    * src/guile/skribilo/engine/lout.scm (first-paragraph?): Removed.
+
+    modified files:
+     ChangeLog src/guile/skribilo/ast.scm
+     src/guile/skribilo/engine/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-103
+
+
 2007-08-30 16:56:12 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-160
 
     Summary:

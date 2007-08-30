@@ -65,6 +65,7 @@
            container-search-down search-down find-down find1-down
            find-up find1-up
            ast-document ast-chapter ast-section
+           first-paragraph?
 
            ;; numbering
            markup-number-string
@@ -618,6 +619,16 @@
 
 (define (ast-section m)
   (find1-up (lambda (n) (is-markup? n 'section)) m))
+
+(define (first-paragraph? n)
+  ;; Return true if N is the first paragraph in this container.
+  (and (is-markup? n 'paragraph)
+       (let* ((parent   (ast-parent n))
+              (siblings (markup-body parent)))
+         (and (pair? siblings)
+              (eq? n (find (lambda (n)
+                             (is-markup? n 'paragraph))
+                           siblings))))))
 
 
 ;;;
