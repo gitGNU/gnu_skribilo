@@ -634,6 +634,15 @@
                          ;; (e.g., the first paragraph of a chapter).
                          (first-paragraph-gap "\n@LP\n")
 
+                         ;; A boolean or predicate indicating whether drop
+                         ;; capitals should be used at the beginning of
+                         ;; paragraphs.
+                         (drop-capital? #f)
+
+                         ;; Number of lines over which drop capitals span.
+                         ;; Only 2 and 3 are currently supported.
+                         (drop-capital-lines 2)
+
 			 ;; For multi-page tables, it may be
 			 ;; useful to set this to `#t'.  However,
 			 ;; this looks kind of buggy.
@@ -1522,6 +1531,65 @@
 
 
 ;*---------------------------------------------------------------------*/
+;*    support for paragraphs ...                                       */
+;*---------------------------------------------------------------------*/
+
+(define (first-paragraph? n)
+  ;; Return true if N is the first paragraph in this container.
+  (let* ((parent   (ast-parent n))
+         (siblings (markup-body parent)))
+    (and (pair? siblings)
+         (eq? n (find (lambda (n)
+                        (is-markup? n 'paragraph))
+                      siblings)))))
+
+(define (make-drop-capital? n e)
+  ;; Return true if the first letter of N's body should be output as a drop
+  ;; capital.
+  (let ((pred (engine-custom e 'drop-capital?)))
+    (cond ((procedure? pred)
+           (pred n e))
+          ((not pred)
+           #f)
+          (else
+           (and (is-markup? (ast-parent n) 'chapter)
+                (first-paragraph? n))))))
+
+(define (output-with-drop-capital n e)
+  ;; Assuming N is a paragraph, try producing a drop capital.
+
+  (define (drop-capital-function)
+    (let ((lines (engine-custom e 'drop-capital-lines)))
+      (if (integer? lines)
+          (case lines
+            ((3)  "@DropCapThree")
+            (else "@DropCapTwo"))
+          "@DropCapTwo")))
+
+  (define (try)
+    (let loop ((body (markup-body n)))
+      (cond ((string? body)
+             (let ((body (string-trim body)))
+               (and (not (string=? body ""))
+                    (begin
+                      (display "{ ")
+                      (output (string (string-ref body 0)) e)
+                      (format #t " } ~a { " (drop-capital-function))
+                      (output (string-drop body 1) e)
+                      #t))))
+            ((pair? body)
+             (let ((did-it? (loop (car body))))
+               (output (cdr body) e)
+               did-it?))
+            (else
+             (output body e)
+             #f))))
+
+  (let ((did-it? (try)))
+    (if did-it?
+        (display " } "))))
+
+;*---------------------------------------------------------------------*/
 ;*    paragraph ...                                                    */
 ;*---------------------------------------------------------------------*/
 (markup-writer 'paragraph
@@ -1532,20 +1600,17 @@
 			      (markup-markup (ast-parent n)))
 			 '(chapter section subsection subsubsection slide))))
    :before (lambda (n e)
-             (define (first-paragraph?)
-               ;; Return true if N is the first paragraph in this container.
-               (let* ((parent   (ast-parent n))
-                      (siblings (markup-body parent)))
-                 (and (pair? siblings)
-                      (eq? n (find (lambda (n)
-                                     (is-markup? n 'paragraph))
-                                   siblings)))))
-
-	     (let ((gap (if (first-paragraph?)
+	     (let ((gap (if (first-paragraph? n)
                             (engine-custom e 'first-paragraph-gap)
                             (engine-custom e 'paragraph-gap))))
-	       (display (if (string? gap) gap "\n@PP\n")))))
+	       (display (if (string? gap) gap "\n@PP\n"))))
 
+   :action (lambda (n e)
+             (if (make-drop-capital? n e)
+                 (output-with-drop-capital n e)
+                 (output (markup-body n) e))))
+
+
 ;*---------------------------------------------------------------------*/
 ;*    footnote ...                                                     */
 ;*---------------------------------------------------------------------*/
