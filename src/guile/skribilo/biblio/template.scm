@@ -153,13 +153,13 @@
               (", " month) " " year
               (", pp. " pages) "."))
     ((article)
-     `(author ". " (or title url documenturl) ". "
+     '(author ". " (or title url documenturl) ". "
               "In " journal ", " volume
               ("(" number ") ")", "
               (address ", ") month " " year ", "
               ("pp. " pages) "."))
     ((inproceedings)
-     `(author ". " (or title url documenturl) ". "
+     '(author ". " (or title url documenturl) ". "
               "In " booktitle ", "
               (series ", ")
               ("(" number ")")
@@ -167,12 +167,20 @@
               (publisher ", ")
               (month " ") year "."))
     ((book) ;; FIXME:  Title should be in italics
-     '(author ". " (or title url documenturl) ". "
+     '((or author editor)
+              ". " (or title url documenturl) ". "
               publisher
               (", " address)
               (", " month)
               ", " year
               (", pp. " pages) "."))
+    ((inbook)
+     `(author ". " (or title url documenturl) ". "
+              "In " booktitle ", " publisher
+              (", " editor " (" ,(_ "editor") ")")
+              (", " ,(_ "Chapter ") chapter)
+              (", pp. " pages) ", "
+              (month " ") year "."))
     ((phdthesis)
      `(author ". " (or title url documenturl)
               ", " ,(_ "PhD Thesis")
