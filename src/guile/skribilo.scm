@@ -464,10 +464,12 @@ Processes a Skribilo/Skribe source file and produces its output.
 
 	    (setvbuf (*skribilo-output-port*) _IOFBF 16384)
 
-	    ;;	(start-stack 7
 	    (if source-file
 		(with-input-from-file source-file doskribe)
-		(doskribe))))))))
+		(doskribe))
+
+            ;; Make sure the output port is flushed before we leave.
+            (force-output (*skribilo-output-port*))))))))
 
 
 (define main skribilo)
