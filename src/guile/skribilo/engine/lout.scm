@@ -557,7 +557,7 @@
 
 
 ;*---------------------------------------------------------------------*/
-;*    lout-engine ...                                                 */
+;*    lout-engine ...                                                  */
 ;*---------------------------------------------------------------------*/
 (define lout-engine
   (make-engine 'lout
@@ -612,6 +612,14 @@
 			 ;; produced.  If `#t', a default name in the
 			 ;; current language is chosen.
 			 (abstract-title #t)
+
+                         ;; For books.
+                         (publisher #f)
+                         (edition #f)
+                         (before-title-page #f)
+                         (on-title-page #f)
+                         (after-title-page #f)
+                         (at-end #f)
 
 			 ;; Whether to optimize pages.
 			 (optimize-pages? #f)
@@ -1011,6 +1019,10 @@
 (markup-writer 'breakable-space :before " &1s\n" :action #f)
 
 
+;;;
+;;; Document.
+;;;
+
 (define (lout-page-orientation orientation)
   ;; Return a string representing the Lout page orientation name for symbol
   ;; `orientation'.
@@ -1024,6 +1036,46 @@
 		      "`page-orientation' should be either `portrait' or `landscape'"
 		      orientation)
 	(cdr which))))
+
+(define (output-report-options doc e)
+  ;; Output document options specific to the `report' document type.
+  (let ((cover-sheet?   (engine-custom e 'cover-sheet?))
+        (abstract       (engine-custom e 'abstract))
+        (abstract-title (engine-custom e 'abstract-title)))
+    (display (string-append "  @CoverSheet { "
+                            (if cover-sheet? "Yes" "No")
+                            " }\n"))
+
+    (if abstract
+        (begin
+          (if (not (eq? abstract-title #t))
+              (begin
+                (display "  @AbstractTitle { ")
+                (cond
+                 ((not abstract-title) #t)
+                 (else (output abstract-title e)))
+                (display " }\n")))
+
+          (display "  @Abstract {\n")
+          (output abstract e)
+          (display "\n}\n")))))
+
+(define (output-book-options doc engine)
+  ;; Output document options specific to the `book' document type.
+  (define (output-option lout opt)
+    (let ((val (engine-custom engine opt)))
+      (if val
+          (begin
+            (format #t "  ~a { " lout)
+            (output val engine)
+            (display " }\n")))))
+
+  (output-option "@Edition"         'edition)
+  (output-option "@Publisher"       'publisher)
+  (output-option "@BeforeTitlePage" 'before-title-page)
+  (output-option "@OnTitlePage"     'on-title-page)
+  (output-option "@AfterTitlePage"  'after-title-page)
+  (output-option "@AtEnd"           'at-end))
 
 
 ;*---------------------------------------------------------------------*/
@@ -1119,31 +1171,10 @@
 			 (display (if date-line "Yes" "No")))
 		     (display " }\n")))
 
-	       ;; Lout reports make it possible to choose whether to prepend
-	       ;; a cover sheet (books and docs don't).  Same for a date
-	       ;; line.
-	       (if (eq? doc-type 'report)
-		   (let ((cover-sheet?   (engine-custom e 'cover-sheet?))
-			 (abstract       (engine-custom e 'abstract))
-			 (abstract-title (engine-custom e 'abstract-title)))
-		     (display (string-append "  @CoverSheet { "
-					     (if cover-sheet?
-						 "Yes" "No")
-					     " }\n"))
-
-		     (if abstract
-			 (begin
-			   (if (not (eq? abstract-title #t))
-			       (begin
-				 (display "  @AbstractTitle { ")
-				 (cond
-				  ((not abstract-title) #t)
-				  (else (output abstract-title e)))
-				 (display " }\n")))
-
-			   (display "  @Abstract {\n")
-			   (output abstract e)
-			   (display "\n}\n")))))
+               ;; Output options specific to one of the document types.
+	       (case doc-type
+                 ((report)  (output-report-options n e))
+                 ((book)    (output-book-options n e)))
 
 	       (format #t "  @OptimizePages { ~a }\n"
 		       (if (engine-custom e 'optimize-pages?)
