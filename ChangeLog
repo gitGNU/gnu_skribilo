@@ -2,6 +2,26 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-09-20 17:20:55 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-167
+
+    Summary:
+      lout: Add customs for the `book' document type.
+    Revision:
+      skribilo--devo--1.2--patch-167
+
+    * src/guile/skribilo/engine/lout.scm (lout-engine)[publisher, edition,
+      before-title-page, on-title-page, after-title-page, at-end]: New
+      customs.
+      (output-report-options, output-book-options): New.
+      (document): Use them.
+
+    modified files:
+     ChangeLog src/guile/skribilo/engine/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-109
+
+
 2007-09-20 14:16:12 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-166
 
     Summary:
