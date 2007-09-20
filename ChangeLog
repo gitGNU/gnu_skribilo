@@ -2,6 +2,23 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-09-20 14:15:38 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-165
+
+    Summary:
+      eq/lout: Better handle parenthesizing of combinations.
+    Revision:
+      skribilo--devo--1.2--patch-165
+
+    * src/guile/skribilo/package/eq/lout.scm (binary-lout-markup-writer):
+      Special-case `eq:combinations'.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/eq/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-107
+
+
 2007-09-20 14:14:45 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-164
 
     Summary:

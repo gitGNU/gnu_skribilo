@@ -215,7 +215,10 @@
 		 (if (= (length body) 2)
 		     (let* ((first (car body))
 			    (second (cadr body))
-			    (parentheses? (equation-markup? first)))
+			    (parentheses? (and (equation-markup? first)
+                                               (not
+                                                (memq (markup-markup first)
+                                                      '(eq:combinations))))))
 		       (display " { { ")
 		       (if parentheses? (display %left-paren))
 		       (output first engine)
