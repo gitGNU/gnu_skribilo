@@ -2,6 +2,23 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-09-20 14:16:12 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-166
+
+    Summary:
+      slide: Tiny fix.
+    Revision:
+      skribilo--devo--1.2--patch-166
+
+    * src/guile/skribilo/package/slide.scm (slide-embed): Provide an
+      identifier, pass ARGUMENTS.
+
+    modified files:
+     ChangeLog src/guile/skribilo/package/slide.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-108
+
+
 2007-09-20 14:15:38 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-165
 
     Summary:
