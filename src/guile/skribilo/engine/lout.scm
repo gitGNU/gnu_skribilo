@@ -1359,6 +1359,7 @@
   (let ((lout-markup (lout-structure-markup (markup-markup n) e))
 	(title (markup-option n :title))
 	(number (markup-option n :number))
+        (word (markup-option n :word))
 	(ident (markup-ident n)))
 
     (if (not lout-markup)
@@ -1379,6 +1380,12 @@
 	       (format #t "  @BypassNumber { ~a }\n"
 		       (markup-number-string n))
                (display "  @BypassNumber { } # unnumbered\n"))
+
+           (if (and word
+                    (eq? (engine-custom e 'document-type)
+                         'book))
+               (format #t "  @BypassWord { ~a }~%"
+                       word))
 
 	   (cond ((string? ident)
 		  (begin
@@ -1485,7 +1492,7 @@
 ;*    section ... .. @label chapter@                                   */
 ;*---------------------------------------------------------------------*/
 (markup-writer 'chapter
-   :options '(:title :number :toc :file :env)
+   :options '(:title :number :toc :file :env :word)
    :validate (lambda (n e)
 	       (document? (ast-parent n)))
 
@@ -1503,7 +1510,7 @@
 ;*    section ... . @label section@                                    */
 ;*---------------------------------------------------------------------*/
 (markup-writer 'section
-   :options '(:title :number :toc :file :env)
+   :options '(:title :number :toc :file :env :word)
    :validate (lambda (n e)
 	       (is-markup? (ast-parent n) 'chapter))
    :before lout-start-large-scale-structure
@@ -1513,7 +1520,7 @@
 ;*    subsection ... @label subsection@                                */
 ;*---------------------------------------------------------------------*/
 (markup-writer 'subsection
-   :options '(:title :number :toc :file :env)
+   :options '(:title :number :toc :file :env :word)
    :validate (lambda (n e)
 	       (is-markup? (ast-parent n) 'section))
    :before lout-start-large-scale-structure
@@ -1523,7 +1530,7 @@
 ;*    subsubsection ... @label subsubsection@                          */
 ;*---------------------------------------------------------------------*/
 (markup-writer 'subsubsection
-   :options '(:title :number :toc :file :env)
+   :options '(:title :number :toc :file :env :word)
    :validate (lambda (n e)
 	       (is-markup? (ast-parent n) 'subsection))
    :before lout-start-large-scale-structure
@@ -2488,7 +2495,7 @@
 		   (if text (output text e))
 
 		   ;; Marks don't have a number
-		   (if (eq? kind 'mark)
+		   (if (and ident (eq? kind 'mark))
 		       (format #t (lout-page-of ident))
 		       (begin
 			  ;; Don't output a section/whatever number
@@ -2504,7 +2511,7 @@
                                          (markup-number-string target))))
                                 (display " ")
                                 (display number))
-                              (if show-page-num?
+                              (if (and ident show-page-num?)
                                   (format #t (lout-page-of ident))))))))))
 
 ;*---------------------------------------------------------------------*/

@@ -2,6 +2,26 @@
 # arch-tag: automatic-ChangeLog--skribilo@sv.gnu.org--2006/skribilo--devo--1.2
 #
 
+2007-09-20 14:14:45 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-164
+
+    Summary:
+      lout: New `:word' option for `chapter' et al.
+    Revision:
+      skribilo--devo--1.2--patch-164
+
+    * src/guile/skribilo/engine/lout.scm (lout-block-before): Handle the
+      `:word' option (note `@BypassWord' should be added in Lout 3.37).
+      (chapter, section, subsection, subsubsection): Mark `:word' as
+      supported.
+      (ref): Sanity-check IDENT.
+
+    modified files:
+     ChangeLog src/guile/skribilo/engine/lout.scm
+
+    new patches:
+     lcourtes@laas.fr--2006-libre/skribilo--devo--1.2--patch-106
+
+
 2007-09-03 17:23:55 GMT	Ludovic Court`es <ludovic.courtes@laas.fr>	patch-163
 
     Summary:
