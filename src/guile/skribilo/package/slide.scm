@@ -179,9 +179,11 @@
 	  (markup 'slide-embed)
           (loc &invocation-location)
 	  (required-options '(:alt))
-	  (options `((:geometry-opt ,geometry-opt)
+          (ident (symbol->string (gensym "slide-embed")))
+	  (options `((:arguments ,arguments)
+                     (:geometry-opt ,geometry-opt)
 		     (:alt ,alt)
-		     ,@(the-options opt :geometry-opt :alt)))
+		     ,@(the-options opt :arguments :geometry-opt :alt)))
 	  (body (the-body opt)))))
 
 ;*---------------------------------------------------------------------*/
