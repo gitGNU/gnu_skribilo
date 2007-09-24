@@ -624,7 +624,8 @@
   ;; Return true if N is the first paragraph in this container.
   (and (is-markup? n 'paragraph)
        (let* ((parent   (ast-parent n))
-              (siblings (markup-body parent)))
+              (siblings (and (markup? parent)
+                             (markup-body parent))))
          (and (pair? siblings)
               (eq? n (find (lambda (n)
                              (is-markup? n 'paragraph))
