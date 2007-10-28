@@ -3,9 +3,13 @@
 
 AC_PREREQ(2.59)
 AC_INIT(skribilo, 1.2, skribilo-users@nongnu.org)
-AM_INIT_AUTOMAKE(skribilo, 1.2)
+AC_CONFIG_AUX_DIR(build-aux)
+AC_CONFIG_MACRO_DIR(m4)
+
+AM_INIT_AUTOMAKE([gnu no-define check-news])
 
 AC_CONFIG_SRCDIR([src/guile/skribilo/reader.scm])
+
 
 # GNU Gettext.
 AM_GNU_GETTEXT([external])
@@ -20,10 +24,13 @@ AC_SUBST([GUILE_LINT])
 AM_CONDITIONAL([HAVE_GUILE_LINT], test "x$GUILE_LINT" != "x")
 
 
-# Need guile-reader 0.2.
+# Need Guile-Reader.
 GUILE_MODULE_REQUIRED([system reader])
 
-# Need SRFI-35, available in `guile-library'.
+# SRFI-34 is normally in Guile 1.8, but let's make sure.
+GUILE_MODULE_REQUIRED([srfi srfi-34])
+
+# Need SRFI-35, available in `guile-library' or Guile >= 1.8.3.
 GUILE_MODULE_REQUIRED([srfi srfi-35])
 
 # Look for Lout.
