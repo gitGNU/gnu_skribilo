@@ -50,7 +50,6 @@ AC_CONFIG_COMMANDS([skribilo-executable], [chmod a+x src/skribilo])
 
 AC_OUTPUT([Makefile
 	   po/Makefile.in
-	   src/skribilo
 	   src/Makefile
 	   src/guile/Makefile
 	   src/guile/skribilo/Makefile
