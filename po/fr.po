@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: ludovic.courtes@laas.fr\n"
-"POT-Creation-Date: 2007-07-04 18:24+0200\n"
+"POT-Creation-Date: 2007-10-28 21:26+0100\n"
 "PO-Revision-Date: 2007-02-05 16:02+0100\n"
 "Last-Translator: Ludovic Courtès <ludovic.courtes@laas.fr>\n"
 "Language-Team: fr <LL@li.org>\n"
@@ -81,10 +81,18 @@ msgid "undefined bibliography error: ~a~%"
 msgstr "erreur de bibliographie indéfinie : ~a~%"
 
 #: src/guile/skribilo/biblio/template.scm:150
-#: src/guile/skribilo/biblio/template.scm:202
+#: src/guile/skribilo/biblio/template.scm:210
 msgid "Technical Report"
 msgstr "Rapport Technique"
 
-#: src/guile/skribilo/biblio/template.scm:178
+#: src/guile/skribilo/biblio/template.scm:180
+msgid "editor"
+msgstr ""
+
+#: src/guile/skribilo/biblio/template.scm:181
+msgid "Chapter "
+msgstr ""
+
+#: src/guile/skribilo/biblio/template.scm:186
 msgid "PhD Thesis"
 msgstr "Thèse de doctorat"
