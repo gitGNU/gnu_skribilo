@@ -1,4 +1,3 @@
-guilemoduledir = $(GUILE_SITE)/skribilo/package/eq
 dist_guilemodule_DATA = lout.scm
 
 include $(top_srcdir)/guile-lint.am

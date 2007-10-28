@@ -1,4 +1,3 @@
-guilemoduledir = $(GUILE_SITE)/skribilo
 dist_guilemodule_DATA = biblio.scm color.scm config.scm		\
                         debug.scm engine.scm evaluator.scm	\
 			index.scm lib.scm module.scm		\

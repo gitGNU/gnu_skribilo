@@ -1,4 +1,3 @@
-guilemoduledir = $(GUILE_SITE)/skribilo/biblio
 dist_guilemodule_DATA = bibtex.scm author.scm abbrev.scm template.scm
 
 include $(top_srcdir)/guile-lint.am

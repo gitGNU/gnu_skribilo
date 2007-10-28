@@ -5,7 +5,6 @@ EXTRA_DIST = skribilo.in
 bin_SCRIPTS = skribilo
 CLEANFILES  = $(bin_SCRIPTS)
 
-guilemoduledir = $(GUILE_SITE)
 substitute = sed -e 's,[@]guilemoduledir[@],$(guilemoduledir),g'	\
 		 -e 's,[@]GUILE[@],$(GUILE),g'				\
 		 -e 's,[@]PACKAGE_STRING[@],$(PACKAGE_STRING),g'	\

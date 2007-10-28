@@ -1,4 +1,3 @@
-guilemoduledir = $(GUILE_SITE)/skribilo/package/slide
 dist_guilemodule_DATA = base.scm latex.scm html.scm lout.scm
 
 include $(top_srcdir)/guile-lint.am

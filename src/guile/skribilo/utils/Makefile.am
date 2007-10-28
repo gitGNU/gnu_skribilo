@@ -1,4 +1,3 @@
-guilemoduledir = $(GUILE_SITE)/skribilo/utils
 dist_guilemodule_DATA = syntax.scm compat.scm files.scm images.scm	\
 			keywords.scm strings.scm
 

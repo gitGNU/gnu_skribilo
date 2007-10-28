@@ -14,6 +14,16 @@ AC_CONFIG_SRCDIR([src/guile/skribilo/reader.scm])
 # GNU Gettext.
 AM_GNU_GETTEXT([external])
 
+# Specifying the Guile module directory.
+AC_ARG_WITH([guilemoduledir],
+  [use the specified installation path for Guile modules],
+  [case "x$withval" in
+     xyes|xno) guilemoduledir="";;
+     *)        guilemoduledir="$withval";;
+   esac],
+  [guilemoduledir=""])
+
+
 # Look for Guile.
 GUILE_PROGS
 GUILE_SITE_DIR
@@ -40,6 +50,23 @@ AM_CONDITIONAL([HAVE_LOUT], [test "x$LOUT" != "x"])
 # Look for Ploticus.
 AC_PATH_PROGS([PLOTICUS], [ploticus pl])
 AM_CONDITIONAL([HAVE_PLOTICUS], [test "x$PLOTICUS" != "x"])
+
+
+
+
+pkgdatadir="$datadir/$PACKAGE_NAME"
+if test "x$guilemoduledir" = "x"; then
+  guilemoduledir="$pkgdatadir"
+fi
+AC_SUBST([guilemoduledir])
+
+if test "$guilemoduledir" != "$GUILE_SITE"; then
+   # Guile won't be able to locate the module "out of the box", so
+   # warn the user.
+   AC_MSG_WARN([`guilemoduledir' ($guilemoduledir) is different from `GUILE_SITE' ($GUILE_SITE).])
+   AC_MSG_WARN([Make sure to adjust the `GUILE_LOAD_PATH' environment variable accordingly,])
+   AC_MSG_WARN([or re-run `configure' with `--with-guilemoduledir=$GUILE_SITE'.])
+fi
 
 
 AC_SUBST([SKRIBILO_DOC_DIR], ["$datadir/doc/skribilo"])
