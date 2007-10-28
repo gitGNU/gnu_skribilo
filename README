@@ -35,7 +35,7 @@ You need at least:
   * Guile-Reader >= 0.3
     http://www.nongnu.org/guile-reader/
 
-  * Guile-Lib (any version)
+  * Guile-Lib (unless using Guile >= 1.8.3)
     http://home.gna.org/guile-lib/
 
 Optionally, you may want to install one of the following document layout
@@ -56,6 +56,18 @@ Optionally, to produce pie charts, you may want to use:
     http://ploticus.sourceforge.net/
 
 This is it!
+
+
+Development
+...........
+
+A copy of the source code repository can be obtained with Git
+(http://git.or.cz/), using the following incantation:
+
+  git-clone git://git.sv.gnu.org/skribilo.git
+
+You can then send patches to the <skribilo-users@nongnu.org> mailing
+list!
 
 
 History
