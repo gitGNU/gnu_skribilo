@@ -73,8 +73,6 @@ AC_SUBST([SKRIBILO_DOC_DIR], ["$datadir/doc/skribilo"])
 AC_SUBST([SKRIBILO_EXT_DIR], ["$datadir/skribilo/1.2/"])
 AC_SUBST([SKRIBILO_SKR_PATH], ["$GUILE_SITE/"])
 
-AC_CONFIG_COMMANDS([skribilo-executable], [chmod a+x src/skribilo])
-
 AC_OUTPUT([Makefile
 	   po/Makefile.in
 	   src/Makefile
