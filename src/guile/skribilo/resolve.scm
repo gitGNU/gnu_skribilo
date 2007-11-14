@@ -201,9 +201,8 @@
      (debug-item "node=" node)
      (let ((p (assq 'parent env)))
        (slot-set! node 'parent (and (pair? p) (pair? (cdr p)) (cadr p))))
-     (for-each (lambda (n)
-                 (do-resolve! n engine env))
-               (command-body node))
+     (slot-set! node 'body
+                (do-resolve! (command-body node) engine env))
      node))
 
 
