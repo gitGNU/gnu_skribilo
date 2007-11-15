@@ -251,7 +251,7 @@
 ;*    slide-topic ...                                                  */
 ;*---------------------------------------------------------------------*/
 (define-markup (slide-topic :rest opt
-			    :key title (outline? #t)
+			    :key title (outline? #t) (unfold? #t)
                             (ident #f) (class #f))
    (new container
       (markup 'slide-topic)
@@ -260,14 +260,15 @@
       (class class)
       (loc   &invocation-location)
       (options `((:outline? ,outline?)
-                 ,@(the-options opt :outline? :class)))
+                 (:unfold?  ,unfold?)
+                 ,@(the-options opt :outline? :unfold? :class)))
       (body (the-body opt))))
 
 ;*---------------------------------------------------------------------*/
 ;*    slide-subtopic ...                                               */
 ;*---------------------------------------------------------------------*/
 (define-markup (slide-subtopic :rest opt
-			       :key title (outline? #f)
+			       :key title (outline? #f) (unfold? #f)
                                (ident #f) (class #f))
    (new container
       (markup 'slide-subtopic)
@@ -276,6 +277,7 @@
       (class class)
       (loc   &invocation-location)
       (options `((:outline? ,outline?)
+                 (:unfold?  ,unfold?)
                  ,@(the-options opt :outline? :class)))
       (body (the-body opt))))
 

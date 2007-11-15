@@ -148,23 +148,24 @@
 
 
 (define (make-outline-slide topic engine)
-  (let ((parent-topic (if (is-markup? topic 'slide-topic)
-                          topic
-                          (find1-up (lambda (n)
-                                      (is-markup? n 'slide-topic))
-                                    topic))))
+  (let* ((parent-topic (if (is-markup? topic 'slide-topic)
+                           topic
+                           (find1-up (lambda (n)
+                                       (is-markup? n 'slide-topic))
+                                     topic)))
+         (unfold?      (markup-option topic :unfold?)))
     (output (slide :title %slide-outline-title :toc #f
                    :class (markup-class topic)
                    ;; The mark below is needed for cross-referencing by PDF
                    ;; bookmarks.
                    (if (markup-ident topic) (mark (markup-ident topic)) "")
-                   (p (make-topic-list parent-topic #t
+                   (p (make-topic-list parent-topic unfold?
                                        make-topic-entry)))
             engine)))
 
 
 (markup-writer 'slide-topic (find-engine 'base)
-   :options '(:title :outline? :class :ident)
+   :options '(:title :outline? :class :ident :unfold?)
    :action (lambda (n e)
 	      (if (markup-option n :outline?)
 		  (make-outline-slide n e))
@@ -173,7 +174,7 @@
 
 (markup-writer 'slide-subtopic (find-engine 'base)
    ;; FIXME: Largely untested.
-   :options '(:title :outline? :class :ident)
+   :options '(:title :outline? :class :ident :unfold?)
    :action (lambda (n e)
 	      (if (markup-option n :outline?)
 		  (make-outline-slide n e))

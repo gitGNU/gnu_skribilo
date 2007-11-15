@@ -103,7 +103,9 @@ used to automatically produce an outline at the beginning of each new
 	         (:outline? [A boolean (i.e., ,(code [#t]) or ,(code
 [#f])) telling whether an outline should be produced at the beginning of
 this topic.  The outline will typically list the titles of the different
-topics, as well as the titles of the slides under the current topic.]))
+topics, as well as the titles of the slides under the current topic.])
+	         (:unfold? [If ,(code [#t]), then the outline will also
+show the contents of the current topic.]))
 	       :source "skribilo/package/slide.scm")
    
    (p [The ,(code [slide-subtopic]) markup is similar:])
@@ -114,7 +116,9 @@ topics, as well as the titles of the slides under the current topic.]))
 [#f])) telling whether an outline should be produced at the beginning of
 this subtopic.  The outline will typically list the titles of the
 different subtopics, as well as the titles of the slides under the
-current subtopic.]))
+current subtopic.])
+	         (:unfold? [If ,(code [#t]), then the outline will also
+show the contents of the current subtopic.]))
 	       :source "skribilo/package/slide.scm"))
 
 ;*---------------------------------------------------------------------*/
