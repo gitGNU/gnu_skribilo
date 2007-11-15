@@ -1,4 +1,5 @@
-dist_guilemodule_DATA = syntax.scm compat.scm files.scm images.scm	\
+moduledir = $(guilemoduledir)/skribilo/utils
+dist_module_DATA =      syntax.scm compat.scm files.scm images.scm	\
 			keywords.scm strings.scm
 
 include $(top_srcdir)/guile-lint.am

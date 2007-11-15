@@ -1,4 +1,5 @@
-dist_guilemodule_DATA = biblio.scm color.scm config.scm		\
+moduledir = $(guilemoduledir)/skribilo
+dist_module_DATA =      biblio.scm color.scm config.scm		\
                         debug.scm engine.scm evaluator.scm	\
 			index.scm lib.scm module.scm		\
 		        output.scm prog.scm			\

@@ -1,4 +1,5 @@
-dist_guilemodule_DATA = parameters.scm c.scm lisp.scm xml.scm	\
+moduledir = $(guilemoduledir)/skribilo/source
+dist_module_DATA =      parameters.scm c.scm lisp.scm xml.scm	\
 			lisp-lex.scm xml-lex.scm c-lex.scm
 
 

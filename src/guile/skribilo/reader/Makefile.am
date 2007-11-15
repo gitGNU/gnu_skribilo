@@ -1,3 +1,4 @@
-dist_guilemodule_DATA = skribe.scm outline.scm
+moduledir = $(guilemoduledir)/skribilo/reader
+dist_module_DATA = skribe.scm outline.scm
 
 include $(top_srcdir)/guile-lint.am
