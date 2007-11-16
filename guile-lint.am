@@ -2,7 +2,7 @@
 # See http://www.geocities.com/user42_kevin/guile-lint/index.html .
 
 if HAVE_GUILE_LINT
-all-local: $(dist_guilemodule_DATA)
+all-local: $(dist_module_DATA)
 	$(GUILE_LINT) -L $(top_srcdir)/src/guile		\
 		      -L $(top_builddir)/src/guile -k $^
 endif
