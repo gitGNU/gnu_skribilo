@@ -1,7 +1,7 @@
 ;;; slide.scm  --  Overhead transparencies.
 ;;;
 ;;; Copyright 2003, 2004  Manuel Serrano
-;;; Copyright 2006, 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2006, 2007  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -85,7 +85,9 @@
 			  ,@(the-options opt :ident :class :vspace :toc)))
 	       (body (if vspace
 			 (list (slide-vspace vspace) (the-body opt))
-			 (the-body opt))))))
+			 (the-body opt)))
+               (env (list (list 'equation-counter 0)
+                          (list 'equation-env '()))))))
       (set! %slide-the-slides (cons s %slide-the-slides))
       s))
 
