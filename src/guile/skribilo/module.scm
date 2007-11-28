@@ -39,11 +39,8 @@
 (define %skribilo-user-imports
   ;; List of modules needed by Skribilo modules.  The list is much shorter
   ;; than in the Skribe case, as we want to only provide the minimal set of
-  ;; bindings that documents need.  In particular, only the `base' package is
-  ;; imported by default.
-  '((skribilo ast)
-    (skribilo config)
-    (skribilo package base)))
+  ;; bindings that documents need.
+  '((skribilo package base)))
 
 (define %skribe-user-imports
   ;; List of modules imported by legacy Skribe documents.
