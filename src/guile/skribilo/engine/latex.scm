@@ -1,7 +1,7 @@
 ;;; latex.scm  --  LaTeX engine.
 ;;;
+;;; Copyright 2007  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
-;;; Copyright 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -39,8 +39,7 @@
   :use-module (ice-9 receive)
 
   :export (latex-engine
-           LaTeX TeX !latex
-           skribe-get-latex-color))
+           LaTeX TeX !latex))
 
 (fluid-set! current-reader %skribilo-module-reader)
 
@@ -453,27 +452,6 @@
 		"normalsize"))))
 
 ;*---------------------------------------------------------------------*/
-;*    *skribe-latex-color-table* ...                                   */
-;*---------------------------------------------------------------------*/
-(define *skribe-latex-color-table* #f)
-
-;*---------------------------------------------------------------------*/
-;*    latex-declare-color ...                                          */
-;*---------------------------------------------------------------------*/
-(define (latex-declare-color name rgb)
-   (format #t "\\definecolor{~a}{rgb}{~a}\n" name rgb))
-
-;*---------------------------------------------------------------------*/
-;*    skribe-get-latex-color ...                                       */
-;*---------------------------------------------------------------------*/
-(define (skribe-get-latex-color spec)
-   (let ((c (and (hash-table? *skribe-latex-color-table*)
-		 (hash-ref *skribe-latex-color-table* spec))))
-      (if (not (string? c))
-	  (skribe-error 'latex "Can't find color" spec)
-	  c)))
-
-;*---------------------------------------------------------------------*/
 ;*    skribe-color->latex-rgb ...                                      */
 ;*---------------------------------------------------------------------*/
 (define (skribe-color->latex-rgb spec)
@@ -490,23 +468,6 @@
 		    (number->string (/ r ff))
 		    (number->string (/ g ff))
 		    (number->string (/ b ff))))))))
-
-;*---------------------------------------------------------------------*/
-;*    skribe-latex-declare-colors ...                                  */
-;*---------------------------------------------------------------------*/
-(define (skribe-latex-declare-colors colors)
-   (set! *skribe-latex-color-table* (make-hash-table))
-   (for-each (lambda (spec)
-		(let ((old (hash-ref *skribe-latex-color-table* spec)))
-		   (if (not (string? old))
-		       (let ((name (symbol->string (gensym "c"))))
-			  ;; bind the color 
-			  (hash-set! *skribe-latex-color-table* spec name)
-			  ;; and emit a latex declaration
-			  (latex-declare-color 
-			   name 
-			   (skribe-color->latex-rgb spec))))))
-	     colors))
 
 ;*---------------------------------------------------------------------*/
 ;*    ~ ...                                                           */
@@ -562,20 +523,6 @@
 	      ;; usepackage
 	      (let ((pa (engine-custom e 'usepackage)))
 		 (if pa (begin (display pa) (newline))))
-	      ;; colors
-	      (if (latex-color? e)
-		  (begin
-		     (skribe-use-color! (engine-custom e 'source-comment-color))
-		     (skribe-use-color! (engine-custom e 'source-define-color))
-		     (skribe-use-color! (engine-custom e 'source-module-color))
-		     (skribe-use-color! (engine-custom e 'source-markup-color))
-		     (skribe-use-color! (engine-custom e 'source-thread-color))
-		     (skribe-use-color! (engine-custom e 'source-string-color))
-		     (skribe-use-color! (engine-custom e 'source-bracket-color))
-		     (skribe-use-color! (engine-custom e 'source-type-color))
-		     (display "\n%% colors\n")
-		     (skribe-latex-declare-colors (skribe-get-used-colors))
-		     (display "\n\n")))
 	      ;; predocument
 	      (let ((pd (engine-custom e 'predocument)))
 		 (when pd (display pd) (newline)))
@@ -838,14 +785,15 @@
 	     (set! latex-color-counter (+ latex-color-counter 1))
 	     (if fg
 		 (begin
-		    (format #t "\\textcolor{~a}{" (skribe-get-latex-color fg))
+		    (format #t "{\\textcolor[rgb]{~a}{"
+                            (skribe-color->latex-rgb fg))
 		    (output n e)
-		    (display "}"))
+		    (display "}}"))
 		 (output n e))
 	     (set! latex-color-counter (- latex-color-counter 1))
 	     (if bg
-		 (format #t "\\egroup\\colorbox{~a}{\\box~a}%\n"
-			 (skribe-get-latex-color bg) latex-color-counter))))))
+		 (format #t "\\egroup\\colorbox[rgb]{~a}{\\box~a}%\n"
+			 (skribe-color->latex-rgb bg) latex-color-counter))))))
    
 ;*---------------------------------------------------------------------*/
 ;*    color ...                                                        */
