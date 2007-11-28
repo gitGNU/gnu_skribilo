@@ -1,6 +1,6 @@
 ;;; module.scm  --  Integration of Skribe code as Guile modules.
 ;;;
-;;; Copyright 2005, 2006, 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2005, 2006, 2007  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -85,39 +85,6 @@
 
     ((ice-9 and-let-star)     . (and-let*))
     ((ice-9 receive)          . (receive))))
-
-
-
-;; The very macro to turn a legacy Skribe file (which uses Skribe's syntax)
-;; into a Guile module.
-
-(define-macro (define-skribe-module name . options)
-  `(begin
-     (define-module ,name
-       :use-module ((skribilo reader) :select (%default-reader))
-       :use-module (srfi srfi-1)
-       ,@(append-map (lambda (mod)
-		       (list :autoload (car mod) (cdr mod)))
-		     %skribilo-user-autoloads)
-       ,@options)
-
-     ;; Pull all the bindings that Skribe code may expect, plus those needed
-     ;; to actually create and read the module.
-     ;; TODO: These should be auto-loaded.
-     ,(cons 'use-modules %skribilo-user-imports)
-
-     ;; Change the current reader to a Skribe-compatible reader.  If this
-     ;; primitive is not provided by Guile (i.e., version <= 1.7.2), then it
-     ;; should be provided by `guile-reader' (version >= 0.3) as a core
-     ;; binding and installed by `(skribilo utils syntax)'.
-     (fluid-set! current-reader %default-reader)))
-
-
-;; Make it available to the top-level module.
-(module-define! the-root-module
-                'define-skribe-module define-skribe-module)
-
-
 
 
 ;;;
