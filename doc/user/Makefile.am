@@ -11,7 +11,7 @@ EXTRA_DIST = bib.skb char.skb colframe.skb document.skb emacs.skb	\
 BUILT_SOURCES = doc-config.scm
 html_DATA = user.html
 
-skribilo = $(top_builddir)/src/skribilo
+skribilo = $(top_builddir)/src/pre-inst-skribilo
 load_path = $(top_srcdir)/src/guile:$(top_srcdir)/src/guile/skribilo/package:$(top_builddir)/src/guile:$(top_srcdir)/doc/modules
 
 
