@@ -1,4 +1,6 @@
 SUBDIRS = skribilo
 
-dist_guilemodule_DATA = skribilo.scm diff.scm
+moduledir = $(guilemoduledir)
+dist_module_DATA = skribilo.scm diff.scm
+
 EXTRA_DIST = README

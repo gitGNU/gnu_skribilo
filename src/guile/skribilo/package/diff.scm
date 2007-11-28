@@ -1,6 +1,6 @@
 ;;; diff.scm  --  A document difference highlighting package.
 ;;;
-;;; Copyright 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2007  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -31,7 +31,7 @@
   :use-module (skribilo writer)
   :autoload   (skribilo output)        (output)
   :autoload   (skribilo reader)        (*document-reader*)
-  :autoload   (skribilo module)        (make-run-time-module)
+  :autoload   (skribilo module)        (make-user-module)
   :autoload   (skribilo resolve)       (resolve!)
   :autoload   (skribilo evaluator)     (evaluate-ast-from-port)
   :autoload   (skribilo biblio)        (*bib-table* make-bib-table)
@@ -387,13 +387,13 @@
            (skribe-message "diff: loading first document~%")
            (evaluate-ast-from-port (open-input-file old-file)
                                    :reader reader
-                                   :module (make-run-time-module))))
+                                   :module (make-user-module 'skribilo))))
         (ast2
          (parameterize ((*bib-table* (make-bib-table 'doc-2)))
            (skribe-message "diff: loading second document~%")
            (evaluate-ast-from-port (open-input-file new-file)
                                    :reader reader
-                                   :module (make-run-time-module)))))
+                                   :module (make-user-module 'skribilo)))))
 
     (resolve! ast1 engine env)
     (resolve! ast2 engine env)

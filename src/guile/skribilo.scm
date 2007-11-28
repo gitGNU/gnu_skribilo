@@ -6,8 +6,8 @@ exec ${GUILE-guile} --debug -l $0 -c "(apply $main (cdr (command-line)))" "$@"
 
 ;;; skribilo.scm  --  The Skribilo document processor.
 ;;;
+;;; Copyright 2005, 2006, 2007  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
-;;; Copyright 2005, 2006, 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -36,7 +36,7 @@ exec ${GUILE-guile} --debug -l $0 -c "(apply $main (cdr (command-line)))" "$@"
 
 
 (define-module (skribilo)
-  :autoload (skribilo module) (make-run-time-module *skribilo-user-module*)
+  :autoload (skribilo module) (make-user-module *skribilo-user-module*)
   :autoload (skribilo engine) (*current-engine*)
   :autoload (skribilo reader) (*document-reader*)
   :use-module (skribilo utils syntax))
@@ -83,6 +83,8 @@ specifications."
 (define-options skribilo-options
   (("reader" :alternate "R" :arg reader
     (nothing)))
+  (("compat" :arg compat
+    :help "use the COMPAT compatibility mode, e.g., `skribe'"))
   (("target" :alternate "t" :arg target
     :help "sets the output format to <target>")
    (set! engine (string->symbol target)))
@@ -200,6 +202,7 @@ Processes a Skribilo/Skribe source file and produces its output.
   --reader=READER  Use READER to parse the input file (by default,
                    the `skribe' reader is used)
   --target=ENGINE  Use ENGINE as the underlying engine
+  --compat=COMPAT  Use COMPAT as the compatibility layer, e.g., \"skribe\"
 
   --help           Give this help list
   --version        Print program version
@@ -359,7 +362,7 @@ Processes a Skribilo/Skribe source file and produces its output.
 
 (define *skribilo-output-port* (make-parameter (current-output-port)))
 
-(define (doskribe)
+(define (doskribe compat)
   (let ((output-port (current-output-port))
 	(user-module (current-module)))
     (dynamic-wind
@@ -367,7 +370,7 @@ Processes a Skribilo/Skribe source file and produces its output.
 	  ;; FIXME: Using this technique, anything written to `stderr' will
 	  ;; also end up in the output file (e.g. Guile warnings).
 	  (set-current-output-port (*skribilo-output-port*))
-          (let ((user (make-run-time-module)))
+          (let ((user (make-user-module (string->symbol compat))))
             (set-current-module user)
             (*skribilo-user-module* user)))
 	(lambda ()
@@ -400,6 +403,7 @@ Processes a Skribilo/Skribe source file and produces its output.
 	 (bib-path          (option-ref options 'bib-path "."))
 	 (source-path       (option-ref options 'source-path "."))
 	 (image-path        (option-ref options 'image-path "."))
+         (compat            (option-ref options 'compat "skribilo"))
 	 (preload           '())
 	 (variants          '())
 
@@ -465,8 +469,10 @@ Processes a Skribilo/Skribe source file and produces its output.
 	    (setvbuf (*skribilo-output-port*) _IOFBF 16384)
 
 	    (if source-file
-		(with-input-from-file source-file doskribe)
-		(doskribe))
+		(with-input-from-file source-file
+                  (lambda ()
+                    (doskribe compat)))
+		(doskribe compat))
 
             ;; Make sure the output port is flushed before we leave.
             (force-output (*skribilo-output-port*))))))))

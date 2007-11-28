@@ -12,12 +12,13 @@ BUILT_SOURCES = doc-config.scm
 html_DATA = user.html
 
 skribilo = $(top_builddir)/src/pre-inst-skribilo
+skrflags = -I ../ -P ../img --compat=skribe
 load_path = $(top_srcdir)/src/guile:$(top_srcdir)/src/guile/skribilo/package:$(top_builddir)/src/guile:$(top_srcdir)/doc/modules
 
 
 %.html: %.skb
 	GUILE_LOAD_PATH=$(load_path):$$GUILE_LOAD_PATH \
-	$(skribilo) --target html -I ../ -P ../img -o $@ $<
+	$(skribilo) $(skrflags) --target html -o $@ $<
 
 if HAVE_LOUT
 
@@ -25,7 +26,7 @@ ps_DATA = user.ps
 
 %.lout: %.skb
 	GUILE_LOAD_PATH=$(load_path):$$GUILE_LOAD_PATH \
-	$(skribilo) --target lout -I ../ -P ../img -o $@ $<
+	$(skribilo) $(skrflags) --target lout -o $@ $<
 
 %.ps: %.lout
 	$(LOUT) -c $(<:%.lout=%) -o $@ $<
