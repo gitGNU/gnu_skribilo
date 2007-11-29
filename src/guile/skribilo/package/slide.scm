@@ -28,7 +28,6 @@
   :use-module (skribilo engine)
   :use-module (skribilo evaluator) ;; `*load-options*'
 
-  :autoload   (skribilo color)          (skribe-use-color!)
   :autoload   (skribilo utils keywords) (the-options the-body)
 
   :use-module (srfi srfi-1)
@@ -213,7 +212,7 @@
 	  (ident ident)
 	  (class class)
           (loc   &invocation-location)
-	  (options `((:color ,(if color (skribe-use-color! color) #f))
+	  (options `((:color ,color)
 		     ,@(the-options opt :color)))
 	  (body (the-body opt)))))
 
@@ -226,15 +225,15 @@
       (for-each (lambda (lbl)
 		   (match lbl
 		      ((id col)
-		       (skribe-use-color! col))))
+		       col)))
 		body)
       (new markup
 	 (markup 'slide-play*)
 	 (ident ident)
 	 (class class)
          (loc   &invocation-location)
-	 (options `((:color ,(if color (skribe-use-color! color) #f))
-		    (:scolor ,(if color (skribe-use-color! scolor) #f))
+	 (options `((:color ,color)
+		    (:scolor ,scolor)
 		    ,@(the-options opt :color :scolor)))
 	 (body body))))
 

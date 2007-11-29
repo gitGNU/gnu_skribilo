@@ -25,19 +25,13 @@
   :autoload    (skribilo ast) (search-down)
   :autoload    (srfi srfi-1)  (append-map)
   :autoload    (srfi srfi-60) (bitwise-and arithmetic-shift)
-  :export (skribe-color->rgb skribe-get-used-colors skribe-use-color!
-           document-used-colors))
+  :export (color->rgb document-used-colors))
 
 (fluid-set! current-reader %skribilo-module-reader)
 
 
-;; FIXME: This module should be generalized and the `skribe-' procedures
-;; moved to `compat.scm'.
 
-;; FIXME: Use a fluid?  Or remove it?
-(define *used-colors* '())
-
-(define *skribe-rgb-alist* '(
+(define %rgb-alist '(
    ("snow"			. "255 250 250")
    ("ghostwhite"		. "248 248 255")
    ("whitesmoke"		. "245 245 245")
@@ -583,7 +577,7 @@
 
 
 (define (%convert-color str)
-  (let ((col (assoc str *skribe-rgb-alist*)))
+  (let ((col (assoc str %rgb-alist)))
     (cond
       (col
        (let* ((p (open-input-string (cdr col)))
@@ -603,9 +597,9 @@
        (values 0 0 0)))))
 
 ;;;
-;;; SKRIBE-COLOR->RGB
+;;; COLOR->RGB
 ;;;
-(define (skribe-color->rgb spec)
+(define (color->rgb spec)
   (cond
     ((string? spec) (%convert-color spec))
     ((integer? spec)
@@ -614,19 +608,6 @@
 	       (bitwise-and #xff spec)))
     (else
      (values 0 0 0))))
-
-;;;
-;;; SKRIBE-GET-USED-COLORS
-;;;
-(define (skribe-get-used-colors)
-   *used-colors*)
-
-;;;
-;;; SKRIBE-USE-COLOR!
-;;;
-(define (skribe-use-color! color)
-  (set! *used-colors* (cons color *used-colors*))
-  color)
 
 ;;;
 ;;; DOCUMENT-USED-COLORS

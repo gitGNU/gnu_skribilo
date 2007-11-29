@@ -32,7 +32,7 @@
   :autoload   (skribilo utils images)  (convert-image)
   :autoload   (skribilo evaluator)     (evaluate-document)
   :autoload   (skribilo output)        (output)
-  :autoload   (skribilo color)         (skribe-color->rgb)
+  :autoload   (skribilo color)         (color->rgb)
   :use-module (srfi srfi-1)
   :use-module (srfi srfi-2)
   :use-module (srfi srfi-11)
@@ -997,7 +997,7 @@
 			      16)
 	      skribe-color)))
      (let-values (((r g b)
-                   (skribe-color->rgb actual-color)))
+                   (color->rgb actual-color)))
        (apply format #f
               (cons "rgb ~a ~a ~a"
                     (map (if b&w?

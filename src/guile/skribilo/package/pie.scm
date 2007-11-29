@@ -27,7 +27,7 @@
   :use-module (skribilo utils syntax)
   :use-module (skribilo utils keywords) ;; `the-options', etc.
   :use-module (skribilo utils strings)  ;; `make-string-replace'
-  :autoload   (skribilo color)        (skribe-color->rgb)
+  :autoload   (skribilo color)        (color->rgb)
   :autoload   (skribilo package base) (bold)
   :autoload   (srfi srfi-13)          (string-concatenate)
   :autoload   (ice-9 popen)           (open-output-pipe)
@@ -157,7 +157,7 @@ the string \"hello\".  Implement `sliceweight' markups too."
 (define (color-spec->ploticus color-spec)
   (define round (make-rounder 2))
 
-  (call-with-values (lambda () (skribe-color->rgb color-spec))
+  (call-with-values (lambda () (color->rgb color-spec))
     (lambda (r g b)
       (format #f "rgb(~a,~a,~a)"
 	      (round (/ r 255.0))

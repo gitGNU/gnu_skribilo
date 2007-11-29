@@ -31,9 +31,8 @@
   :autoload   (skribilo utils images)  (convert-image)
   :autoload   (skribilo evaluator)     (evaluate-document)
   :autoload   (skribilo output)        (output *document-being-output*)
-  :autoload   (skribilo color)         (skribe-color->rgb
-                                        document-used-colors
-                                        skribe-use-color!)
+  :autoload   (skribilo color)         (color->rgb
+                                        document-used-colors)
   :autoload   (skribilo config)        (skribilo-release)
   :use-module (ice-9 optargs)
   :use-module (ice-9 receive)
@@ -356,7 +355,7 @@
 ;;; ======================================================================
 (define (skribe-color->context-color spec)
   (receive (r g b)
-     (skribe-color->rgb spec)
+     (color->rgb spec)
      (let ((ff (exact->inexact #xff)))
        (format #f "r=~a,g=~a,b=~a"
 	       (number->string (/ r ff))

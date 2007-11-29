@@ -24,6 +24,7 @@
   :use-module (skribilo utils files)
   :use-module (skribilo parameters)
   :use-module (skribilo evaluator)
+  :use-module (skribilo color)
   :use-module (skribilo lib)
   :use-module (srfi srfi-1)
   :autoload   (srfi srfi-13)       (string-rindex)
@@ -212,6 +213,21 @@
 
 (define-public (find-markup-ident ident)
   (or (find-markups ident) '()))
+
+
+
+;;;
+;;; Colors.
+;;;
+
+(define-public skribe-color->rgb color->rgb)
+(define-public (skribe-use-color! c) c)
+(define-public (skribe-get-used-colors)
+  (let ((doc (or (*document-being-output*)
+                 (*document-being-resolved*))))
+    (if doc
+        (document-used-colors doc)
+        '())))
 
 
 

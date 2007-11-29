@@ -32,8 +32,7 @@
   :autoload   (skribilo evaluator)     (evaluate-document)
   :autoload   (skribilo output)        (output)
   :autoload   (skribilo debug)         (*debug*)
-  :autoload   (skribilo color)         (skribe-color->rgb
-                                        skribe-use-color!)
+  :autoload   (skribilo color)         (color->rgb)
   :use-module (srfi srfi-13)
   :use-module (ice-9 optargs)
   :use-module (ice-9 receive)
@@ -457,7 +456,7 @@
 ;*---------------------------------------------------------------------*/
 (define (skribe-color->latex-rgb spec)
    (receive (r g b)
-      (skribe-color->rgb spec)
+      (color->rgb spec)
       (cond
 	 ((and (= r 0) (= g 0) (= b 0))
 	  "0.,0.,0.")

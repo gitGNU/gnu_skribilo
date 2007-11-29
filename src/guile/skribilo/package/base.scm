@@ -1,7 +1,7 @@
 ;;; base.scm -- The base markup package of Skribe/Skribilo.
 ;;;
+;;; Copyright 2005, 2006, 2007  Ludovic Courtès  <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
-;;; Copyright 2005, 2006, 2007  Ludovic Courtès  <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -35,7 +35,6 @@
   ;; optional ``sub-packages''
   :autoload   (skribilo biblio)    (*bib-table* resolve-bib
                                     bib-load! bib-add! bib-sort-refs/number)
-  :autoload   (skribilo color)     (skribe-use-color!)
   :autoload   (skribilo source)    (language? source-read-lines source-fontify)
   :autoload   (skribilo prog)      (make-prog-body resolve-line)
   :autoload   (skribilo index)     (make-index-table default-index)
@@ -394,8 +393,8 @@
       (class class)
       (loc   &invocation-location)
       (required-options '(:bg :fg :width))
-      (options `((:bg ,(if bg (skribe-use-color! bg) bg))
-		 (:fg ,(if fg (skribe-use-color! fg) fg))
+      (options `((:bg ,bg)
+		 (:fg ,fg)
 		 ,@(the-options opts :ident :class :bg :fg)))
       (body (the-body opts))))
 
@@ -754,7 +753,7 @@
       (class class)
       (loc   &invocation-location)
       (required-options '())
-      (options `(,@(if bg `((:bg ,(if bg (skribe-use-color! bg) bg))) '())
+      (options `(,@(if bg `((:bg ,bg)) '())
 		 ,@(the-options opts :ident :class :bg)))
       (body (parse-list-of 'tr 'tc (the-body opts)))))
 
@@ -801,7 +800,7 @@
 			(:valign ,valign)
 			(:colspan ,colspan)
 			,@(if bg
-			      `((:bg ,(if bg (skribe-use-color! bg) bg)))
+			      `((:bg ,bg))
 			      '())
 			,@(the-options opts :ident :class :bg :align :valign)))
 	     (body (the-body opts)))))))
