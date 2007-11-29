@@ -39,7 +39,8 @@
   :use-module (ice-9 receive)
 
   :export (latex-engine
-           LaTeX TeX !latex))
+           LaTeX TeX !latex
+           skribe-color->latex-rgb))
 
 (fluid-set! current-reader %skribilo-module-reader)
 

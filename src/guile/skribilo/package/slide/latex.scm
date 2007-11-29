@@ -1,7 +1,7 @@
 ;;; latex.scm  --  LaTeX implementation of the `slide' package.
 ;;;
-;;; Copyright 2003, 2004  Manuel Serrano
 ;;; Copyright 2007  Ludovic Courtès <ludo@chbouib.org>
+;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -29,7 +29,7 @@
   :use-module (skribilo ast)
   :use-module (skribilo lib)
   :autoload   (skribilo evaluator)     (evaluate-document)
-  :autoload   (skribilo engine latex)  (skribe-get-latex-color)
+  :autoload   (skribilo engine latex)  (skribe-color->latex-rgb)
 
   :autoload   (ice-9 regex)            (string-match)
   :use-module (ice-9 match)
@@ -252,33 +252,37 @@
 	 (display "\\adviplay")
 	 (let ((c (markup-option n :color)))
 	    (when c
-	       (display "[")
-	       (display (skribe-get-latex-color c))
-	       (display "]")))
+               ;; XXX: It's unclear from the ADVI manual whether the `color'
+               ;; argument of `\adviplay' can be specified in a
+               ;; "[model]{spec}" form.  If it can't, then we'd have to use
+               ;; `\definecolor'.  See the `context' engine for an example.
+	       (display "[[rgb]{")
+	       (display (skribe-color->latex-rgb c))
+	       (display "}]")))
 	 (format #t "{~a}" (markup-option n :tag)))
       ;; advi play*
       (define (advi-play* n e)
-	 (let ((c (skribe-get-latex-color (markup-option n :color)))
-	       (d (skribe-get-latex-color (markup-option n :scolor))))
+	 (let ((c (skribe-color->latex-rgb (markup-option n :color)))
+	       (d (skribe-color->latex-rgb (markup-option n :scolor))))
 	    (let loop ((lbls (markup-body n))
 		       (last #f))
 	       (when last
-		  (display "\\adviplay[")
+		  (display "\\adviplay[[rgb]{")
 		  (display d)
-		  (format #t "]{~a}" last))
+		  (format #t "}]{~a}" last))
 	       (when (pair? lbls)
 		  (let ((lbl (car lbls)))
 		     (match lbl
 			((id col)
-			 (display "\\adviplay[")
-			 (display (skribe-get-latex-color col))
-			 (display (string-append "]{" id "}"))
+			 (display "\\adviplay[[rgb]{")
+			 (display (skribe-color->latex-rgb col))
+			 (display (string-append "}]{" id "}"))
 			 (evaluate-document (slide-pause) e)
 			 (loop (cdr lbls) id))
 			(else
-			 (display "\\adviplay[")
+			 (display "\\adviplay[[rgb]{")
 			 (display c)
-			 (format #t "]{~a}" lbl)
+			 (format #t "}]{~a}" lbl)
 			 (evaluate-document (slide-pause) e)
 			 (loop (cdr lbls) lbl))))))))
       (engine-custom-set! le 'documentclass
