@@ -1,7 +1,7 @@
 ;;; color.scm -- Color management.
 ;;;
+;;; Copyright 2006, 2007  Ludovic Courtès  <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
-;;; Copyright 2006  Ludovic Courtès  <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -21,9 +21,16 @@
 
 
 (define-module (skribilo color)
-  :autoload (srfi srfi-60) (bitwise-and arithmetic-shift)
-  :export (skribe-color->rgb skribe-get-used-colors skribe-use-color!))
+  :use-module  (skribilo utils syntax)
+  :autoload    (skribilo ast) (search-down)
+  :autoload    (srfi srfi-1)  (append-map)
+  :autoload    (srfi srfi-60) (bitwise-and arithmetic-shift)
+  :export (skribe-color->rgb skribe-get-used-colors skribe-use-color!
+           document-used-colors))
 
+(fluid-set! current-reader %skribilo-module-reader)
+
+
 ;; FIXME: This module should be generalized and the `skribe-' procedures
 ;; moved to `compat.scm'.
 
@@ -620,3 +627,25 @@
 (define (skribe-use-color! color)
   (set! *used-colors* (cons color *used-colors*))
   color)
+
+;;;
+;;; DOCUMENT-USED-COLORS
+;;;
+(define (document-used-colors doc)
+  ;; Return the list of colors used by DOC, a document.
+  (define colored-nodes
+    (search-down (lambda (n)
+                   ;; The only standard markups known to deal with colors.
+                   (or (is-markup? n 'color)
+                       (is-markup? n 'tr)))
+                 doc))
+
+  (append-map (lambda (n)
+                (let ((fg (markup-option n :fg))
+                      (bg (markup-option n :bg)))
+                  (cond ((and bg fg) (list bg fg))
+                        (fg          (list fg))
+                        (bg          (list bg))
+                        (else        '()))))
+              colored-nodes))
+

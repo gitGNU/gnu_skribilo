@@ -1,7 +1,7 @@
 ;;; context.scm  --  ConTeXt engine.
 ;;;
-;;; Copyright 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
 ;;; Copyright 2007  Ludovic Courtès <ludo@chbouib.org>
+;;; Copyright 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -30,9 +30,9 @@
   :use-module (skribilo package base)
   :autoload   (skribilo utils images)  (convert-image)
   :autoload   (skribilo evaluator)     (evaluate-document)
-  :autoload   (skribilo output)        (output)
+  :autoload   (skribilo output)        (output *document-being-output*)
   :autoload   (skribilo color)         (skribe-color->rgb
-                                        skribe-get-used-colors
+                                        document-used-colors
                                         skribe-use-color!)
   :autoload   (skribilo config)        (skribilo-release)
   :use-module (ice-9 optargs)
@@ -354,8 +354,6 @@
 ;;; ======================================================================
 ;;;	Color Management ...
 ;;; ======================================================================
-(define *skribe-context-color-table* (make-hash-table))
-
 (define (skribe-color->context-color spec)
   (receive (r g b)
      (skribe-color->rgb spec)
@@ -365,34 +363,50 @@
 	       (number->string (/ g ff))
 	       (number->string (/ b ff))))))
 
+(define %doc-table
+  ;; Associate documents with a hash table of used colors.
+  (make-weak-key-hash-table))
 
-(define (skribe-declare-used-colors)
+(define (document-color-table doc)
+  ;; Return the color table associated with DOC.
+  (or (hashq-ref %doc-table doc)
+      (let ((table (make-hash-table)))
+        (hashq-set! %doc-table doc table)
+        table)))
+
+(define (use-color! doc spec)
+  ;; Mark SPEC (a color) as used by DOC.
+  (let ((name (symbol->string (gensym "col"))))
+    (hash-set! (document-color-table doc) spec name)))
+
+(define (declare-used-colors doc)
+  ;; Output a `\definecolor' for each color in DOC's color table.
   (display "\n%%Colors\n")
-  (for-each (lambda (spec)
-	      (let ((c (hash-ref *skribe-context-color-table* spec)))
-		(unless (string? c)
-		  ;; Color was never used before
-		  (let ((name (symbol->string (gensym "col"))))
-		    (hash-set! *skribe-context-color-table* spec name)
-		    (format #t "\\definecolor[~A][~A]\n"
-			    name
-			    (skribe-color->context-color spec))))))
-	    (skribe-get-used-colors))
+  (hash-for-each (lambda (spec name)
+                   (format #t "\\definecolor[~A][~A]\n"
+                           name
+                           (skribe-color->context-color spec)))
+                 (document-color-table doc))
   (newline))
 
-(define (skribe-declare-standard-colors engine)
+(define (use-standard-colors! doc engine)
   (for-each (lambda (x)
-	      (skribe-use-color! (engine-custom engine x)))
+	      (use-color! doc (engine-custom engine x)))
 	    '(source-comment-color source-define-color source-module-color
-	      source-markup-color  source-thread-color source-string-color
-	      source-bracket-color source-type-color)))
+              source-markup-color  source-thread-color source-string-color
+              source-bracket-color source-type-color))
+  (for-each (lambda (c)
+              (use-color! doc c))
+            (document-used-colors doc)))
 
-(define (skribe-get-color spec)
-  (let ((c (and (hash-table? *skribe-context-color-table*)
-		(hash-ref *skribe-context-color-table* spec))))
+(define (get-color doc spec)
+  ;; Return the name of color SPEC in DOC.
+  (let* ((table (document-color-table (or doc (*document-being-output*))))
+         (c     (hash-ref table spec)))
     (if (not (string? c))
 	(skribe-error 'context "Can't find color" spec)
 	c)))
+
 
 ;;; ======================================================================
 ;;;	context-engine ...
@@ -432,8 +446,8 @@
 	     (let ((s (engine-custom e 'user-style)))
 	       (when s (format #t "\\input ~a\n" s)))
 	     ;; Output used colors
-	     (skribe-declare-standard-colors e)
-	     (skribe-declare-used-colors)
+	     (use-standard-colors! n e)
+	     (declare-used-colors n)
 
 	     (display "\\starttext\n\\StartTitlePage\n")
 	     ;; title
@@ -606,16 +620,17 @@
 		       (format #t ",offset=~A" (context-width m)))
 		     (when bg
 		       (format #t ",background=color,backgroundcolor=~A"
-			       (skribe-get-color bg)))
+			       (get-color (ast-document n) bg)))
 		     (when fg
 		       (format #t ",foregroundcolor=~A"
-			       (skribe-get-color fg)))
+			       (get-color (ast-document n) fg)))
 		     (when c
 		       (display ",framecorner=round"))
 		     (display "]\n"))
 		   ;; Probably just a foreground was specified
 		   (when fg
-		     (format #t "\\startcolor[~A] " (skribe-get-color fg))))))
+		     (format #t "\\startcolor[~A] "
+                             (get-color (ast-document n) fg))))))
    :after (lambda (n e)
 	    (let ((bg (markup-option n :bg))
 		   (fg (markup-option n :fg))
@@ -881,7 +896,7 @@
 	     (let ((bg (markup-option n :bg)))
 	       (when bg
 		 (format #t "[background=color,backgroundcolor=~A]"
-			 (skribe-get-color bg)))))
+			 (get-color (ast-document n) bg)))))
    :after  "\\eTR\n")
 
 
