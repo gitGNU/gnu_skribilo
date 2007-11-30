@@ -304,9 +304,9 @@
      ("Downarrow" ,(sym "arrowdbldown"))
      ("<=>" ,(sym "arrowdblboth"))
      ("<==>" "{ { 1.6 1 } @Scale { @Sym arrowdblboth } }")
-     ;; Mathematical operators (we try to avoid `@Eq' since it
-     ;; requires to `@SysInclude { eq }' -- one solution consists in copying
-     ;; the symbol definition from `eqf')
+     ;; Mathematical operators (we try to avoid `@M' since it
+     ;; requires to `@SysInclude { math }' -- one solution consists in copying
+     ;; the symbol definition from `mathf')
      ("forall" "{ { Symbol Base } @Font \"\\042\" }")
      ("partial" ,(sym "partialdiff"))
      ("exists" "{ { Symbol Base } @Font \"\\044\" }")
@@ -757,11 +757,12 @@
 	       :symbol-table (lout-symbol-table
 			      (lambda (m)
 				;; We don't use `@Sym' because it doesn't
-				;; work within `@Eq'.
+				;; work within `@M'.
 				(string-append "{ { Symbol Base } @Font "
 					       "@Char \"" m "\" }"))
 			      (lambda (m)
-				(format #f "{ @Eq { ~a } }" m)))))
+                                ;; This form requires `@SysInclude { math }'.
+				(format #f "{ @M { ~a } }" m)))))
 
 
 ;; So that calls to `markup-writer' automatically use `lout-engine'...
