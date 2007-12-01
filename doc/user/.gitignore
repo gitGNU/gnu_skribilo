@@ -1,4 +1,16 @@
 user.html
 user-*.html
+user.tex
+user.aux
+user.log
+user.out
+user.dvi
+user.toc
+user.lout
+user.lout.*
+user.li*
+user.ps
+user.pdf
 *.png
+*.jpg
 *.eps
