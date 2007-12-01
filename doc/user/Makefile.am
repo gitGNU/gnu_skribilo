@@ -45,9 +45,9 @@ endif
 
 if HAVE_PLOTICUS
 doc-config.scm:
-	-echo "(define %have-ploticus? #t)" > $@
-	-echo "(define %ploticus-path \"$(PLOTICUS)\")" >> $@
+	echo "(define %have-ploticus? #t)" > $@
+	echo "(define %ploticus-path \"$(PLOTICUS)\")" >> $@
 else
 doc-config.scm:
-	-echo "(define %have-ploticus? #f) (define %ploticus-path #f)" > $@
+	echo "(define %have-ploticus? #f) (define %ploticus-path #f)" > $@
 endif
