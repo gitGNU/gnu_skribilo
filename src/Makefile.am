@@ -1,11 +1,11 @@
 SUBDIRS = guile
 
-EXTRA_DIST = skribilo.in
+EXTRA_DIST = skribilo.in pre-inst-skribilo.in
 
 bin_SCRIPTS = skribilo
 noinst_SCRIPTS = pre-inst-skribilo
 
-CLEANFILES  = $(bin_SCRIPTS)
+CLEANFILES  = $(bin_SCRIPTS) $(noinst_SCRIPTS)
 
 substitute = sed -e 's,[@]guilemoduledir[@],$(guilemoduledir),g'	\
 		 -e 's,[@]abs_top_srcdir[@],$(abs_top_srcdir),g'	\

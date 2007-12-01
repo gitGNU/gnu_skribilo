@@ -24,6 +24,7 @@ EXTRA_DIST += src/api1.skb						\
 
 BUILT_SOURCES = doc-config.scm
 html_DATA = user.html
+CLEANFILES = $(BUILT_SOURCES) $(html_DATA)
 
 skribilo = $(top_builddir)/src/pre-inst-skribilo
 skrflags = -I ../ -P ../img --compat=skribe
@@ -36,10 +37,14 @@ load_path = $(top_srcdir)/src/guile:$(top_srcdir)/src/guile/skribilo/package:$(t
 
 if HAVE_LOUT
 
+CLEANFILES += user.lout user.lout.ld user.li user.lix
+
 if HAVE_PS2PDF
 pdf_DATA = user.pdf
+CLEANFILES += $(pdf_DATA)
 else
 ps_DATA = user.ps
+CLEANFILES += $(ps_DATA)
 endif
 
 .skb.lout:
