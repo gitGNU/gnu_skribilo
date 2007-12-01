@@ -1,9 +1,11 @@
-Erick Gallesio and Manuel Serrano implemented Skribe,
-http://www.inria.fr/mimosa/fp/Skribe .
+-*- coding: utf-8 -*-
 
-Skribilo is based upon Skribe 1.2d and re-uses a large body of code
-written for Skribe by Erick and Manuel, and in particular mostly code
-by Erick from the STkLos implementation.  The port to GNU Guile and
-several enhancements were implemented by Ludovic Court�s.
+Érick Gallesio and Manuel Serrano implemented Skribe,
+http://www.inria.fr/mimosa/fp/Skribe/ .
 
-You can contact me at `ludovic.courtes@laas.fr'.
+Skribilo is based upon Skribe 1.2d and re-uses a large body of code by
+Érick and Manuel, in particular code by Érick from the STkLos
+implementation.
+
+The port to GNU Guile and several enhancements were implemented by
+Ludovic Courtès <ludo@gnu.org>.
