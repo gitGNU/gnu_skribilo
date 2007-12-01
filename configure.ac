@@ -47,6 +47,10 @@ GUILE_MODULE_REQUIRED([srfi srfi-35])
 AC_PATH_PROG([LOUT], [lout])
 AM_CONDITIONAL([HAVE_LOUT], [test "x$LOUT" != "x"])
 
+# Look for `ps2pdf' from GhostScript.
+AC_PATH_PROG([PS2PDF], [ps2pdf])
+AM_CONDITIONAL([HAVE_PS2PDF], [test "x$PS2PDF" != "x"])
+
 # Look for Ploticus.
 AC_PATH_PROGS([PLOTICUS], [ploticus pl])
 AM_CONDITIONAL([HAVE_PLOTICUS], [test "x$PLOTICUS" != "x"])

@@ -23,7 +23,11 @@ load_path = $(top_srcdir)/src/guile:$(top_srcdir)/src/guile/skribilo/package:$(t
 
 if HAVE_LOUT
 
+if HAVE_PS2PDF
+pdf_DATA = user.pdf
+else
 ps_DATA = user.ps
+endif
 
 .skb.lout:
 	GUILE_LOAD_PATH=$(load_path):$$GUILE_LOAD_PATH \
@@ -32,6 +36,11 @@ ps_DATA = user.ps
 .lout.ps:
 	$(LOUT) -r4 -I$(srcdir)/lout -c $(@:%.ps=%) -o $@ $<
 
+endif
+
+if HAVE_PS2PDF
+.ps.pdf:
+	$(PS2PDF) $(@:%.pdf=%.ps)
 endif
 
 if HAVE_PLOTICUS
