@@ -17,7 +17,7 @@ skrflags = -I ../ -P ../img --compat=skribe
 load_path = $(top_srcdir)/src/guile:$(top_srcdir)/src/guile/skribilo/package:$(top_builddir)/src/guile:$(top_srcdir)/doc/modules
 
 
-%.html: %.skb
+.skb.html:
 	GUILE_LOAD_PATH=$(load_path):$$GUILE_LOAD_PATH \
 	$(skribilo) $(skrflags) --target html -o $@ $<
 
@@ -25,12 +25,12 @@ if HAVE_LOUT
 
 ps_DATA = user.ps
 
-%.lout: %.skb
+.skb.lout:
 	GUILE_LOAD_PATH=$(load_path):$$GUILE_LOAD_PATH \
 	$(skribilo) $(skrflags) --target lout -o $@ $<
 
-%.ps: %.lout
-	$(LOUT) -r4 -I$(srcdir)/lout -c $(<:%.lout=%) -o $@ $<
+.lout.ps:
+	$(LOUT) -r4 -I$(srcdir)/lout -c $(@:%.ps=%) -o $@ $<
 
 endif
 
