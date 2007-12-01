@@ -68,6 +68,26 @@
                      e)))))
 
 ;*---------------------------------------------------------------------*/
+;*    Lout configuration                                               */
+;*---------------------------------------------------------------------*/
+(let ((le (find-engine 'lout)))
+   (markup-writer 'example le
+      :options '(:legend :number)
+      :action (lambda (n e)
+                (let ((ident  (markup-ident n))
+                      (number (markup-option n :number))
+                      (legend (markup-option n :legend)))
+                  (evaluate-document (mark ident) e)
+                  (display "\n@LP\n5c @Wide @FullWidthRule\n@LP\n")
+                  (output (list (! "{ Schoolbook Bold 1.0f } @Font { $1 }"
+                                   (list (format #f "Example ~a. " number)
+                                         legend))
+                                (! "\n@LP\n")
+                                (markup-body n))
+                          e)))))
+
+
+;*---------------------------------------------------------------------*/
 ;*    html-browsing-extra ...                                          */
 ;*---------------------------------------------------------------------*/
 (define (html-browsing-extra n e)
@@ -240,10 +260,10 @@
 ;*    example-produce ...                                              */
 ;*---------------------------------------------------------------------*/
 (define-markup (example-produce example . produce)
-   (list (it "Example:")
-	 example
+   (list example
 	 (if (pair? produce)
-	     (list (paragraph "Produces:") (car produce)))))
+	     (list (paragraph "... produces:")
+                   (car produce)))))
 
 ;*---------------------------------------------------------------------*/
 ;*    markup-ref ...                                                   */
