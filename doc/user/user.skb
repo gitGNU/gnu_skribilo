@@ -20,7 +20,7 @@
 ;;; USA.
 
 ;*---------------------------------------------------------------------*/
-;*    The Skribe documentation style                                   */
+;*    The Skribilo documentation style                                   */
 ;*---------------------------------------------------------------------*/
 (use-modules (skribilo package web-book)
              (skribilo documentation env)
@@ -76,33 +76,40 @@ If you are new to Skribilo, please read the ,(ref :ident "intro"
 
 
 ;;; Introduction
-(chapter :title "Introduction" :ident "intro" :number #f :toc #t :file #f [
-Skribe is a programming language designed for implementing electronic
-documents. It is mainly designed for the writing of technical documents
-such as the documentation of computer programs. With Skribe these
-documents can be rendered using various tools and technologies. For
-instance, a Skribe document can be ,(emph "compiled") to an HTML file
-that suits Web browser, it can be compiled to a TeX file in order to
-produce a high-quality printed document, and so on.]
+(chapter :title "Introduction" :ident "intro" :number #f :toc #t :file #f
+
+   (p [Skribilo is a document production toolkit and a programming
+language designed for implementing electronic documents,(footnote [To be
+more precise, the programming language itself is that of ,(ref :text
+[Skribe] :url "http://www-sop.inria.fr/mimosa/fp/Skribe/"), the project
+Skribilo is based on.]).  It is mainly designed for the writing of
+technical documents such as the documentation of computer programs.
+With Skribilo these documents can be rendered using various tools and
+technologies.  For instance, a Skribilo document can be ,(emph
+"compiled") to an HTML file that suits Web browser, it can be compiled
+to a TeX file in order to produce a high-quality printed document, and
+so on.])
    
-   (section :title "Who may use Skribe?" :number #f [
-Everyone needing to design web pages, info documents, man pages or
-Postscript files can use Skribe. In particular, there is ,(bold "no need")
-for programming skills in order to use Skribe. Skribe can be used as
-any text description languages such as ,(ref :text [LaTeX] :url
+   (section :title "Who May Use Skribilo?" :number #f
+      
+      (p [Anyone needing to design web pages, PostScript/PDF files or
+Info documents can use Skribilo.  In particular, there is ,(emph "no
+need") for programming skills in order to use Skribilo.  Skribilo can be
+used as any text description languages such as ,(ref :text [LaTeX] :url
 "http://latex-project.org/"), ,(ref :text [Lout] :url
-"http://lout.sf.net/") or HTML.])
-   
-   (section :title "Why using Skribe?" :number #f [
-There are three main reasons for using Skribe:]
+"http://lout.sf.net/") or HTML.]))
+
+   (section :title "Why Use Skribilo?" :number #f
+      
+      (p [There are three main reasons for using Skribilo:]
       
       (itemize
 	 (item [
-It is easier to type in Skribe texts than other text description formats.
+It is easier to type in Skribilo texts than other text description formats.
 The need for ,(emph "meta keyword"), that is, words used to describe
 the structure of the text and not the text itself, is very limited.])
 	 (item [
-Skribe is highly skilled for computing texts. It is very common that
+Skribilo is highly skilled for computing texts. It is very common that
 one needs to automatically produce parts of the text. This can
 be very simple such as, for instance, the need to include inside a text,
 the date of the last update or the number of the last revision.
@@ -110,11 +117,11 @@ Sometimes it may be more complex. For instance, one may be willing to
 embed inside a text the result of a complex arithmetic computation. Or
 even, you may want to include some statistics about that
 text, such as, the number of words, paragraphs, sections, and so on.
-Skribe makes these sort of text manipulation easy whereas other
+Skribilo makes these sort of text manipulation easy whereas other
 systems rely on the use of text preprocessors.])
 	 (item [
 The same source file can be compiled to various output formats such
-as HTML, Info pages, man pages, Postscript, etc.]))))
+as HTML, PostScript, Info pages, etc.])))))
 
 ;;; toc
 (if (engine-format? "latex")
@@ -126,7 +133,7 @@ as HTML, Info pages, man pages, Postscript, etc.]))))
 ;;; Syntax
 (include "syntax.skb")
 
-;;; Skribe Markup Library
+;;; Skribilo Markup Library
 (include "markup.skb")
 
 ;;; Hyperlinks and references
@@ -156,7 +163,7 @@ as HTML, Info pages, man pages, Postscript, etc.]))))
 ;;; Emacs
 (include "emacs.skb")
 
-;;; Skribe
+;;; Skribilo
 (include "skribec.skb")
 
 ;;; Slides
@@ -191,4 +198,5 @@ as HTML, Info pages, man pages, Postscript, etc.]))))
 ;; coding: latin-1
 ;; comment-start: ";"
 ;; comment-end: ""
+;; ispell-local-dictionary: "american"
 ;; End:
