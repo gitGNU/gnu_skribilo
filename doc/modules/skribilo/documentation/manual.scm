@@ -35,6 +35,7 @@
   :use-module (skribilo source lisp)
   :use-module (skribilo source xml)
 
+  :use-module (oop goops)
   :use-module (ice-9 optargs))
 
 (fluid-set! current-reader %skribilo-module-reader)
@@ -149,6 +150,18 @@
    (engine-custom-set! le 'initial-language "English")
    (engine-custom-set! le 'initial-font "Palatino Base 10p"))
 
+
+;*---------------------------------------------------------------------*/
+;*    Keywords should be represented using the right syntax, i.e.,     */
+;*    using the `:KW' style.                                           */
+;*---------------------------------------------------------------------*/
+(define-generic write)
+(define-method (write (kw <keyword>) . rest)
+  (let ((port (if (null? rest)
+                  (current-output-port)
+                  (car rest))))
+    (display ":" port)
+    (display (keyword->symbol kw) port)))
 
 
 ;*---------------------------------------------------------------------*/
