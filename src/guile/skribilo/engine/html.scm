@@ -1,7 +1,7 @@
 ;;; html.scm  --  HTML engine.
 ;;;
+;;; Copyright 2005, 2006, 2007  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
-;;; Copyright 2005, 2006, 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -1890,7 +1890,7 @@
 				(markup-class n)
 				"skribilo-ref")))
 		 (format #t "<a href=\"~a#~a\" class=\"~a\""
-			 (if (and (*destination-file*)
+			 (if (and (*destination-file*) f
 				  (string=? f (*destination-file*)))
 			     ""
 			     (strip-ref-base (or f (*destination-file*) "")))
