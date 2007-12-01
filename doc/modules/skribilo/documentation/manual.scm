@@ -194,7 +194,7 @@
                 ;; Same trick as for `ctrtable': don't center frames (which
                 ;; are actually `@Tbl') in Lout.
                 (if (engine-format? "lout" e)
-                    (list (! "\n@LP\n@DP\n") f)
+                    (! "\n@LP\n@DP\n$1\n@LP\n" f)
                     f)))))
 
 ;*---------------------------------------------------------------------*/
