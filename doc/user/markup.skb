@@ -1,5 +1,6 @@
-;;; markup.skb  --  The Skribe standard markups
+;;; markup.skb  --  The Skribilo standard markups
 ;;;
+;;; Copyright 2007  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -91,3 +92,9 @@ calls are legal ,(tt "section") calls:])
 (include "table.skb")
 (include "footnote.skb")
 (include "char.skb"))
+
+;; Local Variables:
+;; coding: latin-1
+;; comment-start: ";"
+;; comment-end: ""
+;; End:

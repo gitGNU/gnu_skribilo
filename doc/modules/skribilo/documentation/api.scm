@@ -1,7 +1,7 @@
 ;;; api.scm  --  The style for documenting Scheme APIs.
 ;;;
+;;; Copyright 2005, 2006, 2007  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
-;;; Copyright 2005, 2006, 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -30,7 +30,7 @@
   :use-module (skribilo utils syntax) ;; `%skribilo-module-reader'
 
   :use-module (skribilo package base)
-  :use-module (skribilo documentation manual) ;; `*markup-index*'
+  :use-module (skribilo documentation manual)
   :use-module (skribilo documentation env) ;; `*api-engines*'
 
   :use-module (srfi srfi-1)
@@ -609,8 +609,7 @@
 	     ((engine-format? "latex")
 	      #f)
 	     (else
-	      (center
-		 (apply table
+		 (apply ctrtable
                         :&location &invocation-location
 			:width *prgm-width*
 			(tr :class 'api-table-header
@@ -629,5 +628,5 @@
 				      (td :valign 'top
 					 (code (exp->skribe (cadr def)))))
 				   (td :align 'left :valign 'top (cadr r))))
-			     (filter cadr args))))))))))
-	  
+			     (filter cadr args)))))))))
+

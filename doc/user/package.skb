@@ -1,7 +1,7 @@
 ;;; package.skb  --  Packages
 ;;;
-;;; Copyright 2001, 2004, 2005  Manuel Serrano
 ;;; Copyright 2007  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2001, 2004, 2005  Manuel Serrano
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -198,9 +198,15 @@ container.]))
 
       (subsubsection :title [Example]
 
+	 (resolve (lambda (n e env)
+	            ;; XXX: In Lout, the sample code is unbreakable for
+		    ;; some reason, which breaks the whole document.
+	            (if (engine-format? "html" e)
+		        (list
 	 (p [Below is a full example using ,(tt [html-navtabs]).])
-
-	 (prgm :file "src/html-navtabs.skb")))))
+	 (prgm :file "src/html-navtabs.skb"))
+	                [Please see the HTML version of the manual
+                         for an example.])))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    Emacs indentation                                                */

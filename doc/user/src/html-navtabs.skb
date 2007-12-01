@@ -104,7 +104,7 @@
 ;*---------------------------------------------------------------------*/
 (document :title title :html-title "html-navtabs"
    :html-tabs-bar 
-   (table (tr (td :align 'right "a two-lines table"))
+   (table (tr (td :align 'right "a two-line table"))
       (tr (td :align 'right "yep")))
    
    (section :title "Foo" :number #f (p [The in-line foo section]))

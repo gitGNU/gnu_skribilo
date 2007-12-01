@@ -1,7 +1,7 @@
 ;;; user.skb  --  The Skribilo user manual.
 ;;;
+;;; Copyright 2005, 2006, 2007  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2001, 2002, 2003, 2004  Manuel Serrano
-;;; Copyright 2005, 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -32,7 +32,8 @@
 ;*    Packages							       */
 ;*---------------------------------------------------------------------*/
 (use-modules (skribilo package eq)
-	     (skribilo package pie))
+	     (skribilo package pie)
+	     (skribilo package slide))
 
 ;; Load the compile-time configuration file.
 (load "doc-config.scm")
@@ -46,12 +47,6 @@
 ;; correct title width
 (let ((he (find-engine 'html)))
    (engine-custom-set! he 'body-width 100.))
-
-;*---------------------------------------------------------------------*/
-;*    Lout custom                                                      */
-;*---------------------------------------------------------------------*/
-(let ((le (find-engine 'lout)))
-   (engine-custom-set! le 'document-type 'doc))
 
 
 ;*---------------------------------------------------------------------*/
@@ -70,10 +65,14 @@
 		 (author :name "Ludovic Courtès"
 		    :email (mailto *courtes-mail*)))
    
-(p :class "welcome"
+(resolve (lambda (n e env)
+	   ;; The Lout engine uses the `book' style, where we can't have
+	   ;; text outside of chapters.
+	   (and (not (engine-format? "lout" e))
+	        (p :class "welcome"
    [Welcome to the User Manual for Skribilo version ,(skribe-release).
 If you are new to Skribilo, please read the ,(ref :ident "intro"
-:text [introduction]) first.])
+:text [introduction]) first.]))))
 
 
 ;;; Introduction
@@ -187,3 +186,9 @@ as HTML, Info pages, man pages, Postscript, etc.]))))
        (the-index :column (if (engine-format? "latex") 2 3)
 	  *markup-index* *custom-index* *function-index* *package-index*
 	  (default-index)))))
+
+;; Local Variables:
+;; coding: latin-1
+;; comment-start: ";"
+;; comment-end: ""
+;; End:

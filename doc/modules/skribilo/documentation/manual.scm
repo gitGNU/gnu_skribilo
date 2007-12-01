@@ -1,7 +1,7 @@
 ;;; manual.scm  --  Skribilo manuals and documentation style.
 ;;;
-;;; Copyright 2003, 2004  Manuel Serrano
 ;;; Copyright 2007  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -92,7 +92,7 @@
 				     :text "Directory"))))))))
 
 ;*---------------------------------------------------------------------*/
-;*    Html configuration                                               */
+;*    HTML configuration                                               */
 ;*---------------------------------------------------------------------*/
 (let* ((he (find-engine 'html))
        (bd (markup-writer-get 'bold he)))
@@ -118,6 +118,35 @@
    (engine-custom-set! le 'usepackage npckg))
 
 ;*---------------------------------------------------------------------*/
+;*    Lout                                                             */
+;*---------------------------------------------------------------------*/
+(let* ((le (find-engine 'lout)))
+   (engine-custom-set! le 'document-type 'book)
+   (engine-custom-set! le 'document-include
+                       "@Include { \"book-style.lout\" }")
+   (engine-custom-set! le 'initial-language "English")
+   (engine-custom-set! le 'initial-font "Palatino Base 10p"))
+
+
+
+;*---------------------------------------------------------------------*/
+;*    ctrtable ...                                                     */
+;*---------------------------------------------------------------------*/
+(define-markup (ctrtable :rest args)
+  (resolve (lambda (n e env)
+             ;; With Lout, centering whole tables precludes breaking over
+             ;; several pages (because `@Center' has an `@OneRow' effect),
+             ;; which is a problem with large tables.
+             (if (engine-format? "lout" e)
+                 (list (linebreak)
+                       (apply table
+                              :&location &invocation-location
+                              args))
+                 (center (apply table
+                                :&location &invocation-location
+                                args))))))
+
+;*---------------------------------------------------------------------*/
 ;*    prgm ...                                                         */
 ;*---------------------------------------------------------------------*/
 (define-markup (prgm :rest opts :key (language skribe) (line #f) (file #f) (definition #f))
@@ -136,10 +165,15 @@
 		 (line
 		  (prog :line line sc))
 		 (else
-		  (pre sc)))))
-      (center
-       (frame :margin 5 :border 0 :width *prgm-width*
-	      (color :margin 5 :width 100. :bg c pr)))))
+		  (pre sc))))
+          (f  (frame :margin 5 :border 0 :width *prgm-width*
+                     (color :margin 5 :width 100. :bg c pr))))
+     (resolve (lambda (n e env)
+                ;; Same trick as for `ctrtable': don't center frames (which
+                ;; are actually `@Tbl') in Lout.
+                (if (engine-format? "lout" e)
+                    (list (! "\n@LP\n@DP\n") f)
+                    f)))))
 
 ;*---------------------------------------------------------------------*/
 ;*    disp ...                                                         */

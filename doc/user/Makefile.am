@@ -6,7 +6,8 @@ EXTRA_DIST = bib.skb char.skb colframe.skb document.skb emacs.skb	\
   justify.skb latexe.skb lib.skb line.skb links.skb			\
   markup.skb ornament.skb package.skb pie.skb prgm.skb sectioning.skb	\
   skribe-config.skb skribec.skb skribeinfo.skb slide.skb start.skb	\
-  syntax.skb table.skb toc.skb user.skb xmle.skb
+  syntax.skb table.skb toc.skb user.skb xmle.skb			\
+  lout/book-style.lout
 
 BUILT_SOURCES = doc-config.scm
 html_DATA = user.html
@@ -29,7 +30,7 @@ ps_DATA = user.ps
 	$(skribilo) $(skrflags) --target lout -o $@ $<
 
 %.ps: %.lout
-	$(LOUT) -c $(<:%.lout=%) -o $@ $<
+	$(LOUT) -r4 -I$(srcdir)/lout -c $(<:%.lout=%) -o $@ $<
 
 endif
 

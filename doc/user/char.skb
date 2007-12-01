@@ -79,21 +79,20 @@ of the capacity of the targeted format.])
 
 (p [Here is the list of recognized symbols:])
 
-(center
- (apply table 
-	:width *prgm-width*
-	(tr :class 'api-symbol-prototype (th "Symbol name") (th "Rendering"))
-	(map (lambda (s)
-		(tr :bg  *prgm-skribe-color*
-		    (td :align 'left s)
-		    (td :align 'left (symbol s))))
-	     (sort (let ((t (make-hashtable)))
-		      (for-each (lambda (e)
-				   (for-each (lambda (s)
-						(hashtable-put! t (car s) (car s)))
-					     (engine-symbol-table e)))
-				*api-engines*)
-		      (hashtable->list t))
-		   string<?))))))
+(apply ctrtable
+       :width *prgm-width*
+       (tr :class 'api-symbol-prototype (th "Symbol name") (th "Rendering"))
+       (map (lambda (s)
+               (tr :bg  *prgm-skribe-color*
+                   (td :align 'left s)
+                   (td :align 'left (symbol s))))
+            (sort (let ((t (make-hashtable)))
+                     (for-each (lambda (e)
+                                  (for-each (lambda (s)
+                                               (hashtable-put! t (car s) (car s)))
+                                            (engine-symbol-table e)))
+                               *api-engines*)
+                     (hashtable->list t))
+                  string<?)))))
 
 
