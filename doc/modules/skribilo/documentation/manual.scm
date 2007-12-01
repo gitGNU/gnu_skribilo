@@ -23,11 +23,11 @@
   :use-module (skribilo engine)
   :use-module (skribilo writer)
   :use-module (skribilo ast)
-  :use-module (skribilo lib) ;; `define-markup'
-  :use-module (skribilo resolve)
+  :use-module (skribilo lib)
   :use-module (skribilo output)
+  :use-module (skribilo resolve)
+  :use-module (skribilo evaluator)
   :use-module (skribilo utils keywords)
-  :use-module (skribilo utils compat)
   :use-module (skribilo utils syntax)
 
   :use-module (skribilo documentation env)
@@ -58,22 +58,24 @@
 		 (let ((ident (markup-ident n))
 		       (number (markup-option n :number))
 		       (legend (markup-option n :legend)))
-		    (skribe-eval (mark ident) e)
-		    (skribe-eval (center
-				  (markup-body n)
-				  (if number
-				      (bold (format #f "Ex. ~a: " number)))
-				  legend)
-				 e)))))
+		    (evaluate-document (mark ident) e)
+		    (evaluate-document
+                     (center
+                      (markup-body n)
+                      (if number
+                          (bold (format #f "Ex. ~a: " number)))
+                      legend)
+                     e)))))
 
 ;*---------------------------------------------------------------------*/
 ;*    html-browsing-extra ...                                          */
 ;*---------------------------------------------------------------------*/
 (define (html-browsing-extra n e)
-   (let ((i1 (let ((m (find-markup-ident "Index")))
-		(and (pair? m) (car m))))
-	 (i2 (let ((m (find-markup-ident "markups-index")))
-		(and (pair? m) (car m)))))
+
+   (define doc (ast-document n))
+
+   (let ((i1 (and doc (document-lookup-node doc "Index")))
+	 (i2 (and doc (document-lookup-node doc "markups-index"))))
       (cond
 	 ((not i1)
 	  (skribe-error 'left-margin "Can't find section" "Index"))
@@ -224,7 +226,7 @@
 (define-markup (example :rest opts :key legend class)
    (new container
       (markup 'example)
-      (ident (symbol->string (gensym 'example)))
+      (ident (symbol->string (gensym "example")))
       (class class)
       (required-options '(:legend :number))
       (options `((:number
@@ -331,7 +333,7 @@
 			   (else
 			    (table :width 100. :&location loc
 			       (make-sub-tables ie nc pref))))))
-		 (output (skribe-eval t e) e))))
+		 (output (evaluate-document t e) e))))
 
 ;*---------------------------------------------------------------------*/
 ;*    compiler-command ...                                             */
