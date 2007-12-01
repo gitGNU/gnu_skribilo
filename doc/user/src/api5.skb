@@ -1,2 +1,3 @@
-(section :title "This is a simple section" :number #f :toc #f [
-Its body is just one sentence.])
+(chapter :title "This is a simple chapter" :number #f :toc #f
+   
+   (p [Its body is just one sentence.]))

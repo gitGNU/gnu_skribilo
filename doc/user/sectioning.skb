@@ -1,7 +1,7 @@
 ;;; sectioning.skb  --  Sectioning markups
 ;;;
-;;; Copyright 2003, 2004  Manuel Serrano
 ;;; Copyright 2007  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -57,7 +57,7 @@ in the main target file.])
 	    :see-also '(document section toc))
 
 (example-produce
- (example :legend "The chapter markup" (prgm :file "src/api4.skb"))
+ (example :legend [The ,(tt [chapter]) markup] (prgm :file "src/api5.skb"))
  (disp 
   (processor :combinator 
 	     (lambda (e1 e2)
@@ -66,7 +66,7 @@ in the main target file.])
 				  :options '(:title :file :number :toc)
 				  :action dummy-section-output)
 		   e))
-	     (include "src/api4.skb")))))
+	     (include "src/api5.skb")))))
 
 ;*--- section ---------------------------------------------------------*/
 (subsection :title "Sections" 
@@ -88,19 +88,7 @@ file. A value of ,(tt "#f") tells the Skribe compiler to embed the chapter
 in the main target file.])
 	      (#!rest node... [The nodes of the section.]))
 	    :others '(subsection subsubsection)
-	    :see-also '(document chapter paragraph toc))
-
-(example-produce
- (example :legend "The chapter markup" (prgm :file "src/api5.skb"))
- (disp 
-  (processor :combinator 
-	     (lambda (e1 e2)
-		(let ((e (copy-engine 'document-engine e2)))
-		   (markup-writer 'chapter e
-				  :options '(:title :file :number :toc)
-				  :action dummy-section-output)
-		   e))
-	     (include "src/api5.skb")))))
+	    :see-also '(document chapter paragraph toc)))
 
 ;*--- paragraph -------------------------------------------------------*/
 (subsection :title "Paragraph"
