@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT(skribilo, 1.2, skribilo-users@nongnu.org)
+AC_INIT(skribilo, 0.9.0, skribilo-users@nongnu.org)
 AC_CONFIG_AUX_DIR(build-aux)
 AC_CONFIG_MACRO_DIR(m4)
 
@@ -75,7 +75,7 @@ fi
 
 
 AC_SUBST([SKRIBILO_DOC_DIR], ["$datadir/doc/skribilo"])
-AC_SUBST([SKRIBILO_EXT_DIR], ["$datadir/skribilo/1.2/"])
+AC_SUBST([SKRIBILO_EXT_DIR], ["$datadir/skribilo/$PACKAGE_VERSION/"])
 AC_SUBST([SKRIBILO_SKR_PATH], ["$GUILE_SITE/"])
 
 AC_OUTPUT([Makefile
