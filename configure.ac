@@ -60,15 +60,16 @@ AM_CONDITIONAL([HAVE_PLOTICUS], [test "x$PLOTICUS" != "x"])
 
 pkgdatadir="$datadir/$PACKAGE_NAME"
 if test "x$guilemoduledir" = "x"; then
-  guilemoduledir="$pkgdatadir"
+  guilemoduledir="$pkgdatadir/$PACKAGE_VERSION"
 fi
 AC_SUBST([guilemoduledir])
 
 if test "$guilemoduledir" != "$GUILE_SITE"; then
    # Guile won't be able to locate the module "out of the box", so
-   # warn the user.
+   # warn the user.  OTOH, `skribilo' will find it, no matter where
+   # it is.
    AC_MSG_WARN([`guilemoduledir' ($guilemoduledir) is different from `GUILE_SITE' ($GUILE_SITE).])
-   AC_MSG_WARN([Make sure to adjust the `GUILE_LOAD_PATH' environment variable accordingly,])
+   AC_MSG_WARN([You might want to adjust the `GUILE_LOAD_PATH' environment variable accordingly,])
    AC_MSG_WARN([or re-run `configure' with `--with-guilemoduledir=$GUILE_SITE'.])
 fi
 
