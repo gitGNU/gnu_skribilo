@@ -1,8 +1,8 @@
 SUBDIRS = guile
 
-EXTRA_DIST = skribilo.in pre-inst-skribilo.in
+EXTRA_DIST = skribilo.in pre-inst-skribilo.in skribilo-config.in
 
-bin_SCRIPTS = skribilo
+bin_SCRIPTS = skribilo skribilo-config
 noinst_SCRIPTS = pre-inst-skribilo
 
 CLEANFILES  = $(bin_SCRIPTS) $(noinst_SCRIPTS)
@@ -10,10 +10,14 @@ CLEANFILES  = $(bin_SCRIPTS) $(noinst_SCRIPTS)
 substitute = sed -e 's,[@]guilemoduledir[@],$(guilemoduledir),g'	\
 		 -e 's,[@]abs_top_srcdir[@],$(abs_top_srcdir),g'	\
 		 -e 's,[@]abs_top_builddir[@],$(abs_top_builddir),g'	\
+		 -e 's,[@]prefix[@],$(prefix),g'			\
+		 -e 's,[@]docdir[@],$(docdir),g'			\
+		 -e 's,[@]emacsdir[@],$(emacsdir),g'			\
 		 -e 's,[@]GUILE[@],$(GUILE),g'				\
 		 -e 's,[@]PACKAGE_STRING[@],$(PACKAGE_STRING),g'	\
 		 -e 's,[@]PACKAGE_NAME[@],$(PACKAGE_NAME),g'		\
-		 -e 's,[@]PACKAGE_VERSION[@],$(PACKAGE_VERSION),g'
+		 -e 's,[@]PACKAGE_VERSION[@],$(PACKAGE_VERSION),g'	\
+		 -e 's,[@]PACKAGE_BUGREPORT[@],$(PACKAGE_BUGREPORT),g'
 
 SUFFIXES = .in
 

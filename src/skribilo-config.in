@@ -1,0 +1,63 @@
+#!/bin/sh
+#
+#           Author: Erick Gallesio [eg@essi.fr]
+#                   Ludovic Courtès <ludo@gnu.org>
+
+
+function usage()
+{
+    cat <<EOF
+Usage: skribilo-config [OPTIONS]
+Display the configuration of Skribilo.
+
+  --version, -v		Show Skribilo version.
+  --help, -h		Show a list of options.
+
+  --prefix, -p		Prefix that was given during the build
+  --module-dir, -m	Display the Guile module directory
+  --doc-dir, -d		Display the documentation directory location
+  --emacs-dir, -e	Display the emacs directory location
+  --scheme, -s		Display the configured Scheme implementation
+
+Report bugs to <@PACKAGE_BUGREPORT@>.
+EOF
+    exit $1
+}
+
+
+if test $# -eq 0; then
+    usage 1 1>&2
+fi
+
+while test $# -gt 0; do
+    case "$1" in
+	--version|-v)
+	    echo @PACKAGE_VERSION@
+	    ;;
+	--prefix|-p)
+	    echo @prefix@
+	    ;;
+	--module-dir|-m)
+	    echo @guilemoduledir@
+	    ;;
+	--doc-dir|-d) 
+	    echo @docdir@
+	    ;;
+	--emacs-dir|-e) 
+	    echo @emacsdir@
+	    ;;
+	--scheme|-s)
+	    echo @GUILE@
+	    ;;
+	--help|-h)
+	    usage 0 1>&2
+	    ;;
+	*)
+	    echo "unrecognized option \`$1'" 1>&2
+	    usage 1 1>&2
+	    ;;
+    esac
+    shift
+done
+exit 0
+
