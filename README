@@ -29,14 +29,11 @@ Requirements
 
 You need at least:
 
-  * GNU Guile >= 1.8.x
+  * GNU Guile >= 1.8.3
     http://www.gnu.org/software/guile/
 
   * Guile-Reader >= 0.3
     http://www.nongnu.org/guile-reader/
-
-  * Guile-Lib (unless using Guile >= 1.8.3)
-    http://home.gna.org/guile-lib/
 
 Optionally, you may want to install one of the following document layout
 programs to produce PS/PDF files:

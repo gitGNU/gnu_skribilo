@@ -40,8 +40,12 @@ GUILE_MODULE_REQUIRED([system reader])
 # SRFI-34 is normally in Guile 1.8, but let's make sure.
 GUILE_MODULE_REQUIRED([srfi srfi-34])
 
-# Need SRFI-35, available in `guile-library' or Guile >= 1.8.3.
+# Need SRFI-35, available in Guile >= 1.8.3.
 GUILE_MODULE_REQUIRED([srfi srfi-35])
+
+# Need SRFI-37, available in Guile >= 1.8.3.
+GUILE_MODULE_REQUIRED([srfi srfi-37])
+
 
 # Look for Lout.
 AC_PATH_PROG([LOUT], [lout])

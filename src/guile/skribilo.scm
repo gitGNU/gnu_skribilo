@@ -29,26 +29,28 @@ exec ${GUILE-guile} --debug -l $0 -c "(apply $main (cdr (command-line)))" "$@"
 ;;;
 ;;; Usage: skribilo [ARGS]
 ;;;
-;;; Process a skribilo document.
+;;; Process a skribilo document using options from the command-line.
 ;;;
 ;;; Code:
 
 
 
 (define-module (skribilo)
-  :autoload (skribilo module) (make-user-module *skribilo-user-module*)
-  :autoload (skribilo engine) (*current-engine*)
-  :autoload (skribilo reader) (*document-reader*)
-  :use-module (skribilo utils syntax))
+  :autoload    (skribilo module) (make-user-module *skribilo-user-module*)
+  :autoload    (skribilo engine) (*current-engine*)
+  :autoload    (skribilo reader) (*document-reader*)
+  :autoload    (skribilo config) (skribilo-version)
 
-(use-modules (skribilo evaluator)
-	     (skribilo debug)
-	     (skribilo parameters)
-	     (skribilo lib)
+  :use-module  (skribilo utils syntax)
+  :use-module  (skribilo evaluator)
+  :use-module  (skribilo debug)
+  :use-module  (skribilo parameters)
+  :use-module  (skribilo lib)
 
-	     (srfi srfi-39)
-	     (ice-9 optargs)
-	     (ice-9 getopt-long))
+  :autoload    (srfi srfi-1)     (alist-cons)
+  :use-module  (srfi srfi-37)
+  :use-module  (srfi srfi-39)
+  :use-module  (ice-9 optargs))
 
 
 ;; Install the Skribilo module syntax reader.
@@ -60,6 +62,10 @@ exec ${GUILE-guile} --debug -l $0 -c "(apply $main (cdr (command-line)))" "$@"
 
 
 
+;;;
+;;; Legacy option processing (FIXME: To be removed!).
+;;;
+
 (define* (process-option-specs longname
 			       :key (alternate #f) (arg #f) (help #f)
 			       :rest thunk)
@@ -167,32 +173,10 @@ specifications."
       (lambda () (eval (read))))))
 
 
-; (define skribilo-options
-;   ;; Skribilo options in getopt-long's format, as computed by
-;   ;; `raw-options->getopt-long'.
-;   `((target (single-char #\t) (value #f))
-;     (I (value #f))
-;     (B (value #f))
-;     (S (value #f))
-;     (P (value #f))
-;     (split-chapters (single-char #\C) (value #f))
-;     (preload (value #f))
-;     (use-variant (single-char #\u) (value #f))
-;     (base (single-char #\b) (value #f))
-;     (rc-dir (single-char #\d) (value #f))
-;     (no-init-file (value #f))
-;     (output (single-char #\o) (value #f))
-;     (help (single-char #\h) (value #f))
-;     (options (value #f))
-;     (version (single-char #\V) (value #f))
-;     (query (single-char #\q) (value #f))
-;     (verbose (single-char #\v) (value #f))
-;     (warning (single-char #\w) (value #f))
-;     (debug (single-char #\g) (value #f))
-;     (no-color (value #f))
-;     (custom (single-char #\c) (value #f))
-;     (eval (single-char #\e) (value #f))))
-
+
+;;;
+;;; Help.
+;;;
 
 (define (skribilo-show-help)
   (format #t "Usage: skribilo [OPTIONS] [INPUT]
@@ -209,132 +193,18 @@ Processes a Skribilo/Skribe source file and produces its output.
 ~%"))
 
 (define (skribilo-show-version)
-  (format #t "skribilo ~a~%" (skribilo-release)))
+  (format #t "skribilo ~a~%" (skribilo-version)))
 
-;;;; ======================================================================
-;;;;
-;;;;				P A R S E - A R G S
-;;;;
-;;;; ======================================================================
-(define (parse-args args)
+(define (leave fmt . args)
+  (apply format (current-error-port) (string-append fmt "~%") args)
+  (exit 1))
 
-  (define (version)
-    (format #t "skribe v~A\n" (skribe-release)))
 
-  (define (query)
-    (version)
-    (for-each (lambda (x)
-		(let ((s (keyword->string (car x))))
-		  (printf "  ~a: ~a\n" s (cadr x))))
-	      (skribe-configure)))
+
+;;;
+;;; Document processing.
+;;;
 
-  ;;
-  ;; parse-args starts here
-  ;;
-  (let ((paths '())
-	(engine #f))
-    (parse-arguments args
-      "Usage: skribe [options] [input]"
-      "General options:"
-	(("target" :alternate "t" :arg target
-		   :help "sets the output format to <target>")
-	   (set! engine (string->symbol target)))
-	(("I" :arg path :help "adds <path> to Skribe path")
-	   (set! paths (cons path paths)))
-	(("B" :arg path :help "adds <path> to bibliography path")
-	   (skribe-bib-path-set! (cons path (skribe-bib-path))))
-	(("S" :arg path :help "adds <path> to source path")
-	   (skribe-source-path-set! (cons path (skribe-source-path))))
-	(("P" :arg path :help "adds <path> to image path")
-	   (skribe-image-path-set! (cons path (skribe-image-path))))
-	(("split-chapters" :alternate "C" :arg chapter
-			   :help "emit chapter's sections in separate files")
-	   (set! *skribe-chapter-split* (cons chapter *skribe-chapter-split*)))
-	(("preload" :arg file :help "preload <file>")
-	 (set! *skribe-preload* (cons file *skribe-preload*)))
-	(("use-variant" :alternate "u" :arg variant
-			:help "use <variant> output format")
-	  (set! *skribe-variants* (cons variant *skribe-variants*)))
-	(("base" :alternate "b" :arg base
-		 :help "base prefix to remove from hyperlinks")
-	   (set! *skribe-ref-base* base))
-	(("rc-dir" :arg dir :alternate "d" :help "set the RC directory to <dir>")
-	   (set! *skribe-rc-directory* dir))
-
-      "File options:"
-	(("no-init-file" :help "Dont load rc Skribe file")
-	   (set! *load-rc* #f))
-	(("output" :alternate "o" :arg file :help "set the output to <file>")
-	   (set! *skribe-dest* file)
-	   (let* ((s (file-suffix file))
-		  (c (assoc s *skribe-auto-mode-alist*)))
-	     (if (and (pair? c) (symbol? (cdr c)))
-	       (set! *skribe-engine* (cdr c)))))
-
-      "Misc:"
-	(("help" :alternate "h" :help "provides help for the command")
-	   (arg-usage (current-error-port))
-	   (exit 0))
-	(("options" :help "display the skribe options and exit")
-	   (arg-usage (current-output-port) #t)
-	   (exit 0))
-	(("version" :alternate "V" :help "displays the version of Skribe")
-	   (version)
-	   (exit 0))
-	(("query" :alternate "q"
-		  :help "displays informations about Skribe conf.")
-	   (query)
-	   (exit 0))
-	(("verbose" :alternate "v" :arg level
-	  :help "sets the verbosity to <level>. Use -v0 for crystal silence")
-	   (let ((val (string->number level)))
-	     (if (integer? val)
-	       (set! *skribe-verbose* val))))
-	(("warning" :alternate "w" :arg level
-	  :help "sets the verbosity to <level>. Use -w0 for crystal silence")
-	   (let ((val (string->number level)))
-	     (if (integer? val)
-	       (set! *skribe-warning* val))))
-	(("debug" :alternate "g" :arg level :help "sets the debug <level>")
-	   (let ((val (string->number level)))
-	     (if (integer? val)
-		 (set-skribe-debug! val)
-		 (begin
-		   ;; Use the symbol for debug
-		   (set-skribe-debug!	    1)
-		   (add-skribe-debug-symbol (string->symbol level))))))
-	(("no-color" :help "disable coloring for output")
-	 (no-debug-color))
-	(("custom" :alternate "c" :arg key=val :help "Preset custom value")
-	   (let ((args (string-split key=val "=")))
-	     (if (and (list args) (= (length args) 2))
-		 (let ((key (car args))
-		       (val (cadr args)))
-		   (set! *skribe-precustom* (cons (cons (string->symbol key) val)
-						  *skribe-precustom*)))
-		 (error 'parse-arguments "Bad custom ~S" key=val))))
-	(("eval" :alternate "e" :arg expr :help "evaluate expression <expr>")
-	   (with-input-from-string expr
-	     (lambda () (eval (read)))))
-	(else
-	 (set! *skribe-src* other-arguments)))
-
-    ;; we have to configure Skribe path according to the environment variable
-    (skribe-path-set! (append (let ((path (getenv "SKRIBEPATH")))
-				(if path
-				    (string-split path ":")
-				    '()))
-			      (reverse! paths)
-			      (skribe-default-path)))
-    ;; Final initializations
-    (if engine
-      (set! *skribe-engine* engine))))
-
-;;;; ======================================================================
-;;;;
-;;;;				   L O A D - R C
-;;;;
-;;;; ======================================================================
 (define *load-rc* #f)  ;; FIXME:  This should go somewhere else.
 
 (define (load-rc)
@@ -342,23 +212,6 @@ Processes a Skribilo/Skribe source file and produces its output.
     (let ((file (make-path (*rc-directory*) (*rc-file*))))
       (if (and file (file-exists? file))
 	(load file)))))
-
-
-;;;; ======================================================================
-;;;;
-;;;;				      S K R I B E
-;;;;
-;;;; ======================================================================
-; (define (doskribe)
-;    (let ((e (find-engine *skribe-engine*)))
-;      (if (and (engine? e) (pair? *skribe-precustom*))
-; 	 (for-each (lambda (cv)
-; 		     (engine-custom-set! e (car cv) (cdr cv)))
-; 		   *skribe-precustom*))
-;      (if (pair? *skribe-src*)
-; 	 (for-each (lambda (f) (skribe-load f :engine *skribe-engine*))
-; 		   *skribe-src*)
-; 	 (skribe-eval-port (current-input-port) *skribe-engine*))))
 
 (define *skribilo-output-port* (make-parameter (current-output-port)))
 
@@ -384,36 +237,117 @@ Processes a Skribilo/Skribe source file and produces its output.
 
 
 
-;;;; ======================================================================
-;;;;
-;;;;				      M A I N
-;;;;
-;;;; ======================================================================
+;;;
+;;; Argument parsing.
+;;;
+
+(define (make-path-processor key)
+  (lambda (opt name arg result)
+    (let ((path (assoc key result)))
+      (alist-cons key (if (pair? path)
+                          (cons arg (cdr path))
+                          (list arg))
+                  (alist-delete key result eq?)))))
+
+(define (make-level-processor key default)
+  (lambda (opt name arg result)
+    (alist-cons key (if (string? arg)
+                        (or (string->number arg) default)
+                        default)
+                result)))
+
+(define %options
+  ;; Specifications of the command-line options.
+  (list (option '(#\h "help") #f #f
+                (lambda args
+                  (skribilo-show-help)
+                  (exit 0)))
+        (option '(#\V "version") #f #f
+                (lambda args
+                  (skribilo-show-version)
+                  (exit 0)))
+
+        (option '(#\R "reader") #t #f
+                (lambda (opt name arg result)
+                  (alist-cons :reader arg result)))
+        (option '(#\t "target") #t #f
+                (lambda (opt name arg result)
+                  (alist-cons :target arg result)))
+        (option '(#\o "output") #t #f
+                (lambda (opt name arg result)
+                  (if (assoc :output result)
+                      (leave "~a: only one output at a time" arg)
+                      (alist-cons :output arg result))))
+
+        (option '("compat") #t #f
+                (lambda (opt name arg result)
+                  (alist-cons :compat arg result)))
+        (option '(#\I "doc-path") #t #f
+                (make-path-processor :doc-path))
+        (option '(#\B "bib-path") #t #f
+                (make-path-processor :bib-path))
+        (option '(#\S "source-path") #t #f
+                (make-path-processor :source-path))
+        (option '(#\P "image-path") #t #f
+                (make-path-processor :image-path))
+
+        (option '(#\v "verbose") #f #t
+                (make-level-processor :verbose 0))
+        (option '(#\g "debug") #f #t
+                (make-level-processor :debug 0))
+        (option '(#\w "warning") #f #t
+                (make-level-processor :warning 1))))
+
+(define %default-options
+  ;; Default value of various command-line options.
+  '((:debug     . 0)
+    (:warning   . 1)
+    (:verbose   . 0)
+    (:reader    . "skribe")
+    (:target    . "html")
+    (:compat    . "skribilo")
+    (:doc-path    ".")
+    (:bib-path    ".")
+    (:source-path ".")
+    (:image-path  ".")))
+
+(define (parse-args args)
+  "Parse argument list @var{args} and return an alist with all the relevant
+options."
+  (args-fold args %options
+             (lambda (opt name arg result)
+               (leave "~A: unrecognized option" opt))
+             (lambda (file result)
+               (if (assoc :input result)
+                   (leave "~a: only one input file at a time" file)
+                   (alist-cons :input file result)))
+             %default-options))
+
+
+;;;
+;;; The program.
+;;;
+
 (define-public (skribilo . args)
-  (let* ((options           (getopt-long (cons "skribilo" args)
-					 skribilo-options))
-	 (reader-name       (string->symbol
-			     (option-ref options 'reader "skribe")))
-	 (engine            (string->symbol
-			     (option-ref options 'target "html")))
-	 (output-file       (option-ref options 'output #f))
-	 (debugging-level   (option-ref options 'debug "0"))
-	 (warning-level     (option-ref options 'warning "2"))
-	 (load-path         (option-ref options 'load-path "."))
-	 (bib-path          (option-ref options 'bib-path "."))
-	 (source-path       (option-ref options 'source-path "."))
-	 (image-path        (option-ref options 'image-path "."))
-         (compat            (option-ref options 'compat "skribilo"))
-	 (preload           '())
-	 (variants          '())
+  (let* ((options           (parse-args args))
 
-	 (help-wanted       (option-ref options 'help #f))
-	 (version-wanted    (option-ref options 'version #f)))
+	 (reader-name       (string->symbol (assoc-ref options :reader)))
+	 (engine            (string->symbol (assoc-ref options :target)))
+         (input-file        (assoc-ref options :input))
+	 (output-file       (assoc-ref options :output))
 
-    (cond (help-wanted    (begin (skribilo-show-help) (exit 1)))
-	  (version-wanted (begin (skribilo-show-version) (exit 1))))
+         (verbosity-level   (assoc-ref options :verbose))
+	 (debugging-level   (assoc-ref options :debug))
+	 (warning-level     (assoc-ref options :warning))
 
-    ;; Parse the most important options.
+	 (load-path         (assoc-ref options :doc-path))
+	 (bib-path          (assoc-ref options :bib-path))
+	 (source-path       (assoc-ref options :source-path))
+	 (image-path        (assoc-ref options :image-path))
+         (compat            (assoc-ref options :compat))
+	 (preload           '()) ;; FIXME: Implement
+	 (variants          '()) ;; FIXME: Implement
+         )
 
     (if (> (*debug*) 4)
 	(set! %load-hook
@@ -422,60 +356,47 @@ Processes a Skribilo/Skribe source file and produces its output.
 
     (parameterize ((*document-reader* (make-reader reader-name))
 		   (*current-engine* engine)
-		   (*document-path*  (cons load-path (*document-path*)))
-		   (*bib-path*       (cons bib-path (*bib-path*)))
-		   (*source-path*    (cons source-path
-					   (append %load-path
-						   (*source-path*))))
-		   (*image-path*     (cons image-path (*image-path*)))
-		   (*debug*          (string->number debugging-level))
-		   (*warning*        (string->number warning-level))
-		   (*verbose*        (let ((v (option-ref options
-							  'verbose 0)))
-				       (if (number? v) v
-					   (if v 1 0)))))
+		   (*document-path*  load-path)
+		   (*bib-path*       bib-path)
+		   (*source-path*    source-path)
+		   (*image-path*     image-path)
+		   (*debug*          debugging-level)
+		   (*warning*        warning-level)
+		   (*verbose*        verbosity-level))
 
-      ;; Load the user rc file
+      ;; Load the user rc file (FIXME)
       ;;(load-rc)
 
       (for-each (lambda (f)
 		  (skribe-load f :engine (*current-engine*)))
 		preload)
 
-      ;; Load the specified variants.
-      (for-each (lambda (x)
-		  (skribe-load (format #f "~a.skr" x)
-			       :engine (*current-engine*)))
-		(reverse! variants))
+      ;; Load the specified variants. (FIXME)
+;;       (for-each (lambda (x)
+;; 		  (skribe-load (format #f "~a.skr" x)
+;; 			       :engine (*current-engine*)))
+;; 		(reverse! variants))
 
-      (let ((files (option-ref options '() '())))
+      (if (and output-file (file-exists? output-file))
+          (delete-file output-file))
 
-	(if (> (length files) 2)
-	    (error "you can specify at most one input file and one output file"
-		   files))
+      (parameterize ((*destination-file* output-file)
+                     (*source-file*      input-file)
+                     (*skribilo-output-port*
+                      (if (string? output-file)
+                          (open-output-file output-file)
+                          (current-output-port))))
 
-	(let* ((source-file (if (null? files) #f (car files))))
+        (setvbuf (*skribilo-output-port*) _IOFBF 16384)
 
-	  (if (and output-file (file-exists? output-file))
-	      (delete-file output-file))
+        (if input-file
+            (with-input-from-file input-file
+              (lambda ()
+                (doskribe compat)))
+            (doskribe compat))
 
-	  (parameterize ((*destination-file* output-file)
-			 (*source-file*      source-file)
-			 (*skribilo-output-port*
-			  (if (string? output-file)
-			      (open-output-file output-file)
-			      (current-output-port))))
-
-	    (setvbuf (*skribilo-output-port*) _IOFBF 16384)
-
-	    (if source-file
-		(with-input-from-file source-file
-                  (lambda ()
-                    (doskribe compat)))
-		(doskribe compat))
-
-            ;; Make sure the output port is flushed before we leave.
-            (force-output (*skribilo-output-port*))))))))
+        ;; Make sure the output port is flushed before we leave.
+        (force-output (*skribilo-output-port*))))))
 
 
 (define main skribilo)

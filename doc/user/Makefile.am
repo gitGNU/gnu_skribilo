@@ -27,13 +27,13 @@ html_DATA = user.html
 CLEANFILES = $(BUILT_SOURCES) $(html_DATA)
 
 skribilo = $(top_builddir)/src/pre-inst-skribilo
-skrflags = -I ../ -P ../img --compat=skribe
+skrflags = -I ../ -P ../img -S $(top_srcdir)/src/guile --compat=skribe
 load_path = $(top_srcdir)/src/guile:$(top_srcdir)/src/guile/skribilo/package:$(top_builddir)/src/guile:$(top_srcdir)/doc/modules
 
 
 .skb.html:
 	GUILE_LOAD_PATH=$(load_path):$$GUILE_LOAD_PATH \
-	$(skribilo) $(skrflags) --target html -o $@ $<
+	$(skribilo) $(skrflags) --target=html -o $@ $<
 
 if HAVE_LOUT
 
@@ -49,7 +49,7 @@ endif
 
 .skb.lout:
 	GUILE_LOAD_PATH=$(load_path):$$GUILE_LOAD_PATH \
-	$(skribilo) $(skrflags) --target lout -o $@ $<
+	$(skribilo) $(skrflags) --target=lout -o $@ $<
 
 .lout.ps:
 	$(LOUT) -r4 -I$(srcdir)/lout -c $(@:%.ps=%) -o $@ $<
