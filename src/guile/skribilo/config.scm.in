@@ -1,20 +1,35 @@
-;;; -*- Scheme -*-
+;;; config.scm  --  Skribilo configuration.
 ;;;
+;;; Copyright 2005, 2006, 2007  Ludovic Courtès <ludo@gnu.org>
+;;;
+;;;
+;;; This program is free software; you can redistribute it and/or modify
+;;; it under the terms of the GNU General Public License as published by
+;;; the Free Software Foundation; either version 2 of the License, or
+;;; (at your option) any later version.
+;;;
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;;
+;;; You should have received a copy of the GNU General Public License
+;;; along with this program; if not, write to the Free Software
+;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+;;; USA.
 
-(define-module (skribilo config))
+(define-module (skribilo config)
+  :export (skribilo-version skribilo-url
+           skribilo-module-directory skribilo-doc-directory
+           skribilo-scheme))
 
-(define-public (skribilo-release)             "1.2")
-(define-public (skribilo-url)                 "http://www.nongnu.org/skribilo/")
-(define-public (skribilo-doc-directory)       "@SKRIBILO_DOC_DIR@")
-(define-public (skribilo-extension-directory) "@SKRIBILO_EXT_DIR@")
-(define-public (skribilo-default-path)        "@SKRIBILO_SKR_PATH@")
-(define-public (skribilo-scheme)              "guile")
+(define (skribilo-version)             "@PACKAGE_VERSION@")
+(define (skribilo-url)                 "http://www.nongnu.org/skribilo/")
+(define (skribilo-module-directory)    "@guilemoduledir@")
+(define (skribilo-scheme)              "@GUILE@")
+(define (skribilo-doc-directory)       "@docdir@")
 
-;; Compatibility.
 
-(define-public skribe-release      skribilo-release)
-(define-public skribe-url          skribilo-url)
-(define-public skribe-doc-dir      skribilo-doc-directory)
-(define-public skribe-ext-dir      skribilo-extension-directory)
-(define-public skribe-default-path skribilo-default-path)
-(define-public skribe-scheme       skribilo-scheme)
+;;; Local Variables:
+;;; coding: latin-1
+;;; End:

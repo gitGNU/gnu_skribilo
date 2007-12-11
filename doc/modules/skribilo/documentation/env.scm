@@ -1,7 +1,7 @@
 ;;; env.scm  --  The environment variables for the documentation.
 ;;;
+;;; Copyright 2005, 2006, 2007  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
-;;; Copyright 2005, 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -25,7 +25,7 @@
 
 (define-public *serrano-url* "http://www.inria.fr/mimosa/Manuel.Serrano")
 (define-public *serrano-mail* "Manuel.Serrano@sophia.inria.fr")
-(define-public *courtes-mail* "ludovic.courtes@laas.fr")
+(define-public *courtes-mail* "ludo@gnu.org")
 (define-public *html-url* "http://www.w3.org/TR/html4")
 (define-public *html-form* "interact/forms.html")
 (define-public *emacs-url* "http://www.gnu.org/software/emacs")
@@ -33,8 +33,11 @@
 (define-public *texinfo-url* "http://www.texinfo.org")
 (define-public *r5rs-url* "http://www.inria.fr/mimosa/fp/Bigloo/doc/r5rs.html")
 (define-public *bigloo-url* "http://www.inria.fr/mimosa/fp/Bigloo")
-(define-public *skribe-user-doc-url* (string-append (skribe-doc-dir) "/user.html"))
-(define-public *skribe-dir-doc-url* (string-append (skribe-doc-dir) "/dir.html"))
+
+(define-public *skribe-user-doc-url*
+  (string-append (skribilo-doc-directory) "/user.html"))
+(define-public *skribe-dir-doc-url*
+  (string-append (skribilo-doc-directory) "/dir.html"))
 
 (define-public *prgm-width* 97.)
 (define-public *prgm-skribe-color* "#ffffcc")

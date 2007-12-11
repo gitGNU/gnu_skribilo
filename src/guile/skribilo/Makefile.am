@@ -10,4 +10,12 @@ dist_module_DATA =      biblio.scm color.scm config.scm		\
 
 SUBDIRS = utils reader engine package source biblio
 
+CLEANFILES = config.scm
+
+include $(top_srcdir)/substitute.am
+
+.in:
+	$(substitute) "$^" > "$@.tmp" &&	\
+	mv "$@.tmp" "$@"
+
 include $(top_srcdir)/guile-lint.am

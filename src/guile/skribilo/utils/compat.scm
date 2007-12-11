@@ -24,6 +24,7 @@
   :use-module (skribilo utils files)
   :use-module (skribilo parameters)
   :use-module (skribilo evaluator)
+  :use-module (skribilo config)
   :use-module (skribilo color)
   :use-module (skribilo lib)
   :use-module (srfi srfi-1)
@@ -67,6 +68,18 @@
 		 ((symbol? (car obj)) (list (symbol->string (car obj))))
 		 ((string? (car obj)) (list (car obj)))
 		 (else (skribe-error 'gensym "invalid argument" obj))))))
+
+
+;;;
+;;; Configuration.
+;;;
+
+(define-public skribe-release      skribilo-version)
+(define-public skribe-url          skribilo-url)
+(define-public skribe-doc-dir      skribilo-doc-directory)
+(define-public skribe-ext-dir      skribilo-module-directory)
+(define-public skribe-default-path skribilo-module-directory)
+(define-public skribe-scheme       skribilo-scheme)
 
 
 ;;;

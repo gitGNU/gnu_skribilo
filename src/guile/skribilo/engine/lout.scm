@@ -710,8 +710,8 @@
 
 			 ;; Extra PDF information, an alist of key-value
 			 ;; pairs (string pairs).
-			 (pdf-extra-info (("SkribeVersion"
-					   ,(skribilo-release))))
+			 (pdf-extra-info (("SkribiloVersion"
+					   ,(skribilo-version))))
 
 			 ;; Tells whether to produce PDF "docinfo"
 			 ;; (meta-information with title, author,

@@ -74,16 +74,11 @@ if test "$guilemoduledir" != "$GUILE_SITE"; then
 fi
 
 
-AC_SUBST([SKRIBILO_DOC_DIR], ["$datadir/doc/skribilo"])
-AC_SUBST([SKRIBILO_EXT_DIR], ["$datadir/skribilo/$PACKAGE_VERSION/"])
-AC_SUBST([SKRIBILO_SKR_PATH], ["$GUILE_SITE/"])
-
 AC_OUTPUT([Makefile
 	   po/Makefile.in
 	   src/Makefile
 	   src/guile/Makefile
 	   src/guile/skribilo/Makefile
-	   src/guile/skribilo/config.scm
 	   src/guile/skribilo/utils/Makefile
 	   src/guile/skribilo/engine/Makefile
 	   src/guile/skribilo/reader/Makefile
