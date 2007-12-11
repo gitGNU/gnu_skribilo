@@ -79,23 +79,34 @@
 ###############################################################################
 
 @Use { @DocumentSetup
-  # @PageType		{ A4	@OrIfPlain Other} # page type (width, height)
+    @PageType		{ A4	@OrIfPlain Other} # page type (width, height)
   # @PageWidth		{ 80s			} # page width if type Other
   # @PageHeight		{ 66f			} # page height if type Other
   # @PageOrientation	{ Portrait		} # Portrait, Landscape, etc.
   # @PageBackground	{  			} # background of each page
-    @TopMargin		{ 3.0c	@OrIfPlain 6f	} # top margin of all pages
-    @FootMargin		{ 3.0c	@OrIfPlain 6f	} # bottom margin of all pages
-    @OddLeftMargin	{ 3.0c	@OrIfPlain 10s	} # left margin of odd pages
-    @OddRightMargin	{ 3.0c	@OrIfPlain 10s	} # right margin of odd pages
-    @EvenLeftMargin	{ 3.0c	@OrIfPlain 10s	} # left margin of even pages
-    @EvenRightMargin	{ 3.0c	@OrIfPlain 10s	} # right margin of even pages
-  # @OddLeftBodyMargin	{ 0c			} # extra margin for page body
-  # @OddRightBodyMargin	{ 0c			} # extra margin for page body
-  # @EvenLeftBodyMargin	{ 0c			} # extra margin for page body
-  # @EvenRightBodyMargin{ 0c			} # extra margin for page body
+
+  # The Van de Graaf canon for page construction: small margin is 1/9th
+  # and large margin is 2/9th.
+
+  # `@TopMargin' is margin above headers.  We want a margin of 3.3c for
+  # the page _body  (i.e., excluding headers), so we have to choose
+  # `@TopMargin' = 3.3c - (`@MidGap' + 1.0f), since running headers are
+  # typeset in 1.0f and followed by a `@MidGap' gap.  We take:
+  # 1.0f = 10p = 0.35c and `@MidGap' = 0.75c.
+
+    @TopMargin		{ 2.2c	@OrIfPlain 6f	} # top margin of all pages
+    @FootMargin		{ 6.6c	@OrIfPlain 6f	} # bottom margin of all pages
+
+    @OddLeftMargin	{ 2.33c	@OrIfPlain 10s	} # left margin of odd pages
+    @OddRightMargin	{ 4.67c	@OrIfPlain 10s	} # right margin of odd pages
+    @EvenLeftMargin	{ 4.67c	@OrIfPlain 10s	} # left margin of even pages
+    @EvenRightMargin	{ 2.33c	@OrIfPlain 10s	} # right margin of even pages
+    @OddLeftBodyMargin	{ 0c			} # extra margin for page body
+    @OddRightBodyMargin	{ 0c			} # extra margin for page body
+    @EvenLeftBodyMargin	{ 0c			} # extra margin for page body
+    @EvenRightBodyMargin{ 0c			} # extra margin for page body
   # @PageBoxType	{ None			} # None Box CurveBox ShadowBox
-  # @PageBoxMargin	{ 1.00c			} # page box margin
+    @PageBoxMargin	{ 0.70c			} # page box margin
   # @PageBoxLineWidth	{			} # page box line thickness
   # @PageBoxPaint	{ none			} # page box paint
   # @PageBoxShadow	{ 0.60c			} # shadow margin if ShadowBox
@@ -292,7 +303,6 @@
   # @ExampleFormat	{ {@B { word @NumSep number title: } &2s} @Insert body }
   # @ProofWord		{ proof			} # "Proof" word, etc.
 
-  # @PageHeaders	{ Simple		} # None Simple Titles NoTitles
     @PageHeaders	{ Titles		} # None Simple Titles NoTitles
   # @PageNumbers	{ Arabic		} # page numbers
   # @FirstPageNumber	{ 1			} # number of first page 
