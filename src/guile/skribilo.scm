@@ -61,16 +61,34 @@
 
 (define (skribilo-show-help)
   (format #t "Usage: skribilo [OPTIONS] [INPUT]
+Process Skribilo document from file INPUT (or the standard input) using the
+specified reader syntax, and produce its output using the specified engine.
 
-Processes a Skribilo/Skribe source file and produces its output.
+  -R, --reader=READER    Use READER to parse the input file, e.g., `skribe'
+                         (default) or `outline'.
+  -t, --target=ENGINE    Use ENGINE as the output engine, e.g., `html'.
+  -o, --output=FILE      Write output to FILE.
+      --compat=COMPAT    Use COMPAT as the compatibility layer, e.g., `skribe'.
 
-  --reader=READER  Use READER to parse the input file (by default,
-                   the `skribe' reader is used)
-  --target=ENGINE  Use ENGINE as the underlying engine
-  --compat=COMPAT  Use COMPAT as the compatibility layer, e.g., \"skribe\"
+  -I, --doc-path=DIR     Prepend DIR to the document include path.
+  -B, --bib-path=DIR     Prepend DIR to the bibliography include path.
+  -S, --source-path=DIR  Prepend DIR to the source include path.
+  -P, --image-path=DIR   Prepend DIR to the image include path.
 
-  --help           Give this help list
-  --version        Print program version
+  -b, --base=BASE        Strip BASE from all hyperlinks (`html' engine).
+  -e, --eval=EXPR        Prepend EXPR to the list of expressions to be
+                         evaluted before the input file is processed.
+  -p, --preload=FILE     Preload FILE before processing the input file.
+
+  -v, --verbose[=LEVEL]  Be verbose, unless LEVEL is 0.
+  -w, --warning[=LEVEL]  Issue warnings, unless LEVEL is 0.
+  -d, --debug[=ARG]      Issue debugging output, unless ARG is 0.  If ARG is
+                         not a number, it is interpreted as a symbol to be
+                         watched.
+      --no-color         Disable colored debugging output.
+
+  -h, --help             Give this help list
+  -V, --version          Print program version
 
 Report bugs to <~a>.~%"
           (skribilo-bug-report-address)))
@@ -194,7 +212,9 @@ Report bugs to <~a>.~%"
                 (make-level-processor :warning 1))
         (option '(#\g "debug") #f #t
                 (lambda (opt name arg result)
-                  (let ((num (string->number arg)))
+                  (let ((num (if arg
+                                 (string->number arg)
+                                 1)))
                     (if (integer? num)
                         (alist-cons :debug num result)
                         (let ((watched (assoc :watched-symbols result)))
