@@ -39,12 +39,12 @@ exec ${GUILE-guile} --debug -l $0 -c "(apply $main (cdr (command-line)))" "$@"
   :autoload    (skribilo module) (make-user-module *skribilo-user-module*)
   :autoload    (skribilo engine) (*current-engine*)
   :autoload    (skribilo reader) (*document-reader*)
-  :autoload    (skribilo config) (skribilo-version)
 
   :use-module  (skribilo utils syntax)
   :use-module  (skribilo evaluator)
   :use-module  (skribilo debug)
   :use-module  (skribilo parameters)
+  :use-module  (skribilo config)
   :use-module  (skribilo lib)
 
   :autoload    (srfi srfi-1)     (alist-cons)
@@ -190,7 +190,9 @@ Processes a Skribilo/Skribe source file and produces its output.
 
   --help           Give this help list
   --version        Print program version
-~%"))
+
+Report bugs to <~a>.~%"
+          (skribilo-bug-report-address)))
 
 (define (skribilo-show-version)
   (format #t "skribilo ~a~%" (skribilo-version)))

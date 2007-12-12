@@ -19,12 +19,13 @@
 ;;; USA.
 
 (define-module (skribilo config)
-  :export (skribilo-version skribilo-url
+  :export (skribilo-version skribilo-url skribilo-bug-report-address
            skribilo-module-directory skribilo-doc-directory
            skribilo-scheme))
 
 (define (skribilo-version)             "@PACKAGE_VERSION@")
 (define (skribilo-url)                 "http://www.nongnu.org/skribilo/")
+(define (skribilo-bug-report-address)  "@PACKAGE_BUGREPORT@")
 (define (skribilo-module-directory)    "@guilemoduledir@")
 (define (skribilo-scheme)              "@GUILE@")
 (define (skribilo-doc-directory)       "@docdir@")
@@ -32,4 +33,5 @@
 
 ;;; Local Variables:
 ;;; coding: latin-1
+;;; mode: scheme
 ;;; End:
