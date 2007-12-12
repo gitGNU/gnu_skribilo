@@ -295,10 +295,21 @@ Report bugs to <~a>.~%"
 
         (option '(#\v "verbose") #f #t
                 (make-level-processor :verbose 0))
-        (option '(#\g "debug") #f #t
-                (make-level-processor :debug 0))
         (option '(#\w "warning") #f #t
-                (make-level-processor :warning 1))))
+                (make-level-processor :warning 1))
+        (option '(#\g "debug") #f #t
+                (lambda (opt name arg result)
+                  (let ((num (string->number arg)))
+                    (if (integer? num)
+                        (alist-cons key (if (string? arg)
+                                            (or (string->number arg) default)
+                                            default)
+                                    result)
+                        (let ((watched (assoc :watched-symbols result)))
+                          (alist-cons :watched-symbols
+                                      (cons (string->symbol arg)
+                                            (cdr watched))
+                                      result))))))))
 
 (define %default-options
   ;; Default value of various command-line options.
@@ -311,7 +322,8 @@ Report bugs to <~a>.~%"
     (:doc-path    ".")
     (:bib-path    ".")
     (:source-path ".")
-    (:image-path  ".")))
+    (:image-path  ".")
+    (:watched-symbols)))
 
 (define (parse-args args)
   "Parse argument list @var{args} and return an alist with all the relevant
@@ -341,6 +353,7 @@ options."
          (verbosity-level   (assoc-ref options :verbose))
 	 (debugging-level   (assoc-ref options :debug))
 	 (warning-level     (assoc-ref options :warning))
+         (watched-symbols   (assoc-ref options :watched-symbols))
 
 	 (load-path         (assoc-ref options :doc-path))
 	 (bib-path          (assoc-ref options :bib-path))
@@ -357,14 +370,15 @@ options."
 		(format #t "~~ loading `~a'...~%" file))))
 
     (parameterize ((*document-reader* (make-reader reader-name))
-		   (*current-engine* engine)
-		   (*document-path*  load-path)
-		   (*bib-path*       bib-path)
-		   (*source-path*    source-path)
-		   (*image-path*     image-path)
-		   (*debug*          debugging-level)
-		   (*warning*        warning-level)
-		   (*verbose*        verbosity-level))
+		   (*current-engine*  engine)
+		   (*document-path*   load-path)
+		   (*bib-path*        bib-path)
+		   (*source-path*     source-path)
+		   (*image-path*      image-path)
+		   (*debug*           debugging-level)
+                   (*watched-symbols* watched-symbols)
+		   (*warning*         warning-level)
+		   (*verbose*         verbosity-level))
 
       ;; Load the user rc file (FIXME)
       ;;(load-rc)
