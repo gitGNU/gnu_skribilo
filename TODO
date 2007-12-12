@@ -2,7 +2,6 @@
 
 * Important Items (Release Blockers)
 
-** Improve the `(skribilo)' module, use SRFI-37 for argument parsing
 ** Update the documentation, remove Skribe legacy stuff
 ** Have a PS/PDF version of the documentation (preferably using Lout)
 ** Remove calls to `skribe-error', use SRFI-35 exceptions
@@ -29,4 +28,6 @@ engine actually used during resolution and output.
 ** Add stand-alone tools
 Such as `skribilo-to-bibtex', `bibtex-to-skribilo', etc.
 ** Provide better internationalization
+*** Add a `:language' keyword to `document'
+** Check items in `src/guile/README'
 
