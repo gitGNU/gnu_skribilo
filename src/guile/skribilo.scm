@@ -217,7 +217,7 @@ Report bugs to <~a>.~%"
 
 (define *skribilo-output-port* (make-parameter (current-output-port)))
 
-(define (doskribe compat)
+(define (doskribe module)
   (let ((output-port (current-output-port))
 	(user-module (current-module)))
     (dynamic-wind
@@ -225,9 +225,8 @@ Report bugs to <~a>.~%"
 	  ;; FIXME: Using this technique, anything written to `stderr' will
 	  ;; also end up in the output file (e.g. Guile warnings).
 	  (set-current-output-port (*skribilo-output-port*))
-          (let ((user (make-user-module (string->symbol compat))))
-            (set-current-module user)
-            (*skribilo-user-module* user)))
+          (set-current-module module)
+          (*skribilo-user-module* module))
 	(lambda ()
 	  ;;(format #t "engine is ~a~%" (*current-engine*))
 	  (evaluate-document-from-port (current-input-port)
@@ -293,6 +292,29 @@ Report bugs to <~a>.~%"
         (option '(#\P "image-path") #t #f
                 (make-path-processor :image-path))
 
+        (option '(#\b "base") #t #f
+                (lambda (opt name arg result)
+                  (if (assoc :ref-base result)
+                      (leave "~a: only one reference base at a time" arg)
+                      (alist-cons :ref-base arg result))))
+        (option '(#\e "eval") #t #f
+                (lambda (opt name arg result)
+                  (let ((expr-list (assoc :expressions result))
+                        (expr      (with-input-from-string arg read)))
+                    (alist-cons :expressions
+                                (if (pair? expr-list)
+                                    (cons expr (cdr expr-list))
+                                    (list expr))
+                                result))))
+        (option '(#\p "preload") #t #f
+                (lambda (opt name arg result)
+                  (let ((preloads (assoc :preloads result)))
+                    (alist-cons :preloads
+                                (if (pair? preloads)
+                                    (cons arg preloads)
+                                    (list arg))
+                                result))))
+
         (option '(#\v "verbose") #f #t
                 (make-level-processor :verbose 0))
         (option '(#\w "warning") #f #t
@@ -301,15 +323,18 @@ Report bugs to <~a>.~%"
                 (lambda (opt name arg result)
                   (let ((num (string->number arg)))
                     (if (integer? num)
-                        (alist-cons key (if (string? arg)
-                                            (or (string->number arg) default)
-                                            default)
+                        (alist-cons :debug (if (string? arg)
+                                               (or (string->number arg) default)
+                                               default)
                                     result)
                         (let ((watched (assoc :watched-symbols result)))
                           (alist-cons :watched-symbols
                                       (cons (string->symbol arg)
                                             (cdr watched))
-                                      result))))))))
+                                      result))))))
+        (option '("no-color") #f #f
+                (lambda (opt name arg result)
+                  (alist-cons :no-color? #t result)))))
 
 (define %default-options
   ;; Default value of various command-line options.
@@ -354,38 +379,58 @@ options."
 	 (debugging-level   (assoc-ref options :debug))
 	 (warning-level     (assoc-ref options :warning))
          (watched-symbols   (assoc-ref options :watched-symbols))
+         (color?            (not (assoc-ref options :no-color?)))
+
+         (ref-base          (assoc-ref options :ref-base))
+         (expressions       (assoc-ref options :expressions))
 
 	 (load-path         (assoc-ref options :doc-path))
 	 (bib-path          (assoc-ref options :bib-path))
 	 (source-path       (assoc-ref options :source-path))
 	 (image-path        (assoc-ref options :image-path))
          (compat            (assoc-ref options :compat))
-	 (preload           '()) ;; FIXME: Implement
+	 (preloads          (assoc-ref options :preloads))
 	 (variants          '()) ;; FIXME: Implement
          )
+
+    (define user-module
+      ;; The environment in which the document is evaluated.
+      (make-user-module (string->symbol compat)))
+
 
     (if (> (*debug*) 4)
 	(set! %load-hook
 	      (lambda (file)
 		(format #t "~~ loading `~a'...~%" file))))
 
-    (parameterize ((*document-reader* (make-reader reader-name))
-		   (*current-engine*  engine)
-		   (*document-path*   load-path)
-		   (*bib-path*        bib-path)
-		   (*source-path*     source-path)
-		   (*image-path*      image-path)
-		   (*debug*           debugging-level)
-                   (*watched-symbols* watched-symbols)
-		   (*warning*         warning-level)
-		   (*verbose*         verbosity-level))
+
+    (parameterize ((*document-reader*   (make-reader reader-name))
+		   (*current-engine*    engine)
+                   (*ref-base*          ref-base)
+		   (*document-path*     load-path)
+		   (*bib-path*          bib-path)
+		   (*source-path*       source-path)
+		   (*image-path*        image-path)
+		   (*debug*             debugging-level)
+                   (*debug-use-colors?* color?)
+                   (*watched-symbols*   watched-symbols)
+		   (*warning*           warning-level)
+		   (*verbose*           verbosity-level))
 
       ;; Load the user rc file (FIXME)
       ;;(load-rc)
 
+      ;; Evaluate expressions passed as `--eval'.
+      (for-each (lambda (expr)
+                  (eval expr user-module))
+                (or expressions '()))
+
+      ;; Load files passed as `--preload' using the default reader.
       (for-each (lambda (f)
-		  (skribe-load f :engine (*current-engine*)))
-		preload)
+                  (save-module-excursion
+                   (lambda ()
+                     (load f))))
+		(or preloads '()))
 
       ;; Load the specified variants. (FIXME)
 ;;       (for-each (lambda (x)
@@ -408,8 +453,8 @@ options."
         (if input-file
             (with-input-from-file input-file
               (lambda ()
-                (doskribe compat)))
-            (doskribe compat))
+                (doskribe user-module)))
+            (doskribe user-module))
 
         ;; Make sure the output port is flushed before we leave.
         (force-output (*skribilo-output-port*))))))
