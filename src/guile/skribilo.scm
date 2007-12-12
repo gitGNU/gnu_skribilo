@@ -1,9 +1,3 @@
-#!/bin/sh
-# aside from this initial boilerplate, this is actually -*- scheme -*- code
-main='(module-ref (resolve-module '\''(skribilo)) '\'main')'
-exec ${GUILE-guile} --debug -l $0 -c "(apply $main (cdr (command-line)))" "$@"
-!#
-
 ;;; skribilo.scm  --  The Skribilo document processor.
 ;;;
 ;;; Copyright 2005, 2006, 2007  Ludovic Courtès <ludo@gnu.org>
@@ -45,12 +39,12 @@ exec ${GUILE-guile} --debug -l $0 -c "(apply $main (cdr (command-line)))" "$@"
   :use-module  (skribilo debug)
   :use-module  (skribilo parameters)
   :use-module  (skribilo config)
-  :use-module  (skribilo lib)
 
   :autoload    (srfi srfi-1)     (alist-cons)
   :use-module  (srfi srfi-37)
   :use-module  (srfi srfi-39)
-  :use-module  (ice-9 optargs))
+
+  :export (skribilo))
 
 
 ;; Install the Skribilo module syntax reader.
@@ -58,119 +52,6 @@ exec ${GUILE-guile} --debug -l $0 -c "(apply $main (cdr (command-line)))" "$@"
 
 (if (not (keyword? :kw))
     (error "guile-reader sucks"))
-
-
-
-
-;;;
-;;; Legacy option processing (FIXME: To be removed!).
-;;;
-
-(define* (process-option-specs longname
-			       :key (alternate #f) (arg #f) (help #f)
-			       :rest thunk)
-  "Process STkLos-like option specifications and return getopt-long option
-specifications."
-  `(,(string->symbol longname)
-    ,@(if alternate
-	  `((single-char ,(string-ref alternate 0)))
-	  '())
-    (value ,(if arg #t #f))))
-
-(define (raw-options->getopt-long options)
-  "Converts @var{options} to a getopt-long-compatible representation."
-  (map (lambda (option-specs)
-	 (apply process-option-specs (car option-specs)))
-       options))
-
-(define-macro (define-options binding . options)
-  `(define ,binding (quote ,(raw-options->getopt-long options))))
-
-(define-options skribilo-options
-  (("reader" :alternate "R" :arg reader
-    (nothing)))
-  (("compat" :arg compat
-    :help "use the COMPAT compatibility mode, e.g., `skribe'"))
-  (("target" :alternate "t" :arg target
-    :help "sets the output format to <target>")
-   (set! engine (string->symbol target)))
-  (("load-path" :alternate "I" :arg path :help "adds <path> to Skribe path")
-   (set! paths (cons path paths)))
-  (("bib-path" :alternate "B" :arg path :help "adds <path> to bibliography path")
-   (skribe-bib-path-set! (cons path (skribe-bib-path))))
-  (("source-path" :alternate "S" :arg path :help "adds <path> to source path")
-   (skribe-source-path-set! (cons path (skribe-source-path))))
-  (("image-path" :alternate "P" :arg path :help "adds <path> to image path")
-   (skribe-image-path-set! (cons path (skribe-image-path))))
-  (("split-chapters" :alternate "C" :arg chapter
-    :help "emit chapter's sections in separate files")
-   (set! *skribe-chapter-split* (cons chapter *skribe-chapter-split*)))
-  (("preload" :arg file :help "preload <file>")
-   (set! *skribe-preload* (cons file *skribe-preload*)))
-  (("use-variant" :alternate "u" :arg variant
-    :help "use <variant> output format")
-   (set! *skribe-variants* (cons variant *skribe-variants*)))
-  (("base" :alternate "b" :arg base
-    :help "base prefix to remove from hyperlinks")
-   (set! *skribe-ref-base* base))
-  (("rc-dir" :arg dir :alternate "d" :help "set the RC directory to <dir>")
-   (set! *skribe-rc-directory* dir))
-
-  ;;"File options:"
-  (("no-init-file" :help "Dont load rc Skribe file")
-   (set! *load-rc* #f))
-  (("output" :alternate "o" :arg file :help "set the output to <file>")
-   (set! *skribe-dest* file)
-   (let* ((s (file-suffix file))
-	  (c (assoc s *skribe-auto-mode-alist*)))
-     (if (and (pair? c) (symbol? (cdr c)))
-	 (set! *skribe-engine* (cdr c)))))
-
-  ;;"Misc:"
-  (("help" :alternate "h" :help "provides help for the command")
-   (arg-usage (current-error-port))
-   (exit 0))
-  (("options" :help "display the skribe options and exit")
-   (arg-usage (current-output-port) #t)
-   (exit 0))
-  (("version" :alternate "V" :help "displays the version of Skribe")
-   (version)
-   (exit 0))
-  (("query" :alternate "q"
-    :help "displays informations about Skribe conf.")
-   (query)
-   (exit 0))
-  (("verbose" :alternate "v" :arg level
-    :help "sets the verbosity to <level>. Use -v0 for crystal silence")
-   (let ((val (string->number level)))
-     (if (integer? val)
-	 (set! *skribe-verbose* val))))
-  (("warning" :alternate "w" :arg level
-    :help "sets the verbosity to <level>. Use -w0 for crystal silence")
-   (let ((val (string->number level)))
-     (if (integer? val)
-	 (set! *skribe-warning* val))))
-  (("debug" :alternate "g" :arg level :help "sets the debug <level>")
-   (let ((val (string->number level)))
-     (if (integer? val)
-	 (set-skribe-debug! val)
-	 (begin
-	   ;; Use the symbol for debug
-	   (set-skribe-debug!	    1)
-	   (add-skribe-debug-symbol (string->symbol level))))))
-  (("no-color" :help "disable coloring for output")
-   (no-debug-color))
-  (("custom" :alternate "c" :arg key=val :help "Preset custom value")
-   (let ((args (string-split key=val "=")))
-     (if (and (list args) (= (length args) 2))
-	 (let ((key (car args))
-	       (val (cadr args)))
-	   (set! *skribe-precustom* (cons (cons (string->symbol key) val)
-					  *skribe-precustom*)))
-	 (error 'parse-arguments "Bad custom ~S" key=val))))
-  (("eval" :alternate "e" :arg expr :help "evaluate expression <expr>")
-   (with-input-from-string expr
-      (lambda () (eval (read))))))
 
 
 
@@ -206,14 +87,6 @@ Report bugs to <~a>.~%"
 ;;;
 ;;; Document processing.
 ;;;
-
-(define *load-rc* #f)  ;; FIXME:  This should go somewhere else.
-
-(define (load-rc)
-  (if *load-rc*
-    (let ((file (make-path (*rc-directory*) (*rc-file*))))
-      (if (and file (file-exists? file))
-	(load file)))))
 
 (define *skribilo-output-port* (make-parameter (current-output-port)))
 
@@ -323,10 +196,7 @@ Report bugs to <~a>.~%"
                 (lambda (opt name arg result)
                   (let ((num (string->number arg)))
                     (if (integer? num)
-                        (alist-cons :debug (if (string? arg)
-                                               (or (string->number arg) default)
-                                               default)
-                                    result)
+                        (alist-cons :debug num result)
                         (let ((watched (assoc :watched-symbols result)))
                           (alist-cons :watched-symbols
                                       (cons (string->symbol arg)
@@ -367,7 +237,7 @@ options."
 ;;; The program.
 ;;;
 
-(define-public (skribilo . args)
+(define (skribilo . args)
   (let* ((options           (parse-args args))
 
 	 (reader-name       (string->symbol (assoc-ref options :reader)))
@@ -390,7 +260,7 @@ options."
 	 (image-path        (assoc-ref options :image-path))
          (compat            (assoc-ref options :compat))
 	 (preloads          (assoc-ref options :preloads))
-	 (variants          '()) ;; FIXME: Implement
+	 ;;(variants          '()) ;; FIXME: Implement
          )
 
     (define user-module
@@ -458,8 +328,5 @@ options."
 
         ;; Make sure the output port is flushed before we leave.
         (force-output (*skribilo-output-port*))))))
-
-
-(define main skribilo)
 
 ;;; skribilo ends here.

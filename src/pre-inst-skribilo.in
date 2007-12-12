@@ -21,7 +21,7 @@
 # A pre-installation `skribilo' executable that makes sure to load
 # stuff from the source directory rather than the installation directory.
 
-main='(module-ref (resolve-module '\''(skribilo)) '\'main')'
+main='(module-ref (resolve-interface '\''(skribilo)) '\'skribilo')'
 exec ${GUILE-@GUILE@} -L "@abs_top_srcdir@/src/guile"   \
                       -L "@abs_top_builddir@/src/guile" \
                       -c "

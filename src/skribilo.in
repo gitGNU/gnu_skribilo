@@ -24,7 +24,7 @@
 # needed, the use should explicitly set the `GUILE' environment
 # variable to, e.g., "guile --debug".
 
-main='(module-ref (resolve-module '\''(skribilo)) '\'main')'
+main='(module-ref (resolve-interface '\''(skribilo)) '\'skribilo')'
 exec ${GUILE-@GUILE@} -L "@guilemoduledir@" -c "
 (use-modules (skribilo condition))
 
