@@ -17,5 +17,6 @@ stamp-h[0-9]
 stamp-po
 doc/user/doc-config.scm
 src/skribilo
+src/skribilo-config
 src/pre-inst-skribilo
 src/guile/skribilo/config.scm
