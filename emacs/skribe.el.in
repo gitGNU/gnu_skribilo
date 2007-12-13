@@ -25,7 +25,7 @@
 ;*    custom                                                           */
 ;*---------------------------------------------------------------------*/
 ;; skribe version
-(defconst skribe-version "@SKRIBE_RELEASE@"
+(defconst skribe-version "@PACKAGE_VERSION@"
   "*The Skribe version.")
 
 ;; skribe group
@@ -36,19 +36,19 @@
   :group 'processes)
 
 ;; emacs directory
-(defcustom skribe-emacs-dir '"@SKRIBE_EMACSDIR@"
+(defcustom skribe-emacs-dir '"@lispdir@"
   "*Directory for Skribe Emacs installation."
   :group 'skribe
   :type '(string))
 
 ;; additional directories for online documentation
-(defcustom skribe-docdirs '("@SKRIBE_DOCDIR@")
+(defcustom skribe-docdirs '("@docdir@")
   "*Directories for online documentation."
   :group 'skribe
   :type '(repeat (string)))
 
 ;; Host scheme documentation
-(defcustom skribe-host-scheme-docdirs '("@SKRIBE_HOSTSCHEMEDOCDIR@")
+(defcustom skribe-host-scheme-docdirs '("http://www.gnu.org/software/guile/")
   "*URL for hosting Scheme system."
   :group 'skribe
   :type '(string))

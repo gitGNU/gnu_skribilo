@@ -5,7 +5,7 @@ substitute = sed -e 's,[@]guilemoduledir[@],$(guilemoduledir),g'	\
 		 -e 's,[@]abs_top_builddir[@],$(abs_top_builddir),g'	\
 		 -e 's,[@]prefix[@],$(prefix),g'			\
 		 -e 's,[@]docdir[@],$(docdir),g'			\
-		 -e 's,[@]emacsdir[@],$(emacsdir),g'			\
+		 -e 's,[@]lispdir[@],$(lispdir),g'			\
 		 -e 's,[@]GUILE[@],$(GUILE),g'				\
 		 -e 's,[@]PACKAGE_STRING[@],$(PACKAGE_STRING),g'	\
 		 -e 's,[@]PACKAGE_NAME[@],$(PACKAGE_NAME),g'		\

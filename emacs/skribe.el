@@ -25,7 +25,7 @@
 ;*    custom                                                           */
 ;*---------------------------------------------------------------------*/
 ;; skribe version
-(defconst skribe-version "1.2d"
+(defconst skribe-version "0.9.0"
   "*The Skribe version.")
 
 ;; skribe group
@@ -36,19 +36,19 @@
   :group 'processes)
 
 ;; emacs directory
-(defcustom skribe-emacs-dir '"/users/serrano/emacs/site-lisp/bigloo"
+(defcustom skribe-emacs-dir '"/usr/local/share/emacs/site-lisp"
   "*Directory for Skribe Emacs installation."
   :group 'skribe
   :type '(string))
 
 ;; additional directories for online documentation
-(defcustom skribe-docdirs '("/usr/local/doc/skribe-1.2d")
+(defcustom skribe-docdirs '("/usr/local/share/doc/skribilo")
   "*Directories for online documentation."
   :group 'skribe
   :type '(repeat (string)))
 
 ;; Host scheme documentation
-(defcustom skribe-host-scheme-docdirs '("/users/serrano/prgm/project/bigloo/manuals")
+(defcustom skribe-host-scheme-docdirs '("http://www.gnu.org/software/guile/")
   "*URL for hosting Scheme system."
   :group 'skribe
   :type '(string))
