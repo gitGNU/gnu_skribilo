@@ -1,4 +1,4 @@
-SUBDIRS = po src doc
+SUBDIRS = po src doc emacs
 
 ACLOCAL_AMFLAGS = -I m4
 

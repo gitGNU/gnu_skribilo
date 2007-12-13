@@ -59,7 +59,8 @@ AM_CONDITIONAL([HAVE_PS2PDF], [test "x$PS2PDF" != "x"])
 AC_PATH_PROGS([PLOTICUS], [ploticus pl])
 AM_CONDITIONAL([HAVE_PLOTICUS], [test "x$PLOTICUS" != "x"])
 
-
+# Emacs.
+AM_PATH_LISPDIR
 
 
 pkgdatadir="$datadir/$PACKAGE_NAME"
@@ -98,4 +99,5 @@ AC_OUTPUT([Makefile
 	   doc/dir/Makefile
 	   doc/modules/Makefile
 	   doc/modules/skribilo/Makefile
-	   doc/modules/skribilo/documentation/Makefile])
+	   doc/modules/skribilo/documentation/Makefile
+	   emacs/Makefile])
