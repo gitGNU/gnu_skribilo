@@ -1,7 +1,7 @@
 ;;; images.scm  --  Images handling utilities.
 ;;;
+;;; Copyright 2005, 2006, 2007  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
-;;; Copyright 2005, 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -59,9 +59,9 @@
 				   from " " to))))
 	 (cond
 	   ((> (*verbose*) 1)
-	    (format (current-error-port) "  [converting image: ~S (~S)]" from c))
+	    (format (current-error-port) "  [converting image: ~S (~S)]~%" from c))
 	   ((> (*verbose*) 0)
-	    (format (current-error-port) "  [converting image: ~S]" from)))
+	    (format (current-error-port) "  [converting image: ~S]~%" from)))
 	 (and (zero? (system c))
 	      to))))))
 
@@ -78,8 +78,9 @@
 		(if dir
 		    (let* ((dest (basename path))
 			   (dest-path (string-append dir "/" dest)))
-		      (if (not (string=? path dest-path))
-			  (copy-file path dest-path))
+		      (if (and (not (string=? path dest-path))
+                               (not (file-exists? dest-path)))
+                          (copy-file path dest-path))
 		      dest)
 		    path))
 	      (let loop ((fmts formats))
