@@ -4,7 +4,7 @@ EXTRA_DIST = bib.skb char.skb colframe.skb document.skb emacs.skb	\
   font.skb footnote.skb htmle.skb image.skb index.skb			\
   justify.skb latexe.skb lib.skb line.skb links.skb			\
   markup.skb ornament.skb package.skb pie.skb prgm.skb sectioning.skb	\
-  skribe-config.skb skribec.skb skribeinfo.skb slide.skb spacing.skb	\
+  skribilo-config.skb skribec.skb skribeinfo.skb slide.skb spacing.skb	\
   start.skb syntax.skb table.skb toc.skb user.skb xmle.skb		\
   lout/book-style.lout
 
@@ -28,9 +28,11 @@ html_DATA = user.html
 CLEANFILES = $(BUILT_SOURCES) $(html_DATA)
 
 skribilo = $(top_builddir)/src/pre-inst-skribilo
-skrflags  = -I $(srcdir) -P $(top_srcdir)/doc/img	\
-	    -S $(srcdir) -S $(top_srcdir)/src/guile	\
-	    -B $(srcdir)
+skrflags  = -I $(srcdir) -P $(top_srcdir)/doc/img		\
+	    -S $(srcdir) -S $(top_srcdir)/src/guile		\
+	    -B $(srcdir)					\
+	    -e '(define %top-srcdir "$(top_srcdir)")'		\
+	    -e '(define %top-builddir "$(top_builddir)")'
 skrflags += --compat=skribe
 load_path = $(top_srcdir)/doc/modules
 

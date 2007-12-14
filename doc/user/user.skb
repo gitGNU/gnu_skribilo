@@ -39,6 +39,11 @@
 (load "doc-config.scm")
 
 (if %have-ploticus? (set! %ploticus-program %ploticus-path))
+    
+;; Modules needed, e.g., to get the output of "skribilo-config --help".
+(use-modules (ice-9 popen)
+	     (ice-9 rdelim))
+
 
 ;*---------------------------------------------------------------------*/
 ;*    HTML custom                                                      */
@@ -172,8 +177,8 @@ as HTML, PostScript, Info pages, etc.])))))
 ;;; Packages
 (include "package.skb")
 
-;;; skribe-config
-(include "skribe-config.skb")
+;;; skribilo-config
+(include "skribilo-config.skb")
 
 ;;; List of examples
 (include "examples.skb")
