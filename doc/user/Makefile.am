@@ -73,3 +73,18 @@ else
 doc-config.scm:
 	echo "(define %have-ploticus? #f) (define %ploticus-path #f)" > $@
 endif
+
+
+# Install/uninstall files not listed in `html_DATA'.
+install-data-hook:
+	$(INSTALL_DATA) user-*.html *.png "$(DESTDIR)$(htmldir)"
+
+uninstall-local:
+	-rm -rf "$(DESTDIR)$(htmldir)"/user-*.html \
+		"$(DESTDIR)$(htmldir)"/*.png
+
+
+# Remove the HTML files and images created in the process and
+# not listed in `CLEANFILES'.
+clean-local:
+	-rm -f user-*.html *.eps *.png
