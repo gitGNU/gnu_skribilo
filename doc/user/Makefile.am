@@ -4,8 +4,8 @@ EXTRA_DIST = bib.skb char.skb colframe.skb document.skb emacs.skb	\
   font.skb footnote.skb htmle.skb image.skb index.skb			\
   justify.skb latexe.skb lib.skb line.skb links.skb			\
   markup.skb ornament.skb package.skb pie.skb prgm.skb sectioning.skb	\
-  skribe-config.skb skribec.skb skribeinfo.skb slide.skb start.skb	\
-  syntax.skb table.skb toc.skb user.skb xmle.skb			\
+  skribe-config.skb skribec.skb skribeinfo.skb slide.skb spacing.skb	\
+  start.skb syntax.skb table.skb toc.skb user.skb xmle.skb		\
   lout/book-style.lout
 
 # Examples.
@@ -14,7 +14,8 @@ EXTRA_DIST += src/api1.skb						\
   src/api15.skb src/api16.skb src/api17.skb src/api18.skb src/api19.skb	\
   src/api2.skb src/api20-html.skb src/api20-lout.skb src/api3.skb	\
   src/api5.skb src/api6.skb src/api7.skb src/api8.skb src/api9.skb	\
-  src/bib2.skb src/bib3.skb src/bib4.skb src/bib5.skb src/bib6.skb	\
+  src/bib1.sbib src/bib2.skb src/bib3.skb src/bib4.skb src/bib5.skb	\
+  src/bib6.skb								\
   src/eq1.skb src/eq2.skb src/eq3.skb src/html-navtabs.skb		\
   src/index1.skb src/index2.skb src/index3.skb src/links1.skb		\
   src/links2.skb src/pie1.skb src/pie2.skb src/prgm1.skb src/prgm2.skb	\
@@ -27,8 +28,11 @@ html_DATA = user.html
 CLEANFILES = $(BUILT_SOURCES) $(html_DATA)
 
 skribilo = $(top_builddir)/src/pre-inst-skribilo
-skrflags = -I ../ -P ../img -S $(top_srcdir)/src/guile --compat=skribe
-load_path = $(top_srcdir)/src/guile:$(top_srcdir)/src/guile/skribilo/package:$(top_builddir)/src/guile:$(top_srcdir)/doc/modules
+skrflags  = -I $(srcdir) -P $(top_srcdir)/doc/img	\
+	    -S $(srcdir) -S $(top_srcdir)/src/guile	\
+	    -B $(srcdir)
+skrflags += --compat=skribe
+load_path = $(top_srcdir)/doc/modules
 
 
 .skb.html:
