@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: ludovic.courtes@laas.fr\n"
-"POT-Creation-Date: 2007-10-28 21:26+0100\n"
+"POT-Creation-Date: 2007-12-14 12:37+0100\n"
 "PO-Revision-Date: 2007-02-05 16:02+0100\n"
 "Last-Translator: Ludovic Courtès <ludovic.courtes@laas.fr>\n"
 "Language-Team: fr <LL@li.org>\n"
@@ -20,32 +20,32 @@ msgstr ""
 msgid "unexpected character in Skribilo module"
 msgstr "caractère inattendu dans le module Skribilo"
 
-#: src/guile/skribilo/condition.scm:123
+#: src/guile/skribilo/condition.scm:124
 #, scheme-format
 msgid "in `~a': invalid argument: ~S~%"
 msgstr "dans `~a': argument incorrect: ~S~%"
 
-#: src/guile/skribilo/condition.scm:130
+#: src/guile/skribilo/condition.scm:131
 #, scheme-format
 msgid "in `~a': too few arguments: ~S~%"
 msgstr "dans `~a': trop peu d'arguments: ~S~%"
 
-#: src/guile/skribilo/condition.scm:136
+#: src/guile/skribilo/condition.scm:138
 #, scheme-format
 msgid "~a: not found in path `~S'~%"
 msgstr "~a: non trouvé dans le chemin `~S'~%"
 
-#: src/guile/skribilo/condition.scm:143
+#: src/guile/skribilo/condition.scm:145
 #, scheme-format
 msgid "~a: cannot open file~%"
 msgstr "~a: échec d'ouverture du fichier~%"
 
-#: src/guile/skribilo/condition.scm:149
+#: src/guile/skribilo/condition.scm:151
 #, scheme-format
 msgid "~a: cannot write to file~%"
 msgstr "~a: échec en écriture sur le fichier~%"
 
-#: src/guile/skribilo/condition.scm:155
+#: src/guile/skribilo/condition.scm:157
 #, scheme-format
 msgid "file error: ~a~%"
 msgstr "erreur de fichier : ~a~%"
