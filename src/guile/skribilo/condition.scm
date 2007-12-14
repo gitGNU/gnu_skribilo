@@ -1,6 +1,6 @@
 ;;; condition.scm  --  Skribilo SRFI-35 error condition hierarchy.
 ;;;
-;;; Copyright 2006  Ludovic Courtès  <ludovic.courtes@laas.fr>
+;;; Copyright 2006, 2007  Ludovic Courtès  <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -37,7 +37,8 @@
 	       lookup-error-condition-handler
 
 	       %call-with-skribilo-error-catch
-	       call-with-skribilo-error-catch))
+	       call-with-skribilo-error-catch
+               call-with-skribilo-error-catch/exit))
 
 ;;; Author:  Ludovic Courtès
 ;;;
@@ -129,7 +130,8 @@
 	     (format (current-error-port)
                      (_ "in `~a': too few arguments: ~S~%")
 		     (too-few-arguments-error:proc-name c)
-		     (too-few-arguments-error:arguments c)))
+		     (too-few-arguments-error:arguments c))
+             (exit exit-val))
 
 	    ((file-search-error? c)
 	     (format (current-error-port)
@@ -156,9 +158,7 @@
 		     (file-error:file-name c))
 	     (exit exit-val))
 
-	    (;;(skribilo-error? c)
-	     #t ;; XXX: The SRFI-35 currently in `guile-lib' doesn't work
- 	        ;; properly with non-direct super-types.
+	    ((skribilo-error? c)
 	     (let ((handler (lookup-error-condition-handler c)))
 	       (if (procedure? handler)
 		   (handler c)
@@ -173,6 +173,8 @@
   `(call/cc (lambda (cont)
 	      (%call-with-skribilo-error-catch ,thunk cont #f))))
 
-;;; arch-tag: 285010f9-06ea-4c39-82c2-6c3604f668b3
+(define (call-with-skribilo-error-catch/exit thunk)
+  (%call-with-skribilo-error-catch thunk primitive-exit 1))
+
 
 ;;; conditions.scm ends here

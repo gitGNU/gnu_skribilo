@@ -28,6 +28,6 @@ main='(module-ref (resolve-interface '\''(skribilo)) '\'skribilo')'
 exec ${GUILE-@GUILE@} -L "@guilemoduledir@" -c "
 (use-modules (skribilo condition))
 
-(call-with-skribilo-error-catch
+(call-with-skribilo-error-catch/exit
   (lambda ()
     (apply $main (cdr (command-line)))))"  "$@"

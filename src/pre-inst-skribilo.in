@@ -27,6 +27,6 @@ exec ${GUILE-@GUILE@} -L "@abs_top_srcdir@/src/guile"   \
                       -c "
 (use-modules (skribilo condition))
 
-(call-with-skribilo-error-catch
+(call-with-skribilo-error-catch/exit
   (lambda ()
     (apply $main (cdr (command-line)))))"  "$@"
