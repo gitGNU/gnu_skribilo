@@ -21,6 +21,14 @@ Expressions like `(if (engine-format? "lout") xxx yyy)' are wrong,
 because they look at the value of `*current-engine*' rather than the
 engine actually used during resolution and output.
 
+** Find a clean way to have packages customize engines
+Currently, most packages have side-effects at `use-modules'-time, e.g.,
+they `engine-custom-set!' the current engine, which kinda sucks (see,
+e.g., `(skribilo package slide)').
+
+Likewise, there's no replacement for the `*load-options*' mechanism
+implemented by `skribe-load' (see, e.g., `web-article').
+
 ** Write an Info engine based on Scribe's one
 ** Write an XHTML engine
 ** Write a nice GUI based on Andy's STexi browser

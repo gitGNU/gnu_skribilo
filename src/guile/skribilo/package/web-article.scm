@@ -1,7 +1,7 @@
 ;;; web-article.scm  --  A style to produce web articles.
 ;;;
+;;; Copyright 2007, 2008  Ludovic Courtès <ludo@chbouib.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
-;;; Copyright 2007  Ludovic Courtès <ludo@chbouib.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -35,6 +35,11 @@
   :use-module (srfi srfi-1))
 
 (fluid-set! current-reader %skribilo-module-reader)
+
+;; FIXME: The purpose of this package is unclear, and it relies on "documents
+;; made of sections" (according to the doc), which sucks (we want all
+;; documents to consist of chapters at the top-level, so that engines can at
+;; least assume that), so better not advertise it.
 
 
 ;*---------------------------------------------------------------------*/
@@ -242,6 +247,9 @@
 ;*---------------------------------------------------------------------*/
 ;*    Setup ...                                                        */
 ;*---------------------------------------------------------------------*/
+;; FIXME: The `*load-options*' stuff is not usable from `use-modules', so we
+;; must provide another mechanism, e.g., exporting a `customize-engine!'
+;; method or so.
 (let* ((opt &web-article-load-options)
        (p (memq :style opt))
        (css (memq :css opt))

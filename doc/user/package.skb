@@ -1,6 +1,6 @@
 ;;; package.skb  --  Packages
 ;;;
-;;; Copyright 2007  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2007, 2008  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2001, 2004, 2005  Manuel Serrano
 ;;;
 ;;;
@@ -24,28 +24,32 @@
 ;*---------------------------------------------------------------------*/
 (chapter :title "Standard Packages"
    
-   (p [
-This chapter describes the standard Skribe packages. Additional
-packages can be found from the 
-,(ref :url (skribe-url) :text "Skribe web page").
-This chapter only describes the packages that are contained in the standard
-Skribe distribution.])
+   (p [This chapter describes the standard packages that come with
+Skribilo.  Additional packages may be found from the ,(ref :url
+(skribe-url) :text "Skribe web page"), but they may require slight
+modifications to work correctly with Skribilo.])
    
-   (p [
-In order to use the facilities described in the following sections, the 
-Skribe source file must contains expressions such as:])
+   (p [In order to use the facilities described in the following
+sections, the Skribilo source file must contains statements such as:]
 
-(prgm "(skribe-load \"package.skr\" ...)")
+(prgm "(use-modules (skribilo package THE-PACKAGE))")
 
-[where ,(it (tt "package.skr")) is the described package.]
+[where ,(tt "THE-PACKAGE") is the desired package.  GNU Guile users will
+recognize that this is Guile's standard way to use Scheme modules.  The
+effect of the ,(tt [use-modules]) clause is to insert the bindings
+exported by ,(tt "THE-PACKAGE") into the current module's name space.
+Note that third-party Skribilo packages can have arbitrary Guile module
+names.  And of course, the ,(tt [use-modules]) clause can be used to
+import ,(emph [any]) Guile module, not just Skribilo packages.])
 
 ;*---------------------------------------------------------------------*/
 ;*    jfp                                                              */
 ;*---------------------------------------------------------------------*/
 (section :title "Articles"
 
-   (subsection :title (tt "acmproc.skr") :ident "acmproc"
-      (index :index *package-index* "acmproc.skr" :note "package")
+   (subsection :title (tt "acmproc") :ident "acmproc"
+
+      (index :index *package-index* "acmproc" :note "package")
       (p [
 This package enables producing LaTeX documents conforming to the
 ,(emph "ACM proceeding") (ACMPROC) style. It introduces the
@@ -60,8 +64,8 @@ markup ,(code "abstract"):])
 	 :force-engines *api-engines*
 	 :source "skribilo/package/acmproc.scm"))
 
-   (subsection :title (tt "jfp.skr") :ident "jfp"
-      (index :index *package-index* "jfp.skr" :note "package")
+   (subsection :title (tt "jfp") :ident "jfp"
+      (index :index *package-index* "jfp" :note "package")
       (p [
 This package enables producing LaTeX documents conforming to the
 ,(emph "Journal of Functional Programming") (JFP) style. It introduces the
@@ -75,8 +79,8 @@ markup ,(code "abstract"):])
 	 :force-engines *api-engines*
 	 :source "skribilo/package/jfp.scm"))
 
-   (subsection :title (tt "lncs.skr") :ident "lncs"
-      (index :index *package-index* "lncs.skr" :note "package")
+   (subsection :title (tt "lncs") :ident "lncs"
+      (index :index *package-index* "lncs" :note "package")
       (p [
 This package enables producing LaTeX documents conforming to the
 ,(emph "Lecture Notes on Computer Science") (LNCS) style. It introduces the
@@ -105,16 +109,25 @@ markups ,(code "abstract") and ,(code "references"):])
 ;*    french                                                           */
 ;*---------------------------------------------------------------------*/
 (section :title "Languages"
-   (subsection :title (tt "french.skr")
-      (index :index *package-index* "french.skr" :note "package")
+
+   ;; FIXME: Provide proper i18n.
+
+   (p [Currently, native language support in Skribilo is rudimentary,
+limited to the following package.  In the future, it should be possible
+to specify a document's language so that the output engine behaves
+accordingly, e.g., by choosing the right typographical rules and the
+right phrases.])
+
+   (subsection :title (tt "french")
+      (index :index *package-index* "french" :note "package")
       (p [
 Enables French typesetting and typographical rules.])))
 
 ;*---------------------------------------------------------------------*/
 ;*    letter                                                           */
 ;*---------------------------------------------------------------------*/
-(section :title (tt "letter.skr")
-   (index :index *package-index* "letter.skr" :note "package")
+(section :title (tt "letter")
+   (index :index *package-index* "letter" :note "package")
    (p [
 This package is to be used to authoring simple letters. It redefines the
 ,(markup-ref "document") markup.])
@@ -134,30 +147,35 @@ This package is to be used to authoring simple letters. It redefines the
 ;*---------------------------------------------------------------------*/
 (section :title "Web"
    
-   (subsection :title (tt "web-article.skr")
-      (index :index *package-index* "web-article.skr" :note "package")
-      (p [
-A convenient mode for rendering articles (i.e., documents made of
-sections) in HTML. The Slide package supports two ,(markup-ref "skribe-load")
-user options:
-,(param :style) and ,(param :css). The ,(param :style) option can either
-be ,(code "'traditional") which forces traditional HTML code
-emission or ,(code "'css") which forces HTML code emission using CSS
-annotations. The CSS style used is specified in the (code "css")
-HTML engine ,(ref :subsection "The HTML customization" :text "custom").
-The ,(param :css) is a shorthand for ,(param :style). For instance:])
+   #;(subsection :title (tt "web-article")
+      (index :index *package-index* "web-article" :note "package")
+
+      (p [This module provides a convenient mode for rendering articles
+(i.e., documents made of sections) in HTML.])
+      
+      ;; FIXME: We don't have any clean way to pass load options through
+      ;; `use-modules'.
+      (p [The ,(tt [web-article]) package supports two ,(markup-ref
+"skribe-load") user options: ,(param :style) and ,(param :css). The
+,(param :style) option can either be ,(code "'traditional") which forces
+traditional HTML code emission or ,(code "'css") which forces HTML code
+emission using CSS annotations. The CSS style used is specified in the
+(code "css") HTML engine ,(ref :subsection "The HTML customization"
+:text "custom").  The ,(param :css) is a shorthand for ,(param
+:style). For instance:]
 (prgm [(skribe-load "web-article.skr" :css "style.css")])
 [is equivalent to:]
 (prgm [(skribe-load "web-article.skr" :style 'css)
 (engine-custom-set! (find-engine 'html) :css "style.css")]))
+      )
    
-   (subsection :title (tt "web-book.skr")
-      (index :index *package-index* "web-book.skr" :note "package")
+   (subsection :title (tt "web-book")
+      (index :index *package-index* "web-book" :note "package")
       (p [
 A convenient mode for rendering books (i.e., documents made of
 chapters and sections) in HTML.]))
    
-   (subsection :title [HTML Navigation Tabs]
+   (subsection :title (tt [html-navtabs])
 
       (p [The ,(tt [html-navtabs]) package enables quick navigation
 inside HTML documents by means of tabs.  The produced HTML code uses CSS
