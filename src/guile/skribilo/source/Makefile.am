@@ -5,8 +5,10 @@ dist_module_DATA =      parameters.scm c.scm lisp.scm xml.scm	\
 
 EXTRA_DIST = lisp-lex.l xml-lex.l c-lex.l
 
-# Building the lexers with SILex.  You must previously run
-# `tla build-config ./arch-config' for this to run.
+# Building the lexers with SILex.  You must have SILex installed in
+# `$(top_srcdir)/src/guile/silex'.  The Git repository already contains
+# it.  Otherwise, you can fetch it from
+# http://www.iro.umontreal.ca/~dube/silex-src.tar.gz .
 #
 # Note: Those files should normally be part of the distribution, making
 # this rule useless to the user.
