@@ -1,6 +1,6 @@
 ;;; html.scm  --  HTML engine.
 ;;;
-;;; Copyright 2005, 2006, 2007  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2006, 2007, 2008  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -38,9 +38,11 @@
   :autoload   (skribilo sui)           (document-sui)
   :autoload   (ice-9 rdelim)           (read-line)
   :autoload   (ice-9 regex)            (regexp-substitute/global)
+
   :use-module (srfi srfi-13)
   :use-module (srfi srfi-14)
   :use-module ((srfi srfi-19) :renamer (symbol-prefix-proc 's19:))
+  :use-module (srfi srfi-39)
 
   :export (html-engine html-title-engine html-file
            html-width html-class html-markup-class
@@ -62,7 +64,7 @@
 (define html-file-default
    ;; Default implementation of the `file-name-proc' custom.
    (let ((table '())
-	 (filename (tmpnam)))
+	 (filename (gensym "filename")))
       (define (get-file-name base suf)
 	(let* ((c (assoc base table))
 	       (n (if (pair? c)
@@ -584,6 +586,7 @@
 ;*---------------------------------------------------------------------*/
 (markup-writer 'document
    :options '(:title :author :ending :html-title :env :keywords)
+
    :action (lambda (n e)
 	      (let* ((id (markup-ident n))
 		     (title (new markup
@@ -593,7 +596,12 @@
 			       (class (markup-class n))
 			       (options `((author ,(markup-option n :author))))
 			       (body (markup-option n :title)))))
+
+                 ;; Record the file name, for use by `html-file-default'.
+                 (markup-option-add! n :file (*destination-file*))
+
 		 (&html-generic-document n title e)))
+
    :after (lambda (n e)
 	     (if (engine-custom e 'emit-sui)
 		 (document-sui n e))))
@@ -1196,9 +1204,10 @@
       ;; directly opened by Skribe
       (if (document? n)
 	  (output html e)
-	  (with-output-to-file (html-file n e)
-	     (lambda ()
-		(output html e))))))
+          (parameterize ((*destination-file* (html-file n e)))
+            (with-output-to-file (*destination-file*)
+              (lambda ()
+		(output html e)))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    &html-generic-subdocument ...                                    */
@@ -2259,3 +2268,9 @@
 ;*    Restore the base engine                                          */
 ;*---------------------------------------------------------------------*/
 (default-engine-set! (find-engine 'base))
+
+
+;;; Local Variables:
+;;; mode: scheme
+;;; coding: latin-1
+;;; End:
