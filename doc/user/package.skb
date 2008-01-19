@@ -171,9 +171,25 @@ emission using CSS annotations. The CSS style used is specified in the
    
    (subsection :title (tt "web-book")
       (index :index *package-index* "web-book" :note "package")
-      (p [
-A convenient mode for rendering books (i.e., documents made of
-chapters and sections) in HTML.]))
+
+      (p [This package provides a convenient mode for rendering books
+(i.e., documents made of chapters and sections) in HTML.  It modifies
+the ,(tt [left-margin]) custom of the HTML engine (see ,(ref :text [HTML
+customs] :ident "html-engine")) such that the left margin of each HTML
+file produced contains a menu allowing for quick navigation within the
+HTML document.]))
+   
+   (subsection :title (tt "web-book2")
+      (index :index *package-index* "web-book2" :note "package")
+      
+      (p [This package provides a different way to render books in HTML.
+Concretely, it prepends a small table of contents to each chapter,
+section, etc., that appears in an HTML file of its own, making it easy
+to move around the various HTML files of the document.  Compared to ,(tt
+[web-book]), it does not clutter the left margin of the HTML pages.])
+
+      (p [Unlike ,(tt [web-book]), this package is ``purely functional''
+in that it does not modify the HTML engine customs and writers.]))
    
    (subsection :title (tt [html-navtabs])
 
