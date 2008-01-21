@@ -1,16 +1,28 @@
--*- Outline -*-
+-*- Org -*-
+
+Copyright 2007  Ludovic Courtès <ludo@gnu.org>
+
+  Copying and distribution of this file, with or without modification,
+  are permitted in any medium without royalty provided the copyright
+  notice and this notice are preserved.
+
+
+This is a fairly long list of to-do items for Skribilo, hopefully not
+too outdated, but probably somewhat ambitious, as suggested by the
+headings below.
+
+XXX: Check items in `[[file:src/guile/README::Skribilo%20Outline][src/guile/README]]'.
 
 * Important Items (Release Blockers)
 
 ** Update the documentation, remove Skribe legacy stuff
 ** Have a PS/PDF version of the documentation (preferably using Lout)
 ** Remove calls to `skribe-error', use SRFI-35 exceptions
-** Fix the HTML engine for `html-left-margin'
-Left margin doesn't display well when CSS is being used.
-
 
 * Small Items, Known Bugs
 
+** Fix the HTML engine for `html-left-margin'
+Left margin doesn't display well when CSS is being used.
 ** `eq' package: Handle `:number' in the HTML back-end
 
 
@@ -29,13 +41,53 @@ e.g., `(skribilo package slide)').
 Likewise, there's no replacement for the `*load-options*' mechanism
 implemented by `skribe-load' (see, e.g., `web-article').
 
-** Write an Info engine based on Scribe's one
-** Write an XHTML engine
+** Add new engines
+*** Write an Info engine based on Scribe's one
+*** Write an XHTML engine
+*** Render equations using MathML when rendering to HTML
+*** Write a [[GUI]]
+** Add new readers
+*** Add an Org-Mode reader
+Could be based on [[http://wingolog.org/software/guile-present/][Andy's parser in Guile-Present]].
+*** Add a Texinfo reader
+Could be based on the one in [[http://home.gna.org/guile-lib/][Guile-Lib]].
+
 ** Write a nice GUI based on Andy's STexi browser
-** Render equations using MathML when rendering to HTML
+** Add a BibTeX parser
 ** Add stand-alone tools
 Such as `skribilo-to-bibtex', `bibtex-to-skribilo', etc.
 ** Provide better internationalization
 *** Add a `:language' keyword to `document'
-** Check items in `src/guile/README'
+** Provide a `skribilo-safe' module name space
+In `[[file:src/guile/skribilo/module.scm][(skribilo module)]]', the default user-module should not contain any
+filesystem-related primitives, nor any standard module allowing such
+operations (e.g., `(ice-9 popen)').
 
+* Much Longer Term Items
+** Move to a purely functional style
+The goal would be to benefit from referential transparency several
+levels, thereby clarifying the code and allowing for a wide range of
+improvements (e.g., reusing ASTs or engines in different contexts).
+
+*** Implement a purely functional `resolve'
+We'd need to first iterate over the AST:
+
+1. to create a dictionary of nodes (keyed by node `:ident');
+2. to create a parent-lookup dictionary, so that things like
+   `ast-parent' can be implemented.
+
+To that end, VList-based hash lists could come into play.  Andy Wingo's
+[[http://wingolog.org/pub/fold-and-xml-transformation.pdf][work on `fold-layout']] would certainly be a good source of inspiration.
+   
+*** Avoid side effects on engines
+**** Customs could be passed at engine instantiation time
+**** Main problem is `markup-writer'
+
+** Don't name markups using symbols
+Markups should be named using unforgeable objects, rather than symbols.
+This would be a step in the direction of "capability-object semantics".
+
+;;; Local Variables:
+;;; coding: utf-8
+;;; ispell-local-dictionary: "american"
+;;; End:
