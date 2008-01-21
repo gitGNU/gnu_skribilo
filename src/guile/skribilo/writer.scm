@@ -1,7 +1,7 @@
 ;;; writer.scm  --  Markup writers.
 ;;;
+;;; Copyright 2005, 2006, 2008  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
-;;; Copyright 2005, 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -122,7 +122,7 @@
 			      (action 'unspecified)
 			      (after #f)
 			#:rest engine)
-  ;;; FIXME:  `lambda*' sucks and fails when both optional arguments and
+  ;;; XXX:  `lambda*' sucks and fails when both optional arguments and
   ;;; keyword arguments are used together.  In particular, if ENGINE is not
   ;;; specified by the caller but other keyword arguments are specified, it
   ;;; will consider the value of ENGINE to be the first keyword found.
@@ -236,14 +236,20 @@
 		     '())))))))
 
 
-(define* (copy-markup-writer markup old-engine :optional new-engine
+(define* (copy-markup-writer markup old-engine ;; #:optional new-engine
 			      :key (predicate 'unspecified)
 				   (class 'unspecified)
 				   (options 'unspecified)
 				   (validate 'unspecified)
 				   (before 'unspecified)
 				   (action 'unspecified)
-				   (after 'unspecified))
+				   (after 'unspecified)
+                              :rest args)
+    (define new-engine
+      ;; XXX: Work around `lambda*' suckingness (see `markup-writer').
+      (and (not (null? args))
+           (car args)))
+
     (let ((old        (markup-writer-get markup old-engine))
 	  (new-engine (or new-engine old-engine)))
       (markup-writer markup new-engine

@@ -1,6 +1,6 @@
 ;;; syntax.scm  --  Syntactic candy for Skribilo modules.
 ;;;
-;;; Copyright 2005, 2006, 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2005, 2006, 2007, 2008  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -72,10 +72,16 @@
        (lambda () ,expr2)))
 
 (define-macro (unless condition . exprs)
-  `(if (not ,condition) (begin ,@exprs)))
+  `(if (not ,condition)
+       ,(if (null? (cdr exprs))
+            (car exprs)
+            `(begin ,@exprs))))
 
 (define-macro (when condition . exprs)
-  `(if ,condition (begin ,@exprs)))
+  `(if ,condition
+       ,(if (null? (cdr exprs))
+            (car exprs)
+            `(begin ,@exprs))))
 
 
 ;;;
@@ -93,6 +99,9 @@
   (ngettext msg msgplural n %skribilo-text-domain))
 
 
-;;; arch-tag: 9a0e0638-64f0-480a-ab19-49e8bfcbcd9b
+;;; Local Variables:
+;;; mode: scheme
+;;; coding: latin-1
+;;; End:
 
 ;;; syntax.scm ends here
