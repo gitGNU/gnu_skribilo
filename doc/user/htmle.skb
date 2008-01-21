@@ -1,5 +1,6 @@
-;;; htmle.skb  --  The documentation of the html engine
+;;; htmle.skb  --  Documentation of the HTML engine.
 ;;;
+;;; Copyright 2008  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -19,15 +20,13 @@
 ;;; USA.
 
 
-;*---------------------------------------------------------------------*/
-;*    Document                                                         */
-;*---------------------------------------------------------------------*/
-(section :title "Html engine" :file #t
+(section :title "HTML Engine" :file #t
    (mark "html-engine")
-   (index "Html" :note "Engine")
-   (p [The html engine...])
+   (index "HTML" :note "Engine")
+
+   (p [The HTML engine...])
    
-   (subsection :title "The HTML customization"
+   (subsection :title "HTML Customization"
       
       (doc-engine 'html
 	 `((favicon ,[The name of an image file of the URL image. The 
@@ -81,7 +80,7 @@ should return a file name for the HTML page corresponding to this node.")
 	   (index-header-font-size "The index header font size.")
 	   ;; chapter configuration
 	   (chapter-number->string "A procedure of one argument for rendering chapter numbers.")
-	   (chapter-file ,[A boolean specifying if chapters are rendered in speparate html file (see ,(markup-ref "chapter") markup).])
+	   (chapter-file ,[A boolean specifying if chapters are rendered in separate HTML file (see ,(markup-ref "chapter") markup).])
 	   ;; section configuration
 	   (section-title-start "The HTML sequence for starting section title.")
 	   (section-title-stop "The HTML sequence for stopping section title.")
@@ -89,7 +88,7 @@ should return a file name for the HTML page corresponding to this node.")
 	   (section-title-foreground "The foreground color of section title.")
 	   (section-title-number-separator "The section title number separator.")
 	   (section-number->string "A procedure of one argument for rendering section numbers.")
-	   (section-file ,[A boolean specifying if sections are rendered in speparate html file (see ,(markup-ref "section") markup).])
+	   (section-file ,[A boolean specifying if sections are rendered in separate HTML file (see ,(markup-ref "section") markup).])
 	   ;; subsection configuration
 	   (subsection-title-start "The HTML sequence for starting subsection title.")
 	   (subsection-title-stop "The HTML sequence for stopping subsection title.")
@@ -97,7 +96,7 @@ should return a file name for the HTML page corresponding to this node.")
 	   (subsection-title-foreground "The foreground color of subsection title.")
 	   (subsection-title-number-separator "The subsection title number separator.")
 	   (subsection-number->string "A procedure of one argument for rendering subsection numbers.")
-	   (subsection-file ,[A boolean specifying if subsections are rendered in speparate html file (see ,(markup-ref "subsection") markup).])
+	   (subsection-file ,[A boolean specifying if subsections are rendered in separate HTML file (see ,(markup-ref "subsection") markup).])
 	   ;; subsubsection configuration
 	   (subsubsection-title-start "The HTML sequence for starting subsubsection title.")
 	   (subsubsection-title-stop "The HTML sequence for stopping subsubsection title.")
@@ -105,7 +104,7 @@ should return a file name for the HTML page corresponding to this node.")
 	   (subsubsection-title-foreground "The foreground color of subsubsection title.")
 	   (subsubsection-title-number-separator "The subsubsection title number separator.")
 	   (subsubsection-number->string "A procedure of one argument for rendering subsubsection numbers.")
-	   (subsubsection-file ,[A boolean specifying if subsubsections are rendered in speparate html file (see ,(markup-ref "subsubsection") markup).])
+	   (subsubsection-file ,[A boolean specifying if subsubsections are rendered in separate HTML file (see ,(markup-ref "subsubsection") markup).])
 	   ;; source fontification
 	   (source-color ,[A boolean enabling/disabling color of source code (see ,(markup-ref "source") markup).])
 	   (source-comment-color "The source comment color.")
