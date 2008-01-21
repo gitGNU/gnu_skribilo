@@ -2,7 +2,14 @@
 # See http://www.geocities.com/user42_kevin/guile-lint/index.html .
 
 if HAVE_GUILE_LINT
+
+# FIXME: Guile-Lint 9 or so always returned zero, but Guile-Lint 12
+# returns an actual status code depending on whether errors were
+# encountered, which is good, except that it sometimes erroneously
+# reports errors (e.g., with macros).  So better ignore its exit code
+# for now.
+
 all-local: $(dist_module_DATA)
-	$(GUILE_LINT) -L $(top_srcdir)/src/guile		\
+	-$(GUILE_LINT) -L $(top_srcdir)/src/guile		\
 		      -L $(top_builddir)/src/guile -k $^
 endif
