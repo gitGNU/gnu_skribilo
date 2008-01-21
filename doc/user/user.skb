@@ -1,6 +1,6 @@
 ;;; user.skb  --  The Skribilo user manual.
 ;;;
-;;; Copyright 2005, 2006, 2007  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2006, 2007, 2008  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2001, 2002, 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -22,8 +22,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    The Skribilo documentation style                                   */
 ;*---------------------------------------------------------------------*/
-(use-modules (skribilo package web-book)
-             (skribilo documentation env)
+(use-modules (skribilo documentation env)
              (skribilo documentation manual)
              (skribilo documentation api))
 
@@ -33,7 +32,8 @@
 ;*---------------------------------------------------------------------*/
 (use-modules (skribilo package eq)
 	     (skribilo package pie)
-	     (skribilo package slide))
+	     (skribilo package slide)
+	     (skribilo package web-book2))
 
 ;; Load the compile-time configuration file.
 (load "doc-config.scm")
@@ -78,6 +78,10 @@
    [Welcome to the User Manual for Skribilo version ,(skribe-release).
 If you are new to Skribilo, please read the ,(ref :ident "intro"
 :text [introduction]) first.]))))
+
+(if (engine-format? "html")
+    ;; Produce a complete table of contents on the main HTML page.
+    (toc :chapter #t :section #t :subsection #t))
 
 
 ;;; Introduction
