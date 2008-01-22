@@ -32,10 +32,7 @@ span.sf { font-family: sans-serif }
   border-top-width: 1px;
 }
 
-.skribilo-body, .chapter {
-  /* Note: `.chapter' is used for chapters that are in a
-     separate file.  */
-
+.skribilo-body {
   font-family: sans-serif;
   font-weight: normal;
   font-size: normal;
