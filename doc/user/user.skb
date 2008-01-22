@@ -35,9 +35,6 @@
 	     (skribilo package slide)
 	     (skribilo package web-book2))
 
-;; Load the compile-time configuration file.
-(load "doc-config.scm")
-
 (if %have-ploticus? (set! %ploticus-program %ploticus-path))
     
 ;; Modules needed, e.g., to get the output of "skribilo-config --help".

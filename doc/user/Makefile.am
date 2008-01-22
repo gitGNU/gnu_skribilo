@@ -23,7 +23,6 @@ EXTRA_DIST += src/api1.skb						\
   src/start3.skb src/start4.skb src/start5.skb
 
 
-BUILT_SOURCES = doc-config.scm
 html_DATA = user.html
 dist_html_DATA = skribilo.css
 CLEANFILES = $(BUILT_SOURCES) $(html_DATA)
@@ -35,6 +34,16 @@ skrflags  = -I $(srcdir) -P $(top_srcdir)/doc/img		\
 	    -e '(define %top-srcdir "$(top_srcdir)")'		\
 	    -e '(define %top-builddir "$(top_builddir)")'
 skrflags += --compat=skribe
+
+if HAVE_PLOTICUS
+skrflags += -e "(define %have-ploticus? (= 1 1))"		\
+	    -e "(define %ploticus-path \"$(PLOTICUS)\")"
+else
+skrflags += -e "(define %have-ploticus? (= 0 1))"	\
+	    -e "(define %ploticus-path (= 0 1))"
+endif
+
+
 load_path = $(top_srcdir)/doc/modules
 
 
@@ -66,15 +75,6 @@ endif
 if HAVE_PS2PDF
 .ps.pdf:
 	$(PS2PDF) $(@:%.pdf=%.ps)
-endif
-
-if HAVE_PLOTICUS
-doc-config.scm:
-	echo "(define %have-ploticus? #t)" > $@
-	echo "(define %ploticus-path \"$(PLOTICUS)\")" >> $@
-else
-doc-config.scm:
-	echo "(define %have-ploticus? #f) (define %ploticus-path #f)" > $@
 endif
 
 
