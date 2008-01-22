@@ -25,6 +25,7 @@ EXTRA_DIST += src/api1.skb						\
 
 BUILT_SOURCES = doc-config.scm
 html_DATA = user.html
+dist_html_DATA = skribilo.css
 CLEANFILES = $(BUILT_SOURCES) $(html_DATA)
 
 skribilo = $(top_builddir)/src/pre-inst-skribilo

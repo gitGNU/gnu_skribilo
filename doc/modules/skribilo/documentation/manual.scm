@@ -1,6 +1,6 @@
 ;;; manual.scm  --  Skribilo manuals and documentation style.
 ;;;
-;;; Copyright 2007  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2007, 2008  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -125,7 +125,15 @@
 		  :action (lambda (n e) (output n e bd))
 		  :after "</font>")
    (engine-custom-set! he 'web-book-main-browsing-extra html-browsing-extra)
-   (engine-custom-set! he 'favicon "lambda.gif"))
+   (engine-custom-set! he 'favicon "lambda.gif")
+
+   ;; One chapter per file, starting with a partial table of contents.
+   (engine-custom-set! he 'chapter-file #t)
+   (engine-custom-set! he 'section-file #f)
+   (engine-custom-set! he 'subsection-file #f)
+   (engine-custom-set! he 'subsubsection-file #f)
+
+   (engine-custom-set! he 'css "skribilo.css"))
 
 ;*---------------------------------------------------------------------*/
 ;*    LaTeX                                                            */

@@ -1,0 +1,185 @@
+/* -*- coding: utf-8; mode: C; -*-
+
+   CSS style sheet for the Skribilo manual.
+
+   Copyright 2007, 2008 Ludovic Courtès <ludo@gnu.org>
+
+   Copying and distribution of this file, with or without modification,
+   are permitted in any medium without royalty provided the copyright
+   notice and this notice are preserved.  */
+
+/* FIXME: This file is messy and contains loads of useless stuff.  */
+
+pre { font-family: monospace }
+tt { font-family: monospace }
+code { font-family: monospace }
+body { margin: 1em 1.5em 1.5em 1.5em; background: #ffffff; }
+p { text-align: justify; }
+p.flushright { text-align: right }
+p.flushleft { text-align: left }
+span.sc { font-variant: small-caps }
+span.sf { font-family: sans-serif }
+
+
+.skribilo-title {
+  font-family: sans-serif;
+  font-weight: bolder;
+  font-size: large;
+  text-align: right;
+  background: #ee7777; /* #dddde0; */
+  border-top-color: black;
+  border-top-style: solid;
+  border-top-width: 1px;
+}
+
+.skribilo-body, .chapter {
+  /* Note: `.chapter' is used for chapters that are in a
+     separate file.  */
+
+  font-family: sans-serif;
+  font-weight: normal;
+  font-size: normal;
+  text-align: left;
+  background: #ffffff;
+  padding: 0 5% 0 5%
+}
+
+.small-toc {
+  text-align: left;
+  font-size: normal;
+  font-weight: bold;
+  background: #eeeef0;
+  border-radius: 2px;
+  -moz-border-radius: 2px;
+}
+
+.skribilo-ending {
+  /* The Skribilo advertising message.  */
+  font-family: sans-serif;
+  font-weight: normal;
+  font-size: small;
+}
+
+.section-title {
+  background: #eeeef0;
+  font-family: sans-serif;
+  text-align: right;
+}
+
+.subsection-title { font-family: sans-serif; }
+
+.code-excerpt {
+  background: #eeeef0;
+  font-family: fixed-width, Courier;
+  text-align: left;
+  margin: 20px;
+  padding: 10px 25px 10px 25px;
+  border-width: 0px;
+  align: center;
+}
+
+/* Links.  */
+
+a { text-decoration: none; border: 0 0 0 0; border-style: none; }
+a:link { color: #333344; }
+a:hover { background: #ee7777; color: #333344; }
+a:visited { color: #443333; }
+
+
+/* Navigation tabs (currently unused) */
+
+div.navtabs-title {
+  padding: 0 0 0 0;
+  margin: 0 0 0 0;
+  border: 0 0 0 0;
+  text-align: left;
+  background: #8381de;
+}
+div.navtabs-tabs {
+  clear: left;
+  margin: 0 0 0 0;
+  border: 0 0 0 0;
+  text-align: left;
+  padding: 0 0 0 20%;
+  background: #8381de;
+}
+div.navtabs-bar {
+  margin: 0 0 0 0;
+  border: 0 0 0 0;
+  text-align: left;
+  border-top-color: black;
+  border-top-style: solid;
+  border-top-width: 1px;
+  padding: 0 0 0 20%;
+  background: #dedeff;
+}
+div.navtabs-tabs {
+  color: black;
+  border-width: 1px;
+  border-color: black;
+  border-style: dotted;
+  padding: 2px 10px 0px 10px;
+  margin: 0 1px 0 0;
+  text-decoration: none;
+  background: #dedeff;
+}
+div.navtabs-tabs {
+  background: white;
+  color: black;
+  border-width: 1px;
+  border-color: black;
+  border-style: dotted;
+  padding: 2px 10px 0px 10px;
+  margin: 0 1px 0 0;
+  text-decoration: none;
+}
+div.navtabs-tabs {
+   background: #8381de;
+}
+
+
+/* Margins */
+
+table.left-margin-menu {
+  border-radius: 10pt;
+  -moz-border-radius: 10pt;
+  background: #eee;
+  margin: 10px;
+}
+
+
+td.skribilo-left-margin {
+  border-width: 0;
+  padding: 0 10px 0 10px;
+  height: 100%;
+  background: #ffffff;
+  font-family: sans-serif, Helvetica, Arial;
+  font-size: small;
+}
+
+div.skribilo-left-margin {
+  position: fixed;
+  /* width: 10%; */
+}
+
+table.skribilo-margins {
+  border-width: 1px 0 0 0;
+  border-style: solid;
+  border-color: black;
+  margin: 0px;
+  height: 100%;
+}
+
+div.skribilo-right-margin {
+  border-width: 0 0 0 1px;
+  border-left-style: solid;
+  border-left-color: black;
+  margin: 0;
+  height: 100%;
+}
+table.skribilo-margins td.skribilo-right-margin {
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-bottom-color: black;
+}
+
