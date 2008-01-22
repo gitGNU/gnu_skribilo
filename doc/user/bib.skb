@@ -1,7 +1,7 @@
 ;;; bib.skb  --  The Skribilo bibliography.
 ;;;
+;;; Copyright 2007, 2008  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2001, 2002, 2003, 2004  Manuel Serrano
-;;; Copyright 2007  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -73,8 +73,7 @@ bibliography-table:])
 	       :common-args '()
                :source #f
                :def '(define-markup (*bib-table*) ...))
-   (p [Technically, ,(code "*bib-table*") is actually an ,(ref :text
-[SRFI-39] :url "http://srfi.schemers.org/srfi-39/srfi-39.html")
+   (p [Technically, ,(code "*bib-table*") is actually an ,(srfi-ref 39)
 parameter object, so it can be queried and modified like any other
 parameter object.])
    
@@ -110,13 +109,22 @@ the ,(code "bibliography") Skribe function call before the call to the
 	      (:bib-table ,[The ,(ref :mark "make-bib-table" :text "table") 
                where entry is searched.])
 	      (#!rest entry... ,[If ,(param 'entry) is a string, it denotes
-              a file containing the entry (see ,(ref :mark "skribe-bib-path" 
+              a file containing the entry (see ,(ref :mark "*bib-path*" 
               :text "bibliograph path")). Otherwise, it is a list described
               by the ,(ref :subsection "Bibliography Syntax" :text "syntax") 
               below.]))
 	    :see-also '(bib-table? make-bib-table *bib-table* the-bibliography)
 	    :force-engines *api-engines*
 	    :common-args '())
+
+(mark "*bib-path*")
+(p [Files passed as an argument to ,(markup-ref "bibliography") are
+searched in the current ,(emph [bibliography path]), which is defined by
+the ,(tt [*bib-path*]) ,(srfi-ref 39) parameter.  This parameter
+contains a list of directories and its value can be obtained using
+,(code [(*bib-path*)]).  Its value can be altered using the ,(tt
+[-B]) command-line option of the ,(tt [skribilo]) compiler (see ,(numref
+:text [Chapter] :ident "compiler") for details).])
 
 (p [The ,(param :command) option can be used to import foreign bibliography.
 The following example, shows how to directly use a Bibtex bibliography

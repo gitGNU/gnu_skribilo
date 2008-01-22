@@ -1,5 +1,6 @@
-;;; image.skb  --  Skribe images
+;;; image.skb  --  Images.
 ;;;
+;;; Copyright 2008  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -21,13 +22,13 @@
 ;*---------------------------------------------------------------------*/
 ;*    Image ...  @label image@                                         */
 ;*---------------------------------------------------------------------*/
-(section :title "Image" :file #t
+(section :title "Images" :file #t
 
 (p [Images are defined by the means of the ,(code "image") function])
 
 (doc-markup 'image
 	    `((:file ,[The file where the image is stored on the disk
-                       (see ,(ref :mark "skribe-image-path" 
+                       (see ,(ref :mark "*image-path*" 
 				:text "image path")).
                        The image is converted 
                        (see ,(markup-ref "convert-image")) into a format 
@@ -42,11 +43,21 @@
                         percentage.])
 	      (:zoom [A zoom factor.])
 	      (#!rest comment [A text describing the image.]))
-	    :see-also '(skribe-image-path convert-image))
+	    :see-also '(*image-path* convert-image))
 
 (example-produce
  (example :legend "The image markup" (prgm :file "src/api16.skb"))
  (disp (include "src/api16.skb")))
+   
+(mark "*image-path*")
+(p [Files passed as a ,(tt [:file]) argument to ,(markup-ref "image")
+are searched in the current ,(emph [image path]), which is defined by
+the ,(tt [*image-path*]) ,(srfi-ref 39) parameter.  This parameter
+contains a list of directories and its value can be obtained using
+,(code [(*image-path*)]).  Its value can be altered using the ,(tt [-P])
+command-line option of the ,(tt [skribilo]) compiler (see ,(numref :text
+[Chapter] :ident "compiler") for details).])
+
 
 ;*--- Image format ----------------------------------------------------*/
 (subsection :title "Image formats"
@@ -79,12 +90,12 @@ returns the name of the new converted image. On failure, it returns
 ,(code "#f").]) 
    (doc-markup 'convert-image 
 	       `((file [The image file to be converted. The file is
-searched in the ,(ref :mark "skribe-image-path" :text "image path").])
+searched in the ,(ref :mark "*image-path*" :text "image path").])
 		 (formats [A list of formats into which images are converted to.]))
 	       :common-args '()
                :skribe-source? #f
 	       :source #f ;;"skribilo/runtime.scm"
                :def '(define-markup (convert-image file formats) ...)
-	       :see-also '(skribe-image-path)
+	       :see-also '(*image-path*)
 	       :idx *function-index*)))
    

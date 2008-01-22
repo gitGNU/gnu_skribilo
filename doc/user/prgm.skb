@@ -1,5 +1,6 @@
 ;;; prgm.skb  --  Computer programs
 ;;;
+;;; Copyright 2008  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2001, 2002, 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -74,7 +75,7 @@ program. It may automatically introduce line numbers.])
 ;*---------------------------------------------------------------------*/
 ;*    Source code ... @label source@                                   */
 ;*---------------------------------------------------------------------*/
-(section :title "Source code"
+(section :title "Source Code"
 
 (p [The ,(code "source") function extracts part of the source code and
 enables ,(emph "fontification"). That is, some words of the program
@@ -84,19 +85,28 @@ can be rendered using different colors or faces.])
 (doc-markup 'source
 	    `((:language ,[The ,(markup-ref "language") of the source code.])
 	      (:file ,[The file containing the actual source code. The file
-               is searched in the ,(markup-ref "skribe-source-path") path.])
+               is searched in the ,(markup-ref "*source-path*") path.])
 	      (:start [A start line number or a start marker.])
 	      (:stop [A stop line number or a stop marker.])
 	      (:definition [The identifier of the definition to extract.])
 	      (:tab [The tabulation width.]))
 	    :common-args '()
 	    :force-engines *api-engines*
-	    :see-also '(prog language ref skribe-source-path))
+	    :see-also '(prog language ref *source-path*))
 ;!source-stop
    
 (example-produce 
  (example :legend "The source markup" (prgm :file "src/prgm2.skb"))
- (disp (include "src/prgm2.skb"))))
+ (disp (include "src/prgm2.skb")))
+
+(mark "*source-path*")
+(p [Files passed as the ,(tt [:file]) argument of ,(markup-ref "source")
+are searched in the current ,(emph [source path]), which is defined by the
+,(tt [*source-path*]) ,(srfi-ref 39) parameter.  This parameter contains
+a list of directories and its value can be obtained using ,(code
+[(*source-path*)]).  Its value can be altered using the ,(tt [-S])
+command-line option of the ,(tt [skribilo]) compiler (see ,(numref :text
+[Chapter] :ident "compiler") for details).]))
 
 ;*---------------------------------------------------------------------*/
 ;*    Language ... @label language@                                    */
@@ -128,3 +138,8 @@ in ,(markup-ref "source") function call.])
      (disp (include "src/prgm3.skb"))))
    (else
     '()))))
+
+;;; Local Variables:
+;;; coding: latin-1
+;;; ispell-local-dictionary: "american"
+;;; End:

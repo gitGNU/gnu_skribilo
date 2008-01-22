@@ -1,6 +1,6 @@
 ;;; lib.skb  --  Standard library.
 ;;;
-;;; Copyright 2007  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2007, 2008  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003  Erick Gallesio <eg@essi.fr>
 ;;;
 ;;;
@@ -53,16 +53,21 @@ when the Skribilo compiler is invoked (see Chapter
                :source #f
                :def '(define (*document-path* #!optional opt) ...)
 	       :common-args '()
-	       :others '()  ;;'(*image-path* *bib-path* *source-path*)
-	       :see-also '(include image source bibliography)
+	       :others '()  
+	       :see-also '(include *image-path* *bib-path* *source-path*)
 	       :idx *function-index*)
    
-   (p [,(tt [*document-path*]) is a procedure as returned by SRFI-39
-,(tt [make-parameter]).  As such, ,(tt [(*document-path*)]) returns the
-current document path, while ,(tt [(*document-path* '("."
+   (index :index *function-index* "skribe-path")
+   (index :index *function-index* "skribe-path-set!")
+
+   (p [,(tt [*document-path*]) is a procedure as returned by ,(srfi-ref
+39) ,(tt [make-parameter]).  As such, ,(tt [(*document-path*)]) returns
+the current document path, while ,(tt [(*document-path* '("."
 "/some/path"))]) changes the value of the current path.  This is
 equivalent to Skribe's ,(tt [skribe-path]) and ,(tt [skribe-path-set!])
-functions.]))
+functions.  The value of ,(tt [*document-path*]) can also be changed
+using the ,(tt [-I]) command-line option of the compiler (see ,(numref
+:text [Chapter] :ident "compiler") for details).]))
 
 
 ;;; Misc   

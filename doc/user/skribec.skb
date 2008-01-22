@@ -1,5 +1,6 @@
 ;;; skribec.skb  --  The Skribe compiler
 ;;;
+;;; Copyright 2008  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2001, 2002, 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -22,6 +23,8 @@
 ;*    The Skribe compiler                                              */
 ;*---------------------------------------------------------------------*/
 (chapter :title "Skribe compiler"
+         :ident "compiler"
+
 (index "skribe" :note "manual page")
 (p [
 In this chapter we present the Skribe compiler that compiles Skribe
