@@ -1,5 +1,6 @@
 ;;; engine.skb  --  The description of the Skribe engines
 ;;;
+;;; Copyright 2008  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -19,42 +20,45 @@
 ;;; USA.
 
 
-(cond-expand 
-   (guile
-    (define *engine-src*  "skribilo/engine.scm")
-    (define *types-src*   #f))
-   (bigloo 
-    (define *engine-src*  "../src/bigloo/engine.scm")
-    (define *types-src*   "../src/bigloo/types.scm"))
-   (stklos
-    (define *engine-src*  "../src/stklos/engine.stk")
-    (define *types-src*   "../src/stklos/types.stk")))
+(define *engine-src* "skribilo/engine.scm")
 
 ;*---------------------------------------------------------------------*/
 ;*    Engine                                                           */
 ;*---------------------------------------------------------------------*/
 (chapter :title "Engines" 
 
-   (p [When Skribe produces a document in a given format, it uses a
-specialize engine. For instance, when a Web page is made from a Skribe
-document, the HTML engine is used. The engines provided by Skribe are
-given below:])
+   (p [Skribilo documents can be rendered, or output, in a variety of
+different formats.  When using the compiler, which format is used is
+specified by the ,(tt [--target]) command-line option (see ,(numref
+:text [Chapter] :ident "compiler")).  This command-line option actually
+specifies the ,(emph [engine]) or ``back-end'' to be used, which is
+roughly a set of procedures that translate the input document into the
+output format.  For instance, passing ,(tt [--target=html]) to the
+compiler instructs it to produce an HTML document using the ,(ref :text
+(code "html") :mark "html-engine") engine.])
+
+   (p [This chapter describes procedures allowing the manipulation of
+engines in Skribilo documents or modules (creation, customization,
+etc.), as well as the available engines.  Currently, the available
+engines are:])
 
    (resolve (lambda (n e env)
 	       (let* ((current-chapter (ast-chapter n))
 		      (body  (map (lambda (x) (if (pair? x) (car x) x))
 				  (markup-body current-chapter)))
-		      (sects (filter (lambda (x) (is-markup? x 'section))
+		      (sects (filter (lambda (x)
+		                       (and (is-markup? x 'section)
+				            (markup-option x :file)))
 				     body)))
 		  (itemize 
-		     (map (lambda (x)
-			     (let ((title (markup-option x :title)))
-				(item (ref :text title :section title))))
+		     (map (lambda (s)
+                            (item (ref :text (markup-option s :title)
+				       :handle (handle s))))
 			  sects)))))
    
-   (section :title "Functions dealing with engines"
+   (section :title "Manipulating Engines"
       
-      (subsection :title "Creating engines"
+      (subsection :title "Creating Engines"
 	 (p [The function ,(code "make-engine") creates a brand new engine.])
 	 
 	 (doc-markup 'make-engine
@@ -85,7 +89,7 @@ given below:])
 	    :source *engine-src*
 	    :idx *function-index*))
 	      
-      (subsection :title "Retrieving engines"
+      (subsection :title "Retrieving Engines"
 	 
 	 (p [The ,(code "find-engine") function searches in the list of defined
 engines. It returns an ,(code "engine") object on success and ,(code "#f")
@@ -98,7 +102,7 @@ on failure.])
 	    :source *engine-src*
 	    :idx *function-index*))
       
-      (subsection :title "Engine accessors"
+      (subsection :title "Engine Accessors"
 	 (p [The predicate ,(code "engine?") returns ,(code "#t") if its
 argument is an engine. Otherwise, it returns ,(code "#f"). In other words,
 ,(code "engine?") returns ,(code "#t") for objects created by 
@@ -120,7 +124,7 @@ argument is an engine. Otherwise, it returns ,(code "#f"). In other words,
 	    :source *engine-src*
 	    :idx *function-index*))
       
-      (subsection :title "Engine customs"
+      (subsection :title "Engine Customs"
 	 
 	 (p [Engine customs are locations where dynamic informations relative
 to engines can be stored. Engine custom can be seen a global variables that
@@ -146,9 +150,45 @@ a custom.])
 	    :common-args '()
             :skribe-source? #f
 	    :source *engine-src*
-	    :idx *function-index*)))
+	    :idx *function-index*))
+      
+      (subsection :title [Writing New Engines]
+	 
+	 (p [Writing new engines (i.e., output formats) and making them
+available to Skribilo is an easy task.  Essentially, this boils down to
+instantiating an engine using ,(markup-ref "make-engine") and
+registering ,(emph [markup writers]) using the ,(tt [markup-writer])
+procedure for all supported markups (e.g., ,(tt [chapter]), ,(tt
+[bold]), etc.),(footnote [FIXME: Markup writers are not currently
+documented, but looking at the source of an engine will give you the
+idea, trust me.]).])
+	 
+	 (p [Most likely, you will want to make your new engine visible
+so that ,(markup-ref "find-engine") and consequently the ,(tt
+"--target") command-line option can find it.  To that end, a few rules
+must be followed:
+
+,(enumerate
+    (item [your engine must be enclosed in a Guile Scheme module under
+the ,(tt [skribilo engine]) hierarchy; for instance, if the engine is
+named ,(tt [foo]), then it should be in a module called ,(tt [(skribilo
+engine foo)]);])
+    (item [the engine itself as returned by ,(markup-ref "make-engine")
+must be bound, in that module, to a variable called, say, ,(tt
+[foo-engine]);])
+    (item [finally, the ,(tt [(skribilo engine foo)]) module must be in
+Guile's load path; for instance, you can adjust the ,(tt
+[GUILE_LOAD_PATH]) environment variable.]))
+
+This is all it takes to extend Skribilo's set of engines!])))
 
    ;; existing engines
    (include "htmle.skb")
    (include "latexe.skb")
    (include "xmle.skb"))
+
+
+;;; Local Variables:
+;;; coding: latin-1
+;;; ispell-local-dictionary: "american"
+;;; End:

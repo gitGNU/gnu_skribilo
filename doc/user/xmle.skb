@@ -1,5 +1,6 @@
 ;;; xmle.skb  --  The documentation of the XML engine
 ;;;
+;;; Copyright 2008  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -22,12 +23,16 @@
 ;*---------------------------------------------------------------------*/
 ;*    Document                                                         */
 ;*---------------------------------------------------------------------*/
-(section :title "XML engine" :file #t
+(section :title "XML Engine" :file #t
    (mark "xml-engine")
    (index "XML" :note "Engine")
-   (p [The XML engine...])
+
+   (p [The XML engine produces a simple XML representation of Skribilo
+documents that is essentially a one-to-one mapping of the input
+document.  For instance, ,(tt [chapter]) markups are turned into ,(tt
+[<chapter>]) nodes, etc.])
    
-   (subsection :title "The XML customization"
+   (subsection :title "XML Customization"
       
       (doc-engine 'xml
 	 `()

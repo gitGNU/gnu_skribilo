@@ -24,7 +24,8 @@
    (mark "html-engine")
    (index "HTML" :note "Engine")
 
-   (p [The HTML engine...])
+   (p [The HTML engine produces---guess what!---HTML output.  It can be
+customized in various ways, as shown below.])
    
    (subsection :title "HTML Customization"
       
