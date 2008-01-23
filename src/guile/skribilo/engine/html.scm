@@ -947,7 +947,7 @@
 				      (string-canonicalize
 				       (container-ident fn)))
 			      (format #t "<sup><small>~a</small></sup></a>: "
-				      (markup-option fn :number))
+				      (markup-option fn :label))
 			      (output (markup-body fn) e)
 			      (display "\n<br>\n")
 			      (loop (cdr fns)))))
