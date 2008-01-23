@@ -1,12 +1,13 @@
-(skribe-load "slide.skr" :advi #t)
+(use-modules (skribilo package slide))
 
-(document :title (color :fg "red" (sf (font :size +2. "Skribe Slides")))
-   :author (author :name (it "Manuel Serrano")
-	      :affiliation [Inria Sophia Antipolis]
-	      :address (ref :url "http://www.inria.fr/mimosa/Manuel.Serrano"))
+(document :title (color :fg "red" (sf "Skribilo Slides"))
+   :author (author :name (it [Bob Smith])
+	      :affiliation [The Organization]
+	      :address (ref :url "http://example.org/"))
 
    (if (engine-format? "html")
        (slide :title "Table of Contents" :number #f :toc #f
+	  ;; HTML-specific table of contents.
 	  (toc :chapter #f :section #f :subsection #f :subsubsection #f)))
 ;;;	       :slide #t)))
   
@@ -16,7 +17,7 @@
 
    (slide-topic :title "Interactive Features" :outline? #t
 
-     (slide :title "X11 client" :toc #t :vspace 0.3
+     (slide :title "X11 Clients" :toc #t :vspace 0.3
 
 	(itemize
 	   (item "xlock")
