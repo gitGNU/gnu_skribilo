@@ -1,6 +1,6 @@
 ;;; outline.scm  --  A reader for Emacs' outline syntax.
 ;;;
-;;; Copyright 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2006, 2008  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -118,37 +118,60 @@ line or a line comment."
 (define %inline-markup
   ;; Note: the order matters because, for instance, URLs must be searched for
   ;; _before_ italics (`/italic/').
-  `(("_([^_]+)_" .
+  ;; XXX: This is much less efficient that a lexer as produced by, e.g., SILex.
+
+  `(("_([^_]+)_" .                                 ;; emphasis
      ,(lambda (m)
 	(values (match:prefix m)                           ;; before
 		(match:substring m 1)                      ;; body
 		(match:suffix m)                           ;; after
 		(lambda (body) `(emph ,body)))))           ;; process-body
-    ("(f|ht)tp://[a-zA-Z0-9\\._~%/-]+" .
+
+    ("\\[\\[([^]]+)\\]\\[([^]]+)\\]\\]" .          ;; Org-Mode hyperlink
+     ,(let ((file-rx (make-regexp "^file:(.*)$" regexp/extended)))
+        (lambda (m)
+          (values (match:prefix m)
+                  (match:substring m 2)
+                  (match:suffix m)
+                  (let ((xref (match:substring m 1)))
+                    (lambda (body)
+                      (cond ((regexp-exec file-rx xref)
+                             =>
+                             (lambda (m)
+                               (let ((path (match:substring m 1)))
+                                 `(ref :url ,(string-append "file://" path)
+                                       :text ,body))))
+                            (else
+                             ;; XXX: We assume that everything that's not a
+                             ;; `file:' link is a URL.
+                             `(ref :url  ,xref
+                                   :text ,body)))))))))
+    ("(f|ht)tp://[a-zA-Z0-9\\._~%/-]+" .           ;; URL
      ,(lambda (m)
 	(values (match:prefix m)
 		(match:substring m)
 		(match:suffix m)
 		(lambda (url) `(ref :url ,url)))))
-    ("\\/([^\\/]+)\\/" .
+
+    ("\\/([^\\/]+)\\/" .                           ;; italic
      ,(lambda (m)
 	(values (match:prefix m)
 		(match:substring m 1)
 		(match:suffix m)
 		(lambda (body) `(it ,body)))))
-    ("\\*([^\\*]+)\\*" .
+    ("\\*([^\\*]+)\\*" .                           ;; bold
      ,(lambda (m)
 	(values (match:prefix m)
 		(match:substring m 1)
 		(match:suffix m)
 		(lambda (body) `(bold ,body)))))
-    ("``(([^`^'])+)''" .
+    ("``(([^`^'])+)''" .                           ;; quote
      ,(lambda (m)
 	(values (match:prefix m)
 		(match:substring m 1)
 		(match:suffix m)
 		(lambda (body) `(q ,body)))))
-    ("`(([^`^'])+)'" .
+    ("`(([^`^'])+)'" .                             ;; teletype
      ,(lambda (m)
 	(values (match:prefix m)
 		(match:substring m 1)
@@ -445,12 +468,15 @@ to @var{node-type}."
 
 
 
+;;;
 ;;; The reader specification.
+;;;
 
 (define-reader outline "0.1" make-outline-reader)
 
 
-;;; arch-tag: 53473e73-c811-4eed-a0b4-22ada4d6ef08
+;;; Local Variables:
+;;; coding: latin-1
+;;; End:
 
 ;;; outline.scm ends here
-
