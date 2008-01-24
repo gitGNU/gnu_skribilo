@@ -1,6 +1,6 @@
 ;;; skribilo.scm  --  The Skribilo document processor.
 ;;;
-;;; Copyright 2005, 2006, 2007  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2006, 2007, 2008  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
 ;;;
 ;;;
@@ -82,7 +82,7 @@ specified reader syntax, and produce its output using the specified engine.
 
   -v, --verbose[=LEVEL]  Be verbose, unless LEVEL is 0.
   -w, --warning[=LEVEL]  Issue warnings, unless LEVEL is 0.
-  -d, --debug[=ARG]      Issue debugging output, unless ARG is 0.  If ARG is
+  -g, --debug[=ARG]      Issue debugging output, unless ARG is 0.  If ARG is
                          not a number, it is interpreted as a symbol to be
                          watched.
       --no-color         Disable colored debugging output.
@@ -319,6 +319,7 @@ options."
       (for-each (lambda (f)
                   (save-module-excursion
                    (lambda ()
+                     (set-current-module user-module)
                      (load f))))
 		(or preloads '()))
 
@@ -348,5 +349,10 @@ options."
 
         ;; Make sure the output port is flushed before we leave.
         (force-output (*skribilo-output-port*))))))
+
+
+;;; Local Variables:
+;;; coding: latin-1
+;;; End:
 
 ;;; skribilo ends here.
