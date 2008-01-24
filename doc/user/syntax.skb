@@ -1,5 +1,6 @@
-;;; syntax.skb  --  The syntax of Skribe
+;;; syntax.skb  --  The Skribe syntax.
 ;;;
+;;; Copyright 2008  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2001, 2002, 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -21,9 +22,11 @@
 ;*---------------------------------------------------------------------*/
 ;*    The Skribe syntax                                                */
 ;*---------------------------------------------------------------------*/
-(chapter :title "Syntax & Values" [
-A Skribe document is composed of Skribe expressions. A Skribe expression
-can be:
+(chapter :title "Syntax & Values"
+         :ident "syntax"
+   
+   (p [A Skribilo document is composed of Skribe expressions. A Skribe
+expression can be:
 
 ,(itemize (item [An atomic expression, such as a string of characters, a number.])
 	  (item [A list.])
@@ -61,12 +64,12 @@ On the other hand
 produces
 `,(color :fg "#009999" (tt [Another (bold "text") sample]))' because it does not contain
 the escape sequence `,(color :fg "#009900" (char #\,)(char #\())'.])
-]
+])
 
 ;*---------------------------------------------------------------------*/
 ;*    Formal syntax                                                    */
 ;*---------------------------------------------------------------------*/
-(section :title "Skribe syntax" 
+(section :title "Skribe Syntax" 
 
 (disp :verb #t :bg *prgm-skribe-color* [
 <expr>    --> <atom>
@@ -111,4 +114,7 @@ specifying a width:])
                   specification). Note that this way of specifying width
                   is strictly unportable.])))))
 
-
+;;; Local Variables:
+;;; coding: latin-1
+;;; ispell-local-dictionary: "american"
+;;; End:

@@ -1,0 +1,141 @@
+;;; compiler.skb  --  The Skribilo compiler.
+;;;
+;;; Copyright 2008  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2001, 2002, 2003, 2004  Manuel Serrano
+;;;
+;;;
+;;; This program is free software; you can redistribute it and/or modify
+;;; it under the terms of the GNU General Public License as published by
+;;; the Free Software Foundation; either version 2 of the License, or
+;;; (at your option) any later version.
+;;;
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;;
+;;; You should have received a copy of the GNU General Public License
+;;; along with this program; if not, write to the Free Software
+;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+;;; USA.
+
+;*---------------------------------------------------------------------*/
+;*    The compiler                                                     */
+;*---------------------------------------------------------------------*/
+(chapter :title "Skribilo Compiler"
+         :ident "compiler"
+
+(index "skribilo" :note "compiler")
+(p [This chapter introduces the Skribilo compiler, i.e., the tool that
+turns input documents into various output formats.])
+
+;; Synopsis
+(section :title "Synopsis" :number #f 
+
+   (p (compiler-command "skribilo" "options" "input")))
+
+;; Description
+(section :title "Description" :number #f
+
+   (p [The ,(tt [skribilo]) compiler turns Skribilo input documents into
+one of a variety of output formats, including HTML, LaTeX and Lout.  The
+input format is specified using the ,(tt [--reader]) command-line
+option, while the output format is specified using the ,(tt [--target])
+option.  These options and others are described below.]))
+
+;; Suffixes
+(section :title "Suffixes" :number #f
+
+   (p [A number of file name extensions are used by convention:
+
+,(description
+    (item :key (tt ".skb")  [a Skribilo or Skribe source file.])
+    (item :key (tt ".html") [an HTML target file.])
+    (item :key (tt ".lout") [a Lout target file.])
+    (item :key (tt ".tex")  [a TeX, LaTeX or ConTeXt target file.])
+    (item :key (tt ".sui")  [a Skribe URL index file.]))]))
+
+
+;; Options
+(section :title "Options" :number #f
+
+   (mark "skribilo compiler options")
+   (p [The options supported by the ,(tt [skribilo]) compiler are listed
+below.  They follow the usual GNU convention, i.e., each option can have
+both a short name (a hyphen followed by a single character) and a long
+name (two hyphens followed by a name).])
+
+   (index "compatibility" :note "Skribe compatibility mode")
+
+   (p (compiler-options '(skribilo)
+        `(#\h          ,[Produce a help message.])
+	`(#\V          ,[Show program version.])
+	`(#\R "reader" ,[Use ,(tt "reader") to read the input file,
+i.e., as the format of the input file.  Currently, two formats are
+supported: ,(tt [skribe]), which corresponds to the Skribe syntax (see
+,(numref :text [Chapter] :ident "syntax")), or ,(tt [outline]), which
+corresponds to plain text (markup-less) following the structuring
+conventions of ,(ref :text [Emacs' Outline mode] :url
+"http://www.gnu.org/software/emacs/manual/html_node/emacs/Outline-Mode.html").])
+	`(#\t "engine" ,[Use ,(tt "engine") as the engine, i.e., as
+the output format.  For details on engines and for a list of supported
+engines, see ,(numref :text [Chapter] :ident "engines").])
+	`("compat" "compat" ,[Use ,(tt "compat") as the compatibility
+mode.  This defaults to ,(tt [skribilo]).  Specifying ,(tt [skribe])
+enables the ,(ref :text [Skribe] :url
+"http://www-sop.inria.fr/mimosa/fp/Skribe/") compatibility mode, making
+it possible to compile most Skribe documents.  Technically, the ,(tt
+[skribe]) compatibility mode populates the name space of Skribilo
+documents with bindings available to Skribe documents and that are not
+available by default to Skribilo documents,(footnote [Skribe uses a
+single name space for all the code of packages, documents, in addition
+to bindings provided by the underlying Scheme implementation.]) (e.g.,
+,(srfi-ref 1) functions, Bigloo's hash table API, etc.); for Skribe
+functions not available in Skribilo, such as ,(tt [skribe-load]), a
+compatible implementation is provided.])
+        `(#\o "file" ,[Write output to ,(tt [file]).])
+
+	`(#\I "dir"  ,[Prepend ,(tt [dir]) to the document include path.])
+	`(#\B "dir"  ,[Prepend ,(tt [dir]) to the bibliography include path.])
+	`(#\S "dir"  ,[Prepend ,(tt [dir]) to the source include path.])
+	`(#\P "dir"  ,[Prepend ,(tt [dir]) to the image include path.])
+
+	`(#\b "base" ,[Strip ,(tt [base]) (an arbitrary string,
+typically an URL) from all hyperlinks when producing ,(ref :mark
+"html-engine" :text [HTML files]).])
+	`(#\e "expr" ,[Prepend ,(tt [expr]) to the list of expressions
+to be evaluated before the input document is processed.  ,(tt [expr]) is
+evaluated in the document's environment/module; thus, this option can be
+used to pass parameters to the document, e.g., with ,(tt [-e '(define
+chbouib-enabled? "yes")']).])
+        `(#\p "file" ,[Pre-load ,(tt [file]) before processing the input
+document.  ,(tt [file]) is evaluated in the document's name space and
+should be a regular Scheme file, i.e., it cannot use the ,(ref :text
+[Skribe syntax] :ident "syntax").])
+	
+	`(#\v "level" ,[Be verbose, unless ,(tt [level]) is ,(tt [0]).])
+	`(#\w "level" ,[Issue warnings, unless ,(tt [level]) is ,(tt [0]).])
+	`(#\g "arg"   ,[Issue debugging output, unless ,(tt [arg]) is ,(tt
+[0]).  If ,(tt [arg]) is not a number, it is interpreted as a symbol to
+be watched.])
+        `("no-color"  ,[By default, debugging output is colored on
+capable terminals such as ,(tt [xterm]) or the Linux console (check your
+,(tt [TERM]) environment variable).  This option turns coloring off.]))))
+
+
+;; Environment variables
+(section :title "Environment Variables" :number #f
+   
+   (p [The ,(tt [skribilo]) command does not pay attention to any
+specific environment variable.  In particular, it does not honor the
+,(tt [SKRIBEPATH]) variable that is recognized by Skribe.  Instead, you
+should use the ,(tt [-I]) command-line option to specify the load path
+of ,(emph [documents]) (see ,(markup-ref "include")), or, alternatively,
+change the value of the ,(tt [GUILE_LOAD_PATH]) variable, which affects
+Guile's own module load path.])))
+
+
+;;; Local Variables:
+;;; coding: latin-1
+;;; ispell-local-dictionary: "american"
+;;; End:

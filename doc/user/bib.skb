@@ -317,7 +317,7 @@ bibliography entries.])
 
 ;; Suffixes
 (subsection :title "SUFFIXES" :number #f [
-The ,(ref :chapter "Skribe compiler" :text "skribe") compiler uses file 
+The ,(ref :chapter "Skribilo Compiler" :text "skribilo") compiler uses file 
 suffixes in order to select amongst its possible targets which to choose. 
 These suffixes are:
 

@@ -1,5 +1,6 @@
-;;; links.skb  --  Skribe links
+;;; links.skb  --  Links and cross-references.
 ;;;
+;;; Copyright 2008  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -21,10 +22,12 @@
 ;*---------------------------------------------------------------------*/
 ;*    Links and references                                             */
 ;*---------------------------------------------------------------------*/
-(chapter :title "References and Hyperlinks" [
-Skribe supports traditional ,(emph "references") (that is, references to some
-part of documents) and ,(emph "hyperlinks") (that is visual marks enriching 
-texts that enable interactive browsing). Hyperlinks may point to
+(chapter :title "References and Hyperlinks"
+   
+   (p [Skribilo supports traditional ,(emph [cross-references]) (that
+is, references to some part of documents) and ,(emph [hyperlinks]) (that
+is, visual marks enriching texts that enable interactive
+browsing).  Hyperlinks and references may point to:
 
 ,(itemize (item [Inner parts of a document, such as a section or a figure.])
 	  (item [Other documents, such as Web documents.])
@@ -32,7 +35,7 @@ texts that enable interactive browsing). Hyperlinks may point to
 	  (item [Specific part of other Skribe documents, such as a chapter
                  of another Skribe document.]))
 
-,(paragraph [In order to use hyperlinks, Skribe documents must:])
+In order to use hyperlinks, Skribilo documents must:
 
 ,(itemize (item [,(emph "Refer to") marks. This is the role of the ,(tt "ref")
                  Skribe function.])
@@ -42,7 +45,7 @@ texts that enable interactive browsing). Hyperlinks may point to
                  automatically introduce marks as well. So, it is
                  useless to ,(emph "explicitly") introduce a mark at the 
                  beginning of these constructions in order to refer to them 
-                 with an hyperlink.]))]
+                 with an hyperlink.]))])
 
 ;*---------------------------------------------------------------------*/
 ;*    mark ... @label mark@                                            */
@@ -140,7 +143,7 @@ printed documents, as produced by the Lout and LaTeX engines.  The
 ;*---------------------------------------------------------------------*/
 ;*    mailto ... @label mailto@                                        */
 ;*---------------------------------------------------------------------*/
-(section :title "Electronic mails"
+(section :title "Electronic Mail"
 
 (p [The  ,(code "mailto") function is mainly useful for electronic
 output formats that are able to run a mailing agent. The function ,(tt "mailto") 
@@ -157,13 +160,15 @@ introduces mail annotation in a Skribe document.])
 ;*---------------------------------------------------------------------*/
 ;*    Skribe Url Index ...                                             */
 ;*---------------------------------------------------------------------*/
-(section :title "Skribe Url Index" [
-,(p [A ,(emph "Skribe Url Index") (henceforth ,(sc "Sui")) describes the
+(section :title "Skribe URL Index"
+         :ident "sui"
+   
+(p [A ,(emph "Skribe URL Index") (henceforth ,(sc "Sui")) describes the
 marks that are available in a Skribe document. It is to be used to
 make Skribe marks available to other Skribe documents. The syntax
 of a ,(sc "Sui") file is:])
 
-,(disp :verb #t :bg *prgm-skribe-color* [
+(disp :verb #t :bg *prgm-skribe-color* [
 <sui>     --> (skribe-url-index <title>
                 :file <file-name>
                 (marks <sui-ref>*)
@@ -173,11 +178,16 @@ of a ,(sc "Sui") file is:])
                 (subsubsection <sui-ref>*))
 <sui-ref> --> (<string> :file <file-name> :mark <string>)])
 
-,(p [,(sc "Sui") files can be automatically produced by the Skribe compiler.
+(p [,(sc "Sui") files can be automatically produced by the Skribe compiler.
 For instance, in order to produce the ,(sc "Sui") file of this user
 manual, one should write:])
 
-,(disp :verb #t [
-$ skribe user.skb -o user.sui])]))
+(disp :verb #t [
+$ skribilo user.skb -o user.sui])))
 
-;; LocalWords:  Hyperlinks HTML URL url
+;;; LocalWords:  Hyperlinks HTML URL url
+
+;;; Local Variables:
+;;; coding: latin-1
+;;; ispell-local-dictionary: "american"
+;;; End:

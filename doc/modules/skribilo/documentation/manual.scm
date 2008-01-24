@@ -36,7 +36,10 @@
   :use-module (skribilo source xml)
 
   :use-module (oop goops)
-  :use-module (ice-9 optargs))
+  :use-module (ice-9 optargs)
+  :use-module (srfi srfi-1)
+  :use-module (srfi srfi-13)
+  :use-module (srfi srfi-37))
 
 (fluid-set! current-reader %skribilo-module-reader)
 
@@ -401,11 +404,51 @@
 ;*---------------------------------------------------------------------*/
 ;*    compiler-options ...                                             */
 ;*---------------------------------------------------------------------*/
-(define-markup (compiler-options bin)
-   (skribe-message "  [executing: ~a --options]\n" bin)
-   (let ((port (open-input-file (format #f "| ~a --options" bin))))
-      (let ((opts (read port)))
-	 (close-input-port port)
-	 (apply description (map (lambda (opt) (item :key (bold (car opt))
-						     (cadr opt) "."))
-				 opts)))))
+(define-markup (compiler-options module . descriptions)
+  ;; Fetch an SRFI-37 option list from MODULE (a module name) and use option
+  ;; descriptions from DESCRIPTIONS.
+
+  ;; XXX: We don't have something as smart as what Skribe had that would
+  ;; allow automatic extract of option documentation.  OTOH, descriptions in
+  ;; the manual can be verbose and can include hyperlinks, which differs from
+  ;; descriptions in `--help' output, so it makes sense to have some
+  ;; duplication here.
+  (let ((options (module-ref (resolve-module module) '%options)))
+    (description
+     (map (lambda (option)
+            (let* ((names      (option-names option))
+                   (short-name (find char? names))
+                   (long-names (filter string? names))
+                   (doc        (assoc-ref descriptions
+                                          (or short-name (car long-names)))))
+              (define (make-option-list)
+                (let ((long (map (lambda (long)
+                                   (string-append "--" long))
+                                 long-names)))
+                  (string-join (if short-name
+                                   (cons (string-append "-"
+                                                        (string short-name))
+                                         long)
+                                   long)
+                               ", ")))
+
+              (define (make-key)
+                (string-append
+                 (make-option-list)
+                 (let ((arg-name (if doc (car doc) "ARG")))
+                   (cond ((option-required-arg? option)
+                          (string-append (if (null? long-names) " " "=")
+                                         arg-name))
+                         ((option-optional-arg? option)
+                          (string-append (if (null? long-names) " [" "[=")
+                                         arg-name "]"))
+                         (else "")))))
+
+              (item :key (tt (make-key))
+                    (if doc
+                        (if (or (option-optional-arg? option)
+                                (option-required-arg? option))
+                            (cadr doc)
+                            (car doc))
+                        ""))))
+          options))))

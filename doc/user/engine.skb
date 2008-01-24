@@ -26,6 +26,7 @@
 ;*    Engine                                                           */
 ;*---------------------------------------------------------------------*/
 (chapter :title "Engines" 
+         :ident "engines"
 
    (p [Skribilo documents can be rendered, or output, in a variety of
 different formats.  When using the compiler, which format is used is

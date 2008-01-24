@@ -44,7 +44,7 @@ call.]))
    (p [Skribilo provides functions to deal with paths.  These functions
 are related to the path that can be specified on the command line,
 when the Skribilo compiler is invoked (see Chapter 
-,(ref :chapter "Skribe compiler").)])
+,(ref :ident "compiler").)])
    
    (doc-markup '*document-path*
 	       '()

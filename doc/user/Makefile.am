@@ -4,7 +4,7 @@ EXTRA_DIST = bib.skb char.skb colframe.skb document.skb emacs.skb	\
   font.skb footnote.skb htmle.skb image.skb index.skb			\
   justify.skb latexe.skb lib.skb line.skb links.skb			\
   markup.skb ornament.skb package.skb pie.skb prgm.skb sectioning.skb	\
-  skribilo-config.skb skribec.skb skribeinfo.skb slide.skb spacing.skb	\
+  skribilo-config.skb compiler.skb skribeinfo.skb slide.skb spacing.skb	\
   start.skb syntax.skb table.skb toc.skb user.skb xmle.skb		\
   lout/book-style.lout
 
@@ -33,6 +33,8 @@ skrflags  = -I $(srcdir) -P $(top_srcdir)/doc/img		\
 	    -B $(srcdir)					\
 	    -e '(define %top-srcdir "$(top_srcdir)")'		\
 	    -e '(define %top-builddir "$(top_builddir)")'
+
+# FIXME: Eventually, we should use the native API.
 skrflags += --compat=skribe
 
 if HAVE_PLOTICUS

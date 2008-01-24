@@ -170,8 +170,8 @@ as HTML, PostScript, Info pages, etc.])))))
 ;;; Emacs
 (include "emacs.skb")
 
-;;; Skribilo
-(include "skribec.skb")
+;;; Compiler
+(include "compiler.skb")
 
 ;;; Slides
 (include "slide.skb")
