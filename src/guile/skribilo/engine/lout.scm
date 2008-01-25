@@ -1,7 +1,6 @@
 ;;; lout.scm  --  A Lout engine.
 ;;;
-;;; Copyright 2004, 2005, 2006, 2007
-;;; Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2004, 2005, 2006, 2007, 2008  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -656,10 +655,10 @@
 			 ;; this looks kind of buggy.
 			 (use-header-rows? #f)
 
-			 ;; Tells whether to use Skribe's footnote
-			 ;; numbers or Lout's numbering scheme (the
-			 ;; latter may be better, typography-wise).
-			 (use-skribe-footnote-numbers? #t)
+			 ;; Tells whether to use Lout's footnote numbering
+			 ;; scheme or Skribilo's number (the former may be
+			 ;; better, typography-wise).
+			 (use-lout-footnote-numbers? #f)
 
 			 ;; A procedure that is passed the engine
 			 ;; and returns Lout definitions (a string).
@@ -1651,7 +1650,7 @@
    :before (lambda (n e)
 	     (let ((label (markup-option n :label))
 		   (use-number?
-		    (engine-custom e 'use-skribe-footnote-numbers?)))
+		    (not (engine-custom e 'use-lout-footnote-numbers?))))
 	       (if (or (and (number? label) use-number?) label)
 		   (format #t "{ @FootNote @Label { ~a } { "
 			   (if label label ""))
