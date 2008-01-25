@@ -1,0 +1,225 @@
+;;; loute.skb  --  Documentation of the Lout engine.
+;;;
+;;; Copyright 2008  Ludovic Courtès <ludo@gnu.org>
+;;;
+;;;
+;;; This program is free software; you can redistribute it and/or modify
+;;; it under the terms of the GNU General Public License as published by
+;;; the Free Software Foundation; either version 2 of the License, or
+;;; (at your option) any later version.
+;;;
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;;
+;;; You should have received a copy of the GNU General Public License
+;;; along with this program; if not, write to the Free Software
+;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+;;; USA.
+
+
+(section :title "Lout Engine" :file #t
+         
+   (mark "lout-engine")
+   (index "Lout" :note "Engine")
+
+   (p [The Lout engine produces documents for the ,(ref :text [Lout
+typesetting system] :url "http://www.cs.usyd.edu.au/~jeff/"), which is
+then suitable for the production of PostScript/PDF files for printing.
+Lout is a typesetting system comparable to TeX/LaTeX in functionality.
+However, it is based on a lazy, purely functional programming language
+and makes it easy to customize document layout; it is also lightweight
+compared to typical LaTeX installations, consuming less than 10,(~)MiB
+of disk space.])
+   
+   (p [Skribilo's Lout engine provides lots of customization
+opportunities (currently more than the ,(ref :mark "latex-engine" :text
+[LaTeX engine])), which are shown below.  It also enhances Lout by
+adding new features: PDF bookmarks, high-level interface to the use of
+dropped capitals, improved paragraph indentation, etc.])
+   
+   (subsection :title [Lout Customization]
+      
+      (doc-engine 'lout
+        `((document-type ,[A symbol denoting the underlying Lout
+document type, i.e., one of ,(tt [doc]) (the default), ,(tt [report]),
+,(tt [book]) or ,(tt [slides]).  Note that these document types are not
+interchangeable: ,(tt [slides]) should be used only when using the ,(ref
+:ident "slides" :text [,(tt [slides]) package]); ,(tt [report]) and ,(tt
+[book]) do not permit text in the body of a document outside chapters.
+Also, these document types provide different layout features, ,(tt
+[book]) being the ``richest'' one; in addition, some of the customs
+below do not apply to all these document types.])
+	  (document-include ,[Document style file include line (a string
+such as ,(code [@Include { my-doc-style.lout }])) or the symbol ,(tt
+[auto]) in which case the include file is deduced from ,(tt
+[document-type]).])
+	  (includes         ,[A string containing ,(code [@Include])
+directives.])
+	  (inline-definitions-proc ,[A procedure that is passed the
+engine and returns Lout definitions to be included at the beginning of
+the document as a string.])
+
+	  (initial-font     ,[Lout specification of the document font.])
+	  (initial-break    ,[Lout specification of the default
+paragraph breaking style.])
+	  (initial-language ,[Lout specification of the document's
+language.  This is used to select hyphenation rules, among other
+things.])
+
+	  (column-number    ,[Number of columns.])
+	  (first-page-number ,[Number of the first page.])
+	  (page-orientation ,[A symbol denoting the page orientation,
+one of ,(tt [portrait]), ,(tt [landscape]), ,(tt [reverse-portrait]) or
+,(tt [reverse-landscape]).])
+          (cover-sheet?     ,[For ,(tt [report]), this boolean determines
+whether a cover sheet should be produced.  The ,(tt
+[doc-cover-sheet-proc]) custom may also honor this custom for ,(tt
+[doc]) documents.])
+          (date-line        ,[For ,(tt [report]) and ,(tt [slide]),
+determines whether a date line will appear on the first page (if it's a
+boolean), or what date line will appear (if it's not a boolean).])
+	  (abstract         ,[For ,(tt [report]), this can be an
+arbitrary Skribe expression for use as an abstract.])
+	  (abstract-title   ,[For ,(tt [report]), the title/name of the
+abstract.  If ,(tt [#f]) then no abstract title is produced.  If ,(tt
+[#t]), then a default abstract title is chosen according to ,(tt
+[initial-language]).])
+
+	  (publisher        ,[For ,(tt [book]), the publisher.])
+	  (edition          ,[For ,(tt [book]), the edition.])
+	  (before-title-page ,[For ,(tt [book]), an expression that will
+appear before the title page.])
+          (on-title-page    ,[For ,(tt [book]), the expression used as
+the title page.])
+          (after-title-page ,[For ,(tt [book]), an expression that will
+appear right after the title page.])
+          (at-end           ,[For ,(tt [book]), an expression that will
+appear at the end of the book, on a page of its own.])
+       
+          (optimize-pages?  ,[A boolean indicating whether to optimize
+pages.  Refer to Lout's User's Guide for caveat.])
+	  (doc-cover-sheet-proc ,[For ,(tt [doc]), a procedure that
+produces the title or cover sheet.  When invoked, the procedure is
+passed the ,(markup-ref "document") node and the engine.])
+          (bib-refs-sort-proc ,[Kept for backward compability, do not
+use.])
+
+	  (paragraph-gap    ,[Lout code for paragraph gaps.  Note that the
+default value is not ,(code [@PP]) as one would expect but is instead
+similar to ,(code [@PP]) with ,(code [@ParaGap]) equal to ,(code
+[1.0vx]), which means that a regular inter-line space is used as
+inter-paragraph space.  This differs from Lout's default where the
+inter-paragraph space is larger than the inter-line space, but looks
+better, at least in the author's eyes.])
+	  (first-paragraph-gap ,[Gap for the first paragraph within a
+container (e.g., the first paragraph of a chapter).  This allows
+paragraphs to have a different indentation depending on whether they are
+the first paragraph of a section or not.  By default, the first
+paragraph is not indented and subsequent paragraph are indented.])
+
+	  (drop-capital?     ,[A boolean or predicate indicating whether
+drop capitals should be used at the beginning of paragraphs.  When
+invoked, the predicate is passed the node at hand and the engine.])
+	  (drop-capital-lines ,[Number of lines over which dropped
+capitals span.  Only 2 and 3 are currently supported.])
+	  
+	  (use-header-rows?  ,[For multi-page ,(markup-ref "table")s,
+setting this to ,(tt [#t]) allows header rows to be repeated on each new
+page.  However, it appears to be buggy at the moment.])
+          (use-lout-footnote-numbers? ,[Tells whether to use Lout's
+footnote numbering scheme or Skribilo's number.  Using Lout's numbering
+scheme may yield footnote numbers that are different from those obtained
+with other engines, which can be undesirable.])
+          (transform-url-ref-proc ,[A procedure that takes a URL
+,(markup-ref "ref") markup and returns a list containing (maybe) one
+such ,(markup-ref "ref") markup.  This custom can be used to modify the
+way URLs are rendered.  The default value is a procedure that limits the
+size of the text passed to Lout's ,(tt [@ExternalLink]) symbols to work
+around the fact that ,(tt [@ExternalLink]) objects are unbreakable.  In
+order to completely disable use of ,(tt [@ExternalLink]), just set it to
+,(tt [markup-body]).])
+          
+	  (toc-leader       ,[A string, which is the leader used in
+table-of-content entries.])
+          (toc-leader-space ,[Inter-leader space in table-of-contents
+entries.])
+	  (toc-entry-proc   ,[Procedure that takes a large-scale structure
+(chapter, section, etc.) and the engine and produces the number and
+possibly title of this structure for use in table-of-contents.])
+
+	  (lout-program-name ,[The ,(tt [lout]) program path, only
+useful when producing ,(markup-ref "lout-illustration") on other
+engines.])
+	  (lout-program-arguments ,[List of additional arguments that
+should be passed to ,(tt [lout]), e.g., ,(tt [("-I foo" "-I bar")]).])
+       
+          (make-pdf-docinfo? ,[Tells whether to produce PDF "docinfo",
+i.e., meta-information with title, author, etc.])
+          (pdf-title         ,[Title for use as the PDF document
+meta-information.  If ,(tt [#t]), the ,(markup-ref "document")'s ,(param
+:title) is used.])
+          (pdf-author        ,[Author for use as the PDF document
+meta-information.  If ,(tt [#t]), the ,(markup-ref "document")'s ,(param
+:author) is used.])
+	  (pdf-keywords      ,[Keywords (a list of string) in the PDF
+document information.  This custom is deprecated, use the ,(param
+:keywords) option of ,(markup-ref "document") instead.])
+	  (pdf-extra-info    ,[A list of key-value pairs (strings) to
+appear in the PDF meta-information.])
+
+          (make-pdf-outline? ,[Tells whether to produce a PDF outline
+(aka. "bookmarks").])
+          (pdf-bookmark-title-proc ,[Procedure that takes a node and an
+engine and return a string representing the title of that node's PDF
+bookmark.])
+	  (pdf-bookmark-node-pred ,[Predicate that takes a node and an
+engine and returns true if that node should have a PDF outline entry.])
+          (pdf-bookmark-closed-pred ,[Predicate that takes a node and
+an engine and returns true if the bookmark for that node should be
+closed ("folded") when the user opens the PDF document.])
+
+          (color?            ,[Indicate whether to use colors or not.])
+
+	  ;; source fontification
+	  (source-color ,[A boolean enabling/disabling color of source code (see ,(markup-ref "source") markup).])
+	  (source-comment-color "The source comment color.")
+	  ;;(source-error-color "The source error color.")
+	  (source-define-color "The source define color.")
+	  (source-module-color "The source module color.")
+	  (source-markup-color "The source markup color.")
+	  (source-thread-color "The source thread color.")
+	  (source-string-color "The source string color.")
+	  (source-bracket-color "The source bracket color.")
+	  (source-type-color "The source type color."))
+	:source "skribilo/engine/lout.scm"))
+   
+   (subsection :title [Additional Markup]
+      
+      (p [The ,(tt [(skribilo engine lout)]) module also exports a new
+markup called ,(tt [lout-illustration]), which provides an
+engine-independent way to include illustrations written in Lout, such as
+,(tt [@Diag]) pictures.  When an engine other than Lout is used, ,(tt
+[lout-illustration]) are first automatically translated to EPS (using
+Lout's ,(tt [@Illustration])) and then to whatever image format is
+supported by the engine (see Section ,(ref :section "Images")).])
+      
+      (doc-markup 'lout-illustration
+                  `((:ident ,[An identifier.  This identifier is also
+used as the basis of the EPS file name with non-Lout engines.])
+                    (:file  ,[If different from ,(tt [#f]), this
+specifies a file where the Lout illustration is stored.])
+	            (:alt   ,[A string displayed on display devices not
+capable of displaying images, as for ,(markup-ref "image").])
+	            (#!rest illustration... ,[The illustration itself if ,(param :file)
+is ,(tt [#f]).]))
+                  :common-args '()
+		  :source #f
+                  :def '(define-markup (lout-illustration :rest
+		  illustration :key (file #f) ident alt) ...))))
+
+;;; Local Variables:
+;;; coding: latin-1
+;;; ispell-local-dictionary: "american"
+;;; End:

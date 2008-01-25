@@ -1,6 +1,6 @@
 ;;; env.scm  --  The environment variables for the documentation.
 ;;;
-;;; Copyright 2005, 2006, 2007  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2006, 2007, 2008  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -47,4 +47,4 @@
 (define-public *disp-color* "#ccffcc")
 (define-public *header-color* "#cccccc")
 
-(define-public *api-engines* (map find-engine '(html latex xml)))
+(define-public *api-engines* (map find-engine '(html lout latex xml)))

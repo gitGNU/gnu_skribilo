@@ -59,6 +59,7 @@
 ;*    Computer programs                                                */
 ;*---------------------------------------------------------------------*/
 (chapter :title "Slide Package"
+         :ident "slides"
 
    (p [This chapter describes the facilities Skribilo offers authoring
 slides.  As usual, in order to access the functionalities described in
