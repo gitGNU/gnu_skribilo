@@ -550,7 +550,9 @@
   (or (is-markup? node 'chapter)
       (is-markup? node 'section)
       (is-markup? node 'subsection)
-      (is-markup? node 'slide)))
+      (is-markup? node 'slide)
+      (is-markup? node 'slide-topic)
+      (is-markup? node 'slide-subtopic)))
 
 
 
@@ -737,7 +739,9 @@
 			 ;; opens the PDF document.
 			 (pdf-bookmark-closed-pred
 			  ,(lambda (n e)
-			     (not (is-markup? n 'chapter))))
+			     (not (and (markup? n)
+                                       (memq (markup-markup n)
+                                             '(chapter slide slide-topic))))))
 
 			 ;; color
 			 (color? #t)

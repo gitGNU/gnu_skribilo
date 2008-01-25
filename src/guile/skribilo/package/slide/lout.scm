@@ -1,6 +1,6 @@
 ;;; lout.scm  --  Lout implementation of the `slide' package.
 ;;;
-;;; Copyright 2005, 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2005, 2006, 2008  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -140,21 +140,6 @@
   )
 
 
-
-;;;
-;;; Customs for a nice handling of topics/subtopics.
-;;;
-
-(let ((lout (find-engine 'lout)))
-  (if lout
-      (begin
-	(engine-custom-set! lout 'pdf-bookmark-node-pred
-			    (lambda (n e)
-			      (or (is-markup? n 'slide)
-				  (is-markup? n 'slide-topic)
-				  (is-markup? n 'slide-subtopic))))
-	(engine-custom-set! lout 'pdf-bookmark-closed-pred
-			    (lambda (n e) #f)))))
-
-
-;;; arch-tag: 0c717553-5cbb-46ed-937a-f844b6aeb145
+;;; Local Variables:
+;;; coding: latin-1
+;;; End:
