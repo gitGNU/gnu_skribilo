@@ -1,7 +1,7 @@
 ;;; output.scm  --  Skribilo output stage.
 ;;;
+;;; Copyright 2005, 2006, 2008  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
-;;; Copyright 2005, 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -67,9 +67,9 @@
 	   (format (current-error-port) "unresolved node: ~a~a~%"
 		   node
 		   (if (location? location)
-		       (string-append " "
-				      (location-file location) ":"
-				      (location-line location))
+		       (format #f " ~a:~a"
+                               (location-file location)
+                               (location-line location))
 		       ""))))
 	((output-writer-error? c)
 	 (format (current-error-port) "invalid writer: ~a~%"
