@@ -207,34 +207,36 @@
 		  (source :language language :file file))
 		 (else
 		  (source :language language (the-body opts)))))
-	  (pr (cond
-		 (line
-		  (prog :line line sc))
-		 (else
-		  (pre sc))))
+	  (pr (prog :line line sc))
           (f  (frame :margin 5 :border 0 :width *prgm-width*
                      (color :margin 5 :width 100. :bg c pr))))
      (resolve (lambda (n e env)
                 ;; Same trick as for `ctrtable': don't center frames (which
                 ;; are actually `@Tbl') in Lout.
                 (if (engine-format? "lout" e)
-                    (! "\n@LP\n@DP\n$1\n@LP\n" f)
+                    (! "\n@LP\n@ID @F { $1 }\n@LP\n" pr)
                     f)))))
 
 ;*---------------------------------------------------------------------*/
 ;*    disp ...                                                         */
 ;*---------------------------------------------------------------------*/
 (define-markup (disp :rest opts :key (verb #f) (line #f) (bg *disp-color*))
-   (if (engine-format? "latex")
-       (if verb 
-	   (pre (the-body opts))
-	   (the-body opts))
-       (center
-	  (frame :margin 5 :border 0 :width *prgm-width*
-	     (color :margin 5 :width 100. :bg bg
-		(if verb 
-		    (pre (the-body opts))
-		    (the-body opts)))))))
+  (cond ((engine-format? "latex")
+         (if verb
+             (pre (the-body opts))
+             (the-body opts)))
+        ((engine-format? "lout")
+         (! "\n@ID { $1 } # disp\n"
+            (if verb
+                (pre (the-body opts))
+                (the-body opts))))
+        (else
+         (center
+          (frame :margin 5 :border 0 :width *prgm-width*
+                 (color :margin 5 :width 100. :bg bg
+                        (if verb
+                            (pre (the-body opts))
+                            (the-body opts))))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    keyword ...                                                      */
