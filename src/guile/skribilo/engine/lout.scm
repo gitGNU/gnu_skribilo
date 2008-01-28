@@ -373,12 +373,9 @@
 (define *lout-debug?* #f)
 
 (define-macro (lout-debug fmt . args)
-  `(if *lout-debug?*
-       (with-output-to-port (current-error-port)
-	  (lambda ()
-	     (format #t (string-append ,fmt "~%") ,@args
-		     (current-error-port))))
-       #t))
+  (if *lout-debug?*
+      `(format (current-error-port) (string-append ,fmt "~%") ,@args)
+      '#t))
 
 (define (lout-tagify ident)
   ;; Return an "clean" identifier (a string) based on `ident' (a string),
