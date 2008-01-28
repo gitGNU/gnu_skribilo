@@ -2517,36 +2517,36 @@
 	      :figure :mark :handle :ident)
 
    :action (lambda (n e)
-	     (let ((ident          (markup-option n 'text))
-                   (kind           (markup-option n 'kind))
+             ;; A handle to the target is passed as the body of each `ref'
+             ;; instance (see `package/base.scm').
+	     (let ((kind           (markup-option n 'kind))
 		   (text           (markup-option n :text))
-		   (show-page-num? (markup-option n :page)))
+		   (show-page-num? (markup-option n :page))
+                   (target         (handle-ast (markup-body n))))
 
-               ;; A handle to the target is passed as the body of each `ref'
-               ;; instance (see `package/base.scm').
-		(let ((target (handle-ast (markup-body n))))
-		   (lout-debug "ref: target=~a ident=~a" target ident)
-		   (if text (output text e))
+               (let ((ident (markup-ident target)))
+                 (lout-debug "ref: target=~a ident=~a" target ident)
 
-		   ;; Marks don't have a number
-		   (if (and ident (eq? kind 'mark))
-		       (format #t (lout-page-of ident))
-		       (begin
-			  ;; Don't output a section/whatever number
-			  ;; when text is provided in order to be
-			  ;; consistent with the HTML back-end.
-			  ;; Sometimes (eg. for user-defined markups),
-			  ;; we don't even know how to reference them
-			  ;; anyway.
-			  (if (not text)
-                              (let ((number
-                                     (if (eq? kind 'figure)
-                                         (markup-option target :number)
-                                         (markup-number-string target))))
-                                (display " ")
-                                (display number))
-                              (if (and ident show-page-num?)
-                                  (format #t (lout-page-of ident))))))))))
+                 (if text (output text e))
+
+                 (if (and (eq? kind 'mark) ident show-page-num?)
+
+                     ;; Marks don't have a number.
+                     (format #t (lout-page-of ident))
+
+                     ;; Don't output a section/whatever number when text is
+                     ;; provided in order to be consistent with the HTML
+                     ;; back-end.  Sometimes (e.g., for user-defined
+                     ;; markups), we don't even know how to reference them
+                     ;; anyway.
+                     (if (not text)
+                         (let ((number (if (eq? kind 'figure)
+                                           (markup-option target :number)
+                                           (markup-number-string target))))
+                           (display " ")
+                           (display number))
+                         (if (and ident show-page-num?)
+                             (format #t (lout-page-of ident)))))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    lout-make-url-breakable ...                                      */
