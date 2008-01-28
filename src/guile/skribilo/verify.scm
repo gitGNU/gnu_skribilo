@@ -1,7 +1,7 @@
 ;;; verify.scm  --  Skribe AST verification.
 ;;;
-;;; Copyright 2003-2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
-;;; Copyright 2005, 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2005, 2007, 2008  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -96,7 +96,11 @@
 
 ;;; PAIR
 (define-method (verify (obj <pair>) e)
-  (for-each (lambda (x) (verify x e)) obj)
+  (if (list? obj)
+      (for-each (lambda (o) (verify o e)) obj)
+      (begin
+        (verify (car obj) e)
+        (verify (cdr obj) e)))
   obj)
 
 ;;; PROCESSOR

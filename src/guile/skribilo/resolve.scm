@@ -1,7 +1,7 @@
 ;;; resolve.scm  --  Skribilo reference resolution.
 ;;;
+;;; Copyright 2005, 2006, 2008  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
-;;; Copyright 2005, 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -100,7 +100,8 @@
        (Loop (cdr n*)))
       ((pair? n*)
        (set-car! n* (do-resolve! (car n*) engine env))
-       (set-cdr! n* (do-resolve! (cdr n*) engine env)))
+       (set-cdr! n* (do-resolve! (cdr n*) engine env))
+       n*)
       (else
        (raise (condition (&invalid-argument-error
 			  (proc-name "do-resolve!<pair>")
