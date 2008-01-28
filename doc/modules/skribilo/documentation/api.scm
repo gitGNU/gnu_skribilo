@@ -1,6 +1,6 @@
 ;;; api.scm  --  The style for documenting Scheme APIs.
 ;;;
-;;; Copyright 2005, 2006, 2007  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2006, 2007, 2008  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -84,6 +84,70 @@
 		    (markup-option-add! n :bg c)
 		    (output n e tro)))))
 
+;*---------------------------------------------------------------------*/
+;*    Lout configuration                                               */
+;*---------------------------------------------------------------------*/
+(let ((le (find-engine 'lout)))
+
+  (let ((defs (engine-custom le 'inline-definitions-proc)))
+    (engine-custom-set! le 'inline-definitions-proc
+                        (lambda (e)
+                          (string-append (defs e) "\n"
+                                         "def @DocHeading right x\n{\n"
+                                         "{ Helvetica Base } @Font x\n}\n"))))
+
+  (markup-writer 'doc-markup
+    :action (lambda (n e)
+              (let ((protos (markup-option n 'prototypes))
+                    (opts   (markup-option n 'options))
+                    (params (markup-option n 'parameters))
+                    (see    (markup-option n 'see-also)))
+                ;;(format #t "\n@LP\n@DocHeading { Prototype }\n@LP\n")
+                (format #t "\n@LP\n{ oragged nohyphen } @Break { ")
+                (for-each (lambda (p)
+                            (output (! "\n@LP\n$1" p) e))
+                          protos)
+                (format #t "\n} @LP\n\n")
+                (and (pair? opts)
+                     (for-each (lambda (o)
+                                 (let ((name    (list-ref o 0))
+                                       (engines (list-ref o 1))
+                                       (desc    (list-ref o 2)))
+                                   (output (list (! "\n|2fx { ")
+                                                 (! "\n{ $1 } @Right { $2 }"
+                                                    (tt name) (sf engines))
+                                                 (! "\n@LP\n|2fx { $1 } }\n@LP\n"
+                                                    desc))
+                                           e)))
+                               opts))
+                (and (pair? params)
+                     (for-each (lambda (p)
+                                 (let ((name (car p))
+                                       (desc (cdr p)))
+                                   (output (list (! "\n|2fx { ")
+                                                 (! "\n{ $1 }" (tt name))
+                                                 (! "\n@LP\n|2fx { $1 } }\n@LP\n"
+                                                    desc))
+                                           e)))
+                               params))
+
+                (and (pair? see)
+                     (output (! "@LP\n|2fx { See also { $1 } }\n"
+                                (punctuate see))
+                             e))
+
+                (format #t "\n@LP\n")))))
+
+(define (punctuate lst)
+  ;; Punctuate words (ASTs) listed in LST.
+  (or (null? lst)
+      (reverse (cons "."
+                     (cdr (fold (lambda (word result)
+                                  (cons* ", " word result))
+                                '()
+                                lst))))))
+
+
 ;*---------------------------------------------------------------------*/
 ;*    api-search-definition ...                                        */
 ;*    -------------------------------------------------------------    */
@@ -561,6 +625,36 @@
 			 (subsubsection :title "See also" :number #f :toc #f
 			    (p so)
 			    (! "\\noindent"))))))
+          (define (doc-markup.lout)
+	     (let ((df (map (lambda (f)
+			       (cons (param (car f)) (cadr f)))
+			    dformals))
+		   (dr (if (pair? drest)
+			   (list (cons (param (cadr (car drest)))
+                                       (caddr (car drest))))
+			   '()))
+		   (do (map (lambda (f)
+			       (list (param (car f))
+                                     (opt-engine-support (car f))
+                                     (cadr f)))
+			    doptions))
+		   (so (map (lambda (x)
+			       (let ((s (symbol->string x)))
+				  (list
+				   (ref :mark s :page #t
+				      :text (code s))
+				   " ")))
+			    see-also)))
+               (new container
+                    (markup 'doc-markup)
+                    (ident  (gensym "doc-markup"))
+                    (class  #f)
+                    (loc    &invocation-location)
+                    (options `((prototypes  ,p+)
+                               (options     ,do)
+                               (parameters  ,(append df dr))
+                               (see-also    ,so))))))
+
 	  ;; check all the descriptions
 	  (doc-check-arguments id formals dformals)
 	  (doc-check-arguments id options doptions)
@@ -581,6 +675,8 @@
 		(cond
 		   ((engine-format? "latex")
 		    (doc-markup.latex))
+                   ((engine-format? "lout")
+                    (doc-markup.lout))
 		   (else
 		    (center (doc-markup.html)))))))))
 
@@ -630,3 +726,7 @@
 				   (td :align 'left :valign 'top (cadr r))))
 			     (filter cadr args)))))))))
 
+
+;;; Local Variables:
+;;; coding: latin-1
+;;; End:
