@@ -38,6 +38,7 @@ first described, and then alternate syntaxes are presented.])
 
 
    (section :title [The Skribe Syntax]
+            :ident "skribe-syntax"
 
       (p [By default or when the ,(tt [--reader=skribe]) option is
 passed to the compiler, a Skribilo document is composed of ,(emph
@@ -86,7 +87,7 @@ the escape sequence `,(color :fg "#009900" (char #\,)(char #\())'.])
 ;*---------------------------------------------------------------------*/
 ;*    Formal syntax                                                    */
 ;*---------------------------------------------------------------------*/
-(subsection :title "Skribe Syntax" 
+(subsection :title [Formal Syntax]
 
 (disp :verb #t :bg *prgm-skribe-color* [
 <expr>    --> <atom>
@@ -195,20 +196,37 @@ to the native ,(tt [skribe]) syntax:])
 					     (string #\newline))
 				(loop (read-line)
 				      (cons line result))))))))))
-	 (disp
-	   (prgm 
-	     (with-output-to-string
-	       (lambda ()
-		 (let* ((read  (make-reader 'outline))
-			(input (open-input-file src))
-			(sexp  (read input)))
-		   (pretty-print sexp :width 65))))))))
+	 (prgm 
+	   (with-output-to-string
+	     (lambda ()
+	       (let* ((read  (make-reader 'outline))
+		      (input (open-input-file src))
+		      (sexp  (read input)))
+		 (pretty-print sexp :width 65)))))))
       
       (p [The ,(tt [outline]) mode makes it possible to quickly create
 documents that can be output in variety of formats (see ,(numref :text
-[Chapter] :ident "engines")).  The downside is that, being a markup-less
-document format, there are many things cannot be done using it, most
-notably tables, bibliographies, and cross-references.])))
+[Chapter] :ident "engines")).  The downside is that, being a very simple
+markup-less document format, there are many things that cannot be done
+using it, most notably tables, bibliographies, and cross-references.]))
+   
+   (section :title [Documents in Scheme Programs]
+      
+      (p [It is also possible to create and output Skribilo documents
+from a Guile Scheme program.  In that case, you get to use the Scheme
+syntax, which is close to the ,(ref :ident "skribe-syntax" :text [Skribe
+syntax]) described above, modulo the ,(code "[...]") constructs.  A
+typical Scheme program that would produce and output a document, pretty
+much like what the ,(ref :ident "compiler" :text [,(tt [skribilo])
+compiler does]), would look like this:]
+	 
+	 (example :legend [Programming Skribilo documents in Scheme.]
+	  (prgm :language scheme :file "src/scheme.scm"))
+	 
+        [This should give you an idea of the wonderful, life-changing
+things that can be achieved with a bit of ,(emph [document
+programming]).])))
+
 
 ;;; Local Variables:
 ;;; coding: latin-1
