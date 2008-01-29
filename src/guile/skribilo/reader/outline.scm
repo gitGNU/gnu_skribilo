@@ -230,7 +230,7 @@ takes a string and returns a list."
   (let loop ((line line)
 	     (result '()))
     (if (or (eof-object? line) (empty-line? line))
-	(cons 'p result)
+	(cons 'p (list result))
 	(loop (read-line port)
 	      (let ((line (line-proc line)))
 		(append-trees result line "\n"))))))
