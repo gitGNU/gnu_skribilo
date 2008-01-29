@@ -1,0 +1,59 @@
+-*- mode: outline; coding: latin-1; -*-
+
+Title: Demonstrating Skribilo's Outline Syntax
+Author: Ludovic Courtès
+Keywords: Skribilo outline Emacs
+
+This document aims to *demonstrate*
+[[http://skribilo.nongnu.org/][Skribilo]]'s outline syntax.
+
+
+* The First Chapter
+
+The first chapter contains a couple of sections.
+They look as though they had been introduced with
+the `section' markup of the Skribe syntax.
+
+** The First Section
+
+This section is pretty much empty.
+
+** The Second Section
+
+This section introduces lists.
+
+*** Bullet Lists
+
+This section contains a wonderful `itemize'-style bullet list:
+
+  - the first item;
+
+  - the second item;
+
+  - the last one, which spans
+    two lines of text.
+
+
+And that's it.  Note that list items had to be
+separated by empty lines.
+
+*** Enumerations
+
+This section shows an `enumerate'-style list:
+
+  1. The first item;
+
+  2. The second one;
+
+  3. The last one.
+
+
+Note that list items are numbered this time.
+
+
+* The Second Chapter
+
+The second chapter does _not_ add anything useful.
+
+Text like this that starts after an empty line is
+put into a new paragraph.

@@ -2,7 +2,7 @@
 EXTRA_DIST = bib.skb char.skb colframe.skb document.skb emacs.skb	\
   engine.skb enumeration.skb eq.skb examples.skb figure.skb		\
   font.skb footnote.skb htmle.skb image.skb index.skb			\
-  justify.skb latexe.skb lib.skb line.skb links.skb			\
+  justify.skb latexe.skb loute.skb lib.skb line.skb links.skb		\
   markup.skb ornament.skb package.skb pie.skb prgm.skb sectioning.skb	\
   skribilo-config.skb compiler.skb skribeinfo.skb slide.skb spacing.skb	\
   start.skb syntax.skb table.skb toc.skb user.skb xmle.skb		\
@@ -20,7 +20,8 @@ EXTRA_DIST += src/api1.skb						\
   src/index1.skb src/index2.skb src/index3.skb src/links1.skb		\
   src/links2.skb src/pie1.skb src/pie2.skb src/prgm1.skb src/prgm2.skb	\
   src/prgm3.skb src/slides.skb src/start1.skb src/start2.skb		\
-  src/start3.skb src/start4.skb src/start5.skb
+  src/start3.skb src/start4.skb src/start5.skb				\
+  src/outline.txt
 
 
 html_DATA = user.html

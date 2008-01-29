@@ -33,13 +33,15 @@
 (use-modules (skribilo package eq)
 	     (skribilo package pie)
 	     (skribilo package slide)
-	     (skribilo package web-book2))
+	     (skribilo package web-book2)
+	     (skribilo reader))
 
 (if %have-ploticus? (set! %ploticus-program %ploticus-path))
     
 ;; Modules needed, e.g., to get the output of "skribilo-config --help".
 (use-modules (ice-9 popen)
-	     (ice-9 rdelim))
+	     (ice-9 rdelim)
+	     (ice-9 pretty-print))
 
 
 ;*---------------------------------------------------------------------*/

@@ -1,4 +1,4 @@
-;;; syntax.skb  --  The Skribe syntax.
+;;; syntax.skb  --  The Skribilo syntaxes.
 ;;;
 ;;; Copyright 2008  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2001, 2002, 2003, 2004  Manuel Serrano
@@ -20,13 +20,30 @@
 ;;; USA.
 
 ;*---------------------------------------------------------------------*/
-;*    The Skribe syntax                                                */
+;*    The Skribilo syntaxes                                            */
 ;*---------------------------------------------------------------------*/
-(chapter :title "Syntax & Values"
+(chapter :title "Syntax"
          :ident "syntax"
    
-   (p [A Skribilo document is composed of Skribe expressions. A Skribe
-expression can be:
+   (p [This chapter describes the syntax or Skribilo documents---or
+rather, the available syntaxes Skribilo documents can use.  Skribilo
+actually supports several input syntaxes, each of which is implemented
+by a ,(emph [reader]).  The input syntax (and reader) can be selected at
+document compilation time using the ,(tt [--reader]) option of the
+compiler (see ,(numref :text [Chapter] :ident "compiler")).
+Nevertheless, it has a ``preferred'' syntax (the default syntax), which
+is that of the ,(ref :url "http://www-sop.inria.fr/mimosa/fp/Skribe/"
+:text [Skribe document preparation system]).  Thus, the Skribe syntax is
+first described, and then alternate syntaxes are presented.])
+
+
+   (section :title [The Skribe Syntax]
+
+      (p [By default or when the ,(tt [--reader=skribe]) option is
+passed to the compiler, a Skribilo document is composed of ,(emph
+[Skribe expressions]), which resemble expressions in the Scheme
+programming language, with a few extensions to make them more convenient
+to use within documents.  A Skribe expression can be:
 
 ,(itemize (item [An atomic expression, such as a string of characters, a number.])
 	  (item [A list.])
@@ -69,7 +86,7 @@ the escape sequence `,(color :fg "#009900" (char #\,)(char #\())'.])
 ;*---------------------------------------------------------------------*/
 ;*    Formal syntax                                                    */
 ;*---------------------------------------------------------------------*/
-(section :title "Skribe Syntax" 
+(subsection :title "Skribe Syntax" 
 
 (disp :verb #t :bg *prgm-skribe-color* [
 <expr>    --> <atom>
@@ -92,10 +109,10 @@ the escape sequence `,(color :fg "#009900" (char #\,)(char #\())'.])
 ;*---------------------------------------------------------------------*/
 ;*    Values                                                           */
 ;*---------------------------------------------------------------------*/
-(section :title "Values" :file #f :toc #t 
+(subsection :title "Values" :file #f :toc #t
 
 ;*--- width -----------------------------------------------------------*/
-(subsection :title "Width" (p [
+(subsubsection :title "Width" (p [
 ,(mark "width")
 A Skribe ,(emph "width") refers to the horizontal size a construction
 occupies on an output document. There are three different ways for
@@ -113,6 +130,85 @@ specifying a width:])
                   in the output document (such as HTML column ,(code "\"0*\"")
                   specification). Note that this way of specifying width
                   is strictly unportable.])))))
+   
+
+   (section :title [The Outline Syntax]
+            :ident "outline-syntax"
+      
+      (p [Alternatively, Skribilo allows documents to be written in a
+plain text format, with almost no markup.  Instead, conventions borrowed
+from ,(ref :text [Emacs' Outline Mode] :url
+"http://www.gnu.org/software/emacs/manual/html_node/emacs/Outline-Mode.html")
+to denote the text structure as well as other common conventions are
+used to express various formatting ideas.  This syntax is implemented by
+the ,(tt [outline]) reader; thus, it is made available by passing the
+,(tt [--reader=outline]) option to the ,(ref :ident "compiler" :text
+[compiler]).  The major elements of this syntax are the following:])
+      
+      (description
+	 (item :key [Document title and author]
+	    [The document title is introduced by adding a line starting
+with ,(code [Title:]) at the beginning of the text file, and followed by
+the title.  Likewise, the author can be specified with a line starting
+with ,(code [Author:]).])
+	 (item :key [Sectioning]
+	    [Chapters are introduced using a heading preceding by a
+single ,(tt [*]) (star) character.  For instance, ,(tt [* The First
+Part]) on a line on its own, followed by an empty line, introduces a new
+chapter entitled ``The First Part''.  Likewise, two stars introduce a
+section, three stars introduce a subsection, etc.])
+	 (item :key [Emphasis, italics, bold]
+	    [Words or phrases surrounded by the ,(tt [_]) (underscore)
+character are emphasized; those surrounded by ,(tt [/]) (slash)
+characters are italicized; finally, those surrounded by ,(tt [*]) (star)
+characters are typeset in boldface (see Section ,(ref :section
+"Ornaments")).])
+	 (item :key [Quotes]
+	    [Words enclosed in double quotes (i.e., two back-quote
+characters, then two single-quote characters) are interpreted as quoted
+text, as per ,(tt "q").])
+	 (item :key [Code]
+	    [Words enclosed in single quotes (i.e., one back-quote
+character, then one single-quote) are interpreted as code and are
+typeset using a fixed-width font, as per ,(markup-ref "tt").])
+	 (item :key [Hyperlinks]
+	    [URLs are automatically recognized and converted into a
+,(code [(ref :url ...)]) form (see ,(markup-ref "ref")).  In addition,
+,(tt [outline]) has limited support for Org-Mode-style hyperlinks; for
+instance, ,(code "[[http://gnu.org/][The GNU Project]]") yields ,(ref
+:url "http://gnu.org/" :text [The GNU Project]).]))
+      
+      (p [Here is an example showing how the ,(tt [outline]) syntax maps
+to the native ,(tt [skribe]) syntax:])
+      
+      (let ((src (string-append %top-srcdir "/doc/user/src/outline.txt")))
+	(example-produce
+	 (example :legend [The ,(tt [outline]) syntax]
+	   (tt
+	      (flush :side 'left
+		(pre (with-input-from-file src
+			(lambda ()
+			  (let loop ((line   (read-line))
+				     (result '()))
+			    (if (eof-object? line)
+				(string-join (reverse result)
+					     (string #\newline))
+				(loop (read-line)
+				      (cons line result))))))))))
+	 (disp
+	   (prgm 
+	     (with-output-to-string
+	       (lambda ()
+		 (let* ((read  (make-reader 'outline))
+			(input (open-input-file src))
+			(sexp  (read input)))
+		   (pretty-print sexp :width 65))))))))
+      
+      (p [The ,(tt [outline]) mode makes it possible to quickly create
+documents that can be output in variety of formats (see ,(numref :text
+[Chapter] :ident "engines")).  The downside is that, being a markup-less
+document format, there are many things cannot be done using it, most
+notably tables, bibliographies, and cross-references.])))
 
 ;;; Local Variables:
 ;;; coding: latin-1

@@ -75,8 +75,8 @@ i.e., as the format of the input file.  Currently, two formats are
 supported: ,(tt [skribe]), which corresponds to the Skribe syntax (see
 ,(numref :text [Chapter] :ident "syntax")), or ,(tt [outline]), which
 corresponds to plain text (markup-less) following the structuring
-conventions of ,(ref :text [Emacs' Outline mode] :url
-"http://www.gnu.org/software/emacs/manual/html_node/emacs/Outline-Mode.html").])
+conventions of Emacs' Outline mode (see ,(numref :text [Section] :ident
+"outline-syntax")).])
 	`(#\t "engine" ,[Use ,(tt "engine") as the engine, i.e., as
 the output format.  For details on engines and for a list of supported
 engines, see ,(numref :text [Chapter] :ident "engines").])
