@@ -162,13 +162,13 @@ Here is an example of a simple Skribe database.])
 (p [The function ,(code "the-bibliography") displays the bibliography. ])
 
 (doc-markup 'the-bibliography
-	    `((:bib-table [The bibliography 
+	    `((:bib-table ,[The bibliography 
                ,(ref :mark "make-bib-table" :text "table") to be displayed.])
-              (:pred [A predicate filtering the bibliography entries. It takes
+              (:pred ,[A predicate filtering the bibliography entries. It takes
                       two parameters: the bibliography entry and the 
                       ,(code "the-bibliography") node.])
-	      (:sort [A function sorting a list of entries.])
-	      (:labels [Specifies the style for bibliography entries
+	      (:sort ,[A function sorting a list of entries.])
+	      (:labels ,[Specifies the style for bibliography entries
                         labels.  The default, ,(code "number"), uses
                         numbers to identify references, e.g., "\[7\]".
                         When ,(code "name+year") is chosen, long labels
@@ -197,7 +197,7 @@ bibliography entries:
     (item [the ,(code [author]) fields of bibliographic entries should
 be a string containing a comma-separated list of full author names;])
     (item [each ``full author name'' should have the form ,(code
-"first-name second-name ... last-name");]))
+"first-name second-name ... last-name").]))
 
 When using the ,(code "name+year") label style, it is sometimes
 desirable to preclude automatic abbreviations for some authors, e.g.,
