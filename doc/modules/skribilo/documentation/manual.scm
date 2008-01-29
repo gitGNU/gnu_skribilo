@@ -221,22 +221,23 @@
 ;*    disp ...                                                         */
 ;*---------------------------------------------------------------------*/
 (define-markup (disp :rest opts :key (verb #f) (line #f) (bg *disp-color*))
-  (cond ((engine-format? "latex")
-         (if verb
-             (pre (the-body opts))
-             (the-body opts)))
-        ((engine-format? "lout")
-         (! "\n@ID { $1 } # disp\n"
-            (if verb
-                (pre (the-body opts))
-                (the-body opts))))
-        (else
-         (center
-          (frame :margin 5 :border 0 :width *prgm-width*
-                 (color :margin 5 :width 100. :bg bg
-                        (if verb
-                            (pre (the-body opts))
-                            (the-body opts))))))))
+  (resolve (lambda (n e env)
+             (cond ((engine-format? "latex" e)
+                    (if verb
+                        (pre (the-body opts))
+                        (the-body opts)))
+                   ((engine-format? "lout" e)
+                    (! "\n@ID { $1 } # disp\n"
+                       (if verb
+                           (pre (the-body opts))
+                           (the-body opts))))
+                   (else
+                    (center
+                     (frame :margin 5 :border 0 :width *prgm-width*
+                            (color :margin 5 :width 100. :bg bg
+                                   (if verb
+                                       (pre (the-body opts))
+                                       (the-body opts))))))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    keyword ...                                                      */
@@ -452,5 +453,12 @@
                                 (option-required-arg? option))
                             (cadr doc)
                             (car doc))
-                        ""))))
+                        (let ((msg (string-append "missing description "
+                                                  "for compiler option `"
+                                                  (or (and short-name
+                                                           (string short-name))
+                                                      (car long-names))
+                                                  "'")))
+                          (skribe-warning 1 msg)
+                          "")))))
           options))))
