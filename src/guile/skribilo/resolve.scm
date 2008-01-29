@@ -179,18 +179,20 @@
 (define-method (do-resolve! (node <unresolved>) engine env)
   (with-debug 5 'do-resolve<unresolved>
      (debug-item "node=" node)
-     (let ((p (assq 'parent env)))
-       (slot-set! node 'parent (and (pair? p) (pair? (cdr p)) (cadr p))))
+     (let* ((p      (assq 'parent env))
+            (parent (and (pair? p) (pair? (cdr p)) (cadr p))))
 
-     (let* ((proc (slot-ref node 'proc))
-	    (res  (proc node engine env))
-	    (loc  (ast-loc node)))
-       (when (ast? res)
-	 (ast-loc-set! res loc)
-	 (slot-set! res 'parent (assq 'parent env)))
-       (debug-item "res=" res)
-       (*unresolved* #t)
-       res)))
+       (slot-set! node 'parent parent)
+
+       (let* ((proc (slot-ref node 'proc))
+              (res  (proc node engine env))
+              (loc  (ast-loc node)))
+         (when (ast? res)
+           (ast-loc-set! res loc)
+           (slot-set! res 'parent parent))
+         (debug-item "res=" res)
+         (*unresolved* #t)
+         res))))
 
 
 (define-method (do-resolve! (node <handle>) engine env)
@@ -303,3 +305,7 @@
 	       result
 	       #f)))))
 
+
+;;; Local Variables:
+;;; coding: latin-1
+;;; End:
