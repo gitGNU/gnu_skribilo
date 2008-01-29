@@ -10,7 +10,7 @@
 
 /* FIXME: This file is messy and contains loads of useless stuff.  */
 
-pre { font-family: monospace }
+pre { font-family: monospace; text-align: left; }
 tt { font-family: monospace }
 code { font-family: monospace }
 body { margin: 1em 1.5em 1.5em 1.5em; background: #ffffff; }
