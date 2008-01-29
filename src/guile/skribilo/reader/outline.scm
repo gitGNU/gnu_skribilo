@@ -335,12 +335,12 @@ to @var{node-type}."
   (regexp-exec node-rx line))
 
 (define %list-processors
-  (list (make-list-processor (make-regexp "^[-~o] (.+)$" regexp/extended)
+  (list (make-list-processor (make-regexp "^[[:space:]]*[-~o] (.+)$" regexp/extended)
 			     'itemize
 			     (lambda (m) (match:substring m 1))
 			     %line-processor
 			     node-markup-line?)
-	(make-list-processor (make-regexp "^([0-9]+)\\.? (.+)$"
+	(make-list-processor (make-regexp "^[[:space:]]*([0-9]+)\\.? (.+)$"
 					  regexp/extended)
 			     'enumerate
 			     (lambda (m) (match:substring m 2))
@@ -410,7 +410,7 @@ to @var{node-type}."
 
 (define* (outline-reader :optional (port (current-input-port)))
   (define modeline-rx
-    (make-regexp "^[[:space:]]*-\\*- [a-zA-Z-]+ -\\*-[[:space:]]*$"))
+    (make-regexp "^[[:space:]]*-\\*- ([a-zA-Z0-9;:-]|[[:space:]])+ -\\*-[[:space:]]*$"))
   (define title-rx (make-regexp "^[Tt]itle: (.+)$" regexp/extended))
   (define author-rx (make-regexp "^[Aa]uthors?: (.+)$" regexp/extended))
   (define keywords-rx
