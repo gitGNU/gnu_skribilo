@@ -99,6 +99,11 @@ technologies.  For instance, a Skribilo document can be ,(emph
 to a TeX file in order to produce a high-quality printed document, and
 so on.])
    
+   (p [This manual documents Skribilo version ,(skribilo-version).  Since
+it is based on Skribe's user manual, you might stumble upon documentation
+bits that are obsolete or inaccurate in the context of Skribilo,
+although work is being done to fix it.])  ;; FIXME
+
    (section :title "Who May Use Skribilo?" :number #f
       
       (p [Anyone needing to design web pages, PostScript/PDF files or
@@ -169,9 +174,6 @@ as HTML, PostScript, Info pages, etc.])))))
 ;;; Engines
 (include "engine.skb")
 
-;;; Emacs
-(include "emacs.skb")
-
 ;;; Compiler
 (include "compiler.skb")
 
@@ -183,6 +185,9 @@ as HTML, PostScript, Info pages, etc.])))))
 
 ;;; skribilo-config
 (include "skribilo-config.skb")
+
+;;; Emacs
+(include "emacs.skb")
 
 ;;; List of examples
 (include "examples.skb")

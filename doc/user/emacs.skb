@@ -1,5 +1,6 @@
-;;; emacs.skb  --  Editing Skribe programs
+;;; emacs.skb  --  Editing Skribilo programs
 ;;;
+;;; Copyright 2008  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2001, 2002, 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -19,49 +20,67 @@
 ;;; USA.
 
 ;*---------------------------------------------------------------------*/
-;*    Editing Skribe programs                                          */
+;*    Editing Skribilo programs                                        */
 ;*---------------------------------------------------------------------*/
-(chapter :title "Editing Skribe Programs" (p [
-Skribe sources can be automatically generated from
-,(ref :url *texinfo-url* :text "Texinfo") by the ,(tt "skribeinfo") compiler.
-They can also be typed in. For this task, it is highly recommended to
-use ,(ref :url *emacs-url* :text "GNU Emacs") or 
-,(ref :url *xemacs-url* :text "Xemacs").
-These editors provide parentheses matching and Skribe expressions
-handling.])
+(chapter :title [Editing Skribilo Programs]
+   
+   (p [Skribilo documents can be typed in.  The ,(tt [outline]) syntax
+(see ,(numref :text [Section] :ident "outline-syntax")) can be easily
+typed in with any editor, although the Outline and Org modes found in
+GNU,(~)Emacs and XEmacs make it more convenient to deal with this
+format.  For instance, they allow section contents to be hidden, leaving
+only the section headings visible; Org Mode can also highlight forms
+that denote emphasis, and provide proper display of Org-Mode-style
+hyperlinks (well, not surprisingly).])
+
+   (p [When using the Skribe syntax (see ,(numref :text [Section] :ident
+"skribe-syntax")), it is highly recommended to use ,(ref :url
+*emacs-url* :text "GNU Emacs") or ,(ref :url *xemacs-url* :text
+"XEmacs").  In addition to parentheses matching, these editors provide
+syntax highlighting (or ``fontification'') through the Skribe Mode
+described below.])
 
 ;*---------------------------------------------------------------------*/
 ;*    Skribe emacs mode                                                */
 ;*---------------------------------------------------------------------*/
-(section :title "Skribe Emacs mode" [
-,(index "emacs" :note "skribe mode")
+(section :title "Skribe Emacs Mode"
 
-The Skribe distribution contains a minor mode dedicated to
-Skribe edition. This mode provides ,(emph "fontification") and
-indentation of Skribe programs. In this manual, we present
-the two most important key bindings specific to this mode.
+(index "emacs" :note "skribe mode")
 
-,(itemize (item [,(color :fg "#007700" (kbd "tab")) Indents the current line.])
-	  (item [,(color :fg "#007700" (kbd "M-C-q")) Indents a whole Skribe
-expression.]))
+(p [The Skribilo distribution contains a minor mode dedicated to Skribe
+edition written by Manuel Serrano.  This mode provides ,(emph
+"fontification") and indentation of Skribe programs.  In this manual, we
+present the two most important key bindings specific to this mode:
 
-,(p [In order to install the Skribe emacs mode, you need to specify that 
-when the emacs Lisp ,(tt "skribe-mode") function is needed
-it has to be loaded from the ,(tt "skribe.el") file:])
+,(itemize (item [,(color :fg "#007700" (kbd "tab")) indents the current line.])
+	  (item [,(color :fg "#007700" (kbd "M-C-q")) indents a whole Skribe
+expression.]))])
+
+(p [In order to install the Skribe Emacs mode, you first need to install
+,(ref :text [Bigloo's development environment] :url
+"http://www-sop.inria.fr/mimosa/fp/Bigloo/") called ``UDE'' (on
+Debian-based systems, it boils down to ,(tt [apt-get install
+bigloo-ude])).  Then, you need to specify that when the Emacs Lisp ,(tt
+"skribe-mode") function is needed it has to be loaded from the ,(tt
+"skribe.el") file:])
 
 
-,(disp :verb #t (source :language lisp [
+(disp :verb #t (source :language lisp [
 (autoload 'skribe-mode "skribe.el" "Skribe mode." t)]))
 
-,(p [The ,(tt "skribe.el") file must in the path described by the Emacs Lisp
+(p [The ,(tt "skribe.el") file must in the path described by the Emacs Lisp
 ,(tt "load-path") variable.])
 
-,(p [
-The ,(code "skribe") mode is a minor mode. It is intended to be used with
-a Lisp or Scheme mode. Hence, to use the ,(code "skribe") mode you will
-have to use the following Emacs commands:])
+(p [The ,(code "skribe") mode is a minor mode. It is intended to be
+used with a Lisp or Scheme mode. Hence, to use the ,(code "skribe") mode
+you will have to use the following Emacs commands:])
 
-,(disp :verb #t (source :language lisp [
-ESC-x: scheme-mode
-ESC-x: skribe-mode
-]))]))
+(disp :verb #t (source :language lisp [
+M-x scheme-mode
+M-x skribe-mode
+]))))
+
+;;; Local Variables:
+;;; coding: latin-1
+;;; ispell-local-dictionary: "american"
+;;; End:
