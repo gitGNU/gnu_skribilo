@@ -44,9 +44,22 @@ span.sf { font-family: sans-serif }
 .small-toc {
   text-align: left;
   font-size: normal;
-  font-weight: bold;
+  font-weight: normal;
   background: #eeeef0;
-  border-radius: 2px;
+
+  position: relative;
+  padding: 10px;
+  width: 30%;
+  margin: 30px 0 0 0;
+
+  /* XXX: `float' doesn't play well with tables.  */
+  /* float: right; */
+  /* margin: 0 0 30px 30px; */
+
+  border-width: 1px;
+  border-style: dotted;
+  border-color: #999;
+  border-radius: 5px;
   -moz-border-radius: 2px;
 }
 
@@ -55,6 +68,12 @@ span.sf { font-family: sans-serif }
   font-family: sans-serif;
   font-weight: normal;
   font-size: small;
+  text-align: right;
+  color: #999;
+  border-top-style: dashed;
+  border-top-width: 1px;
+  border-top-color: #aaa;
+  margin: 20px 0 0 0;
 }
 
 .section-title {
