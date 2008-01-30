@@ -49,26 +49,36 @@
 ;;; Small table-of-contents.
 ;;;
 
+(define %small-toc-class
+  "small-toc")
+
 (define (section? n)
   (and (container? n)
        (memq (markup-markup n)
              '(chapter section subsection subsubsection))))
 
-(define (make-small-toc n)
+(define (make-small-toc n e)
   ;; Return a small table of contents, for use at the beginning of chapter N.
+  (define enclose
+    (if (engine-format? "html" e)
+        (lambda (toc)
+          (! (format #f "\n<div class=\"~a\">\n$1\n</div>" %small-toc-class)
+             toc))
+        (lambda (toc)
+          (p :class %small-toc-class toc))))
+
   (define (make-uplink)
     (let ((parent (ast-parent n)))
       (and parent
            (ref :handle (handle parent)
-                :text (list "<< up to ``"
-                            (markup-option parent :title)
-                            "''")))))
+                :text (list (symbol "uparrow") " "
+                            (markup-option parent :title))))))
 
   (let ((kids (filter section? (markup-body n))))
-    (p :class "small-toc"
+    (enclose
        (list
         (and (not (null? kids))
-             (list "Table of Contents"
+             (list "Contents"
                    (itemize
                     (map (lambda (section)
                            (item (ref :handle (handle section)
@@ -105,7 +115,7 @@
                          (cons (resolve (lambda (n e env)
                                           (let ((p (ast-parent n)))
                                             (and (in-file-of-its-own? p e)
-                                                 (make-small-toc p)))))
+                                                 (make-small-toc p e)))))
                                (the-body args))))
           (apply real-markup args)))))
 
