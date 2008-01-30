@@ -103,18 +103,18 @@
                     (params (markup-option n 'parameters))
                     (see    (markup-option n 'see-also)))
                 ;;(format #t "\n@LP\n@DocHeading { Prototype }\n@LP\n")
-                (format #t "\n@LP\n{ oragged nohyphen } @Break { ")
+                (display "\n@LP\n{ oragged nohyphen } @Break { ")
                 (for-each (lambda (p)
                             (output (! "\n@LP\n$1" p) e))
                           protos)
-                (format #t "\n} @LP\n\n")
+                (display "\n} @LP\n\n")
                 (and (pair? opts)
                      (for-each (lambda (o)
-                                 (let ((name    (list-ref o 0))
-                                       (engines (list-ref o 1))
-                                       (desc    (list-ref o 2)))
+                                 (let ((name    (car o))
+                                       (engines (cadr o))
+                                       (desc    (caddr o)))
                                    (output (list (! "\n|2fx { ")
-                                                 (! "\n{ $1 } @Right { $2 }"
+                                                 (! "\n//1.0fx\n{ $1 } @Right { $2 }"
                                                     (tt name) (sf engines))
                                                  (! "\n@LP\n|2fx { $1 } }\n@LP\n"
                                                     desc))
@@ -125,7 +125,7 @@
                                  (let ((name (car p))
                                        (desc (cdr p)))
                                    (output (list (! "\n|2fx { ")
-                                                 (! "\n{ $1 }" (tt name))
+                                                 (! "\n//1.0fx{ $1 }" (tt name))
                                                  (! "\n@LP\n|2fx { $1 } }\n@LP\n"
                                                     desc))
                                            e)))
@@ -136,7 +136,30 @@
                                 (punctuate see))
                              e))
 
-                (format #t "\n@LP\n")))))
+                (display "\n@LP\n"))))
+
+  (markup-writer 'doc-engine
+    :action (lambda (n e)
+              (let ((customs  (markup-option n 'customs))
+                    (defaults (markup-option n 'defaults)))
+
+                (display "\n@LP\n")
+                (for-each (lambda (c)
+                            (let* ((name    (car c))
+                                   (desc    (cadr c))
+                                   (default (assq name defaults)))
+                              (output (list (! "\n//1.0fx\n{ $1 } @Right { $2 }"
+                                               (tt (symbol->string name))
+                                               (and (pair? default)
+                                                    (tt
+                                                     (with-output-to-string
+                                                       (lambda ()
+                                                         (write (cadr default)))))))
+                                            (! "\n@LP\n|2fx { $1 }\n@LP\n"
+                                               desc))
+                                      e)))
+                          customs)
+                (display "\n@LP\n")))))
 
 (define (punctuate lst)
   ;; Punctuate words (ASTs) listed in LST.
@@ -684,9 +707,9 @@
 ;*    doc-engine ...                                                   */
 ;*---------------------------------------------------------------------*/
 (define-markup (doc-engine id args
-			   :rest 
+			   :rest
 			   opts
-			   :key 
+			   :key
 			   (idx *custom-index*)
 			   source
 			   (skribe-source? #t)
@@ -701,30 +724,49 @@
 						skribe-source?)))
 	      (c (make-engine-custom d)))
 	  (doc-check-arguments id c args)
-	  (cond
-	     ((engine-format? "latex")
-	      #f)
-	     (else
-		 (apply ctrtable
-                        :&location &invocation-location
-			:width *prgm-width*
-			(tr :class 'api-table-header
-			   (th :align 'left :width 20. "custom")
-			   (th :width 10. "default")
-			   (th "description"))
-			(map (lambda (r)
-				(tr :bg *prgm-skribe-color*
-				   (td :align 'left :valign 'top
-				      (list (index (symbol->string (car r))
-					       :index idx
-					       :note (format #f "~a custom"
-							     id))
-					    (symbol->string (car r))))
-				   (let ((def (assq (car r) c)))
-				      (td :valign 'top
-					 (code (exp->skribe (cadr def)))))
-				   (td :align 'left :valign 'top (cadr r))))
-			     (filter cadr args)))))))))
+          (resolve (lambda (n e env)
+                     (cond
+                      ((engine-format? "latex" e)
+                       (skribe-warning "`doc-engine' not rendered in LaTeX")
+                       #f)
+                      ((engine-format? "lout" e)
+                       (list (map (lambda (c)
+                                    (index (symbol->string (car c))
+                                           :index idx
+                                           :note (format #f "~a custom"
+                                                         id)))
+                                  c)
+                             (new container
+                                  (markup 'doc-engine)
+                                  (ident  (gensym "doc-engine"))
+                                  (class  #f)
+                                  (loc    &invocation-location)
+                                  (options `((customs  ,args)
+                                             (defaults ,c))))))
+                      (else
+                       (let ((make-row-for-custom
+                              (lambda (r)
+                                (tr :bg *prgm-skribe-color*
+                                    (td :align 'left :valign 'top
+                                        (list (index (symbol->string (car r))
+                                                     :index idx
+                                                     :note (format #f "~a custom"
+                                                                   id))
+                                              (symbol->string (car r))))
+                                    (let ((def (assq (car r) c)))
+                                      (td :valign 'top
+                                          (code (exp->skribe (cadr def)))))
+                                    (td :align 'left :valign 'top (cadr r))))))
+
+                         (apply ctrtable
+                                :&location &invocation-location
+                                :width *prgm-width*
+                                (tr :class 'api-table-header
+                                    (th :align 'left :width 20. "custom")
+                                    (th :width 10. "default")
+                                    (th "description"))
+                                (map make-row-for-custom
+                                     (filter cadr args))))))))))))
 
 
 ;;; Local Variables:
