@@ -41,7 +41,6 @@
 
   :use-module (srfi srfi-13)
   :use-module (srfi srfi-14)
-  :use-module ((srfi srfi-19) :renamer (symbol-prefix-proc 's19:))
   :use-module (srfi srfi-39)
 
   :export (html-engine html-title-engine html-file
@@ -170,7 +169,7 @@
 		   (title-font #f)
 		   (title-background #f)
 		   (title-foreground #f)
-		   (file-title-separator " -- ")
+		   (file-title-separator ,(! " &#8212; ")) ;; an "em dash"
 		   ;; html file naming
 		   (file-name-proc ,html-file-default)
 		   ;; index configuration
@@ -865,21 +864,12 @@
    :action (lambda (n e)
 	      (let ((body (markup-body n)))
 		 (if body
-		     (output body #t)
-		     (evaluate-document
-		      (list (hrule)
-			    (p :class "ending"
-			       (font :size -1
-				     (list "This HTML page was "
-					   "produced by "
-					   (ref :text "Skribilo"
-						:url (skribilo-url))
-					   "."
-					   (linebreak)
-					   "Last update: "
-					   (s19:date->string
-					    (s19:current-date))))))
-		      e))))
+		     (output body e)
+		     (evaluate-document (list "(made with "
+                                              (ref :text "skribilo"
+                                                   :url (skribilo-url))
+                                              ")")
+                                        e))))
    :after "</div>\n")
 
 ;*---------------------------------------------------------------------*/
