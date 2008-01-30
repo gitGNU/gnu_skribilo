@@ -121,14 +121,16 @@
 	     (when (eq? parent 'unspecified)
 	       (let ((p (assq 'parent env)))
 		 (slot-set! node 'parent
-			    (and (pair? p) (pair? (cdr p)) (cadr p)))
-		 (when (pair? options)
-		   (debug-item "unresolved options=" options)
-		   (for-each (lambda (o)
-			       (set-car! (cdr o)
-					 (do-resolve! (cadr o) engine env)))
-			     options)
-		   (debug-item "resolved options=" options))))
+			    (and (pair? p) (pair? (cdr p)) (cadr p)))))
+
+             (when (pair? options)
+               (debug-item "unresolved options=" options)
+               (for-each (lambda (o)
+                           (set-car! (cdr o)
+                                     (do-resolve! (cadr o) engine env)))
+                         options)
+               (debug-item "resolved options=" options))
+
 	     (slot-set! node 'body (do-resolve! body engine env))
 	     (slot-set! node 'resolved? (not (*unresolved*))))
 
@@ -137,29 +139,43 @@
 
 
 (define-method (do-resolve! (node <container>) engine env0)
-  (let ((body     (slot-ref node 'body))
-	(options  (slot-ref node 'options))
-	(env      (slot-ref node 'env))
-	(parent   (slot-ref node 'parent)))
-    (with-debug 5 'do-resolve<container>
-       (debug-item "markup=" (markup-markup node))
-       (debug-item "body=" body)
-       (debug-item "env0=" env0)
-       (debug-item "env=" env)
-       (when (eq? parent 'unspecified)
-	 (let ((p (assq 'parent env0)))
-	   (slot-set! node 'parent (and (pair? p) (pair? (cdr p)) (cadr p)))
-	   (when (pair? options)
-	     (let ((e (append `((parent ,node)) env0)))
-	       (debug-item "unresolved options=" options)
-	       (for-each (lambda (o)
-			   (set-car! (cdr o)
-				     (do-resolve! (cadr o) engine e)))
-			 options)
-	       (debug-item "resolved options=" options)))))
-       (let ((e `((parent ,node) ,@env ,@env0)))
-	 (slot-set! node 'body (do-resolve! body engine e)))
-       node)))
+  ;; Similar to the NODE method, except that (i) children will get NODE as
+  ;; their parent, and (ii) NODE may extend its environment, through its
+  ;; `env' slot.
+  (if (ast-resolved? node)
+      node
+      (let ((body     (slot-ref node 'body))
+            (options  (slot-ref node 'options))
+            (env      (slot-ref node 'env))
+            (parent   (slot-ref node 'parent))
+            (unresolved? (*unresolved*)))
+        (with-debug 5 'do-resolve<container>
+           (debug-item "markup=" (markup-markup node))
+           (debug-item "body=" body)
+           (debug-item "env0=" env0)
+           (debug-item "env=" env)
+           (parameterize ((*unresolved* #f))
+             (when (eq? parent 'unspecified)
+               (let ((p (assq 'parent env0)))
+                 (slot-set! node 'parent
+                            (and (pair? p) (pair? (cdr p)) (cadr p)))))
+
+             (when (pair? options)
+               (let ((e (append `((parent ,node)) env0)))
+                 (debug-item "unresolved options=" options)
+                 (for-each (lambda (o)
+                             (set-car! (cdr o)
+                                       (do-resolve! (cadr o)
+                                                    engine e)))
+                           options)
+                 (debug-item "resolved options=" options)))
+
+             (let ((e `((parent ,node) ,@env ,@env0)))
+               (slot-set! node 'body (do-resolve! body engine e)))
+             (slot-set! node 'resolved? (not (*unresolved*))))
+
+           (*unresolved* (or unresolved? (not (ast-resolved? node))))
+           node))))
 
 
 (define-method (do-resolve! (node <document>) engine env0)
@@ -188,8 +204,7 @@
               (res  (proc node engine env))
               (loc  (ast-loc node)))
          (when (ast? res)
-           (ast-loc-set! res loc)
-           (slot-set! res 'parent parent))
+           (ast-loc-set! res loc))
          (debug-item "res=" res)
          (*unresolved* #t)
          res))))
