@@ -48,3 +48,4 @@
 (define-public *header-color* "#cccccc")
 
 (define-public *api-engines* (map find-engine '(html lout latex xml)))
+(define-public *engine-src* "skribilo/engine.scm")

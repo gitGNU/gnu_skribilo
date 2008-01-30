@@ -20,8 +20,6 @@
 ;;; USA.
 
 
-(define *engine-src* "skribilo/engine.scm")
-
 ;*---------------------------------------------------------------------*/
 ;*    Engine                                                           */
 ;*---------------------------------------------------------------------*/
@@ -41,7 +39,7 @@ compiler instructs it to produce an HTML document using the ,(ref :text
    (p [This chapter describes procedures allowing the manipulation of
 engines in Skribilo documents or modules (creation, customization,
 etc.), as well as the available engines.  Currently, the available
-engines are:])
+engines are:]
 
    (resolve (lambda (n e env)
 	       (let* ((current-chapter (ast-chapter n))
@@ -56,7 +54,14 @@ engines are:])
                             (item (ref :text (markup-option s :title)
 				       :handle (handle s))))
 			  sects)))))
-   
+
+   [Engine customization provides tight control over the output produced
+for each particular engine.  In particular, it allows the style for each
+output to be fine-tuned, be it HTML, PDF ,(it [via]) Lout, or anything
+else.  However, note that such fine-tuning usually requires good
+knowledge of the output format (e.g., HTML/CSS, Lout, LaTeX).])
+
+
    (section :title "Manipulating Engines"
       
       (subsection :title "Creating Engines"
@@ -151,7 +156,11 @@ a custom.])
 	    :common-args '()
             :skribe-source? #f
 	    :source *engine-src*
-	    :idx *function-index*))
+	    :idx *function-index*)
+	 
+	 (p [In the documentation of available engines that follows, a
+list of available customs is shown for each engine, along with each
+custom's default value and a description.]))
       
       (subsection :title [Writing New Engines]
 	 
