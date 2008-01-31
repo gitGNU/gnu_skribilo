@@ -1,15 +1,69 @@
-New in Skribilo 0.9.0 (compared to Skribe 1.2d)
+Copyright (C) 2005, 2006, 2007, 2008  Ludovic Courtès <ludo@gnu.org>
 
-  * New engine: Lout (see http://lout.sf.net/).
+  Copying and distribution of this file, with or without modification,
+  are permitted in any medium without royalty provided the copyright
+  notice and this notice are preserved.
 
-  * New package `eq' for equation formatting.
 
-  * New package `pie' for pie charts.
+
+New in Skribilo 0.9.0 (user-visible changes compared to Skribe 1.2d)
 
-  * New markups in the `base' package: `~', `breakable-space',
-    `numref', `!lout', `lout-illustration'.
+* New engine: `lout' (see http://lout.sf.net/).
 
-  * Extended markups:
+* New packages
 
-     - `footnote' now takes a `:label' option.
-     - `document' now takes a `:keywords' option.
+  - `eq' for equation formatting.
+  - `pie' for pie charts.
+  - `diff' for document diff (experimental).
+  - `web-book2' for on-line publishing.
+
+* New markups in the `base' package
+
+  `~', `breakable-space', `numref', `!lout', `lout-illustration'.
+
+* Extended markups in the `base' package
+
+   - `footnote' now takes a `:label' option.
+   - `document' now takes a `:keywords' option.	
+   - `bibliography' now takes a `:labels' option.
+
+* New `outline' front-end (see the `--reader' option of `skribilo')
+
+* New module system (actually that of GNU Guile), no `skribe-load'
+
+  Just like modules help structure programs, they are useful for
+  documents: Skribilo documents are not second-class programs.  Also,
+  by default, Skribilo documents have fewer bindings in their name
+  space than Skribe documents.
+
+  For compatibility with Skribe, see the `--compat=skribe'
+  command-line option.
+
+* Little or no global state
+
+  Per-document data structures (e.g., per-document node identifier
+  hash table) or SRFI-39 parameters (e.g., `*document-path*') are used
+  where appropriate, which introduces API changes.
+
+  Use `--compat=skribe' for compatibility with Skribe.
+
+* Stricter document structure
+
+  In Skribe, if the engine allowed it, it was possible to use
+  `section' instead of `chapter' as the top-level section type.  The
+  `latex' engine, consequently, has a new custom named
+  `class-has-chapters?'.
+
+* Bug fixes
+
+  Most notably in the `resolve' subsystem.
+
+* New build system
+
+* Last but not least: New name!  :-)
+
+
+;;; Local Variables:
+;;; mode: org
+;;; coding: utf-8
+;;; End:
