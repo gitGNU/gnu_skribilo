@@ -82,10 +82,9 @@ the output format.  For details on engines and for a list of supported
 engines, see ,(numref :text [Chapter] :ident "engines").])
 	`("compat" "compat" ,[Use ,(tt "compat") as the compatibility
 mode.  This defaults to ,(tt [skribilo]).  Specifying ,(tt [skribe])
-enables the ,(ref :text [Skribe] :url
-"http://www-sop.inria.fr/mimosa/fp/Skribe/") compatibility mode, making
-it possible to compile most Skribe documents.  Technically, the ,(tt
-[skribe]) compatibility mode populates the name space of Skribilo
+enables the ,(ref :text [Skribe] :url *skribe-url*) compatibility mode,
+making it possible to compile most Skribe documents.  Technically, the
+,(tt [skribe]) compatibility mode populates the name space of Skribilo
 documents with bindings available to Skribe documents and that are not
 available by default to Skribilo documents,(footnote [Skribe uses a
 single name space for all the code of packages, documents, in addition

@@ -53,6 +53,12 @@
    (engine-custom-set! he 'body-width 100.))
 
 
+;*---------------------------------------------------------------------*/
+;*    Example bibliography                                             */
+;*---------------------------------------------------------------------*/
+(bibliography "src/bib1.sbib")
+
+
 
 ;*---------------------------------------------------------------------*/
 ;*    The document                                                     */
@@ -61,11 +67,11 @@
    :keywords '("Skribilo" "Skribe" "User Manual" "text processing"
 	       "HTML" "LaTeX" "Lout" "PostScript" "PDF")
    :env '((example-counter 0) (example-env ()))
-   :author (list (author :name "Erick Gallesio"
+   :author (list (author :name "Érick Gallesio"
 		    :affiliation "Université de Nice - Sophia Antipolis"
 		    :email (mailto "eg@essi.fr"))
 		 (author :name "Manuel Serrano"
-		    :affiliation "Inria Sophia-Antipolis"
+		    :affiliation "INRIA Sophia-Antipolis"
 		    :email (mailto *serrano-mail*))
 		 (author :name "Ludovic Courtès"
 		    :email (mailto *courtes-mail*)))
@@ -75,7 +81,7 @@
 	   ;; text outside of chapters.
 	   (and (not (engine-format? "lout" e))
 	        (p :class "welcome"
-   [Welcome to the User Manual for Skribilo version ,(skribe-release).
+   [Welcome to the User Manual for Skribilo version ,(skribilo-version)!
 If you are new to Skribilo, please read the ,(ref :ident "intro"
 :text [introduction]) first.]))))
 
@@ -90,14 +96,13 @@ If you are new to Skribilo, please read the ,(ref :ident "intro"
    (p [Skribilo is a document production toolkit and a programming
 language designed for implementing electronic documents,(footnote [To be
 more precise, the programming language itself is that of ,(ref :text
-[Skribe] :url "http://www-sop.inria.fr/mimosa/fp/Skribe/"), the project
-Skribilo is based on.]).  It is mainly designed for the writing of
-technical documents such as the documentation of computer programs.
-With Skribilo these documents can be rendered using various tools and
-technologies.  For instance, a Skribilo document can be ,(emph
-"compiled") to an HTML file that suits Web browser, it can be compiled
-to a TeX file in order to produce a high-quality printed document, and
-so on.])
+[Skribe] :url *skribe-url*), the project Skribilo is based on.]).  It is
+mainly designed for the writing of technical documents such as the
+documentation of computer programs.  With Skribilo these documents can
+be rendered using various tools and technologies.  For instance, a
+Skribilo document can be ,(emph "compiled") to an HTML file that suits
+Web browser, it can be compiled to a TeX file in order to produce a
+high-quality printed document, and so on.])
    
    (p [This manual documents Skribilo version ,(skribilo-version).  Since
 it is based on Skribe's user manual, you might stumble upon documentation

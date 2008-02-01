@@ -57,9 +57,8 @@ present the two most important key bindings specific to this mode:
 expression.]))])
 
 (p [In order to install the Skribe Emacs mode, you first need to install
-,(ref :text [Bigloo's development environment] :url
-"http://www-sop.inria.fr/mimosa/fp/Bigloo/") called ``UDE'' (on
-Debian-based systems, it boils down to ,(tt [apt-get install
+,(ref :text [Bigloo's development environment] :url *bigloo-url*) called
+``UDE'' (on Debian-based systems, it boils down to ,(tt [apt-get install
 bigloo-ude])).  Then, you need to specify that when the Emacs Lisp ,(tt
 "skribe-mode") function is needed it has to be loaded from the ,(tt
 "skribe.el") file:])

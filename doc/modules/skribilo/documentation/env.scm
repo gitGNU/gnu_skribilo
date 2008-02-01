@@ -33,6 +33,7 @@
 (define-public *texinfo-url* "http://www.texinfo.org")
 (define-public *r5rs-url* "http://www.inria.fr/mimosa/fp/Bigloo/doc/r5rs.html")
 (define-public *bigloo-url* "http://www.inria.fr/mimosa/fp/Bigloo")
+(define-public *skribe-url* "http://www.inria.fr/mimosa/fp/Skribe")
 
 (define-public *skribe-user-doc-url*
   (string-append (skribilo-doc-directory) "/user.html"))

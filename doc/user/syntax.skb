@@ -32,9 +32,9 @@ by a ,(emph [reader]).  The input syntax (and reader) can be selected at
 document compilation time using the ,(tt [--reader]) option of the
 compiler (see ,(numref :text [Chapter] :ident "compiler")).
 Nevertheless, it has a ``preferred'' syntax (the default syntax), which
-is that of the ,(ref :url "http://www-sop.inria.fr/mimosa/fp/Skribe/"
-:text [Skribe document preparation system]).  Thus, the Skribe syntax is
-first described, and then alternate syntaxes are presented.])
+is that of the ,(ref :url *skribe-url* :text [Skribe document
+preparation system]).  Thus, the Skribe syntax is first described, and
+then alternate syntaxes are presented.])
 
 
    (section :title [The Skribe Syntax]
@@ -211,6 +211,7 @@ markup-less document format, there are many things that cannot be done
 using it, most notably tables, bibliographies, and cross-references.]))
    
    (section :title [Documents in Scheme Programs]
+            :ident "scheme-syntax"
       
       (p [It is also possible to create and output Skribilo documents
 from a Guile Scheme program.  In that case, you get to use the Scheme

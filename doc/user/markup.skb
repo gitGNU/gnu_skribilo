@@ -1,6 +1,6 @@
 ;;; markup.skb  --  The Skribilo standard markups
 ;;;
-;;; Copyright 2007  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2007, 2008  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -22,57 +22,75 @@
 ;*---------------------------------------------------------------------*/
 ;*    API                                                              */
 ;*---------------------------------------------------------------------*/
-(chapter :title "Standard Markups" :ident "std-markups" [
+(chapter :title "Standard Markups" :ident "std-markups"
 
-This chapter describes the forms composing Skribe texts. In XML/HTML
-these forms are called ,(emph "markups"). In LaTeX they are called
-,(emph "macros"). In Skribe these forms are called ,(emph
-"functions"). In this manual, we will say that we ,(emph "call a
-function") when a function is used in a form. The values used in a
-function call are named the ,(emph "actual parameters") of the
-function or ,(emph "parameters") in short. When calling a function
-with parameters we say that we are ,(emph "passing") arguments to the
-function.
+   (p [This chapter describes the forms composing Skribilo texts that
+use the Skribe syntax (see ,(numref :text [Section] :ident
+"skribe-syntax")).  In XML/HTML jargon these forms are called ,(emph
+"markups").  In LaTeX they are called ,(emph "macros").  In Skribilo
+these forms are called ,(emph "functions").  In this manual, we will say
+that we ,(emph "call a function") when a function is used in a form.
+The values used in a function call are named the ,(emph "actual
+parameters") of the function or ,(emph "parameters") in short.  When
+calling a function with parameters we say that we are ,(emph "passing")
+arguments to the function.])
 
-,(p [ In this documentation function names are typesetted in bold
-face. We call a ,(emph "keyword argument"), an argument whose
-identifier starts with the ,(tt ":") character. Arguments whose
-identifier does not start with this character are called ,(emph "plain
-arguments") or ,(emph "arguments") in short. An ,(emph "optional
+   (p [In this document function names are typeset in boldface.  We call
+,(emph "keyword argument") a named argument, i.e., an argument whose
+name, starting with a colon (,(tt [:])), must be specified when the
+function is called.  Other arguments are called ,(emph "plain
+arguments") or ,(emph "arguments") for short.  An ,(emph "optional
 argument") is represented by a list, starting with the character ,(q
 (char 91)) and ending with the character ,(q (char 93)), whose first
-element is a keyword argument and the optional second (,(code "#f")
-when not specified) element is the default value used if the optional
-argument value is not provided on a function call. Arguments that are
-not optional are said ,(emph "mandatory"). If a plain argument is
-preceeded with a ,(tt ".")  character, this argument may be used to
-accumulate several values. There are two ways to pass actual arguments
-to a function.])
+element is a keyword argument and the optional second (,(code "#f") when
+not specified) element is the default value used if the optional
+argument value is not provided on a function call.  Arguments that are
+not optional are said ,(emph "mandatory").  If a plain argument is
+preceded by a ,(tt ".")  character, this argument may be used to
+accumulate several values.  There are two ways to pass actual arguments
+to a function:]
 
-,(itemize (item [for keyword arguments: the value of the parameter
+(itemize (item [for keyword arguments: the value of the parameter
 must be preceeded by the name of the argument.])
 	  (item [for plain arguments: a value is provided.]))
 
-Example: Let us consider the function ,(tt "section") defined as follows:
+[Example: Let us consider the function ,(tt "section") defined as follows:
 ,(prgm "(section :title [:number #t] [:toc #t] . body)")
-
-,(p [
 The argument ,(param :title) is a mandatory keyword argument.
 The keyword arguments ,(param :number) and ,(param :toc) are
 optional. The plain argument ,(param 'body) is preceeded with a
 ,(tt ".") character so it may receive several values. All the following
-calls are legal ,(tt "section") calls:])
+calls are legal ,(tt "section") calls:]
 
-,(prgm (source :file "src/api1.skb"))]
+(prgm (source :file "src/api1.skb")))
+   
+   (p [The remainder of this chapter describes ``standard'' markups or
+functions that are commonly used in documents.  By ``standard'', we mean
+two things: first, you will quickly notice that they look familiar if
+you have ever written, say, HTML or LaTeX documents; second, they are
+standard because these markups are always available by default to
+Skribilo documents, unlike those bundled in separate packages such as
+,(ref :ident "pie-charts" :text [pie charts]), ,(ref :text [slides]
+:ident "slides"), etc.  In fact, these markups are also bundled in a
+package, called ,(tt [base]), but this package is always available to
+Skribilo documents,(footnote [When creating Skribilo documents within
+Guile Scheme programs (see ,(numref :text [Section] :ident
+"scheme-syntax")), these standard markups can be made available by using
+the following clause: ,(code [(use-modules (skribilo package
+base))]).]).])
+
 
 ;*---------------------------------------------------------------------*/
 ;*    Markup index ...                                                 */
 ;*---------------------------------------------------------------------*/
-(section :title "Markup index" :ident "markups-index" :file #f :number #f :toc #t
-   (the-index :class 'markup-index 
-      :column (if (engine-format? "latex") 2 4)
-      :split #f
-      *markup-index*))
+(resolve (lambda (n e env)
+	   (and (not (engine-format? "lout" e))
+		(section :title "Markup Index" :ident "markups-index"
+		         :file #f :number #f :toc #t
+		   (the-index :class 'markup-index 
+		      :column (if (engine-format? "latex") 2 4)
+		      :split #f
+		      *markup-index*)))))
 
 ;*---------------------------------------------------------------------*/
 ;*    Markups                                                          */
@@ -95,6 +113,7 @@ calls are legal ,(tt "section") calls:])
 
 ;; Local Variables:
 ;; coding: latin-1
+;; ispell-local-dictionary: "american"
 ;; comment-start: ";"
 ;; comment-end: ""
 ;; End:

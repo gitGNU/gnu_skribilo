@@ -19,16 +19,15 @@
 ;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 ;;; USA.
 
-(bibliography "src/bib1.sbib")
-
 ;*---------------------------------------------------------------------*/
 ;*    Index                                                            */
 ;*---------------------------------------------------------------------*/
 (chapter :title "Bibliographies"
 
-   (p [
-Skribe supports bibliographies. In order to use bibliography
-,(markup-ref "ref") it is needed to:])
+   (p [Skribilo provides support for bibliographies.  To setup a
+bibliography database and to be able to refer to its entries from a
+document, the following things must be done:]
+
    (itemize 
       (item [
 Use the default pre-existing ,(emph "bibliography table") or create a 
@@ -36,20 +35,22 @@ custom one.])
       (item [
 Provide a ,(emph "bibliography database").])
       (item [
-Load the database by the mean of the ,(markup-ref "bibliography") 
-Skribe function call.])
+Load the database using the ,(markup-ref "bibliography") function.])
       (item [
-Reference to a bibliography entry, with a ,(markup-ref "ref") Skribe 
-function call.]))
+Reference to bibliography entries with ,(code [,(markup-ref "ref")
+,(param [:bib])]) function calls.]))
+   
+   [The following sections will guide you through these steps.])
+
 
 ;*---------------------------------------------------------------------*/
 ;*    Bibliography tables                                              */
 ;*---------------------------------------------------------------------*/
-(section :title "Bibliography tables"
+(section :title "Bibliography Tables"
    
-   (p [
-This section describes the function of using and creating bibliography 
-tables.])
+   (p [This section describes functions dealing with ,(emph
+[bibliography tables]).  Essentially, bibliography tables are the
+representation of your bibliographies used by Skribilo at run-time.])
    
    (p [The predicate ,(code "bib-table?") returns ,(code "#t") if and only
 if its argument is a bibliography table as returned by 
@@ -92,15 +93,15 @@ bibliography-table:])
 ;*---------------------------------------------------------------------*/
 (section :title "Bibliography"
 
-(p [The function ,(code "bibliography") loads bibliography ,(param 'entries) 
-into the Skribe memory. An ,(emph "entry") is either a list
-representing one entry (such as an article or book reference) or a
-string which denotes a file name that contains several
-entries. All the entries loaded in memory are available for the function
-,(ref :ident "ref" :text "references"). A bibliography database must be loaded
-,(emph "before") any reference is introduced. It is advised to place
-the ,(code "bibliography") Skribe function call before the call to the
-,(markup-ref "document") function call.])
+(p [The ,(markup-ref "bibliography") function loads bibliography entries
+into the bibliography table specified using the ,(param :bib-table)
+parameter.  It can be passed either lists representing entries (such as
+an article or book reference), or strings denoting the names of files
+that contains several entries.  All the entries loaded in memory can
+then be referred to with ,(markup-ref "ref").  A bibliography database
+must be loaded ,(emph "before") any reference is introduced.  It is
+advised to place the ,(markup-ref "bibliography") function call before
+the call to the ,(markup-ref "document") function call.])
 
 (doc-markup 'bibliography
 	    `((:command ,[An external command to be applied when loading
@@ -126,9 +127,9 @@ contains a list of directories and its value can be obtained using
 [-B]) command-line option of the ,(tt [skribilo]) compiler (see ,(numref
 :text [Chapter] :ident "compiler") for details).])
 
-(p [The ,(param :command) option can be used to import foreign bibliography.
-The following example, shows how to directly use a Bibtex bibliography
-using the ,(ref :section "Skribebibtex") translator.])
+(p [The ,(param :command) option can be used to import foreign
+bibliography.  The following example, shows how to directly use a BibTeX
+bibliography using the ,(ref :section "Skribebibtex") translator.])
 
 (example-produce 
  (example :legend "Printing a Bibliography" (prgm :file "src/bib6.skb")))
@@ -137,9 +138,9 @@ using the ,(ref :section "Skribebibtex") translator.])
 ;; bibliography syntax
 (subsection :title "Bibliography Syntax"
 
-(p [The Skribe bibliography database uses a format very close to
-the Bibtex one. It is a parenthetic version of Bibtex. Here is the
-syntax of an entry:])
+(p [The Skribe/Skribilo bibliography database uses a format very close
+to the BibTeX one, which is a parenthetic version of BibTeX.  Here is
+the syntax of an entry:])
 
 (disp :verb #t :bg *prgm-skribe-color* [
 <entry>  -->  ,(bold "(")<kind> <key> <field>+,(bold ")")
@@ -147,10 +148,10 @@ syntax of an entry:])
 <key>    -->  <symbol> | <string>
 <field>  -->  ,(bold "(")<symbol> <string>,(bold ")")])
 
-(p [Bibtex files cannot be directly loaded in Skribe but the tool
-,(ref :section "Skribebibtex" :text (tt "skribebibtex")) can be use to
-automatically convert Bibtex format to Skribe bibliography format.
-Here is an example of a simple Skribe database.])
+(p [BibTeX files cannot be directly loaded but the tool ,(ref :section
+"Skribebibtex" :text (tt "skribebibtex")) can be use to automatically
+convert BibTeX format to Skribe bibliography format.  Here is an example
+of a simple Skribe database.])
 
 (prgm :file "src/bib1.sbib")))
 
@@ -295,12 +296,18 @@ conventions as for the ,(code "name+year") label style of ,(ref :ident
 
 ;*---------------------------------------------------------------------*/
 ;*    skribebibtex                                                     */
+;*    FIXME: Uncomment section below when we have a replacement.       */
 ;*---------------------------------------------------------------------*/
 (section :title "Skribebibtex"
+   
+   (p [FIXME: This tool is not available as of Skribilo version
+,(skribilo-version).]))
+
+#;(section :title "Skribebibtex"
 (index "skribebibtex" :note "manual page")
-(index "bibtex")
+(index "BibTeX")
 (p [
-In this section we present the Skribebibtex translator that compiles Bibtex
+In this section we present the Skribebibtex translator that compiles BibTeX
 source files into a Skribe bibliography.])
 
 ;; Synopsis (FIXME)
@@ -311,7 +318,7 @@ source files into a Skribe bibliography.])
 (subsection :title "DESCRIPTION" :number #f [
 This manual page is not meant to be exhaustive. It
 documents the ,(tt "skribebibtex"), a tool that translates
-,(bold "Bibtex") files into ,(it "Skribe"), bibliography format. These 
+,(bold "BibTeX") files into ,(it "Skribe"), bibliography format. These 
 files can be used by the ,(bold "skribe") compiler to produce  
 bibliography entries.])
 
@@ -321,7 +328,7 @@ The ,(ref :chapter "Skribilo Compiler" :text "skribilo") compiler uses file
 suffixes in order to select amongst its possible targets which to choose. 
 These suffixes are:
 
-,(description (item :key (it ".bib") [a ,(bold "Bibtex") source file.]))])
+,(description (item :key (it ".bib") [a ,(bold "BibTeX") source file.]))])
 
 ;; Options (FIXME)
 ;;(subsection :title "OPTIONS" :number #f 
@@ -329,3 +336,7 @@ These suffixes are:
 
    ))
 
+;;; Local Variables:
+;;; coding: latin-1
+;;; ispell-local-dictionary: "american"
+;;; End:
