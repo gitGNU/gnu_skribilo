@@ -1,0 +1,32 @@
+# -*- coding: latin-1 -*-
+#
+# The front page.
+
+# @SysInclude { doc }
+
+# @Document
+#   @InitialFont { Palatino Base 10p }
+# //
+
+# @Text @Begin
+
+{ Palatino Base 12p } @Font {
+
+//13.7c
+
+{ Palatino Italic 35p } @Font { Skribilo }
+//0.1ce
+{ Helvetica Bold 30p } @Font { User Manual }
+//2fe
+@I { for version @PACKAGE_VERSION@ }
+
+@LP
+@VExpand { }
+@LP
+Érick Gallesio, Manuel Serrano, Ludovic Courtès
+//1.3fx
+"http://www.nongnu.org/skribilo/" @ExternalLink { @I "http://www.nongnu.org/skribilo/" }
+
+}
+
+# @End @Text

@@ -159,7 +159,8 @@
    (engine-custom-set! le 'document-include
                        "@Include { \"book-style.lout\" }")
    (engine-custom-set! le 'initial-language "English")
-   (engine-custom-set! le 'initial-font "Palatino Base 10p"))
+   (engine-custom-set! le 'initial-font "Palatino Base 10p")
+   (engine-custom-set! le 'on-title-page (! "@Include { \"front-page.lout\" }")))
 
 
 ;*---------------------------------------------------------------------*/

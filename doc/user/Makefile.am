@@ -6,7 +6,7 @@ EXTRA_DIST = bib.skb char.skb colframe.skb document.skb emacs.skb	\
   markup.skb ornament.skb package.skb pie.skb prgm.skb sectioning.skb	\
   skribilo-config.skb compiler.skb skribeinfo.skb slide.skb spacing.skb	\
   start.skb syntax.skb table.skb toc.skb user.skb xmle.skb		\
-  lout/book-style.lout
+  lout/book-style.lout lout/front-page.lout.in
 
 # Examples.
 EXTRA_DIST += src/api1.skb						\
@@ -26,6 +26,7 @@ EXTRA_DIST += src/api1.skb						\
 
 html_DATA = user.html
 dist_html_DATA = skribilo.css
+BUILT_SOURCES = lout/front-page.lout
 CLEANFILES = $(BUILT_SOURCES) $(html_DATA)
 
 skribilo = $(top_builddir)/src/pre-inst-skribilo
@@ -61,19 +62,28 @@ CLEANFILES += user.lout user.lout.ld user.li user.lix
 if HAVE_PS2PDF
 pdf_DATA = user.pdf
 CLEANFILES += $(pdf_DATA)
-else
+else !HAVE_PS2PDF
 ps_DATA = user.ps
 CLEANFILES += $(ps_DATA)
-endif
+endif !HAVE_PS2PDF
 
 .skb.lout:
 	GUILE_LOAD_PATH=$(load_path):$$GUILE_LOAD_PATH \
 	$(skribilo) $(skrflags) --target=lout -o $@ $<
 
 .lout.ps:
-	$(LOUT) -r4 -I$(srcdir)/lout -c $(@:%.ps=%) -o $@ $<
+	$(LOUT) -r4 -I$(srcdir)/lout -I$(builddir)/lout \
+	  -c $(@:%.ps=%) -o $@ $<
 
-endif
+# Variable substitution.
+include $(top_srcdir)/substitute.am
+
+lout/front-page.lout: lout/front-page.lout.in
+	test -d "lout" || mkdir "lout"
+	$(substitute) "$^" > "$@.tmp" &&	\
+	mv "$@.tmp" "$@"
+
+endif HAVE_LOUT
 
 if HAVE_PS2PDF
 .ps.pdf:
@@ -94,3 +104,4 @@ uninstall-local:
 # not listed in `CLEANFILES'.
 clean-local:
 	-rm -f user-*.html *.eps *.png
+	-rm -rf "lout"
