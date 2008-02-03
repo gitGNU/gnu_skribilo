@@ -32,17 +32,16 @@
 ;*---------------------------------------------------------------------*/
 (chapter :title "Computer Programs" 
 
-(p [It is common that some parts of a Skribe text represent other
-texts. For instance, for a document describing a computer programming
-language, it is frequent to include excerpt of programs. These
-embedded texts are frequently displayed in a specific font and with no
-justification but with a precise ,(emph "indentation"). This indentation is
-important because it helps in understanding the text,(begin ";")
-it is thus desirable to preserve it in the Skribe text. The
-,(markup-ref "pre") text layout already enables such a
-text formating. This chapter presents two new Skribe functions:
-,(markup-ref "prog") and ,(markup-ref "source") that is specially 
-designed to represent computer programs in Skribe text.])
+(p [In a document describing a computer programming language, it is
+common to include excerpt of programs.  Program code is typically
+typeset in a specific font, with no justification, and with a precise
+,(emph "indentation").  Indentation is important because it helps
+understand the code,(begin ";") it is thus desirable to preserve
+indentation in program text.  The ,(markup-ref "pre") text layout
+already allows indentation to be preserved.  This chapter presents two
+new functions that complement it: ,(markup-ref "prog") and ,(markup-ref
+"source"), both of which are specially designed to represent computer
+programs in text.])
 
 ;*---------------------------------------------------------------------*/
 ;*    Programs ... @label prog@                                        */
@@ -94,7 +93,8 @@ can be rendered using different colors or faces.])
 	    :force-engines *api-engines*
 	    :see-also '(prog language ref *source-path*))
 ;!source-stop
-   
+
+(linebreak)
 (example-produce 
  (example :legend "The source markup" (prgm :file "src/prgm2.skb"))
  (disp (include "src/prgm2.skb")))
@@ -106,7 +106,19 @@ are searched in the current ,(emph [source path]), which is defined by the
 a list of directories and its value can be obtained using ,(code
 [(*source-path*)]).  Its value can be altered using the ,(tt [-S])
 command-line option of the ,(tt [skribilo]) compiler (see ,(numref :text
-[Chapter] :ident "compiler") for details).]))
+[Chapter] :ident "compiler") for details).])
+   
+(p [The ,(param :language) parameter of ,(markup-ref "source") takes a
+,(tt [language]) object, which performs the actual source highlighting.
+Several programming languages are currently supported: the ,(tt
+[(skribilo source lisp)]) module provides ,(tt [skribe]), ,(tt [scheme]),
+,(tt [stklos]), ,(tt [bigloo]) and ,(tt [lisp]), which implement source
+highlighting for the corresponding lispy dialects, while the ,(tt
+[(skribilo source c)]) module provides ,(tt [c]) and ,(tt [java]).
+Thus, you need to import the relevant module to get the right language,
+for instance by adding ,(code [(use-modules (skribilo source c))]) at
+the beginning of your document.  Additional languages can be created
+using the ,(markup-ref "language") function (see below).]))
 
 ;*---------------------------------------------------------------------*/
 ;*    Language ... @label language@                                    */

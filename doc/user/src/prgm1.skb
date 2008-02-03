@@ -1,15 +1,15 @@
 (frame :width 100. 
        (prog :line 10 :mark "##" [
-SKRIBE=skribe
+SKRIBILO = skribilo
 
-all: demo.html demo.man  ##main-goal
+all: demo.html demo.lout  ##main-goal
 
 demo.html: demo.skb
-	$(SKRIBE) demo.skb -o demo.html
+	$(SKRIBILO) -t html demo.skb -o demo.html
 
-demo.man: demo.skb
-	$(SKRIBE) demo.skb -o demo.man
+demo.lout: demo.skb
+	$(SKRIBILO) -t lout demo.skb -o demo.lout
 ]))
 
-(p [The main goal is specified line ,(ref :line "main-goal").])
+(p [The main goal is specified on line ,(ref :line "main-goal").])
 		

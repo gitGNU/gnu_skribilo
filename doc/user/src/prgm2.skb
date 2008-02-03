@@ -1,7 +1,11 @@
-(frame :width 100. 
-       (prog (source :language bigloo :file "prgm.skb" :definition 'fib)))
+(use-modules (skribilo source lisp))
 
-(p [The Fibonacci function is defined line ,(ref :line "fib").])
+(linebreak)
+(frame :width 100. 
+       (prog (source :language scheme :file "prgm.skb" :definition 'fib)))
+
+(p [The Fibonacci function is defined on line ,(ref :line "fib").])
+(linebreak)
 
 ;!start
 (frame :width 100.
@@ -10,9 +14,10 @@
 ;!stop
 
 (p [Here is the source of the frame above:])
+(linebreak)
 
 (frame :width 100.
        (prog :line 30 :mark #f
 	     (source :language skribe :file "src/prgm2.skb"
-		:start ";!start"
-		:stop ";!stop")))
+		:start (string-append ";" "!start") ;; trick!
+		:stop (string-append ";" "!stop"))))
