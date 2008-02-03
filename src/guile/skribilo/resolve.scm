@@ -202,9 +202,15 @@
 
        (let* ((proc (slot-ref node 'proc))
               (res  (proc node engine env))
-              (loc  (ast-loc node)))
-         (when (ast? res)
-           (ast-loc-set! res loc))
+              (loc  (ast-loc node))
+              (doc  (ast-document node)))
+         (ast-fold (lambda (node result)
+                     (if (markup? node)
+                         (document-bind-node! doc node))
+                     (if (ast? node)
+                         (ast-loc-set! node loc)))
+                   #t ;; unused
+                   res)
          (debug-item "res=" res)
          (*unresolved* #t)
          res))))
