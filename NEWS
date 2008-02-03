@@ -54,6 +54,11 @@ New in Skribilo 0.9.0 (user-visible changes compared to Skribe 1.2d)
   `latex' engine, consequently, has a new custom named
   `class-has-chapters?'.
 
+* Unique node identifiers
+
+  No two nodes within a document can have the same identifier (`:ident'
+  parameter).  Duplicate identifiers are reported as an error.
+
 * Bug fixes
 
   Most notably in the `resolve' subsystem.

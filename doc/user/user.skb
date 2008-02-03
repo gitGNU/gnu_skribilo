@@ -173,6 +173,9 @@ as HTML, PostScript, Info pages, etc.])))))
 ;;; Pie charts
 (if %have-ploticus? (include "pie.skb"))
 
+;;; Packages
+(include "package.skb")
+
 ;;; Standard Library
 (include "lib.skb")
 
@@ -184,9 +187,6 @@ as HTML, PostScript, Info pages, etc.])))))
 
 ;;; Slides
 (include "slide.skb")
-
-;;; Packages
-(include "package.skb")
 
 ;;; skribilo-config
 (include "skribilo-config.skb")
