@@ -517,6 +517,8 @@
 	   (fold loop result ast))
 	  ((node? ast)
 	   (loop (node-body ast) (proc ast result)))
+          ((command? ast)
+           (loop (command-body ast) (proc ast result)))
 	  (else result))))
 
 
