@@ -1,6 +1,6 @@
 ;;; skribilo-config.skb  --  The `skribilo-config' tool
 ;;;
-;;; Copyright 2007  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2007, 2008  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2004  Manuel Serrano
 ;;;
 ;;;
@@ -37,7 +37,7 @@ program that gives information about the current configuration.])
 ;; Description
 (section :title "Description" :number #f
    
-   [The ,(code "skribilo-config") program gives information about the
+   (p [The ,(code "skribilo-config") program gives information about the
 Skribilo configuration, such as the module installation path, version
 number, etc.  The full list of supported options and their meaning is
 the following:]
@@ -50,14 +50,14 @@ the following:]
 	 (let loop ((line (read-line port))
 		    (lines '()))
 	    (if (eof-object? line)
-		(reverse! lines)
+		(tt (string-concatenate-reverse lines))
 		(begin
 		   (loop (read-line port)
-		         (cons* line "\n" lines)))))))
+		         (cons* line "\n" lines))))))))
    
-   [Note that the same information can be obtained through the
+  (p [Note that the same information can be obtained through the
 programming interface exposed by the ,(code [(skribilo config)]) module
-(,(numref :text [see Section] :ident "config-module")).]))
+(,(numref :text [see Section] :ident "config-module")).])))
 
 
 ;;; Local Variables:

@@ -37,11 +37,12 @@
 	     (skribilo reader))
 
 (if %have-ploticus? (set! %ploticus-program %ploticus-path))
-    
+
 ;; Modules needed, e.g., to get the output of "skribilo-config --help".
 (use-modules (ice-9 popen)
 	     (ice-9 rdelim)
-	     (ice-9 pretty-print))
+	     (ice-9 pretty-print)
+             (srfi srfi-13))
 
 
 ;*---------------------------------------------------------------------*/
@@ -173,6 +174,9 @@ as HTML, PostScript, Info pages, etc.])))))
 ;;; Pie charts
 (if %have-ploticus? (include "pie.skb"))
 
+;;; Slides
+(include "slide.skb")
+
 ;;; Packages
 (include "package.skb")
 
@@ -185,9 +189,6 @@ as HTML, PostScript, Info pages, etc.])))))
 ;;; Compiler
 (include "compiler.skb")
 
-;;; Slides
-(include "slide.skb")
-
 ;;; skribilo-config
 (include "skribilo-config.skb")
 
@@ -198,20 +199,32 @@ as HTML, PostScript, Info pages, etc.])))))
 (include "examples.skb")
 
 ;;; table of contents
-(if (not (engine-format? "latex"))
-    (begin
-       (chapter :title "Table of contents"
-	  (toc :chapter #t :section #t :subsection #t))
-       (chapter :title "Index" :number #f :ident "Index"
-	  (mark "global index")
-	  (the-index :column (if (engine-format? "latex") 2 3)
-	     *markup-index* *custom-index* *function-index* *package-index*
-	     (default-index))))
-    (chapter :title "Index" :ident "Index"
-       (mark "global index")
-       (the-index :column (if (engine-format? "latex") 2 3)
-	  *markup-index* *custom-index* *function-index* *package-index*
-	  (default-index)))))
+(resolve (lambda (n e env)
+	   (cond ((and (not (engine-format? "latex" e))
+	   	       (not (engine-format? "lout" e)))
+                  (list
+                     (and (not (engine-format? "html" e))
+                          (chapter :title "Table of Contents"
+                             (toc :chapter #t :section #t :subsection #t)))
+                     (chapter :title "Index" :number #f :ident "Index"
+                        (mark "global index")
+                        (the-index :column (if (engine-format? "latex") 2 3)
+                           *markup-index* *custom-index*
+                           *function-index* *package-index*
+                           (default-index)))))
+
+                 ((not (engine-format? "lout" e))
+                  (chapter :title "Index" :ident "Index"
+                     (mark "global index")
+                     (the-index :column (if (engine-format? "latex") 2 3)
+                        *markup-index* *custom-index*
+                        *function-index* *package-index*
+                        (default-index))))
+
+                 (else
+                  ;; FIXME: We don't have a clean `the-index' in Lout.
+                  (skribe-warning 0 "index not available for this engine" e)
+                  #f)))))
 
 ;; Local Variables:
 ;; coding: latin-1

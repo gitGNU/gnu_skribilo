@@ -87,7 +87,7 @@ endif HAVE_LOUT
 
 if HAVE_PS2PDF
 .ps.pdf:
-	$(PS2PDF) $(@:%.pdf=%.ps)
+	$(PS2PDF) -sPAPERSIZE=a4 -dPDFSETTINGS=/prepress $(@:%.pdf=%.ps)
 endif
 
 
