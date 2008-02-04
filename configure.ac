@@ -6,7 +6,7 @@ AC_INIT(skribilo, 0.9.0, skribilo-users@nongnu.org)
 AC_CONFIG_AUX_DIR(build-aux)
 AC_CONFIG_MACRO_DIR(m4)
 
-AM_INIT_AUTOMAKE([gnu no-define check-news])
+AM_INIT_AUTOMAKE([gnu no-define check-news readme-alpha])
 
 AC_CONFIG_SRCDIR([src/guile/skribilo/reader.scm])
 

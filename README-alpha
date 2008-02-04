@@ -1,0 +1,24 @@
+Please note that this is an "alpha" release, meaning that (i) there are
+some glitches here and there, (ii) the API is still subject to change,
+and (iii) documentation may be incomplete or inaccurate.
+
+Obvious glitches include limited support or lack thereof of all engines
+for some markups or packages.  API changes may include removal of legacy
+Skribe procedure (e.g., those exported by `(skribilo lib)'), better
+error condition handling, etc.
+
+Nonetheless, this release is hopefully not too far away from a "stable"
+release, so keep hope!
+
+
+
+Copyright 2008  Ludovic Courtès <ludo@gnu.org>
+
+  Copying and distribution of this file, with or without modification,
+  are permitted in any medium without royalty provided the copyright
+  notice and this notice are preserved.
+
+;;; Local Variables:
+;;; mode: text
+;;; coding: utf-8
+;;; End:
