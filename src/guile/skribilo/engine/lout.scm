@@ -1790,14 +1790,13 @@
 ;*---------------------------------------------------------------------*/
 ;; Program lines appear within a `lines @Break' block.
 (markup-writer '&prog-line
-   :before (lambda (n e)
+   :action (lambda (n e)
              (let ((num (markup-option n :number)))
-               (if (number? num)
-                   (evaluate-document
-                    (it (string-append (string-pad (number->string num) 3)
-                                       ": "))
-                    e))))
-   :after "\n")
+               (and (number? num)
+                    (format #t "{ 3f @Wide { ~a. } } "
+                            num))
+               (output (markup-body n) e)
+               (display "\n"))))
 
 ;*---------------------------------------------------------------------*/
 ;*    itemize ...                                                      */
