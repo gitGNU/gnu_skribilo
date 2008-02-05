@@ -6,6 +6,11 @@ Copyright (C) 2005, 2006, 2007, 2008  Ludovic Courtès <ludo@gnu.org>
 
 
 
+New in Skribilo 0.9.1
+
+* Various documentation fixes and improvements
+
+
 New in Skribilo 0.9.0 (user-visible changes compared to Skribe 1.2d)
 
 * New engine: `lout' (see http://lout.sf.net/).
