@@ -199,18 +199,21 @@ are put in italics in an itemize.])
 ;*--- Compiling documents --------------------------------------*/
 (section :title "Compiling Skribilo Documents"
    
-   (p [There are several ways to render a Skribilo document. It can be
-statically compiled by the ,(tt "skribe") compiler to various formats
-such as HTML, LaTeX, man and so on.  In this section we only present
+   (p [There are several ways to render a Skribilo document.  It can be
+statically compiled by the ,(tt "skribilo") compiler to various formats
+such as HTML, LaTeX, Lout and so on.  In this section we only present
 static ``document compilation''.])
 
    (p [Let us suppose a Skribilo text located in a file ,(tt "file.skb").
 In order to compile to various formats one must type in:]
 
    (disp :verb #t [
-$ skribilo file.skb -o file.html ,(char 35) ,(it "This produces an HTML file.")
-$ skribilo file.skb -o file.tex  ,(char 35) ,(it "This produces a TeX file.")
-$ skribilo file.skb -o file.lout ,(char 35) ,(it "This produces a Lout file.")]))))
+$ skribilo --target=html file.skb -o file.html ,(char 35) ,(it "This produces an HTML file.")
+$ skribilo -t latex file.skb -o file.tex  ,(char 35) ,(it "This produces a TeX file.")
+$ skribilo -t lout file.skb -o file.lout ,(char 35) ,(it "This produces a Lout file.")])
+  
+     [The reference of the ,(tt [skribilo]) compiler is given in
+,(numref :text [Chapter] :ident "compiler").])))
 
 
 ;; Local Variables:
