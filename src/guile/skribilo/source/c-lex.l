@@ -1,7 +1,7 @@
 ;;; c-lex.l  --  C fontifier for Skribilo.
 ;;;
+;;; Copyright 2007, 2008  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
-;;; Copyright 2007  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
 ;;; it under the terms of the GNU General Public License as published by
@@ -18,6 +18,9 @@
 ;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 ;;; USA.
 
+;; Comment regexp stolen from http://ostermiller.org/findcomment.html .
+comment  /\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/
+
 space	 [ \n\9]
 letter   [_a-zA-Z]
 alphanum [_a-zA-Z0-9]
@@ -29,9 +32,7 @@ alphanum [_a-zA-Z0-9]
 			     (markup '&source-string)
 			     (body yytext))
 ;; Comments
-;; FIXME: We shouldn't exclude `/' from comments but we do so to match the
-;; shortest multi-line comment.
-/\*(\n|[^/])*\*/	(let* ((not-line (char-set-complement (char-set #\newline)))
+{comment}               (let* ((not-line (char-set-complement (char-set #\newline)))
                                (lines    (string-tokenize yytext not-line)))
                           (reverse!
                            (pair-fold (lambda (line* result)

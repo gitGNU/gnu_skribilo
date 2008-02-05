@@ -1163,13 +1163,11 @@
 			     (markup '&source-string)
 			     (body yytext))
 ;; Comments
-;; FIXME: We shouldn't exclude `/' from comments but we do so to match the
-;; shortest multi-line comment.
         ))
     #t
     (lambda (yycontinue yygetc yyungetc)
       (lambda (yytext yyline)
-                	(let* ((not-line (char-set-complement (char-set #\newline)))
+                        (let* ((not-line (char-set-complement (char-set #\newline)))
                                (lines    (string-tokenize yytext not-line)))
                           (reverse!
                            (pair-fold (lambda (line* result)
@@ -1233,8 +1231,8 @@
     (65 2 err)) (97 2 (123 err 2)))) (48 (42 (= 34 err 2) (43 err (47 2
     err))) (95 (65 2 (91 4 2)) (97 (96 3 2) (123 4 2)))) (95 (65 err (91 4
     err)) (97 (96 4 err) (123 4 err))) (43 (42 8 10) (= 47 9 8)) (= 34 11
-    6) err err (= 10 err 12) (43 (42 10 13) (= 47 err 10)) err (= 10 err
-    12) (43 (42 10 13) (= 47 14 10)) err)
+    6) err err (= 10 err 12) (= 42 13 10) err (= 10 err 12) (43 (42 10 13)
+    (= 47 14 10)) err)
    '#((#f . #f) (#f . #f) (4 . 4) (3 . 3) (3 . 3) (#f . #f) (#f . #f) (6 .
     6) (5 . 5) (2 . 2) (#f . #f) (0 . 0) (2 . 2) (#f . #f) (1 . 1))))
 
