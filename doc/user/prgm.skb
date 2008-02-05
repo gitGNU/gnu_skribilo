@@ -98,6 +98,17 @@ can be rendered using different colors or faces.])
 (example-produce 
  (example :legend "The source markup" (prgm :file "src/prgm2.skb"))
  (disp (include "src/prgm2.skb")))
+   
+(p [Note that even awful programming languages of the C family can be
+highlighted!])
+
+(linebreak)
+(example-produce 
+ (example :legend "The source markup for C" (prgm :file "src/prgm4.skb"))
+ (disp (include "src/prgm4.skb")))
+   
+(p [You would highlight Java,(symbol "tm") code in a similar way, i.e.,
+with ,(tt [:language java]).])
 
 (mark "*source-path*")
 (p [Files passed as the ,(tt [:file]) argument of ,(markup-ref "source")

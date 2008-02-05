@@ -1,0 +1,28 @@
+(use-modules (skribilo source c))
+	     
+(p [Here's how:])
+   
+ (linebreak)
+ (prog
+   (source :language c
+[#include <stdlib.h>
+
+static int foo = 10;
+static float bar;
+
+/* This is the function responsible
+   for integer chbouibification.  */
+float
+chbouibify (int x)
+{
+  bar = foo + (float) x / random ();
+  foo = (float) x * random ();
+
+  if (x > 2)
+    /* Great!  */
+    printf ("hello world!\n");
+  else
+    printf ("lower than two\n");
+
+  return ((float) foo * bar);
+}]))
