@@ -19,7 +19,8 @@ EXTRA_DIST += src/api1.skb						\
   src/eq1.skb src/eq2.skb src/eq3.skb src/html-navtabs.skb		\
   src/index1.skb src/index2.skb src/index3.skb src/links1.skb		\
   src/links2.skb src/pie1.skb src/pie2.skb src/prgm1.skb src/prgm2.skb	\
-  src/prgm3.skb src/slides.skb src/start1.skb src/start2.skb		\
+  src/prgm3.skb src/prgm4.skb src/slides.skb				\
+  src/start1.skb src/start2.skb						\
   src/start3.skb src/start4.skb src/start5.skb				\
   src/outline.txt src/scheme.scm
 
