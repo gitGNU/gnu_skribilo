@@ -47,9 +47,8 @@ GUILE_MODULE_REQUIRED([srfi srfi-35])
 GUILE_MODULE_REQUIRED([srfi srfi-37])
 
 
-# Look for Lout.
-AC_PATH_PROG([LOUT], [lout])
-AM_CONDITIONAL([HAVE_LOUT], [test "x$LOUT" != "x"])
+# Look for a suitable version of Lout.
+LOUT_PROGRAM([LOUT_REQUIRED_PACKAGE([math])])
 
 # Look for `ps2pdf' from GhostScript.
 AC_PATH_PROG([PS2PDF], [ps2pdf])
