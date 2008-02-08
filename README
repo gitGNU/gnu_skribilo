@@ -35,6 +35,9 @@ You need at least:
   * Guile-Reader >= 0.3
     http://www.nongnu.org/guile-reader/
 
+  * ImageMagick, used to convert images from one format to another
+    http://imagemagick.org/
+
 Optionally, you may want to install one of the following document layout
 programs to produce PS/PDF files:
 
@@ -51,6 +54,11 @@ Optionally, to produce pie charts, you may want to use:
 
   * Ploticus
     http://ploticus.sourceforge.net/
+
+To convert images in the `fig' format:
+
+  * Xfig, Transfig
+    http://xfig.org/
 
 This is it!
 

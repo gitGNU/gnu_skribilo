@@ -47,6 +47,15 @@ GUILE_MODULE_REQUIRED([srfi srfi-35])
 GUILE_MODULE_REQUIRED([srfi srfi-37])
 
 
+# Look for `convert', from ImageMagick.
+AC_PATH_PROG([CONVERT], [convert])
+if test "x$CONVERT" == "x"; then
+  AC_MSG_ERROR([The `convert' program was not found.  Please install ImageMagick.])
+fi
+
+# Look for `fig2dev', from Xfig/Transfig.
+AC_PATH_PROG([FIG2DEV], [fig2dev], [fig2dev])
+
 # Look for a suitable version of Lout.
 LOUT_PROGRAM([LOUT_REQUIRED_PACKAGE([math])])
 
@@ -85,6 +94,7 @@ AC_OUTPUT([Makefile
 	   src/guile/Makefile
 	   src/guile/skribilo/Makefile
 	   src/guile/skribilo/utils/Makefile
+	   src/guile/skribilo/utils/images.scm
 	   src/guile/skribilo/engine/Makefile
 	   src/guile/skribilo/reader/Makefile
 	   src/guile/skribilo/package/Makefile

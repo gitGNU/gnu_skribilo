@@ -8,6 +8,7 @@ Copyright (C) 2005, 2006, 2007, 2008  Ludovic Courtès <ludo@gnu.org>
 
 New in Skribilo 0.9.1
 
+* Improved `configure' diagnostics
 * Various documentation fixes and improvements
 
 

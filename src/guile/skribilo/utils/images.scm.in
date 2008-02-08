@@ -39,8 +39,8 @@
 ;;;
 ;;; Code:
 
-(define *fig-convert-program*     (make-parameter "fig2dev -L"))
-(define *generic-convert-program* (make-parameter "/usr/bin/convert"))
+(define *fig-convert-program*     (make-parameter "@FIG2DEV@ -L"))
+(define *generic-convert-program* (make-parameter "@CONVERT@"))
 
 (define (builtin-convert-image from fmt dir)
   (let* ((s  (file-suffix from))
