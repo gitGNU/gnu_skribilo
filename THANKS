@@ -1,0 +1,12 @@
+-*- coding: utf-8; -*-
+
+Of course, I (Ludovic Courtès) am thankful to the authors of Skribe,
+upon which Skribilo is based:
+
+  Manuel Serrano <manuel.serrano@inria.fr>
+  Érick Gallesio <eg@unice.fr>
+
+I would also like to thank the following people who contributed to
+Skribilo through suggestions, bug reports or patches:
+
+  Barrie Stott <zen146410@zen.co.uk>
