@@ -105,4 +105,5 @@ uninstall-local:
 # not listed in `CLEANFILES'.
 clean-local:
 	-rm -f user-*.html *.eps *.png
-	-rm -rf "lout"
+	-if test "$(top_builddir)" != "$(top_srcdir)";	\
+	 then rm -rf "lout" ; else : ; fi
