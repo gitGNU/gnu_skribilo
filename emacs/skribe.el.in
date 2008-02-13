@@ -121,7 +121,12 @@ Set this to nil if you don't want a modeline indicator."
 	 'font-lock-function-name-face)
    (list ",(\\([^ \n()]+\\)"
 	 1
-	 'font-lock-comment-delimiter-face))
+	 'font-lock-comment-delimiter-face)
+   (list ";.*$"
+	 1
+	 'font-lock-comment-face)
+   (list "#;\\(([^)]*)\\|\\[[^\\]]*\\]\\|[a-zA-Z0-9]*\\)" ;; SRFI-62 comments
+	 'font-lock-comment-face))
   "*The Skribe font-lock specification."
   :group 'skribe)
 
