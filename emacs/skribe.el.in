@@ -1,25 +1,29 @@
-;*=====================================================================*/
-;*    serrano/prgm/project/skribe/emacs/skribe.el.in                   */
-;*    -------------------------------------------------------------    */
-;*    Author      :  Manuel Serrano                                    */
-;*    Creation    :  Sun Nov 23 13:16:30 2003                          */
-;*    Last change :  Sun Jul 11 10:38:17 2004 (serrano)                */
-;*    Copyright   :  2003-04 Manuel Serrano                            */
-;*    -------------------------------------------------------------    */
-;*    Skribe minor mode (major mode is supposed to be a                */
-;*    Scheme-like mode).                                               */
-;*=====================================================================*/
+;;; user.skb  --  The Skribe/Skribilo Emacs mode.
+;;;
+;;; Copyright 2008  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2003, 2004  Manuel Serrano <manuel.serrano@inria.fr>
+;;;
+;;;
+;;; This program is free software; you can redistribute it and/or modify
+;;; it under the terms of the GNU General Public License as published by
+;;; the Free Software Foundation; either version 2 of the License, or
+;;; (at your option) any later version.
+;;;
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;;
+;;; You should have received a copy of the GNU General Public License
+;;; along with this program; if not, write to the Free Software
+;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+;;; USA.
 
 ;*---------------------------------------------------------------------*/
 ;*    module                                                           */
 ;*---------------------------------------------------------------------*/
 (provide 'skribe)
-(require 'ude-custom)
-(require 'ude-config)
-(require 'ude-icon)
-(require 'ude-autoload)
-(require 'bmacs-config)
-(require (if (featurep 'xemacs) 'bmacs-xemacs 'bmacs-gnu-emacs))
+
 
 ;*---------------------------------------------------------------------*/
 ;*    custom                                                           */
@@ -101,46 +105,47 @@ Set this to nil if you don't want a modeline indicator."
 	 'font-lock-function-name-face)
    (list "(\\(toc\\|itemize\\|enumerate\\|description\\|item\\|the-bibliography\\|the-index\\|default-index\\|frame\\|center\\|table\\|tr\\|th\\|td\\|linebreak\\|footnote\\|color\\|author\\|prog\\|source\\|figure\\|image\\)[) \n]"
 	 1
-	 'ude-font-lock-face-2)
+	 'font-lock-builtin-face)
    (list "(\\(bold\\|code\\|emph\\|it\\|kbd\\|tt\\|roman\\|underline\\|var\\|samp\\|sc\\|sf\\|sup\\|sub\\)[ )]"
 	 1
-	 'ude-font-lock-face-8)
+	 'font-lock-builtin-face)
    (list "(\\(ref\\|mailto\\|mark\\|new\\)[) \n]"
 	 1
-	 'ude-font-lock-face-3)
+	 'font-lock-type-face)
    (cons "\\(:[^] \n)]+\\|#![a-zA-Z]+\\)"
-	 'ude-font-lock-face-7)
+	 'font-lock-preprocessor-face)
    (cons "[[]\\|]"
-	 'ude-font-lock-face-3)
+	 'font-lock-comment-delimiter-face)
    (list "(\\(markup-writer\\|make-engine\\|copy-engine\\|default-engine-set!\\|engine-custom\\|engine-custom-set!\\|engine-custom-add!\\|markup-option\\|markup-option-add!\\|markup-body\\)[ \n]"
 	 1
 	 'font-lock-function-name-face)
    (list ",(\\([^ \n()]+\\)"
 	 1
-	 'ude-font-lock-face-6))
+	 'font-lock-comment-delimiter-face))
   "*The Skribe font-lock specification."
   :group 'skribe)
 
+;; FIXME: Commented out UDE-dependent toolbar.
 ;; tool-bar
-(defcustom skribe-toolbar
-  `(;; the spell button
-    ("spell.xpm" flyspell-buffer "Buffer spell check")
-    --
-    ;; the compile button
-    (,ude-compile-icon ude-mode-compile-from-menu "Compile")
-    ;; the root button
-    (,ude-root-icon ude-user-set-root-directory "Set new root directory")
-    --
-    ;; the repl button
-    (,ude-repl-icon ude-repl-other-frame "Start a read-eval-print loop")
-    --
-    -->
-    --
-    ;; online documentation
-    (,ude-help-icon skribe-doc-ident "Describe markup at point")
-    (,ude-info-icon skribe-manuals "Skribe online documentations"))
-  "*The Skribe toolbar"
-  :group 'skribe)
+;; (defcustom skribe-toolbar
+;;   `(;; the spell button
+;;     ("spell.xpm" flyspell-buffer "Buffer spell check")
+;;     --
+;;     ;; the compile button
+;;     (,ude-compile-icon ude-mode-compile-from-menu "Compile")
+;;     ;; the root button
+;;     (,ude-root-icon ude-user-set-root-directory "Set new root directory")
+;;     --
+;;     ;; the repl button
+;;     (,ude-repl-icon ude-repl-other-frame "Start a read-eval-print loop")
+;;     --
+;;     -->
+;;     --
+;;     ;; online documentation
+;;     (,ude-help-icon skribe-doc-ident "Describe markup at point")
+;;     (,ude-info-icon skribe-manuals "Skribe online documentations"))
+;;   "*The Skribe toolbar"
+;;   :group 'skribe)
 
 ;; paragraphs
 (defcustom skribe-paragraph-start
@@ -189,6 +194,12 @@ Set this to nil if you don't want a modeline indicator."
       (setq minor-mode-map-alist
 	    (cons (cons 'skribe-mode skribe-mode-map)
 		  minor-mode-map-alist))))
+
+
+;;;
+;;; User manual browsing.
+;;;
+;;; FIXME: This is dependent on Bigloo's UDE and therefore currently unusable.
 
 ;*---------------------------------------------------------------------*/
 ;*    skribe-manuals-menu-entry ...                                    */
@@ -266,6 +277,11 @@ Set this to nil if you don't want a modeline indicator."
 	      (popup-menu
 	       (cons "Doc" menu)))))))))
 
+
+;;;
+;;; Autotyping.
+;;;
+
 ;*---------------------------------------------------------------------*/
 ;*    skribe-scheme-indent-line ...                                    */
 ;*---------------------------------------------------------------------*/
@@ -326,6 +342,7 @@ Set this to nil if you don't want a modeline indicator."
 ;*    HTML browser for serving the documentation.                      */
 ;*---------------------------------------------------------------------*/
 (defun skribe-doc-ident (ident)
+  ;; FIXME: Depends on Bigloo's UDE.
   (interactive (ude-interactive-ident (point) "Identifier: "))
   (and (stringp skribe-html-browser)
        (let ((dirs skribe-docdirs))
@@ -726,8 +743,8 @@ of the start of the containing expression."
 ;*---------------------------------------------------------------------*/
 (defun skribe-activate-mode ()
   ;; buffer local global variables
-  (make-variable-buffer-local 'ude-extra-identifier-chars)
-  (setq ude-extra-identifier-chars "-")
+;;   (make-variable-buffer-local 'ude-extra-identifier-chars)
+;;   (setq ude-extra-identifier-chars "-")
   ;; the keymap
   (skribe-activate-keymap skribe-mode-map)
   ;; font lock
@@ -745,7 +762,7 @@ of the start of the containing expression."
       (setq skribe-scheme-indent-line (global-key-binding "\t")))
   ;; the toolbar
   (use-local-map skribe-mode-map)
-  (ude-toolbar-set skribe-toolbar)
+;;   (ude-toolbar-set skribe-toolbar)
   ;; the custom indentation
   (skribe-custom-indent)
   ;; we end with the skribe hooks
@@ -839,3 +856,7 @@ of the start of the containing expression."
 (put 'processor 'skribe-indent 'skribe-indent-function)
 (put 'slide 'skribe-indent 'skribe-indent-function)
 (put 'counter 'skribe-indent 'skribe-indent-function)
+
+;;; Local Variables:
+;;; coding: utf-8
+;;; End:
