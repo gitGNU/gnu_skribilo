@@ -48,7 +48,7 @@ described below.])
 (index "emacs" :note "skribe mode")
 
 (p [The Skribilo distribution contains a minor mode dedicated to Skribe
-edition written by Manuel Serrano.  This mode provides ,(emph
+edition originally written by Manuel Serrano.  This mode provides ,(emph
 "fontification") and indentation of Skribe programs.  In this manual, we
 present the two most important key bindings specific to this mode:
 
@@ -56,12 +56,9 @@ present the two most important key bindings specific to this mode:
 	  (item [,(color :fg "#007700" (kbd "M-C-q")) indents a whole Skribe
 expression.]))])
 
-(p [In order to install the Skribe Emacs mode, you first need to install
-,(ref :text [Bigloo's development environment] :url *bigloo-url*) called
-``UDE'' (on Debian-based systems, it boils down to ,(tt [apt-get install
-bigloo-ude])).  Then, you need to specify that when the Emacs Lisp ,(tt
-"skribe-mode") function is needed it has to be loaded from the ,(tt
-"skribe.el") file:])
+(p [To use the Skribe/Skribilo Emacs mode, you need to tell Emacs that
+when the Emacs Lisp ,(tt "skribe-mode") function is needed it has to
+be loaded from the ,(tt "skribe.el") file:])
 
 
 (disp :verb #t (source :language lisp [
