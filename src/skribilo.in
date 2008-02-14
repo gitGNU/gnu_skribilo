@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright 2005, 2006, 2007  Ludovic Courtès  <ludo@gnu.org>
+# Copyright 2005, 2006, 2007, 2008  Ludovic Courtès  <ludo@gnu.org>
 #
 #
 # This program is free software; you can redistribute it and/or modify
@@ -26,6 +26,10 @@
 
 main='(module-ref (resolve-interface '\''(skribilo)) '\'skribilo')'
 exec ${GUILE-@GUILE@} -L "@guilemoduledir@" -c "
+
+;; Tell Guile not to issue warnings about duplicate bindings.
+(default-duplicate-binding-handler '(last))
+
 (use-modules (skribilo condition))
 
 (call-with-skribilo-error-catch/exit
