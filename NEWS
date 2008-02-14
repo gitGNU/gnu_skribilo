@@ -6,39 +6,45 @@ Copyright (C) 2005, 2006, 2007, 2008  Ludovic Courtès <ludo@gnu.org>
 
 
 
-New in Skribilo 0.9.1
+* New in Skribilo 0.9.1
 
-* Improved `configure' diagnostics and build/installation fixes
+** Improved `configure' diagnostics and build/installation fixes
 
 Thanks to Barrie Stott!
 
-* Various documentation fixes and improvements
+** Various documentation fixes and improvements
+** Emacs mode no longer depends on Bigloo UDE
+** Guile warnings about duplicate bindings are now hidden
+
+These harmless warnings looked like:
+
+  WARNING: (skribilo ast): imported module (srfi srfi-34) overrides core binding `raise'
 
 
-New in Skribilo 0.9.0 (user-visible changes compared to Skribe 1.2d)
+* New in Skribilo 0.9.0 (user-visible changes compared to Skribe 1.2d)
 
-* New engine: `lout' (see http://lout.sf.net/).
+** New engine: `lout' (see http://lout.sf.net/).
 
-* New packages
+** New packages
 
   - `eq' for equation formatting.
   - `pie' for pie charts.
   - `diff' for document diff (experimental).
   - `web-book2' for on-line publishing.
 
-* New markups in the `base' package
+** New markups in the `base' package
 
   `~', `breakable-space', `numref', `!lout', `lout-illustration'.
 
-* Extended markups in the `base' package
+** Extended markups in the `base' package
 
    - `footnote' now takes a `:label' option.
    - `document' now takes a `:keywords' option.	
    - `bibliography' now takes a `:labels' option.
 
-* New `outline' front-end (see the `--reader' option of `skribilo')
+** New `outline' front-end (see the `--reader' option of `skribilo')
 
-* New module system (actually that of GNU Guile), no `skribe-load'
+** New module system (actually that of GNU Guile), no `skribe-load'
 
   Just like modules help structure programs, they are useful for
   documents: Skribilo documents are not second-class programs.  Also,
@@ -48,7 +54,7 @@ New in Skribilo 0.9.0 (user-visible changes compared to Skribe 1.2d)
   For compatibility with Skribe, see the `--compat=skribe'
   command-line option.
 
-* Little or no global state
+** Little or no global state
 
   Per-document data structures (e.g., per-document node identifier
   hash table) or SRFI-39 parameters (e.g., `*document-path*') are used
@@ -56,25 +62,25 @@ New in Skribilo 0.9.0 (user-visible changes compared to Skribe 1.2d)
 
   Use `--compat=skribe' for compatibility with Skribe.
 
-* Stricter document structure
+** Stricter document structure
 
   In Skribe, if the engine allowed it, it was possible to use
   `section' instead of `chapter' as the top-level section type.  The
   `latex' engine, consequently, has a new custom named
   `class-has-chapters?'.
 
-* Unique node identifiers
+** Unique node identifiers
 
   No two nodes within a document can have the same identifier (`:ident'
   parameter).  Duplicate identifiers are reported as an error.
 
-* Bug fixes
+** Bug fixes
 
   Most notably in the `resolve' subsystem.
 
-* New build system
+** New build system
 
-* Last but not least: New name!  :-)
+** Last but not least: New name!  :-)
 
 
 ;;; Local Variables:
