@@ -9,7 +9,11 @@ if HAVE_GUILE_LINT
 # reports errors (e.g., with macros).  So better ignore its exit code
 # for now.
 
+# Note: We re-export `$GUILE' to make sure Guile-Lint uses the same
+# Guile as we do, e.g., on NixOS.
+
 all-local: $(dist_module_DATA)
-	-$(GUILE_LINT) -L $(top_srcdir)/src/guile		\
+	-GUILE="$(GUILE)"					\
+	$(GUILE_LINT) -L $(top_srcdir)/src/guile		\
 		      -L $(top_builddir)/src/guile -k $^
 endif
