@@ -122,7 +122,21 @@ different subtopics, as well as the titles of the slides under the
 current subtopic.])
 	         (:unfold? [If ,(code [#t]), then the outline will also
 show the contents of the current subtopic.]))
-	       :source "skribilo/package/slide.scm"))
+	       :source "skribilo/package/slide.scm")
+   
+   (p [This package understands the following additional customs (see
+Section ,(ref :subsection "Engine Customs" :page #t)):
+
+,(description
+    (item :key (tt [slide-outline-title])
+       [The title of outline slides.  By default, no title is
+produced.])
+    (item :key (tt [slide-outline-active-color])
+       [The color in which the current slide topic is displayed in
+outline slides.])
+    (item :key (tt [slide-outline-inactive-color])
+       [The color in which inactive slide topics are displayed in
+outline slides.]))]))
 
 ;*---------------------------------------------------------------------*/
 ;*    slide-pause                                                      */
@@ -208,3 +222,8 @@ output format does not support embedded application.]))
        ;; Show only the example (i.e. don't produce a document in a document)
        (example :legend "Example of Skribilo slides"
 	       (prgm :file "src/slides.skb")))))
+
+;;; Local Variables:
+;;; coding: latin-1
+;;; ispell-local-dictionary: "american"
+;;; End:

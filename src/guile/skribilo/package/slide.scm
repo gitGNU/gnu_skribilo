@@ -1,7 +1,7 @@
 ;;; slide.scm  --  Overhead transparencies.
 ;;;
+;;; Copyright 2006, 2007, 2008  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
-;;; Copyright 2006, 2007  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -287,8 +287,6 @@
 ;;;
 ;;; Initialization.
 ;;;
-
-(format (current-error-port) "Slides initializing...~%")
 
 ;; Register specific implementations for lazy loading.
 (when-engine-is-loaded 'base

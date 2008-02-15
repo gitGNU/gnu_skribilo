@@ -20,6 +20,11 @@ These harmless warnings looked like:
 
   WARNING: (skribilo ast): imported module (srfi srfi-34) overrides core binding `raise'
 
+** The `slide' package supports additional customs
+
+Namely, `slide-outline-title' and
+`slide-outline-{active,inactive}-color'.  See manual for details.
+
 
 * New in Skribilo 0.9.0 (user-visible changes compared to Skribe 1.2d)
 

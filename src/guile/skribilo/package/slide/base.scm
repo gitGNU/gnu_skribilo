@@ -1,7 +1,7 @@
 ;;; base.scm  --  Overhead transparencies, `base' engine.
 ;;;
+;;; Copyright 2006, 2008  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
-;;; Copyright 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -31,7 +31,7 @@
 
   :use-module (srfi srfi-1)
 
-  :export (%slide-outline-title %slide-outline-itemize-symbols))
+  :export (%slide-outline-itemize-symbols))
 
 (fluid-set! current-reader %skribilo-module-reader)
 
@@ -119,12 +119,16 @@
                           (make-entry-proc t current-topic))
                         %slide-outline-itemize-symbols)))
 
-(define (make-topic-entry topic current-topic)
+(define (make-topic-entry topic current-topic engine)
   ;; Produce an entry for `topic'.  Colorize it based on the fact
   ;; that the current topic is `current-topic' (it may need to be
   ;; hightlighted).
-  (let ((current? (eq? topic current-topic)))
-    (color :fg (if current? "#000000" "#666666")
+  (let ((current? (eq? topic current-topic))
+	(active   (or (engine-custom engine 'slide-outline-active-color)
+		      "#000000"))
+	(inactive (or (engine-custom engine 'slide-outline-inactive-color)
+		      "#666666")))
+    (color :fg (if current? active inactive)
            (apply (if current? bold (lambda (x) x))
                   (list (markup-option topic :title))))))
 
@@ -132,9 +136,6 @@
 ;;;
 ;;; Default topic/subtopic handling.
 ;;;
-
-;; Title for the automatically-generated outline slide.
-(define %slide-outline-title "")
 
 ;; Circular list of symbols to be passed to `itemize' in outlines.
 (define %slide-outline-itemize-symbols
@@ -153,14 +154,17 @@
                            (find1-up (lambda (n)
                                        (is-markup? n 'slide-topic))
                                      topic)))
-         (unfold?      (markup-option topic :unfold?)))
-    (output (slide :title %slide-outline-title :toc #f
+         (unfold?      (markup-option topic :unfold?))
+	 (title        (or (engine-custom engine 'slide-outline-title) "")))
+    (output (slide :title title :toc #f
                    :class (markup-class topic)
                    ;; The mark below is needed for cross-referencing by PDF
                    ;; bookmarks.
                    (if (markup-ident topic) (mark (markup-ident topic)) "")
                    (p (make-topic-list parent-topic unfold?
-                                       make-topic-entry)))
+				       (lambda (topic current)
+					 (make-topic-entry topic current
+							   engine)))))
             engine)))
 
 
