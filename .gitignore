@@ -14,7 +14,7 @@ lib/*
 ,*
 stamp-h[0-9]
 stamp-po
-doc/user/doc-config.scm
+doc/man/skribilo.1
 src/skribilo
 src/skribilo-config
 src/pre-inst-skribilo

@@ -13,6 +13,7 @@ AC_CONFIG_SRCDIR([src/guile/skribilo/reader.scm])
 
 # GNU Gettext.
 AM_GNU_GETTEXT([external])
+AM_GNU_GETTEXT_VERSION([0.16.1])
 
 # Specifying the Guile module directory.
 AC_ARG_WITH([guilemoduledir],
@@ -110,4 +111,5 @@ AC_OUTPUT([Makefile
 	   doc/modules/Makefile
 	   doc/modules/skribilo/Makefile
 	   doc/modules/skribilo/documentation/Makefile
+	   doc/man/Makefile
 	   emacs/Makefile])

@@ -1,0 +1,65 @@
+.\" Skribilo man page.   -*- mode:nroff; coding: latin-1; -*-
+.\"
+.\" Copyright 2008 Ludovic Courtès <ludo@gnu.org>
+.\"
+.\" This file is part of Skribilo.
+.\"
+.\" Skribilo is free software; you can redistribute it and/or modify it
+.\" under the terms of the GNU General Public License as published by the
+.\" Free Software Foundation; either version 2, or (at your option) any
+.\" later version.
+.\"
+.\" Skribilo is distributed in the hope that it will be useful, but
+.\" WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+.\" General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public License along
+.\" with Skribilo; see the file COPYING.  If not, write to the Free
+.\" Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+.\" 02110-1301 USA.
+.\"
+.TH SKRIBILO 1
+.SH NAME
+skribilo \- Process Skribilo input document.
+.SH SYNOPSIS
+.B skribilo
+[options] [input]...
+.br
+.SH DESCRIPTION
+Skribilo is a document production tool.  It can produce PostScript/PDF,
+HTML, and other output formats from a single input document.  It is
+highly customizable and extensible and relies on the Scheme programming
+language to that end.
+.PP
+For a summary of the command line options run:
+.IP
+skribilo --help
+.PP
+Full documentation is provided in the manual, available in HTML or
+PS/PDF formats under:
+.IP
+.I @docdir@
+.PP
+Please refer to the manual for detailed documentation.
+.SH "SEE ALSO"
+.IR guile (1)
+.SH AUTHOR
+Skribilo is based on Skribe, by Manuel Serrano and Érick Gallesio.  It
+is currently developed and maintained by Ludovic Courtès.
+.SH LICENCE
+Skribilo is free software; you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free
+Software Foundation; either version 2, or (at your option) any later
+version.
+.PP
+Skribilo is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+more details.
+.PP
+You should have received a copy of the GNU General Public License along with
+Skribilo; see the file
+.IR COPYING .
+If not, write to the Free Software Foundation, Inc., 51 Franklin St, Fifth
+Floor, Boston, MA 02110-1301 USA.

@@ -1,1 +1,1 @@
-SUBDIRS = user modules img dir
+SUBDIRS = user modules img dir man
