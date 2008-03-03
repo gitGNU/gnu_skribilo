@@ -80,50 +80,47 @@ Skribe to generate slides for the LaTeX prosper package.])
    (p [A ,(code "slide") function call creates a slide.])
    
    (doc-markup 'slide
-	       `((:title [The title of the slide.])
-		 (:number [The number of the slide (a boolean or an integer).])
-		 (:toc [This argument controls if the slide must
-be referenced in the ,(mark :mark "toc" "table of contents").])
-		 (:vspace [The boolean ,(code "#f") or an integer representing
+	       `((:title ,[The title of the slide.])
+		 (:number ,[The number of the slide (a boolean or an integer).])
+		 (:toc ,[This argument controls if the slide must be
+referenced in the ,(ref :mark "toc" :text "table of contents") and the
+outline slide that introduces a ,(markup-ref "slide-topic") (see
+below).])
+		 (:vspace ,[The boolean ,(code "#f") or an integer representing
 the vertical space size between the title and the body of the slide.])
-		 (:vfill [A boolean that is used to control whether a LaTeX
+		 (:vfill ,[A boolean that is used to control whether a LaTeX
 ,(code "\\vfill") is issued at the end of the slide.])
-		 (:transition [The boolean ,(code "#f") or a symbol in the 
+		 (:transition ,[The boolean ,(code "#f") or a symbol in the 
 list ,(code "(split blinds box wipe dissolve glitter)").])
-		 (:bg [The background color of the slide.])
-		 (:image [The background image of the slide.]))
+		 (:bg ,[The background color of the slide.])
+		 (:image ,[The background image of the slide.]))
 	       :source "skribilo/package/slide.scm")
    
     (p [Optionally, one may group slides into ,(emph [topics]) and
 ,(emph [subtopics]).  Topics and subtopics are just logical grouping
 under a given title that are meant to provide structure to a set of
-slides.  With their ,(code [:outline?]) option, these two markups can be
+slides.  With their ,(param :outline?) option, these two markups can be
 used to automatically produce an outline at the beginning of each new
-(sub)topic, so that the audience knows what the talk is heading to.])
+(sub)topic, which reminds the audience of the current position within
+the talk.])
    
    (doc-markup 'slide-topic
-	       `((:title [The title of a topic.])
-	         (:outline? [A boolean (i.e., ,(code [#t]) or ,(code
+	       `((:title ,[The title of a topic.])
+	         (:outline? ,[A boolean (i.e., ,(code [#t]) or ,(code
 [#f])) telling whether an outline should be produced at the beginning of
 this topic.  The outline will typically list the titles of the different
-topics, as well as the titles of the slides under the current topic.])
-	         (:unfold? [If ,(code [#t]), then the outline will also
-show the contents of the current topic.]))
+topics, as well as the titles of the slides under the current topic.
+Note that ,(markup-ref "slide")s whose ,(param :toc) option is ,(code
+[#f]) will not be shown in the outline.])
+	         (:unfold? ,[If ,(code [#t]), then the outline will also
+show the contents of the current topic.])
+		 (:toc ,[This argument controls if the slide must be
+referenced in the ,(ref :mark "toc" :text "table of contents") and the
+outline slide that introduces a ,(markup-ref "slide-topic") (see
+below).]))
+	       :others '(slide-subtopic)
 	       :source "skribilo/package/slide.scm")
-   
-   (p [The ,(code [slide-subtopic]) markup is similar:])
 
-   (doc-markup 'slide-subtopic
-	       `((:title [The title of a subtopic.])
-	         (:outline? [A boolean (i.e., ,(code [#t]) or ,(code
-[#f])) telling whether an outline should be produced at the beginning of
-this subtopic.  The outline will typically list the titles of the
-different subtopics, as well as the titles of the slides under the
-current subtopic.])
-	         (:unfold? [If ,(code [#t]), then the outline will also
-show the contents of the current subtopic.]))
-	       :source "skribilo/package/slide.scm")
-   
    (p [This package understands the following additional customs (see
 Section ,(ref :subsection "Engine Customs" :page #t)):
 

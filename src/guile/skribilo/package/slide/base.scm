@@ -104,7 +104,8 @@
                         (filter (lambda (n)
                                   (and (markup? n)
                                        (member (markup-markup n)
-                                               subtopic-types)))
+                                               subtopic-types)
+                                       (markup-option n :toc)))
                                 (markup-body node))))))))
 
 (define (make-topic-list current-topic recurse? make-entry-proc)
