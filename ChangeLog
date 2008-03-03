@@ -4,4 +4,7 @@ Please refer to the Git repository for a change log:
   $ (cd skribilo ; git-whatchanged)
   ...
 
+Alternatively, you can browse the repository history on-line at
+http://git.sv.gnu.org/gitweb/?p=skribilo.git .
+
 Thanks.
