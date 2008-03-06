@@ -2274,7 +2274,7 @@
 ;*    table ...                                                        */
 ;*---------------------------------------------------------------------*/
 (markup-writer 'table
-   :options '(:frame :rules :border :width :cellpadding)
+   :options '(:frame :rules :border :width :cellpadding :rulecolor)
    ;; XXX: `:cellstyle' `separate' and `:cellspacing' not supported
    ;; by Lout's @Tbl.
    :before (lambda (n e)
@@ -2305,6 +2305,10 @@
 		 (if (number? cp)
 		     (format #t "  margin { ~ap }\n"
 			     (number->string cp)))
+                 (let ((rule-color (markup-option n :rulecolor)))
+                   (and rule-color
+                        (format #t "  rulecolor { ~a }~%"
+                                (lout-color-specification rule-color))))
 
 		 (display "{\n")))
 

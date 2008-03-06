@@ -1,5 +1,6 @@
 ;;; table.skb  --  Skribe tables
 ;;;
+;;; Copyright 2008  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -41,17 +42,19 @@
 	(:cellpadding [A number of pixels around each cell.])
 	(:cellspacing [An optional number of pixels used to separate each
          cell of the table. A negative uses the target default.])
+	(:rulecolor ,[The color of rules (see Section ,(ref :section
+         "Frames and Colors")).])
 	(#!rest row... [The rows of the table. Each row must be 
          constructed by the ,(ref :mark "tr" :text (code "tr")) function.])))
    
-   (p [,(bold (emph (color :fg "red" "Note:"))) Tables rendering may be only
+   (p [,(bold (color :fg "red" "Note:")) Table rendering may be only
 partially supported by graphical agents. For instance, the ,(code "cellstyle")
 attribute is only supported by HTML engines supporting
 ,(ref :url "http://www.w3.org/TR/REC-CSS2/" :text "CSS2").])
    
 
 ;*--- table rows ------------------------------------------------------*/
-(subsection :title "Table row"
+(subsection :title "Table Row"
 
 (p [Table rows are defined by the ,(code "tr") function.])
 
@@ -60,19 +63,19 @@ attribute is only supported by HTML engines supporting
 	      (#!rest cell... [The row cells.]))))
 
 ;*--- Table cell ------------------------------------------------------*/
-(subsection :title "Table cell"
+(subsection :title "Table Cell"
 
 (p [Two functions define table cells: ,(code "th") for header cells and
 ,(code "td") for plain cells.])
 
 (doc-markup 'th
-	    '((:bg [The background color of the cell.])
+	    `((:bg [The background color of the cell.])
 	      (:width ,[The ,(ref :mark "width") of the table.])
-	      (:align [The horizontal alignment of the table cell 
+	      (:align ,[The horizontal alignment of the table cell 
                        (,(tt "left"), ,(tt "right"), or ,(tt "center"). Some
                        engines, such as the HTML engine, also supports a
                        character for the alignment.)])
-	      (:valign [The vertical alignment of the cell. The value can
+	      (:valign ,[The vertical alignment of the cell. The value can
 		        be ,(code "top"), ,(code "center"), ,(code "bottom").])
               (:colspan [The number of columns that the cell expands to.])
 	      (:rowspan [The number of columns that the cell spans over.])
@@ -89,3 +92,8 @@ attribute is only supported by HTML engines supporting
  (disp (include "src/api17.skb")))))
 
 ;; @indent: (put 'doc-markup 'skribe-indent 'skribe-indent-function)@*
+
+;;; Local Variables:
+;;; coding: latin-1
+;;; ispell-local-dictionary: "american"
+;;; End:

@@ -1,6 +1,6 @@
 ;;; base.scm -- The base markup package of Skribe/Skribilo.
 ;;;
-;;; Copyright 2005, 2006, 2007  Ludovic Courtès  <ludo@gnu.org>
+;;; Copyright 2005, 2006, 2007, 2008  Ludovic Courtès  <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -697,7 +697,8 @@
 		      (ident #f) (class #f) (&location #f)
 		      (border #f) (width #f)
 		      (frame 'none) (rules 'none)
-		      (cellstyle 'collapse) (cellpadding #f) (cellspacing #f))
+		      (cellstyle 'collapse) (cellpadding #f) (cellspacing #f)
+                      (rulecolor #f))
    (let ((frame (cond
 		   ((string? frame)
 		    (string->symbol frame))
@@ -740,6 +741,9 @@
 	     (options `((:frame ,frame)
 			(:rules ,rules)
 			(:cellstyle ,cellstyle)
+                        ,@(if rulecolor
+                              `((:rulecolor ,rulecolor))
+                              '())
 			,@(the-options opts :ident :class)))
 	     (body (parse-list-of 'table 'tr (the-body opts))))))))
 

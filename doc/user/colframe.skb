@@ -1,5 +1,6 @@
 ;;; colframe.skb  --  Skribe color and frame
 ;;;
+;;; Copyright 2008  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -21,7 +22,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    Frame and color                                                  */
 ;*---------------------------------------------------------------------*/
-(section :title "Frame and color" :file #t
+(section :title "Frames and Colors" :file #t
 
 (p [The function ,(code "frame") embeds a text inside a frame. 
 The function ,(code "color") may also use the same purpose when it is
@@ -61,6 +62,7 @@ acts as a container. Otherwise, it acts as an ,(ref :section "Ornaments").])
  (disp (include "src/api13.skb")))))
 
 
-
-	      
-
+;;; Local Variables:
+;;; coding: latin-1
+;;; ispell-local-dictionary: "american"
+;;; End:
