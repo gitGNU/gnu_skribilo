@@ -87,25 +87,81 @@ Set this to nil if you don't want a modeline indicator."
   :group 'skribe
   :type 'integer)
 
-;; font lock
+
+;;;
+;;; Font Lock
+;;;
+
+(defface skribe-title
+  '((((type tty pc) (class color)) :weight bold)
+    (t :weight bold  :height 1.2 :inherit variable-pitch))
+  "Face for Skribe titles."
+  :group 'skribe)
+(defvar skribe-title-face 'skribe-title)
+
+(defface skribe-keyword
+  '((((type tty pc) (class color)) :weight bold)
+    (t :weight bold :inherit font-lock-keyword-face))
+  "Face for Skribe keywords."
+  :group 'skribe)
+(defvar skribe-keyword-face 'skribe-keyword)
+
+(defface skribe-sectioning-markup
+  '((((type tty pc) (class color)) :weight bold)
+    (t :weight bold :inherit font-lock-function-name-face))
+  "Face for Skribe sectioning markups."
+  :group 'skribe)
+(defvar skribe-sectioning-markup-face 'skribe-sectioning-markup)
+
+(defface skribe-markup-option
+  '((((type tty pc) (class color)) :weight normal :foreground "green")
+    (t :weight bold :inherit font-lock-preprocessor-face
+       :foreground "green"))
+  "Face for Skribe markup options, e.g., `:foo'."
+  :group 'skribe)
+(defvar skribe-markup-option-face 'skribe-markup-option)
+
+(defface skribe-italic
+  '((t :slant italic :weight normal :inherit font-lock-builtin-face))
+  "Face for Skribe italicized text."
+  :group 'skribe)
+(defvar skribe-italic-face 'skribe-italic)
+
+(defface skribe-bold
+  '((t :weight bold))
+  "Face for Skribe bold text."
+  :group 'skribe)
+(defvar skribe-bold-face 'skribe-bold)
+
 (defcustom skribe-font-lock-keywords
   (list
    (list (concat "\(\\(let\\|let[*]\\|letrec\\|define"
 		 "\\|define-markup\\|set[!]"
 		 "\\|lambda\\|labels"
 		 "\\|let-syntax\\|letrec-syntax"
-		 "\\|regular-grammar\\|lalr-grammar"
+		 "\\|use-modules"
 		 "\\|if\\|when\\|unless\\|begin\\|case\\|cond\\|else"
 		 "\\|multiple-value-bind\\|values\\)[ :\n\t]")
 	 1
-	 'font-lock-keyword-face)
+	 'skribe-keyword-face)
    
-   (list "(\\(document\\|chapter\\|section\\|subsection\\|subsubsection\\|paragraph\\|p\\|skribe-load\\|include\\|slide\\)[) \n]"
+   (list (concat "(\\(document\\|chapter\\|section\\|subsection\\|subsubsection"
+		 "\\|paragraph\\|p\\|include"
+		 "\\|slide\\(-\\(sub\\)?topic\\)?\\)[) \n]")
 	 1
-	 'font-lock-function-name-face)
+	 'skribe-sectioning-markup-face)
+   (list ":title +\\[\\([^]]*\\)\\]"
+	 1
+	 'skribe-title-face)
    (list "(\\(toc\\|itemize\\|enumerate\\|description\\|item\\|the-bibliography\\|the-index\\|default-index\\|frame\\|center\\|table\\|tr\\|th\\|td\\|linebreak\\|footnote\\|color\\|author\\|prog\\|source\\|figure\\|image\\)[) \n]"
 	 1
 	 'font-lock-builtin-face)
+   (list "(it +\\[\\([^]]*\\)\\])"
+	 1
+	 'skribe-italic-face)
+   (list "(bold +\\[\\([^]]*\\)\\])"
+	 1
+	 'skribe-bold-face)
    (list "(\\(bold\\|code\\|emph\\|it\\|kbd\\|tt\\|roman\\|underline\\|var\\|samp\\|sc\\|sf\\|sup\\|sub\\)[ )]"
 	 1
 	 'font-lock-builtin-face)
@@ -113,7 +169,7 @@ Set this to nil if you don't want a modeline indicator."
 	 1
 	 'font-lock-type-face)
    (cons "\\(:[^] \n)]+\\|#![a-zA-Z]+\\)"
-	 'font-lock-preprocessor-face)
+	 'skribe-markup-option-face)
    (cons "[[]\\|]"
 	 'font-lock-comment-delimiter-face)
    (list "(\\(markup-writer\\|make-engine\\|copy-engine\\|default-engine-set!\\|engine-custom\\|engine-custom-set!\\|engine-custom-add!\\|markup-option\\|markup-option-add!\\|markup-body\\)[ \n]"
@@ -130,6 +186,7 @@ Set this to nil if you don't want a modeline indicator."
   "*The Skribe font-lock specification."
   :group 'skribe)
 
+
 ;; FIXME: Commented out UDE-dependent toolbar.
 ;; tool-bar
 ;; (defcustom skribe-toolbar
@@ -750,6 +807,8 @@ of the start of the containing expression."
   ;; buffer local global variables
 ;;   (make-variable-buffer-local 'ude-extra-identifier-chars)
 ;;   (setq ude-extra-identifier-chars "-")
+  (setq comment-start ";;")
+  (setq comment-end "")
   ;; the keymap
   (skribe-activate-keymap skribe-mode-map)
   ;; font lock
