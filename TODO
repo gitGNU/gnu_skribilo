@@ -1,6 +1,6 @@
 -*- Org -*-
 
-Copyright 2007  Ludovic Courtès <ludo@gnu.org>
+Copyright 2007, 2008  Ludovic Courtès <ludo@gnu.org>
 
   Copying and distribution of this file, with or without modification,
   are permitted in any medium without royalty provided the copyright
@@ -82,6 +82,16 @@ To that end, VList-based hash lists could come into play.  Andy Wingo's
 *** Avoid side effects on engines
 **** Customs could be passed at engine instantiation time
 **** Main problem is `markup-writer'
+
+*** Find a purely functional representation of ASTs
+
+[[http://pobox.com/~oleg/ftp/Scheme/parent-pointers.txt][Oleg's work on SXML parent pointers]] is probably a good source of
+inspiration, especially the "parent pointers as thunks" approach: it's
+simple and Just Works!
+
+In addition, we could have the resolution function add a VList "hash
+list" (read: functional hash table) to the `document' node so that we
+can do `document-lookup-node'.
 
 ** Don't name markups using symbols
 Markups should be named using unforgeable objects, rather than symbols.
