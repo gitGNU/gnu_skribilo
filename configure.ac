@@ -106,10 +106,6 @@ AC_OUTPUT([Makefile
 	   src/guile/skribilo/biblio/Makefile
 	   doc/Makefile
 	   doc/user/Makefile
-	   doc/img/Makefile
-	   doc/dir/Makefile
 	   doc/modules/Makefile
-	   doc/modules/skribilo/Makefile
-	   doc/modules/skribilo/documentation/Makefile
 	   doc/man/Makefile
 	   emacs/Makefile])

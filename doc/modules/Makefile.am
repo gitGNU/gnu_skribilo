@@ -1,3 +1,5 @@
-SUBDIRS = skribilo
-
-## arch-tag: 9c90dd7b-0ee7-44b9-ab41-5283d1bf1fb9
+EXTRA_DIST =					\
+  skribilo/documentation/api.scm		\
+  skribilo/documentation/env.scm		\
+  skribilo/documentation/extension.scm		\
+  skribilo/documentation/manual.scm

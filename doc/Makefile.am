@@ -1,1 +1,5 @@
-SUBDIRS = user modules img dir man
+SUBDIRS = user modules man
+
+EXTRA_DIST =					\
+  dir/dir.skb					\
+  img/bsd.png img/lambda.png img/linux.png
