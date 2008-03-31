@@ -1,2 +1,4 @@
-(document :title [Hello World!] [
-This is a very simple text.])
+(document :title [Hello World!]
+   :html-title [Hello World Example]
+   
+   [This is a very simple text.])

@@ -1,6 +1,6 @@
 ;;; start.skb  --  Getting started with Skribilo
 ;;;
-;;; Copyright 2007  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2007, 2008  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -47,7 +47,7 @@ The HTML source file for such a page should look like:
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <HTML>
 <HEAD>
-<TITLE>Hello world Example</TITLE>
+<TITLE>Hello World Example</TITLE>
 </HEAD>
 <BODY>
 <H1>Hello World!</H1>
@@ -76,7 +76,7 @@ The HTML source file for such a document should look like:
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <HTML>
 <HEAD>
-<TITLE>Hello world Example</TITLE>
+<TITLE>Hello World Example</TITLE>
 </HEAD>
 <BODY>
 <H1>Hello World!</H1>
@@ -172,7 +172,8 @@ can be used to ease the construction of such documents as illustrated below.
 This text has been generated with the following piece of code
 ,(prgm :language skribe [
 (itemize
- (map (lambda (x) (item \[The square of \,(bold x) is \,(bold (* x x))\]))
+ (map (lambda (x)
+        (item \[The square of \,(bold x) is \,(bold (* x x))\]))
       '(1 2 3 4 5 6 7 8 9)))
 ])]))
 
