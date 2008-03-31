@@ -25,7 +25,7 @@ EXTRA_DIST += src/api1.skb						\
   src/outline.txt src/scheme.scm
 
 
-html_DATA = user.html
+html_DATA = user.html user.sui
 dist_html_DATA = skribilo.css
 BUILT_SOURCES = lout/front-page.lout
 CLEANFILES = $(BUILT_SOURCES) $(html_DATA)

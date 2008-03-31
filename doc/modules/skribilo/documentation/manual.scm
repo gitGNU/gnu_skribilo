@@ -136,7 +136,10 @@
    (engine-custom-set! he 'subsection-file #f)
    (engine-custom-set! he 'subsubsection-file #f)
 
-   (engine-custom-set! he 'css "skribilo.css"))
+   (engine-custom-set! he 'css "skribilo.css")
+
+   ;; Emit a SUI file.
+   (engine-custom-set! he 'emit-sui #t))
 
 ;*---------------------------------------------------------------------*/
 ;*    LaTeX                                                            */
