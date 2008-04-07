@@ -74,6 +74,7 @@ specified reader syntax, and produce its output using the specified engine.
   -B, --bib-path=DIR     Prepend DIR to the bibliography include path.
   -S, --source-path=DIR  Prepend DIR to the source include path.
   -P, --image-path=DIR   Prepend DIR to the image include path.
+  -U, --sui-path=DIR     Prepend DIR to the Skribe URL Index (SUI) search path.
 
   -b, --base=BASE        Strip BASE from all hyperlinks (`html' engine).
   -e, --eval=EXPR        Prepend EXPR to the list of expressions to be
@@ -182,6 +183,8 @@ Report bugs to <~a>.~%"
                 (make-path-processor :source-path))
         (option '(#\P "image-path") #t #f
                 (make-path-processor :image-path))
+        (option '(#\U "sui-path") #t #f
+                (make-path-processor :sui-path))
 
         (option '(#\b "base") #t #f
                 (lambda (opt name arg result)
@@ -238,6 +241,7 @@ Report bugs to <~a>.~%"
     (:bib-path    ".")
     (:source-path ".")
     (:image-path  ".")
+    (:sui-path    ".")
     (:watched-symbols)))
 
 (define (parse-args args)
@@ -278,6 +282,7 @@ options."
 	 (bib-path          (assoc-ref options :bib-path))
 	 (source-path       (assoc-ref options :source-path))
 	 (image-path        (assoc-ref options :image-path))
+         (sui-path          (assoc-ref options :sui-path))
          (compat            (assoc-ref options :compat))
 	 (preloads          (assoc-ref options :preloads))
 	 ;;(variants          '()) ;; FIXME: Implement
@@ -301,6 +306,7 @@ options."
 		   (*bib-path*          bib-path)
 		   (*source-path*       source-path)
 		   (*image-path*        image-path)
+                   (*sui-path*          sui-path)
 		   (*debug*             debugging-level)
                    (*debug-use-colors?* color?)
                    (*watched-symbols*   watched-symbols)

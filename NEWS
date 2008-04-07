@@ -30,6 +30,8 @@ Namely, `slide-outline-title' and
 ** New option `:rulecolor' for `table'
 
 
+** New `--sui-path' command-line option, new `*sui-path*' parameter
+
 * New in Skribilo 0.9.0 (user-visible changes compared to Skribe 1.2d)
 
 ** New engine: `lout' (see http://lout.sf.net/).

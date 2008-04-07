@@ -1,6 +1,6 @@
 ;;; parameters.scm  --  Skribilo settings as parameter objects.
 ;;;
-;;; Copyright 2005  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2005, 2008  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -67,6 +67,7 @@
 (define-path-parameter *bib-path*)
 (define-path-parameter *source-path*)
 (define-path-parameter *image-path*)
+(define-path-parameter *sui-path*)
 
 
 ;;;

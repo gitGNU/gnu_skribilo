@@ -1,7 +1,7 @@
-;;; sui.scm
+;;; sui.scm -- Skribe URL Indices
 ;;;
+;;; Copyright 2005, 2006, 2007, 2008  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
-;;; Copyright 2005, 2006, 2007  Ludovic Courtès  <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -22,17 +22,21 @@
 (define-module (skribilo sui)
   :use-module (skribilo lib)
   :use-module (skribilo ast)
-  :autoload   (skribilo parameters) (*verbose* *destination-file*)
+  :autoload   (skribilo parameters) (*verbose* *destination-file*
+                                     *sui-path*)
   :autoload   (skribilo reader)     (make-reader)
   :autoload   (skribilo engine)     (find-engine)
   :autoload   (skribilo evaluator)  (evaluate-document)
   :autoload   (skribilo engine html)(html-file)
+  :autoload   (skribilo condition)  (&file-search-error)
   :use-module (skribilo utils strings)
   :use-module (skribilo utils syntax)
   :use-module (skribilo utils files)
 
   :use-module (ice-9 match)
   :use-module (srfi srfi-1)
+  :use-module (srfi srfi-34)
+  :use-module (srfi srfi-35)
 
   :export (load-sui sui-ref->url sui-title sui-file sui-key
            sui-find-ref sui-search-ref sui-filter
@@ -40,7 +44,8 @@
 
 (fluid-set! current-reader %skribilo-module-reader)
 
-;;; Author:  Manuel Serrano
+
+;;; Author: Manuel Serrano, Ludovic Courtès
 ;;; Commentary:
 ;;;
 ;;; Library dealing with Skribe URL Indexes (SUI).
@@ -55,6 +60,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    *sui-table* ...                                                  */
 ;*---------------------------------------------------------------------*/
+;; FIXME: Remove global state.
 (define *sui-table* (make-hash-table))
 
 ;*---------------------------------------------------------------------*/
@@ -63,29 +69,33 @@
 ;*    Returns a SUI sexp if already loaded. Load it otherwise.         */
 ;*    Raise an error if the file cannot be open.                       */
 ;*---------------------------------------------------------------------*/
-(define (load-sui path)
-   (let ((sexp (hash-ref *sui-table* path)))
-      (or sexp
-	  (begin
-	     (when (> (*verbose*) 0)
+(define (load-sui file)
+  (let* ((path (search-path (*sui-path*) file))
+         (sexp (and path (hash-ref *sui-table* path))))
+    (if (not path)
+        (raise (condition (&file-search-error (file-name file)
+                                              (path (*sui-path*)))))
+        (or sexp
+            (begin
+              (when (> (*verbose*) 0)
 		(format (current-error-port) "  [loading sui: ~a]\n" path))
-	     (let ((p (open-input-file path))
-                   (read (make-reader 'skribe)))
+              (let ((p (open-input-file path))
+                    (read (make-reader 'skribe)))
 		(if (not (input-port? p))
 		    (skribe-error 'load-sui
 				  "Can't find `Skribe Url Index' file"
 				  path)
 		    (unwind-protect
-		       (let ((sexp (read p)))
-			  (match sexp
-			     (('sui (? string?) . _)
-			      (hash-set! *sui-table* path sexp))
-			     (else
-			      (skribe-error 'load-sui
-					    "Illegal `Skribe Url Index' file"
-					    path)))
-			  sexp)
-		       (close-input-port p))))))))
+                     (let ((sexp (read p)))
+                       (match sexp
+                              (('sui (? string?) . _)
+                               (hash-set! *sui-table* path sexp))
+                              (else
+                               (skribe-error 'load-sui
+                                             "Illegal `Skribe Url Index' file"
+                                             path)))
+                       sexp)
+                     (close-input-port p)))))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    sui-ref->url ...                                                 */
@@ -266,3 +276,8 @@
 		(display ")"))
 	     (container-search-down (lambda (n) (is-markup? n kind)) n))
    (display ")\n"))
+
+
+;;; Local Variables:
+;;; coding: latin-1
+;;; End:

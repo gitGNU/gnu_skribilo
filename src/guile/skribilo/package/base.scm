@@ -30,7 +30,7 @@
   :autoload   (srfi srfi-1)        (every any filter)
   :autoload   (skribilo evaluator) (include-document)
   :autoload   (skribilo engine)    (engine?)
-  :autoload   (skribilo parameters)(*document-path*)
+  :autoload   (skribilo parameters)(*document-path* *sui-path*)
 
   ;; optional ``sub-packages''
   :autoload   (skribilo biblio)    (*bib-table* resolve-bib
@@ -1087,15 +1087,13 @@
 		   (options `((kind ,kind) ,@(the-options opts :ident :class)))
 		   (body text))))))
    (define (skribe-ref skribe)
-      (let ((path (search-path (*document-path*) skribe)))
-	 (if (not path)
-	     (unref #f skribe 'sui-file)
-	     (let* ((sui (load-sui path))
-		    (os (the-options opts :skribe :class :text))
-		    (u (sui-ref->url (dirname path) sui ident os)))
-		(if (not u)
-		    (unref #f os 'sui-ref)
-		    (ref :url u :text text :ident ident :class class))))))
+     (let* ((sui (load-sui skribe))
+            (os  (the-options opts :skribe :class :text))
+            (u   (sui-ref->url (search-path (*sui-path*) skribe)
+                               sui ident os)))
+       (if (not u)
+           (unref #f os 'sui-ref)
+           (ref :url u :text text :ident ident :class class))))
    (define (handle-ref text)
       (new markup
 	 (markup 'ref)
