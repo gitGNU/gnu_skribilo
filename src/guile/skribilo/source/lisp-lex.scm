@@ -1141,7 +1141,7 @@
 	     (lexer-make-code-lexer tables IS))))))
 
 ;
-; Table generated from the file lisp-lex.l by SILex 1.0
+; Table generated from the file skribilo/source/lisp-lex.l by SILex 1.0
 ;
 
 (define lexer-default-table
