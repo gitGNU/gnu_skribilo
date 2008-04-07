@@ -98,6 +98,8 @@ compatible implementation is provided.])
 	`(#\B "dir"  ,[Prepend ,(tt [dir]) to the bibliography include path.])
 	`(#\S "dir"  ,[Prepend ,(tt [dir]) to the source include path.])
 	`(#\P "dir"  ,[Prepend ,(tt [dir]) to the image include path.])
+	`(#\U "dir"  ,[Prepend ,(tt [dir]) to the Skribe URL Index (SUI)
+search path (see ,(numref :text [Section] :ident "sui") for details).])
 
 	`(#\b "base" ,[Strip ,(tt [base]) (an arbitrary string,
 typically an URL) from all hyperlinks when producing ,(ref :mark
