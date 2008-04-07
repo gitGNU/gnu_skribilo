@@ -31,29 +31,29 @@
 	     (ta (table (tr (map (lambda (n)
 				    (td :valign 'top :align 'center n))
 	                         (if (list? a) a (list a)))))))
-	 (skribe-eval (center (bold t)) e)
-	 (skribe-eval (center ta) e)
+	 (evaluate-document (center (bold t)) e)
+	 (evaluate-document (center ta) e)
 	 (output b e))))
 
 (define dummy-slide-output
    (lambda (n e)
       (let* ((t (markup-option n :title))
 	     (b (markup-body n)))
-	 (skribe-eval (bold t) e)
+	 (evaluate-document (bold t) e)
 	 (output b e))))
 
 (define dummy-slide-vspace-output
    (lambda (n e)
-     (skribe-eval (linebreak) e)
-     (skribe-eval (center (tt "[vspace]")) e)
-     (skribe-eval (linebreak) e)))
+     (evaluate-document (linebreak) e)
+     (evaluate-document (center (tt "[vspace]")) e)
+     (evaluate-document (linebreak) e)))
 
 (define dummy-slide-embed-output
    (lambda (n e)
-     (skribe-eval (linebreak) e)
-     (skribe-eval (tt (or (markup-option n :alt)
+     (evaluate-document (linebreak) e)
+     (evaluate-document (tt (or (markup-option n :alt)
 			  (markup-option n :command)))
-		  e)))
+		  	e)))
 
 ;*---------------------------------------------------------------------*/
 ;*    Computer programs                                                */

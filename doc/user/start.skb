@@ -135,12 +135,12 @@ presents here the kind of documents that can be created with Skribilo.])
       (p [In this section we present how to introduce a simple
 computation into a document. For instance, the following sentence
 
-,(disp [
-Document creation date: ,(date)])
-is generated with the following piece of code
+,(disp [Document creation date: ,(date->string (current-date))])
+
+is generated with the following piece of code (using ,(srfi-ref 19)):
 
 ,(prgm :language skribe [
-\[Document creation date: \,(date)\]
+\[Document creation date: \,(date->string (current-date))\]
 ])
 
 Here, we use the Skribilo function ,(code "date") to compute the date to

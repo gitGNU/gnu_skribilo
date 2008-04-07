@@ -37,9 +37,6 @@ skrflags  = -I $(srcdir) -P $(top_srcdir)/doc/img		\
 	    -e '(define %top-srcdir "$(top_srcdir)")'		\
 	    -e '(define %top-builddir "$(top_builddir)")'
 
-# FIXME: Eventually, we should use the native API.
-skrflags += --compat=skribe
-
 if HAVE_PLOTICUS
 skrflags += -e "(define %have-ploticus? (= 1 1))"		\
 	    -e "(define %ploticus-path \"$(PLOTICUS)\")"

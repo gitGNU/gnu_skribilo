@@ -17,7 +17,7 @@
 			 (markup-writer '&bib-entry-title e
 					:action
 					(lambda (n e)
-					   (skribe-eval (it (markup-body n)) e)))
+					   (evaluate-document (it (markup-body n)) e)))
 			 e))
 		   (the-bibliography :pred 
 				     (lambda (m n)

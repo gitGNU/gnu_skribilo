@@ -1,5 +1,6 @@
 ;;; char.skb  --  Characters, strings and symbols
 ;;;
+;;; Copyright 2008  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -86,13 +87,20 @@ of the capacity of the targeted format.])
                (tr :bg  *prgm-skribe-color*
                    (td :align 'left s)
                    (td :align 'left (symbol s))))
-            (sort (let ((t (make-hashtable)))
+            (sort (let ((t (make-hash-table)))
                      (for-each (lambda (e)
                                   (for-each (lambda (s)
-                                               (hashtable-put! t (car s) (car s)))
+                                               (hash-set! t (car s) (car s)))
                                             (engine-symbol-table e)))
                                *api-engines*)
-                     (hashtable->list t))
+                     (hash-fold (lambda (key value result)
+		                  (cons key result))
+				'()
+				t))
                   string<?)))))
 
 
+;;; Local Variables:
+;;; coding: latin-1
+;;; ispell-local-dictionary: "american"
+;;; End:

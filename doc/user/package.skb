@@ -26,7 +26,7 @@
    
    (p [This chapter describes the standard packages that come with
 Skribilo.  Additional packages may be found from the ,(ref :url
-(skribe-url) :text "Skribe web page"), but they may require slight
+*skribe-url* :text "Skribe web page"), but they may require slight
 modifications to work correctly with Skribilo.])
    
    (p [In order to use the facilities described in the following

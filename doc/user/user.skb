@@ -34,7 +34,29 @@
 	     (skribilo package pie)
 	     (skribilo package slide)
 	     (skribilo package web-book2)
-	     (skribilo reader))
+	     
+	     (skribilo source lisp)
+	     (skribilo source xml)
+	     (skribilo source c))
+
+;*---------------------------------------------------------------------*/
+;*    Internals							       */
+;*---------------------------------------------------------------------*/
+(use-modules (skribilo ast)
+	     (skribilo reader)
+	     (skribilo engine)
+	     (skribilo writer)
+	     (skribilo output)
+	     (skribilo evaluator)
+	     (skribilo config)
+	     (skribilo index)
+	     (skribilo lib))  ;; for `skribe-warning'
+
+;*---------------------------------------------------------------------*/
+;*    SRFIs							       */
+;*---------------------------------------------------------------------*/
+(use-modules (srfi srfi-19))
+
 
 (if %have-ploticus? (set! %ploticus-program %ploticus-path))
 
