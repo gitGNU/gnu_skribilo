@@ -93,18 +93,8 @@ AC_OUTPUT([Makefile
 	   po/Makefile.in
 	   src/Makefile
 	   src/guile/Makefile
-	   src/guile/skribilo/Makefile
-	   src/guile/skribilo/utils/Makefile
 	   src/guile/skribilo/utils/images.scm
-	   src/guile/skribilo/engine/Makefile
-	   src/guile/skribilo/reader/Makefile
-	   src/guile/skribilo/package/Makefile
-	   src/guile/skribilo/package/slide/Makefile
-	   src/guile/skribilo/package/eq/Makefile
-	   src/guile/skribilo/package/pie/Makefile
-	   src/guile/skribilo/source/Makefile
-	   src/guile/skribilo/biblio/Makefile
-	   doc/Makefile
+           doc/Makefile
 	   doc/user/Makefile
 	   doc/modules/Makefile
 	   doc/man/Makefile
