@@ -1,6 +1,6 @@
 ;;; lout.scm  --  Lout implementation of the `eq' package.
 ;;;
-;;; Copyright 2005, 2006, 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2005, 2006, 2007, 2008  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -116,28 +116,20 @@
      (error "unsupported mul style" style))))
 
 
-(define-macro (simple-lout-markup-writer sym . args)
+(define (simple-lout-markup-writer sym . args)
   (let* ((lout-name (if (null? args)
 			(symbol->string sym)
 			(car args)))
 	 (parentheses? (if (or (null? args) (null? (cdr args)))
 			   #t
 			   (cadr args)))
-	 (precedence (operator-precedence sym))
+	 (precedence (operator-precedence sym)))
 
-	 (open-par (if parentheses?
-                       `(if need-paren? %left-paren "")
-                       ""))
-	 (close-par (if parentheses?
-                        `(if need-paren? %right-paren "")
-                        "")))
-
-    `(markup-writer ',(symbol-append 'eq: sym) (find-engine 'lout)
+    (markup-writer (symbol-append 'eq: sym) (find-engine 'lout)
         :action (lambda (node engine)
-                  (let* ((lout-name ,(if (string? lout-name)
-                                         lout-name
-                                         `(,lout-name node
-                                                      engine)))
+                  (let* ((lout-name (if (string? lout-name)
+                                        lout-name
+                                        (lout-name node engine)))
                          (eq        (ast-parent node))
                          (eq-parent (ast-parent eq)))
 
@@ -148,25 +140,27 @@
                           (let* ((align?
                                   (and first?
                                        (is-markup? eq-parent 'eq-display)
-                                       (eq? ',sym
+                                       (eq? sym
                                             (markup-option eq :align-with))
                                        (direct-equation-child? node)))
                                  (op (car operands))
                                  (eq-op? (equation-markup? op))
                                  (need-paren?
-                                  (and eq-op?
+                                  (and parentheses? eq-op?
                                        (>= (operator-precedence
                                             (equation-markup-name->operator
                                              (markup-markup op)))
-                                           ,precedence)))
-                                 (column (port-column (current-output-port))))
+                                           precedence)))
+                                 (open-par  (if need-paren? %left-paren ""))
+                                 (close-par (if need-paren? %right-paren ""))
+                                 (column    (port-column (current-output-port))))
 
                             ;; Work around Lout's limitations...
-                            (if (> column 1000) (display "\n"))
+                            (if (> column 1000) (newline))
 
-                            (display (string-append " { " ,open-par))
+                            (display (string-append " { " open-par))
                             (output op engine)
-                            (display (string-append ,close-par " }"))
+                            (display (string-append close-par " }"))
                             (if (pair? (cdr operands))
                                 (display (string-append " "
                                                         (if align? "^" "")
@@ -180,10 +174,10 @@
 ;; horizontal bar of `/', we don't need to parenthesize its arguments.
 
 
-(simple-lout-markup-writer +)
-(simple-lout-markup-writer - "-")
+(simple-lout-markup-writer '+)
+(simple-lout-markup-writer '- "-")
 
-(simple-lout-markup-writer *
+(simple-lout-markup-writer '*
                            (lambda (n e)
                              ;; Obey either the per-node `:mul-style' or the
                              ;; top-level one.
@@ -192,7 +186,7 @@
                                   (let ((eq (ast-parent n)))
                                     (markup-option eq :mul-style))))))
 
-(simple-lout-markup-writer /
+(simple-lout-markup-writer '/
                            (lambda (n e)
                              ;; Obey either the per-node `:div-style' or the
                              ;; top-level one.
@@ -201,15 +195,15 @@
                                   (let ((eq (ast-parent n)))
                                     (markup-option eq :div-style)))))
                            #f)
-(simple-lout-markup-writer modulo "mod")
-(simple-lout-markup-writer =)
-(simple-lout-markup-writer <)
-(simple-lout-markup-writer >)
-(simple-lout-markup-writer <=)
-(simple-lout-markup-writer >=)
+(simple-lout-markup-writer 'modulo "mod")
+(simple-lout-markup-writer '=)
+(simple-lout-markup-writer '<)
+(simple-lout-markup-writer '>)
+(simple-lout-markup-writer '<=)
+(simple-lout-markup-writer '>=)
 
-(define-macro (binary-lout-markup-writer sym lout-name)
-  `(markup-writer ',(symbol-append 'eq: sym) (find-engine 'lout)
+(define (binary-lout-markup-writer sym lout-name)
+  (markup-writer (symbol-append 'eq: sym) (find-engine 'lout)
      :action (lambda (node engine)
 	       (let ((body (markup-body node)))
 		 (if (= (length body) 2)
@@ -223,16 +217,16 @@
 		       (if parentheses? (display %left-paren))
 		       (output first engine)
 		       (if parentheses? (display %right-paren))
-		       (display ,(string-append " } " lout-name " { "))
+		       (display (string-append " } " lout-name " { "))
 		       (output second engine)
 		       (display " } } "))
-		     (skribe-error ,(symbol-append 'eq: sym)
+		     (skribe-error (symbol-append 'eq: sym)
 				   "wrong number of arguments"
 				   body))))))
 
-(binary-lout-markup-writer expt  "sup")
-(binary-lout-markup-writer in    "in")
-(binary-lout-markup-writer notin "notin")
+(binary-lout-markup-writer 'expt  "sup")
+(binary-lout-markup-writer 'in    "in")
+(binary-lout-markup-writer 'notin "notin")
 
 (markup-writer 'eq:apply (find-engine 'lout)
    :action (lambda (node engine)
@@ -286,13 +280,13 @@
 ;;; Sums, products, integrals, etc.
 ;;;
 
-(define-macro (range-lout-markup-writer sym lout-name)
-  `(markup-writer ',(symbol-append 'eq: sym) (find-engine 'lout)
+(define (range-lout-markup-writer sym lout-name)
+  (markup-writer (symbol-append 'eq: sym) (find-engine 'lout)
       :action (lambda (node engine)
 		(let ((from (markup-option node :from))
 		      (to (markup-option node :to))
 		      (body (markup-body node)))
-		  (display ,(string-append " { "
+		  (display  (string-append " { "
                                            (if (*use-lout-math?*)
                                                ""
                                                "big ")
@@ -305,8 +299,8 @@
 		  (output body engine)
 		  (display " } } ")))))
 
-(range-lout-markup-writer sum "sum")
-(range-lout-markup-writer product "prod")
+(range-lout-markup-writer 'sum     "sum")
+(range-lout-markup-writer 'product "prod")
 
 (markup-writer 'eq:script (find-engine 'lout)
    :action (lambda (node engine)
