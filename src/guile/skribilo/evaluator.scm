@@ -121,10 +121,12 @@
      (debug-item "engine=" engine)
      (debug-item "reader=" reader)
 
-     (let ((e (if (symbol? engine) (find-engine engine) engine)))
+     (let ((e (if (symbol? engine) (lookup-engine engine) engine)))
        (debug-item "e=" e)
        (if (not (engine? e))
-	   (skribe-error 'evaluate-document-from-port "cannot find engine" engine)
+           (raise (condition (&invalid-argument-error
+                              (proc-name 'evaluate-document-from-port)
+                              (argument  e))))
            (let ((ast (evaluate-ast-from-port port :reader reader
                                               :module module)))
              (evaluate-document ast engine :env env))))))

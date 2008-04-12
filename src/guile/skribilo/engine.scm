@@ -1,7 +1,7 @@
 ;;; engine.scm	-- Skribilo engines.
 ;;;
+;;; Copyright 2005, 2007, 2008  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
-;;; Copyright 2005, 2007  Ludovic Courtès  <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -22,7 +22,8 @@
 (define-module (skribilo engine)
   :use-module (skribilo debug)
   :use-module (skribilo utils syntax)
-  :use-module (skribilo lib)
+  :use-module ((skribilo lib) :select (%procedure-arity))
+  :use-module (skribilo condition)
 
   ;; `(skribilo writer)' depends on this module so it needs to be loaded
   ;; after we defined `<engine>' and the likes.
@@ -30,6 +31,9 @@
 
   :use-module (oop goops)
   :use-module (ice-9 optargs)
+
+  :autoload   (srfi srfi-34)  (raise guard)
+  :use-module (srfi srfi-35)
   :autoload   (srfi srfi-39)  (make-parameter)
 
   :export (<engine> engine? engine-ident engine-format
@@ -43,10 +47,42 @@
 	   processor-get-engine
 	   push-default-engine pop-default-engine
 
-	   engine-loaded? when-engine-is-loaded))
+	   engine-loaded? when-engine-is-loaded
+
+           &engine-error &unknown-engine-error
+           engine-error? unknown-engine-error?
+           unknown-engine-error:engine-name))
 
 
 (fluid-set! current-reader %skribilo-module-reader)
+
+
+;;;
+;;; Error conditions.
+;;;
+
+(define-condition-type &engine-error &skribilo-error
+  engine-error?)
+
+(define-condition-type &unknown-engine-error &engine-error
+  unknown-engine-error?
+  (engine-name unknown-engine-error:engine-name))
+
+
+
+(define (handle-engine-error c)
+  ;; Issue a user-friendly error message for error condition C.
+  (cond ((unknown-engine-error? c)
+         (format (current-error-port)
+                 (_ "unknown engine `~a'~%")
+                 (unknown-engine-error:engine-name c)))
+
+	(else
+	 (format (current-error-port)
+                 (_ "undefined engine error: ~A~%")
+		 c))))
+
+(register-error-condition-handler! engine-error? handle-engine-error)
 
 
 ;;;
@@ -132,7 +168,9 @@
      (debug-item "engine=" e)
 
      (if (not (engine? e))
-	 (skribe-error 'default-engine-set! "bad engine ~S" e))
+	 (raise (condition (&invalid-argument-error
+                            (proc-name 'default-engine-set!)
+                            (argument  e)))))
      (set! *default-engine* e)
      (set! *default-engines* (cons e *default-engines*))
      e))
@@ -144,7 +182,9 @@
 
 (define (pop-default-engine)
    (if (null? *default-engines*)
-       (skribe-error 'pop-default-engine "Empty engine stack" '())
+       (raise (condition (&invalid-argument-error
+                          (proc-name 'pop-default-engine)
+                          (argument  *default-engines*))))
        (begin
 	  (set! *default-engines* (cdr *default-engines*))
 	  (if (pair? *default-engines*)
@@ -167,7 +207,9 @@
 	     ((pair? e) (car e))
 	     (else (*current-engine*)))))
     (if (not (engine? e))
-	(skribe-error 'engine-format? "no engine" e)
+        (raise (condition (&invalid-argument-error
+                           (proc-name 'engine-format?)
+                           (argument  e))))
 	(string=? fmt (engine-format e)))))
 
 ;;;
@@ -274,10 +316,13 @@ otherwise the requested engine is returned."
 	   (let ((e (module-ref m engine)))
 	     (if e (consume-load-hook! id))
 	     e)
-	   (error "no such engine" id)))))
+	   (raise (condition (&unknown-engine-error
+                              (engine-name id))))))))
 
 (define* (find-engine id :key (version 'unspecified))
-  (false-if-exception (apply lookup-engine (list id version))))
+  (guard (c ((unknown-engine-error? c)
+             #f))
+    (lookup-engine id :version version)))
 
 
 
@@ -316,13 +361,12 @@ otherwise the requested engine is returned."
   ;; that may apply to any kind of markup for which PRED returns true.
 
   (define (check-procedure name proc arity)
-    (cond
-      ((not (procedure? proc))
-	 (skribe-error ident "Illegal procedure" proc))
-      ((not (equal? (%procedure-arity proc) arity))
-	 (skribe-error ident
-		       (format #f "Illegal ~S procedure" name)
-		       proc))))
+    (if (or (not (procedure? proc))
+            (not (equal? (%procedure-arity proc) arity)))
+        (raise (condition (&invalid-argument-error
+                           (proc-name 'engine-add-writer!)
+                           (argument  proc))))
+        #t))
 
   (define (check-output name proc)
     (and proc (or (string? proc) (check-procedure name proc 2))))
@@ -330,12 +374,16 @@ otherwise the requested engine is returned."
   ;;
   ;; Engine-add-writer! starts here
   ;;
-  (if (not (is-a? e <engine>))
-      (skribe-error ident "Illegal engine" e))
+  (or (engine? e)
+      (raise (condition (&invalid-argument-error
+                         (proc-name 'engine-add-writer!)
+                         (argument  e)))))
 
   ;; check the options
-  (if (not (or (eq? opt 'all) (list? opt)))
-      (skribe-error ident "Illegal options" opt))
+  (or (eq? opt 'all) (list? opt)
+      (raise (condition (&invalid-argument-error
+                         (proc-name 'engine-add-writer!)
+                         (argument  opt)))))
 
   ;; check the correctness of the predicate
   (if pred
@@ -379,8 +427,9 @@ otherwise the requested engine is returned."
 		    (cond ((symbol? val) (lookup-engine val))
 			  ((engine? val) val)
 			  (else
-			   (error "invalid value for `*current-engine*'"
-				  val))))))
+			   (raise (condition (&invalid-argument-error
+                                              (proc-name '*current-engine*)
+                                              (argument val)))))))))
 
 
 ;;; engine.scm ends here
