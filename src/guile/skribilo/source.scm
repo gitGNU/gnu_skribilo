@@ -1,43 +1,86 @@
-;;;; source.scm	-- Highlighting source files.
-;;;;
-;;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
-;;;; Copyright 2005, 2006  Ludovic Courtès  <ludovic.courtes@laas.fr>
-;;;;
-;;;;
-;;;; This program is free software; you can redistribute it and/or modify
-;;;; it under the terms of the GNU General Public License as published by
-;;;; the Free Software Foundation; either version 2 of the License, or
-;;;; (at your option) any later version.
-;;;;
-;;;; This program is distributed in the hope that it will be useful,
-;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;;;; GNU General Public License for more details.
-;;;;
-;;;; You should have received a copy of the GNU General Public License
-;;;; along with this program; if not, write to the Free Software
-;;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
-;;;; USA.
-;;;;
+;;; source.scm	-- Highlighting source files.
+;;;
+;;; Copyright 2005, 2008  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
+;;;
+;;;
+;;; This program is free software; you can redistribute it and/or modify
+;;; it under the terms of the GNU General Public License as published by
+;;; the Free Software Foundation; either version 2 of the License, or
+;;; (at your option) any later version.
+;;;
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;;
+;;; You should have received a copy of the GNU General Public License
+;;; along with this program; if not, write to the Free Software
+;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+;;; USA.
 
 (define-module (skribilo source)
   :export (<language> language? language-extractor language-fontifier
            language-name
-	   source-read-lines source-read-definition source-fontify)
+	   source-read-lines source-read-definition source-fontify
+
+           &source-error source-error?
+           &no-extractor-error no-extractor-error?
+           no-extractor-error:language
+           &definition-not-found-error definition-not-found-error?
+           definition-not-found-error:definition
+           definition-not-found-error:language)
 
   :use-module (srfi srfi-35)
   :autoload   (srfi srfi-34) (raise)
   :autoload   (srfi srfi-13) (string-prefix-length string-concatenate)
-  :autoload   (skribilo condition) (&file-search-error &file-open-error)
+  :use-module (skribilo condition)
 
   :use-module (skribilo utils syntax)
   :use-module (skribilo parameters)
-  :use-module (skribilo lib)
   :use-module (oop goops)
   :use-module (ice-9 rdelim))
 
 
 (fluid-set! current-reader %skribilo-module-reader)
+
+
+;;;
+;;; Error conditions.
+;;;
+
+(define-condition-type &source-error &skribilo-error
+  source-error?)
+
+(define-condition-type &no-extractor-error &source-error
+  no-extractor-error?
+  (language    no-extractor-error:language))
+
+(define-condition-type &definition-not-found-error &source-error
+  definition-not-found-error?
+  (definition  definition-not-found-error:definition)
+  (language    definition-not-found-error:language))
+
+
+(define (handle-source-error c)
+  ;; Issue a user-friendly error message for error condition C.
+  (cond ((no-extractor-error? c)
+         (format (current-error-port)
+                 (_ "source language `~a' does not have an extractor~%")
+                 (language-name (no-extractor-error:language c))))
+
+        ((definition-not-found-error? c)
+         (format (current-error-port)
+                 (_ "source definition of `~a' in language `~a' not found~%")
+                 (definition-not-found-error:definition c)
+                 (language-name (definition-not-found-error:language c))))
+
+	(else
+	 (format (current-error-port)
+                 (_ "undefined source error: ~A~%")
+		 c))))
+
+(register-error-condition-handler! source-error? handle-source-error)
 
 
 ;;;
@@ -141,9 +184,8 @@
    (let ((p (search-path (*source-path*) file)))
       (cond
 	 ((not (language-extractor lang))
-	  (skribe-error 'source
-			"The specified language has not defined extractor"
-			(slot-ref lang 'name)))
+          (raise (condition (&no-extractor-error
+                             (language lang)))))
 
 	 ((or (not p) (not (file-exists? p)))
 	  (raise (condition (&file-search-error (file-name file)
@@ -158,9 +200,9 @@
 		 (unwind-protect
 		    (let ((s ((language-extractor lang) ip definition tab)))
 		       (if (not (string? s))
-			   (skribe-error 'source
-					 "Can't find definition"
-					 definition)
+                           (raise (condition (&definition-not-found-error
+                                              (definition definition)
+                                              (language   lang))))
 			   s))
 		    (close-input-port ip))))))))
 
