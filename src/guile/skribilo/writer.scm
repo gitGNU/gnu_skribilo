@@ -28,16 +28,18 @@
 
   :use-module (skribilo utils syntax)
   :autoload (srfi srfi-1)     (find filter)
-  :autoload (skribilo engine) (engine? engine-ident? default-engine))
+  :autoload (srfi srfi-34)    (raise)
+  :autoload (skribilo engine) (engine? engine-ident? default-engine)
 
+  :use-module (srfi srfi-35)
+  :use-module (skribilo condition)
+  :use-module (skribilo debug)
+  :use-module (skribilo output)
+  :use-module (skribilo ast)
+  :use-module ((skribilo lib) :select (%procedure-arity))
 
-(use-modules (skribilo debug)
-	     (skribilo output)
-	     (skribilo ast)
-	     (skribilo lib)
-
-	     (oop goops)
-	     (ice-9 optargs))
+  :use-module (oop goops)
+  :use-module (ice-9 optargs))
 
 
 (fluid-set! current-reader %skribilo-module-reader)
@@ -95,14 +97,11 @@
 		 #f)))
     (if predicate
 	(cond
-	  ((not (procedure? predicate))
-	     (skribe-error 'markup-writer
-			   "Illegal predicate (procedure expected)"
-			   predicate))
-	  ((not (eq? (%procedure-arity predicate) 2))
-	     (skribe-error 'markup-writer
-			   "Illegal predicate arity (2 arguments expected)"
-			   predicate))
+	  ((or (not (procedure? predicate))
+               (not (eq? (%procedure-arity predicate) 2)))
+           (raise (condition (&invalid-argument-error
+                              (proc-name make-writer-predicate)
+                              (argument  predicate)))))
 	  (else
 	   (if (procedure? t2)
 	       (lambda (n e)
@@ -135,16 +134,23 @@
 
     (cond
       ((and (not (symbol? markup)) (not (eq? markup #t)))
-       (skribe-error 'markup-writer "illegal markup" markup))
+       (raise (condition (&invalid-argument-error
+                          (proc-name 'markup-writer)
+                          (argument  markup)))))
       ((not (engine? e))
-	  (skribe-error 'markup-writer "illegal engine" e))
+       (raise (condition (&invalid-argument-error
+                          (proc-name 'markup-writer)
+                          (argument  e)))))
       ((and (not predicate)
 	    (not class)
 	    (null? options)
 	    (not before)
 	    (eq? action 'unspecified)
 	    (not after))
-       (skribe-error 'markup-writer "illegal writer" markup))
+       (raise (condition (&invalid-argument-error
+                          (proc-name 'markup-writer)
+                          (argument  (list predicate class options
+                                           before action after))))))
       (else
        (let ((m  (make-writer-predicate markup predicate class))
 	     (ac (if (eq? action 'unspecified)
@@ -196,9 +202,13 @@
   (let ((e (or engine (default-engine))))
     (cond
       ((not (symbol? markup))
-       (skribe-error 'markup-writer-get "illegal symbol" markup))
+       (raise (condition (&invalid-argument-error
+                          (proc-name 'markup-writer-get)
+                          (argument  markup)))))
       ((not (engine? e))
-       (skribe-error 'markup-writer-get "illegal engine" e))
+       (raise (condition (&invalid-argument-error
+                          (proc-name 'markup-writer-get)
+                          (argument  e)))))
       (else
        (let* ((writers (slot-ref e 'writers))
 	      (markup-writers (hashq-ref writers markup '()))
@@ -223,9 +233,13 @@
   (let ((e (or engine (default-engine))))
     (cond
       ((not (symbol? markup))
-       (skribe-error 'markup-writer "illegal symbol" markup))
+       (raise (condition (&invalid-argument-error
+                          (proc-name 'markup-writer-get*)
+                          (argument  markup)))))
       ((not (engine? e))
-       (skribe-error 'markup-writer "illegal engine" e))
+       (raise (condition (&invalid-argument-error
+                          (proc-name 'markup-writer-get*)
+                          (argument  e)))))
       (else
        (let* ((writers (slot-ref e 'writers))
 	      (delegate (slot-ref e 'delegate)))
