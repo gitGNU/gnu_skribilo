@@ -22,16 +22,66 @@
 (define-module (skribilo verify)
   :autoload   (skribilo engine) (engine-ident processor-get-engine)
   :autoload   (skribilo writer) (writer? writer-options lookup-markup-writer)
-  :autoload   (skribilo lib)    (skribe-warning/ast skribe-error)
+  :autoload   (skribilo lib)    (skribe-warning/ast)
   :use-module (skribilo debug)
   :use-module (skribilo ast)
+  :use-module (skribilo condition)
   :use-module (skribilo utils syntax)
+  :autoload   (skribilo location) (location?)
+
+  :autoload   (srfi srfi-34)    (raise)
+  :use-module (srfi srfi-35)
+
   :use-module (oop goops)
+
   :export (verify))
 
 
 (fluid-set! current-reader %skribilo-module-reader)
 
+
+
+;;;
+;;; Error conditions.
+;;;
+
+(define-condition-type &verify-error &skribilo-error
+  verify-error?)
+
+(define-condition-type &unsupported-markup-option-error &verify-error
+  unsupported-markup-option-error?
+  (markup  unsupported-markup-option-error:markup)
+  (engine  unsupported-markup-option-error:engine)
+  (option  unsupported-markup-option-error:option))
+
+
+(define (handle-verify-error c)
+  ;; Issue a user-friendly error message for error condition C.
+  (define (show-location obj)
+    (let ((location (and (ast? obj) (ast-loc obj))))
+      (if (location? location)
+          (format (current-error-port) "~a:~a:~a: "
+                  (location-file location)
+                  (location-line location)
+                  (location-column location)))))
+
+  (cond ((unsupported-markup-option-error? c)
+	 (let ((node   (unsupported-markup-option-error:markup c))
+               (engine (unsupported-markup-option-error:engine c))
+               (option (unsupported-markup-option-error:option c)))
+           (show-location node)
+	   (format (current-error-port)
+                   (_ "option `~a' of markup `~a' not supported by engine `~a'~%")
+		   option (and (markup? node)
+                               (markup-markup node))
+                   (engine-ident engine))))
+
+	(else
+	 (format (current-error-port)
+                 (_ "undefined verify error: ~a~%")
+		 c))))
+
+(register-error-condition-handler! verify-error? handle-verify-error)
 
 
 (define-generic verify)
@@ -48,9 +98,10 @@
 	(begin
 	  (for-each (lambda (o)
 		      (if (not (memq o options))
-			  (skribe-error (engine-ident engine)
-					(format #f "option unsupported: ~a, supported options: ~a" o options)
-					markup)))
+                          (raise (condition (&unsupported-markup-option-error
+                                             (markup markup)
+                                             (option o)
+                                             (engine engine))))))
 		    required-options)
 	  (slot-set! writer 'verified? #t)))))
 
