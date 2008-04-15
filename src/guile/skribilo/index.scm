@@ -1,7 +1,7 @@
 ;;; index.scm
 ;;;
+;;; Copyright 2005, 2006, 2008  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
-;;; Copyright 2005, 2006  Ludovic Courtès  <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -24,12 +24,16 @@
   :use-syntax (skribilo lib)
 
   :use-module (skribilo ast)
+  :autoload   (srfi srfi-34)          (raise)
+  :use-module (srfi srfi-35)
   :use-module (srfi srfi-39)
 
   ;; XXX: The use of `mark' here introduces a cross-dependency between
   ;; `index' and `package base'.  Thus, we require that each of these two
   ;; modules autoloads the other one.
   :autoload   (skribilo package base) (mark)
+
+  :autoload   (skribilo location)     (location?)
 
   :export (index? make-index-table *index-table*
            default-index resolve-the-index))
@@ -83,7 +87,17 @@
    (define (index-ref n)
       (let ((name (markup-option n 'name)))
 	 (if (>= char-offset (string-length name))
-	     (skribe-error 'the-index "char-offset out of bound" char-offset)
+             (let ((loc (if (location? loc)
+                            (format #f "~a:~a:~a: "
+                                    (location-file loc)
+                                    (location-line loc)
+                                    (location-column loc))
+                            ""))
+                   (msg (format
+                         #f (_ "the-index: char-offset `~A' out of bounds~%")
+                         char-offset)))
+               (raise (condition (&message
+                                  (condition-message (string-append loc msg))))))
 	     (string-ref name char-offset))))
    ;; sort a bucket of entries (the entries in a bucket share there name)
    (define (sort-entries-bucket ie)
