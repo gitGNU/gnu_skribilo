@@ -20,7 +20,6 @@
 ;;; USA.
 
 (define-module (skribilo sui)
-  :use-module (skribilo lib)
   :use-module (skribilo ast)
   :autoload   (skribilo parameters) (*verbose* *destination-file*
                                      *sui-path*)
@@ -28,14 +27,14 @@
   :autoload   (skribilo engine)     (find-engine)
   :autoload   (skribilo evaluator)  (evaluate-document)
   :autoload   (skribilo engine html)(html-file)
-  :autoload   (skribilo condition)  (&file-search-error)
+  :use-module (skribilo condition)
   :use-module (skribilo utils strings)
   :use-module (skribilo utils syntax)
   :use-module (skribilo utils files)
 
   :use-module (ice-9 match)
   :use-module (srfi srfi-1)
-  :use-module (srfi srfi-34)
+  :autoload   (srfi srfi-34)        (raise)
   :use-module (srfi srfi-35)
 
   :export (load-sui sui-ref->url sui-title sui-file sui-key
@@ -48,15 +47,49 @@
 ;;; Author: Manuel Serrano, Ludovic Courtès
 ;;; Commentary:
 ;;;
-;;; Library dealing with Skribe URL Indexes (SUI).
+;;; Library dealing with Skribe URL Indices (SUI).
 ;;;
 ;;; Code:
 
+
+;;;
+;;; Error conditions.
+;;;
 
-;;; The contents of the file below are (almost) unchanged compared to Skribe
-;;; 1.2d's `sui.scm' file found in the `common' directory.
+(define-condition-type &sui-error &skribilo-error
+  sui-error?)
+
+(define-condition-type &invalid-sui-error &sui-error
+  invalid-sui-error?
+  (sexp   invalid-sui-error:sexp))
 
 
+(define (handle-sui-error c)
+  ;; Issue a user-friendly error message for error condition C.
+  (define (show-location sexp)
+    (let* ((props  (and (pair? sexp) (source-properties sexp)))
+           (file   (and props (assoc-ref props 'filename)))
+           (line   (and props (assoc-ref props 'line)))
+           (column (and props (assoc-ref props 'column))))
+      (if (and file line column)
+          (format (current-error-port) "~a:~a:~a: "
+                  file line column))))
+
+  (cond ((invalid-sui-error? c)
+	 (let ((sexp (invalid-sui-error:sexp c)))
+           (show-location sexp)
+	   (format (current-error-port)
+                   (_ "invalid SUI form: ~A~%")
+                   sexp)))
+
+	(else
+	 (format (current-error-port)
+                 (_ "undefined sui error: ~A~%")
+		 c))))
+
+(register-error-condition-handler! sui-error? handle-sui-error)
+
+
 ;*---------------------------------------------------------------------*/
 ;*    *sui-table* ...                                                  */
 ;*---------------------------------------------------------------------*/
@@ -82,18 +115,16 @@
               (let ((p (open-input-file path))
                     (read (make-reader 'skribe)))
 		(if (not (input-port? p))
-		    (skribe-error 'load-sui
-				  "Can't find `Skribe Url Index' file"
-				  path)
+                    (raise (condition (&file-open-error
+                                       (file-name path))))
 		    (unwind-protect
                      (let ((sexp (read p)))
                        (match sexp
                               (('sui (? string?) . _)
                                (hash-set! *sui-table* path sexp))
                               (else
-                               (skribe-error 'load-sui
-                                             "Illegal `Skribe Url Index' file"
-                                             path)))
+                               (raise (condition (&invalid-sui-error
+                                                  (sexp     sexp))))))
                        sexp)
                      (close-input-port p)))))))))
 
@@ -116,7 +147,8 @@
       (('sui (and title (? string?)) . _)
        title)
       (else
-       (skribe-error 'sui-title "Illegal `sui' format" sexp))))
+       (raise (condition (&invalid-sui-error
+                          (sexp sexp)))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    sui-file ...                                                     */
@@ -137,7 +169,8 @@
 			(cadr rest))
 		   (loop (cdr rest))))))
       (else
-       (skribe-error 'sui-key "Illegal `sui' format" sexp))))
+       (raise (condition (&invalid-sui-error
+                          (sexp sexp)))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    sui-find-ref ...                                                 */
@@ -162,7 +195,8 @@
 	     (ident (sui-search-all-refs sui ident class))
 	     (else '())))
 	 (else
-	  (skribe-error 'sui-find-ref "Illegal `sui' format" sui)))))
+          (raise (condition (&invalid-sui-error
+                             (sexp sui))))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    sui-search-all-refs ...                                          */
@@ -214,7 +248,8 @@
 		  (loop (cdr refs) res))
 	      (reverse! res))))
       (else
-       (skribe-error 'sui-filter "Illegal `sui' format" sui))))
+       (raise (condition (&invalid-sui-error
+                          (sexp sui)))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    document-sui ...                                                 */
