@@ -1,6 +1,6 @@
 ;;; eq.scm  --  An equation formatting package.
 ;;;
-;;; Copyright 2005, 2006, 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2005, 2006, 2007, 2008  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -439,11 +439,11 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
 		      (skribe-error 'eq "`:renderer' -- wrong argument type"
 				    renderer))))))
 
-(define-macro (simple-markup-writer op . obj)
+(define (simple-markup-writer op . obj)
   ;; Note: The text-only rendering is less ambiguous if we parenthesize
   ;; without taking operator precedence into account.
   (let ((precedence (operator-precedence op)))
-    `(markup-writer ',(symbol-append 'eq: op) (find-engine 'base)
+    (markup-writer (symbol-append 'eq: op) (find-engine 'base)
        :action (lambda (node engine)
 		  (let loop ((operands (markup-body node)))
 		   (if (null? operands)
@@ -455,9 +455,7 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
  				    (>= (operator-precedence
                                          (equation-markup-name->operator
                                           (markup-markup o)))
-                                        ,precedence)
-				    )
-			       ))
+                                        precedence))))
 
 			 (display (if need-paren? "(" ""))
 			 (output o engine)
@@ -465,25 +463,25 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
 			 (if (pair? (cdr operands))
 			     (begin
 			       (display " ")
-			       (output ,(if (null? obj)
-					    (symbol->string op)
-					    (car obj))
+			       (output (if (null? obj)
+                                           (symbol->string op)
+                                           (car obj))
 				       engine)
 			       (display " ")))
 			 (loop (cdr operands)))))))))
 
-(simple-markup-writer +)
-(simple-markup-writer -)
-(simple-markup-writer /)
-(simple-markup-writer * (symbol "times"))
+(simple-markup-writer '+)
+(simple-markup-writer '-)
+(simple-markup-writer '/)
+(simple-markup-writer '* (symbol "times"))
 
-(simple-markup-writer =)
-(simple-markup-writer != (symbol "neq"))
-(simple-markup-writer ~= (symbol "approx"))
-(simple-markup-writer <)
-(simple-markup-writer >)
-(simple-markup-writer >= (symbol "ge"))
-(simple-markup-writer <= (symbol "le"))
+(simple-markup-writer '=)
+(simple-markup-writer '!= (symbol "neq"))
+(simple-markup-writer '~= (symbol "approx"))
+(simple-markup-writer '<)
+(simple-markup-writer '>)
+(simple-markup-writer '>= (symbol "ge"))
+(simple-markup-writer '<= (symbol "le"))
 
 (markup-writer 'eq:sqrt (find-engine 'base)
    :action (lambda (node engine)
@@ -491,8 +489,8 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
 	     (output (markup-body node) engine)
 	     (display ")")))
 
-(define-macro (simple-binary-markup-writer op obj)
-  `(markup-writer ',(symbol-append 'eq: op) (find-engine 'base)
+(define (simple-binary-markup-writer op obj)
+  (markup-writer (symbol-append 'eq: op) (find-engine 'base)
      :action (lambda (node engine)
 	       (let ((body (markup-body node)))
 		 (if (= (length body) 2)
@@ -501,11 +499,11 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
 		       (display (if (equation-markup? first) "(" " "))
 		       (output first engine)
 		       (display (if (equation-markup? first) ")" " "))
-		       (output ,obj engine)
+		       (output obj engine)
 		       (display (if (equation-markup? second) "(" ""))
 		       (output second engine)
 		       (display (if (equation-markup? second) ")" "")))
-		     (skribe-error ',(symbol-append 'eq: op)
+		     (skribe-error (symbol-append 'eq: op)
 				   "wrong argument type"
 				   body))))))
 
@@ -520,8 +518,8 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
 		       (display (if (equation-markup? first) ")" ""))
 		       (output (sup second) engine))))))
 
-(simple-binary-markup-writer in    (symbol "in"))
-(simple-binary-markup-writer notin (symbol "notin"))
+(simple-binary-markup-writer 'in    (symbol "in"))
+(simple-binary-markup-writer 'notin (symbol "notin"))
 
 (markup-writer 'eq:apply (find-engine 'base)
    :action (lambda (node engine)
