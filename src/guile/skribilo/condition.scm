@@ -1,6 +1,6 @@
 ;;; condition.scm  --  Skribilo SRFI-35 error condition hierarchy.
 ;;;
-;;; Copyright 2006, 2007  Ludovic Courtès  <ludo@gnu.org>
+;;; Copyright 2006, 2007, 2008  Ludovic Courtès  <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -165,7 +165,11 @@
 		   (format (current-error-port)
 			   (_ "undefined skribilo error: ~S~%")
 			   c)))
-	     (exit exit-val)))
+	     (exit exit-val))
+
+            ((message-condition? c)
+             (format (current-error-port) (condition-message c))
+             (exit exit-val)))
 
 	 (thunk)))
 
