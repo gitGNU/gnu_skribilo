@@ -1,6 +1,6 @@
 ;;; author.scm  --  Handling author names.
 ;;;
-;;; Copyright 2006, 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2006, 2007, 2008  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -21,11 +21,14 @@
 (define-module (skribilo biblio author)
   :use-module (srfi srfi-13)
   :use-module (srfi srfi-14)
+  :autoload   (srfi srfi-34)     (raise)
+  :use-module (srfi srfi-35)
   :use-module (skribilo biblio abbrev)
   :autoload   (skribilo ast)     (markup-option markup-body markup-ident)
-  :autoload   (skribilo lib)     (skribe-error)
   :autoload   (skribilo utils strings) (make-string-replace)
   :autoload   (skribilo package base)  (it)
+  :use-module (skribilo utils syntax)
+
   :export (comma-separated->author-list
 	   comma-separated->and-separated-authors
 
@@ -161,9 +164,13 @@
 
    (let ((check-author (lambda (e)
 			  (if (not (markup-option e 'author))
-			      (skribe-error 'bib-sort/first-author-last-name
-					    "no author for this bib entry"
-					    (markup-ident e))
+                              (let ((msg (_ "no author for this bib entry")))
+                                (raise (condition
+                                        (&message
+                                         (message (string-append
+                                                   "bib-sort/first-author-last-name: "
+                                                   (markup-ident e) ": "
+                                                   msg))))))
 			      #t))))
       (sort entries
 	    (lambda (e1 e2)
