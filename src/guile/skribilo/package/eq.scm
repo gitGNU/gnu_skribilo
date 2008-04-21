@@ -24,6 +24,7 @@
   :use-module (skribilo writer)
   :use-module (skribilo engine)
   :use-module (skribilo lib)
+  :use-module (skribilo condition)
   :use-module (skribilo utils syntax)
   :use-module (skribilo utils keywords) ;; `the-options', etc.
   :autoload   (skribilo package base) (it symbol sub sup)
@@ -31,6 +32,8 @@
   :autoload   (skribilo resolve)      (resolve-counter)
 
   :use-module (srfi srfi-1)
+  :autoload   (srfi srfi-34)          (raise)
+  :use-module (srfi srfi-35)
   :use-module (srfi srfi-39)
   :use-module (ice-9 optargs))
 
@@ -361,9 +364,10 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
 		     (if (list? first)
 			 (if (null? (cdr body))
 			     (append (reverse! result) first)
-			     (skribe-error 'eq:apply
-					   "wrong argument type"
-					   body))
+                             (raise (condition
+                                     (&invalid-argument-error
+                                      (proc-name 'eq:apply)
+                                      (argument  body)))))
 			 (loop (cdr body) (cons first result)))))))))
 
 
@@ -419,11 +423,11 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
 	       (cond ((not renderer) ;; default: use the current engine
 		      (output (it (markup-body node)) engine))
 		     ((symbol? renderer)
-                      (parameterize ((*embedded-renderer* #t))
-                        (case renderer
-                          ;; FIXME: We should have an `embed' slot for each
-                          ;; engine class similar to `lout-illustration'.
-                          ((lout)
+                      (case renderer
+                        ;; FIXME: We should have an `embed' slot for each
+                        ;; engine class similar to `lout-illustration'.
+                        ((lout)
+                         (parameterize ((*embedded-renderer* #t))
                            (let ((lout-code
                                   (with-output-to-string
                                     (lambda ()
@@ -431,13 +435,18 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
                              (output (lout-illustration
                                       :ident (markup-ident node)
                                       lout-code)
-                                     engine)))
-                          (else
-                           (skribe-error 'eq "invalid renderer" renderer)))))
+                                     engine))))
+                        (else
+                         (raise (condition
+                                 (&invalid-argument-error
+                                  (proc-name 'eq)
+                                  (argument  renderer)))))))
 		     ;; FIXME: `engine?' and `engine-class?'
 		     (else
-		      (skribe-error 'eq "`:renderer' -- wrong argument type"
-				    renderer))))))
+                      (raise (condition
+                              (&invalid-argument-error
+                               (proc-name 'eq)
+                               (argument  renderer)))))))))
 
 (define (simple-markup-writer op . obj)
   ;; Note: The text-only rendering is less ambiguous if we parenthesize
@@ -503,9 +512,10 @@ a symbol representing the mathematical operator denoted by @var{m} (e.g.,
 		       (display (if (equation-markup? second) "(" ""))
 		       (output second engine)
 		       (display (if (equation-markup? second) ")" "")))
-		     (skribe-error (symbol-append 'eq: op)
-				   "wrong argument type"
-				   body))))))
+		     (raise (condition
+                             (&invalid-argument-error
+                              (proc-name (symbol-append 'eq: op))
+                              (argument  body)))))))))
 
 (markup-writer 'eq:expt (find-engine 'base)
    :action (lambda (node engine)
