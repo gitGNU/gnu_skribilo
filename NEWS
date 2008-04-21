@@ -13,7 +13,7 @@ Copyright (C) 2005, 2006, 2007, 2008  Ludovic Courtès <ludo@gnu.org>
 Thanks to Barrie Stott!
 
 ** Lesser reliance on recursive make
-** Various documentation fixes and improvements
+** Various documentation fixes, improvements and additions
 ** Emacs mode no longer depends on Bigloo UDE
 ** Guile warnings about duplicate bindings are now hidden
 
@@ -28,10 +28,10 @@ Namely, `slide-outline-title' and
 
 ** The `:toc' option of `slide' determines whether to include it in the outline
 ** New option `:rulecolor' for `table'
+** New `--sui-path' command-line option, new `*sui-path*' parameter
+** Use more SRFI-34/35 exception handling instead of `skribe-error'
 
 
-** New `--sui-path' command-line option, new `*sui-path*' parameter
-
 * New in Skribilo 0.9.0 (user-visible changes compared to Skribe 1.2d)
 
 ** New engine: `lout' (see http://lout.sf.net/).

@@ -18,7 +18,8 @@ XXX: Check items in `[[file:src/guile/README::Skribilo%20Outline][src/guile/READ
 ** Update the documentation, remove Skribe legacy stuff
 ** Have a PS/PDF version of the documentation (preferably using Lout)
 ** Remove calls to `skribe-error', use SRFI-35 exceptions
-** Add a `--sui-path' option and corresponding SRFI-39 parameter
+** Add a reference to http://www-sop.inria.fr/mimosa/Manuel.Serrano/publi/jfp05/article.html
+
 
 * Small Items, Known Bugs
 
