@@ -65,10 +65,6 @@ ps_DATA = user.ps
 CLEANFILES += $(ps_DATA)
 endif !HAVE_PS2PDF
 
-.skb.lout:
-	GUILE_LOAD_PATH=$(load_path):$$GUILE_LOAD_PATH \
-	$(skribilo) $(skrflags) --target=lout -o $@ $<
-
 .lout.ps:
 	$(LOUT) -r4 -I$(srcdir)/lout -I$(builddir)/lout \
 	  -c $(@:%.ps=%) -o $@ $<
@@ -87,6 +83,18 @@ if HAVE_PS2PDF
 .ps.pdf:
 	$(PS2PDF) -sPAPERSIZE=a4 -dPDFSETTINGS=/prepress $(@:%.pdf=%.ps)
 endif
+
+.skb.lout:
+	GUILE_LOAD_PATH=$(load_path):$$GUILE_LOAD_PATH \
+	$(skribilo) $(skrflags) --target=lout -o $@ $<
+
+.skb.tex:
+	GUILE_LOAD_PATH=$(load_path):$$GUILE_LOAD_PATH \
+	$(skribilo) $(skrflags) --target=latex -o $@ $<
+
+.skb.ctx:
+	GUILE_LOAD_PATH=$(load_path):$$GUILE_LOAD_PATH \
+	$(skribilo) $(skrflags) --target=context -o $@ $<
 
 
 # Install/uninstall files not listed in `html_DATA'.

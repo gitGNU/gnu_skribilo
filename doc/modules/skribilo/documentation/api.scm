@@ -727,7 +727,7 @@
           (resolve (lambda (n e env)
                      (cond
                       ((engine-format? "latex" e)
-                       (skribe-warning "`doc-engine' not rendered in LaTeX")
+                       (skribe-warning 3 "`doc-engine' not rendered in LaTeX")
                        #f)
                       ((engine-format? "lout" e)
                        (list (map (lambda (c)
