@@ -196,6 +196,7 @@ This is all it takes to extend Skribilo's set of engines!])))
    (include "htmle.skb")
    (include "loute.skb")
    (include "latexe.skb")
+   (include "contexte.skb")
    (include "xmle.skb"))
 
 

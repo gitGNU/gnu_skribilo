@@ -1,0 +1,58 @@
+;;; context.skb  --  Documentation of the ConTeXt engine.
+;;;
+;;; Copyright 2008  Ludovic Courtès <ludo@gnu.org>
+;;;
+;;;
+;;; This program is free software; you can redistribute it and/or modify
+;;; it under the terms of the GNU General Public License as published by
+;;; the Free Software Foundation; either version 2 of the License, or
+;;; (at your option) any later version.
+;;;
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;;
+;;; You should have received a copy of the GNU General Public License
+;;; along with this program; if not, write to the Free Software
+;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+;;; USA.
+
+
+;*---------------------------------------------------------------------*/
+;*    Document                                                         */
+;*---------------------------------------------------------------------*/
+(section :title "ConTeXt Engine" :file #t
+   (mark "context-engine")
+   (index "ConTeXt" :note "Engine")
+   
+   (p [The ,(tt [context]) engine produces documents for the ,(ref :text
+[ConTeXt] :url "http://www.pragma-ade.nl/") document layout system,
+which can then be used to produce high-quality PostScript or PDF
+output.])
+   
+   (section :title [ConTeXt Customization]
+      
+      (doc-engine 'context
+	 `((document-style ,[A string describing the document style.])
+	   (user-style     ,[A string denoting a the name of a file
+                             specifying user customization])
+	   (font-type      ,[A string denoting the default font family.])
+	   (font-size      ,[An integer representing the default font size.])
+	   (image-format   ,[A list of supported image formats.])
+
+	   (source-comment-color "The source comment color.")
+	   (source-error-color "The source error color.")
+	   (source-define-color "The source define color.")
+	   (source-module-color "The source module color.")
+	   (source-markup-color "The source markup color.")
+	   (source-thread-color "The source thread color.")
+	   (source-string-color "The source string color.")
+	   (source-bracket-color "The source bracket color.")
+	   (source-type-color "The source type color."))
+	 :source "skribilo/engine/context.scm")))
+
+;;; Local Variables:
+;;; coding: latin-1
+;;; ispell-local-dictionary: "american"
+;;; End:

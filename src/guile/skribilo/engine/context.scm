@@ -1,6 +1,6 @@
 ;;; context.scm  --  ConTeXt engine.
 ;;;
-;;; Copyright 2007  Ludovic Courtès <ludo@chbouib.org>
+;;; Copyright 2007, 2008  Ludovic Courtès <ludo@chbouib.org>
 ;;; Copyright 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
 ;;;
 ;;;
@@ -43,26 +43,6 @@
 
 
 
-;;; ======================================================================
-;;;	context-customs ...
-;;; ======================================================================
-(define context-customs
-  '((source-comment-color "#ffa600")
-    (source-error-color "red")
-    (source-define-color "#6959cf")
-    (source-module-color "#1919af")
-    (source-markup-color "#1919af")
-    (source-thread-color "#ad4386")
-    (source-string-color "red")
-    (source-bracket-color "red")
-    (source-type-color "#00cf00")
-    (index-page-ref #t)
-    (image-format ("jpg"))
-    (font-size 11)
-    (font-type "roman")
-    (user-style #f)
-    (document-style "book")))
-
 ;;; ======================================================================
 ;;;	context-encoding ...
 ;;; ======================================================================
@@ -418,7 +398,21 @@
 	 :delegate (find-engine 'base)
 	 :filter (make-string-replace context-encoding)
 	 :symbol-table (context-symbol-table (lambda (m) (format #f "$~a$" m)))
-	 :custom context-customs)))
+	 :custom '((source-comment-color "#ffa600")
+                   (source-error-color "red")
+                   (source-define-color "#6959cf")
+                   (source-module-color "#1919af")
+                   (source-markup-color "#1919af")
+                   (source-thread-color "#ad4386")
+                   (source-string-color "red")
+                   (source-bracket-color "red")
+                   (source-type-color "#00cf00")
+                   ;;(index-page-ref #t)
+                   (image-format ("jpg"))
+                   (font-size 11)
+                   (font-type "roman")
+                   (user-style #f)
+                   (document-style "book")))))
 
 ;;; ======================================================================
 ;;;	document ...
