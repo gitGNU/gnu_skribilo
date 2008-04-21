@@ -1,8 +1,14 @@
 # List of source files which contain translatable strings.
 #
-# Copyright 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
+# Copyright 2007, 2008  Ludovic Courtès <ludo@gnu.org>
 
 src/guile/skribilo/utils/syntax.scm
-src/guile/skribilo/condition.scm
-src/guile/skribilo/biblio.scm
 src/guile/skribilo/biblio/template.scm
+src/guile/skribilo/ast.scm
+src/guile/skribilo/biblio.scm
+src/guile/skribilo/condition.scm
+src/guile/skribilo/engine.scm
+src/guile/skribilo/index.scm
+src/guile/skribilo/source.scm
+src/guile/skribilo/sui.scm
+src/guile/skribilo/verify.scm
