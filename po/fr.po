@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: ludo@gnu.org\n"
-"POT-Creation-Date: 2008-02-18 14:57+0100\n"
+"POT-Creation-Date: 2008-04-21 23:24+0200\n"
 "PO-Revision-Date: 2007-02-05 16:02+0100\n"
 "Last-Translator: Ludovic Courtès <ludo@gnu.org>\n"
 "Language-Team: fr <LL@li.org>\n"
@@ -19,6 +19,73 @@ msgstr ""
 #: src/guile/skribilo/utils/syntax.scm:53
 msgid "unexpected character in Skribilo module"
 msgstr "caractère inattendu dans le module Skribilo"
+
+#: src/guile/skribilo/biblio/template.scm:150
+#: src/guile/skribilo/biblio/template.scm:210
+msgid "Technical Report"
+msgstr "Rapport Technique"
+
+#: src/guile/skribilo/biblio/template.scm:180
+msgid "editor"
+msgstr ""
+
+#: src/guile/skribilo/biblio/template.scm:181
+msgid "Chapter "
+msgstr ""
+
+#: src/guile/skribilo/biblio/template.scm:186
+msgid "PhD Thesis"
+msgstr "Thèse de doctorat"
+
+#: src/guile/skribilo/ast.scm:138
+#, scheme-format
+msgid "orphan node: ~a~%"
+msgstr ""
+
+#: src/guile/skribilo/ast.scm:145
+#, scheme-format
+msgid "cycle found in AST: ~a~%"
+msgstr ""
+
+#: src/guile/skribilo/ast.scm:152
+#, scheme-format
+msgid "~a: unknown markup option for `~a'~%"
+msgstr ""
+
+#: src/guile/skribilo/ast.scm:160
+#, scheme-format
+msgid "`~a' (~a): markup identifier already bound~%"
+msgstr ""
+
+#: src/guile/skribilo/ast.scm:168
+#, fuzzy, scheme-format
+msgid "undefined AST error: ~a~%"
+msgstr "erreur skribilo indéfinie : ~S~%"
+
+#: src/guile/skribilo/biblio.scm:110
+#, scheme-format
+msgid "~a:~a:~a: invalid bibliography entry: ~a~%"
+msgstr "~a:~a:~a: entrée de bibliographie incorrecte : ~a~%"
+
+#: src/guile/skribilo/biblio.scm:113
+#, scheme-format
+msgid "invalid bibliography entry: ~a~%"
+msgstr "entrée de bibliographie incorrecte : ~a~%"
+
+#: src/guile/skribilo/biblio.scm:117
+#, scheme-format
+msgid "invalid bibliography entry template: `~a', in `~a'~%"
+msgstr "patron de bibliographie incorrect : `~a', dans `~a'~%"
+
+#: src/guile/skribilo/biblio.scm:122
+#, fuzzy, scheme-format
+msgid "invalid bibliography entry s-exp: `~a'~%"
+msgstr "entrée de bibliographie incorrecte : ~a~%"
+
+#: src/guile/skribilo/biblio.scm:126
+#, scheme-format
+msgid "undefined bibliography error: ~a~%"
+msgstr "erreur de bibliographie indéfinie : ~a~%"
 
 #: src/guile/skribilo/condition.scm:124
 #, scheme-format
@@ -55,44 +122,52 @@ msgstr "erreur de fichier : ~a~%"
 msgid "undefined skribilo error: ~S~%"
 msgstr "erreur skribilo indéfinie : ~S~%"
 
-#: src/guile/skribilo/biblio.scm:110
+#: src/guile/skribilo/engine.scm:77
 #, scheme-format
-msgid "~a:~a:~a: invalid bibliography entry: ~a~%"
-msgstr "~a:~a:~a: entrée de bibliographie incorrecte : ~a~%"
+msgid "unknown engine `~a'~%"
+msgstr ""
 
-#: src/guile/skribilo/biblio.scm:113
-#, scheme-format
-msgid "invalid bibliography entry: ~a~%"
-msgstr "entrée de bibliographie incorrecte : ~a~%"
-
-#: src/guile/skribilo/biblio.scm:117
-#, scheme-format
-msgid "invalid bibliography entry template: `~a', in `~a'~%"
-msgstr "patron de bibliographie incorrect : `~a', dans `~a'~%"
-
-#: src/guile/skribilo/biblio.scm:122
+#: src/guile/skribilo/engine.scm:82
 #, fuzzy, scheme-format
-msgid "invalid bibliography entry s-exp: `~a'~%"
-msgstr "entrée de bibliographie incorrecte : ~a~%"
+msgid "undefined engine error: ~A~%"
+msgstr "erreur skribilo indéfinie : ~S~%"
 
-#: src/guile/skribilo/biblio.scm:126
+#: src/guile/skribilo/index.scm:97
 #, scheme-format
-msgid "undefined bibliography error: ~a~%"
-msgstr "erreur de bibliographie indéfinie : ~a~%"
-
-#: src/guile/skribilo/biblio/template.scm:150
-#: src/guile/skribilo/biblio/template.scm:210
-msgid "Technical Report"
-msgstr "Rapport Technique"
-
-#: src/guile/skribilo/biblio/template.scm:180
-msgid "editor"
+msgid "the-index: char-offset `~A' out of bounds~%"
 msgstr ""
 
-#: src/guile/skribilo/biblio/template.scm:181
-msgid "Chapter "
+#: src/guile/skribilo/source.scm:69
+#, scheme-format
+msgid "source language `~a' does not have an extractor~%"
 msgstr ""
 
-#: src/guile/skribilo/biblio/template.scm:186
-msgid "PhD Thesis"
-msgstr "Thèse de doctorat"
+#: src/guile/skribilo/source.scm:74
+#, scheme-format
+msgid "source definition of `~a' in language `~a' not found~%"
+msgstr ""
+
+#: src/guile/skribilo/source.scm:80
+#, fuzzy, scheme-format
+msgid "undefined source error: ~A~%"
+msgstr "erreur skribilo indéfinie : ~S~%"
+
+#: src/guile/skribilo/sui.scm:82
+#, scheme-format
+msgid "invalid SUI form: ~A~%"
+msgstr ""
+
+#: src/guile/skribilo/sui.scm:87
+#, fuzzy, scheme-format
+msgid "undefined sui error: ~A~%"
+msgstr "erreur skribilo indéfinie : ~S~%"
+
+#: src/guile/skribilo/verify.scm:74
+#, scheme-format
+msgid "option `~a' of markup `~a' not supported by engine `~a'~%"
+msgstr ""
+
+#: src/guile/skribilo/verify.scm:81
+#, fuzzy, scheme-format
+msgid "undefined verify error: ~a~%"
+msgstr "erreur skribilo indéfinie : ~S~%"
