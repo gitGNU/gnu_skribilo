@@ -1,7 +1,7 @@
 ;;; lisp.scm -- Lisp Family Fontification
 ;;;
+;;; Copyright 2005, 2006, 2007, 2008  Ludovic Courtès  <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
-;;; Copyright 2005, 2006, 2007  Ludovic Courtès  <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -219,7 +219,7 @@
 	 (and (eq? def fun) exp))
 	(('define (? symbol? var) . _)
 	 (and (eq? var def) exp))
-	(('markup-output (quote mk) . _)
+	(('markup-output mk . _)
 	 (and (eq? mk def) exp))
 	(else #f)))))
 

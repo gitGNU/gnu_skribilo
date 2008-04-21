@@ -282,7 +282,8 @@
 
 (define (check-cost! name est cost)
   (if (not (eqv? est cost))
-      (slib:warn name "cost check failed" est '!= cost)))
+      (format (current-error-port) "~a: cost check failed: ~a != ~a~%"
+              name est cost)))
 
 ;;;; Routines interfacing API layer to algorithms.
 
