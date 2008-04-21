@@ -1,5 +1,0 @@
-# Everything but `.po' files is generated.
-
-precious ^(Makefile(\.in)*|POTFILES|.*\.(sed|header|sin)|Rules-quot|skribilo\.pot|stamp-.*|.*\.g?mo)$
-
-# arch-tag: 4e7d09c2-0d78-4663-931c-ad2b02ffd6a2
