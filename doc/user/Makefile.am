@@ -6,6 +6,7 @@ EXTRA_DIST = bib.skb char.skb colframe.skb document.skb emacs.skb	\
   markup.skb ornament.skb package.skb pie.skb prgm.skb sectioning.skb	\
   skribilo-config.skb compiler.skb skribeinfo.skb slide.skb spacing.skb	\
   start.skb syntax.skb table.skb toc.skb user.skb xmle.skb		\
+  contexte.skb								\
   lout/book-style.lout lout/front-page.lout.in
 
 # Examples.
