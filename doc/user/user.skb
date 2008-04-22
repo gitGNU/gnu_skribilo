@@ -163,7 +163,22 @@ Skribilo makes these sort of text manipulation easy whereas other
 systems rely on the use of text preprocessors.])
 	 (item [
 The same source file can be compiled to various output formats such
-as HTML, PostScript, Info pages, etc.])))))
+as HTML, PostScript, Info pages, etc.]))))
+   
+   (section :title "More on Skribilo" :number #f
+      
+      (p [Skribilo is based on ,(ref :text [Skribe] :url *skribe-url*),
+which was designed and implemented by Manuel Serrano and Érick Gallesio.
+Although it departs from it on some aspects, it shares the overall
+design and philosophy.  Érick and Manuel described the main design
+decisions behind Skribe in a paper published in the 2005 Journal of
+Functional Programming (JFP) entitled ,(ref :url
+"http://www-sop.inria.fr/mimosa/Manuel.Serrano/publi/jfp05/article.html"
+:text (it [Skribe: A Functional Authoring Language])).  Although parts
+of the paper are slightly outdated, it gives a very good idea of
+Skribilo's innards, and notably contains a description of the 3 stages
+of documentation ``evaluation''.])))
+
 
 ;;; toc
 (if (engine-format? "latex")
