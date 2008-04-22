@@ -48,7 +48,8 @@ used in replacement of the ,(code "css") custom in order to produce
 stand alone HTML documents.])
 	   (js ,[A URL or a list of URLs of JavaScript programs used by 
 the document.])
-	   (emit-sui [Emit a SUI file for this document.])
+	   (emit-sui ,[Emit a SUI file for this document (see ,(numref
+:text [Section] :ident "sui") for details).])
 	   (background "The background color of the document.")
 	   (foreground "The foreground color of the document.")
 	   ;; the margins

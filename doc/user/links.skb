@@ -163,10 +163,11 @@ introduces mail annotation in a Skribe document.])
 (section :title "Skribe URL Index"
          :ident "sui"
    
-(p [A ,(emph "Skribe URL Index") (henceforth ,(sc "Sui")) describes the
-marks that are available in a Skribe document. It is to be used to
-make Skribe marks available to other Skribe documents. The syntax
-of a ,(sc "Sui") file is:])
+(p [A ,(emph "Skribe URL Index") (henceforth SUI) describes the marks
+that are available in a Skribe or Skribilo document.  It is to be used
+to make marks available to other Skribe/Skribilo documents through the
+,(param :skribe) option of the ,(markup-ref "ref") markup.  The syntax
+of a SUI file is:])
 
 (disp :verb #t :bg *prgm-skribe-color* [
 <sui>     --> (skribe-url-index <title>
@@ -178,12 +179,16 @@ of a ,(sc "Sui") file is:])
                 (subsubsection <sui-ref>*))
 <sui-ref> --> (<string> :file <file-name> :mark <string>)])
 
-(p [,(sc "Sui") files can be automatically produced by the Skribe compiler.
-For instance, in order to produce the ,(sc "Sui") file of this user
-manual, one should write:])
+(p [SUI files can be automatically produced by the Skribilo compiler.
+For instance, in order to produce the SUI file of this user
+manual, one should set the ,(ref :mark "html-engine" :text [,(tt
+[emit-sui]) HTML custom]) to ,(tt [#t]); a ,(tt [user.sui]) file will
+then be produced when the manual is compiled to HTML:]
 
-(disp :verb #t [
-$ skribilo user.skb -o user.sui])))
+(disp :verb #t
+  [skribilo -t html -o user.html user.skb])
+
+)))
 
 ;;; LocalWords:  Hyperlinks HTML URL url
 
