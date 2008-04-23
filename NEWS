@@ -32,6 +32,7 @@ Namely, `slide-outline-title' and
 ** The `:toc' option of `slide' determines whether to include it in the outline
 ** New option `:rulecolor' for `table'
 ** New `--sui-path' command-line option, new `*sui-path*' parameter
+** Fix SUI `:ident' references
 ** Use more SRFI-34/35 exception handling instead of `skribe-error'
 ** Lesser reliance on recursive make
 

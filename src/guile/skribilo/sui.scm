@@ -192,7 +192,7 @@
 	     (section (sui-search-ref 'sections refs (cadr section) class))
 	     (subsection (sui-search-ref 'subsections refs (cadr subsection) class))
 	     (subsubsection (sui-search-ref 'subsubsections refs (cadr subsubsection) class))
-	     (ident (sui-search-all-refs sui ident class))
+	     (ident (sui-search-all-refs refs (cadr ident) class))
 	     (else '())))
 	 (else
           (raise (condition (&invalid-sui-error
@@ -201,8 +201,27 @@
 ;*---------------------------------------------------------------------*/
 ;*    sui-search-all-refs ...                                          */
 ;*---------------------------------------------------------------------*/
-(define (sui-search-all-refs sui id refs)
-   '())
+(define (sui-search-all-refs refs id class)
+  ;; Search any kind of object with ident ID among REFS.
+  (define (find-mark full-ref)
+    (let loop ((ref full-ref))
+      (and (not (null? ref))
+           (or (and (eq? (car ref) :mark)
+                    (string=? (cadr ref) id)
+                    (let ((f (memq :file full-ref))
+                          (c (memq :mark full-ref)))
+                      (list (cons (and (pair? f) (cadr f))
+                                  (and (pair? c) (cadr c))))))
+               (loop (cdr ref))))))
+
+  (let loop ((ref-kind refs))
+    (and (not (null? ref-kind))
+         (or (and (pair? (car ref-kind))
+                  (let liip ((refs (cdar ref-kind)))
+                    (and (not (null? refs))
+                         (or (find-mark (car refs))
+                             (liip (cdr refs))))))
+             (loop (cdr ref-kind))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    sui-search-ref ...                                               */

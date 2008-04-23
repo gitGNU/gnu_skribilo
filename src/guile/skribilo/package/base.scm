@@ -1089,11 +1089,11 @@
    (define (skribe-ref skribe)
      (let* ((sui (load-sui skribe))
             (os  (the-options opts :skribe :class :text))
-            (u   (sui-ref->url (search-path (*sui-path*) skribe)
+            (u   (sui-ref->url (dirname (search-path (*sui-path*) skribe))
                                sui ident os)))
        (if (not u)
            (unref #f os 'sui-ref)
-           (ref :url u :text text :ident ident :class class))))
+           (ref :url u :text text :class class))))
    (define (handle-ref text)
       (new markup
 	 (markup 'ref)
