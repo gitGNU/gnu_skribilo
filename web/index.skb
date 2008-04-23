@@ -38,6 +38,10 @@
   (ref :url "http://en.wikipedia.org/wiki/Lightweight_markup_language"
      :text body))
 
+(define (wikipedia/esperanto . body)
+  (ref :url "http://en.wikipedia.org/wiki/Esperanto"
+     :text body))
+
 (define (scheme . body)
   (ref :url "http://schemers.org/" :text body))
 
@@ -308,7 +312,20 @@ derivative of ,(ref :url "http://docbook.org/" :text [Docbook]).])
 "http://os.inf.tu-dresden.de/~nf2/files/GOSH/" :text [GOSH]), ,(ref :url
 "http://mercnet.pt/plaindoc/pd.html" :text [PlainDoc]), ,(ref :url
 "http://www.methods.co.nz/asciidoc/" :text [AsciiDoc]), and many
-others.]))))
+others.])))
+	
+   (chapter :title [The Name] :number #f :file #f
+      
+      (p [Skribilo is an ,(wikipedia/esperanto [Esperanto]) noun, which
+literally means ,(ref :url
+"http://www.reta-vortaro.de/revo/art/skrib.html#skrib.0ilo" :text [``a
+tool to write'']) (prefix ``,(ref :url
+"http://www.reta-vortaro.de/revo/art/skrib.html" :text [skrib])''
+relates to writing, while suffix ``,(ref :text [-ilo] :url
+"http://www.reta-vortaro.de/revo/art/il.html")'' designates a tool).
+Interestingly, ``,(skribe* [skribe])'', which is the name of the tool
+Skribilo is based on, is an adverb meaning ``writing'' in
+,(wikipedia/esperanto [Esperanto]).])))
 
 
 ;;; Local Variables:
