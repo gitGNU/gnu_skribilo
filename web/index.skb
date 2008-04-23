@@ -69,7 +69,7 @@
   (ref :url "http://www.gnu.org/licenses/gpl.html" :text body))
 
 (define (emacs/outline . body)
-  (ref :url "http://www.gnu.org/software/emacs/manual/html_node/Outline-Format.html"
+  (ref :url "http://www.gnu.org/software/emacs/manual/html_node/emacs/Outline-Mode.html"
      :text body))
 
 (define (skribilo-ml . body)
@@ -211,7 +211,11 @@ changes ,(ref :ident "mailing-list" :text [on the mailing-list]).])
       
       (p [The repository can also be ,(ref :url
 "http://git.sv.gnu.org/gitweb/?p=skribilo.git;a=summary" :text
-[browsed on-line]).]))
+[browsed on-line]).])
+      
+      (p [A tentative list of milestones and to-do items is in the ,(ref
+:url "http://git.sv.gnu.org/gitweb/?p=skribilo.git;a=blob;f=TODO" :text
+[,(tt [TODO]) file]).]))
 
    (chapter :title [History] :number #f :file #f
 
@@ -254,7 +258,12 @@ programmers.]))]))
           (item [,(skribe* [Skribe]), the father of Skribilo.  Its
 predecessor is ,(scribe [Scribe]) and their goals were expressed in
 ,(ref :url "http://www-sop.inria.fr/mimosa/fp/Scribe/doc/scribe.html"
-:text [the Scribe white paper]) by Manuel Serrano and Erick Gallesio.])
+:text (it [the Scribe white paper])) by Manuel Serrano and Érick
+Gallesio.  Their 2005 Journal of Functional Programming (JFP) article
+entitled ,(ref :url
+"http://www-sop.inria.fr/mimosa/Manuel.Serrano/publi/jfp05/article.html"
+:text (it [Skribe: A Functional Authoring Language])) provides further
+insight.])
           (item [Andy Wingo's ,(ref :url
 "http://wingolog.org/software/guile-lib/texinfo/" :text [STexi]) (,(ref
 :text [Texinfo] :url "http://www.gnu.org/software/texinfo/") as
@@ -263,7 +272,10 @@ functional ,(ref :text (tt [fold-layout]) :url
 "http://home.gna.org/guile-lib/doc/ref/sxml.fold/") operator is also
 very interesting.])
           (item [,(ref :url "http://okmij.org/ftp/Scheme/SXML.html"
-:text [SXML]), XML as S-expressions.])
+:text [SXML]), XML as S-expressions.  Oleg Kiselyov's discussion of
+,(ref :text [implementation strategies for a purely functional SXML
+tree] :url "http://okmij.org/ftp/Scheme/parent-pointers.txt") is a good
+source of inspiration.])
 	  (item [,(ref :url
 	  "http://www.ccs.neu.edu/home/dorai/mistie/mistie.html" :text
 [Mistie]), a ``programmable filter'' in Scheme (for MzScheme) that
