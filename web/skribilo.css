@@ -1,0 +1,160 @@
+pre { font-family: monospace }
+tt { font-family: monospace }
+code { font-family: monospace }
+body { margin: 1em 1.5em 1.5em 1.5em; background: #ffffff; }
+p { text-align: justify; }
+p.flushright { text-align: right }
+p.flushleft { text-align: left }
+span.sc { font-variant: small-caps }
+span.sf { font-family: sans-serif }
+li { margin: 1%; text-align: justify; }
+
+
+.skribilo-title {
+  font-family: sans-serif;
+  font-weight: bolder;
+  font-size: large;
+  text-align: right;
+  background: #ee7777; /* #dddde0; */
+  border-top-color: black;
+  border-top-style: solid;
+  border-top-width: 1px;
+}
+
+.skribilo-body {
+  font-family: sans-serif;
+  font-weight: normal;
+  text-align: left;
+  background: #ffffff;
+  padding: 0 5% 0 5%
+}
+
+.skribilo-ending {
+  /* The Skribilo advertising message.  */
+  font-family: sans-serif;
+  font-weight: normal;
+  font-size: small;
+  text-align: right;
+  color: #999;
+  border-top-style: dashed;
+  border-top-width: 1px;
+  border-top-color: #aaa;
+  margin: 20px 0 0 0;
+}
+
+.chapter {  /* chapter title when `:file' is #f */
+  font-family: sans-serif;
+  font-weight: bolder;
+  font-size: x-large;
+  text-align: right;
+  background: #eeeeee;
+}
+
+.section-title {
+  background: #eeeef0;
+  font-family: sans-serif;
+  text-align: right;
+}
+
+.subsection-title { font-family: sans-serif; }
+
+.code-excerpt {
+  background: #eeeef0;
+  font-family: fixed-width, Courier;
+  text-align: left;
+  margin: 20px;
+  padding: 10px 25px 10px 25px;
+  border-width: 0px;
+  align: center;
+}
+
+/* Links.  */
+
+a { text-decoration: none; border: 0 0 0 0; border-style: none; }
+a:link { color: #333344; }
+a:hover { background: #ee7777; color: #333344; }
+a:visited { color: #443333; }
+
+
+/* Navigation tabs (currently unused) */
+
+a.inactive { padding: 0px 10px 0px 10px; }
+
+div.navtabs-title {
+  padding: 0 0 0 0;
+  margin: 0 0 0 0;
+  border: 0 0 0 0;
+  text-align: right;
+  background: #8381de;
+}
+div.navtabs-bar {
+  margin: 0 0 0 0;
+  border: 0 0 0 0;
+  text-align: right;
+  border-top-color: black;
+  border-top-style: solid;
+  border-top-width: 1px;
+  padding: 0 0 0 20%;
+  margin-bottom: 5%;
+  background: white;
+}
+div.navtabs-tabs {
+  color: black;
+  border-width: 0;
+  border-color: black;
+  border-style: dotted;
+  padding: 2px 10px 0px 10px;
+  margin: 0 1px 0 0;
+  text-decoration: none;
+  background: white;
+  font-family: sans-serif;
+}
+
+
+/* Margins */
+
+table.left-margin-menu {
+  border-radius: 10pt;
+  -moz-border-radius: 10pt;
+  background: #eee;
+  margin: 10px;
+}
+
+
+td.skribilo-left-margin {
+  border-width: 0;
+  padding: 0 10px 0 10px;
+  height: 100%;
+  background: #ffffff;
+  font-family: sans-serif, Helvetica, Arial;
+  font-size: small;
+}
+
+div.skribilo-left-margin {
+  position: fixed;
+  /* width: 10%; */
+}
+
+table.skribilo-margins {
+  border-width: 1px 0 0 0;
+  border-style: solid;
+  border-color: black;
+  margin: 0px;
+  height: 100%;
+}
+
+div.skribilo-right-margin {
+  border-width: 0 0 0 1px;
+  border-left-style: solid;
+  border-left-color: black;
+  margin: 0;
+  height: 100%;
+}
+table.skribilo-margins td.skribilo-right-margin {
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-bottom-color: black;
+}
+
+/* arch-tag: 96319a9d-c819-48dd-b7c9-dd3a64a21dde
+ */

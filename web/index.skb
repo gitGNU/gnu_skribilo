@@ -1,0 +1,297 @@
+;;;
+;;; Skribilo's Wonderful Website.
+;;;
+
+(use-modules (skribilo ast)
+	     (skribilo engine)
+	     (skribilo source lisp)
+	     (skribilo package html-navtabs))
+
+(define (html-tabs n e)
+  ;; Create one "navigation tab" for each chapter.
+  (let ((doc (ast-document n)))
+    (map handle
+         (container-search-down (lambda (n)
+                                  (is-markup? n 'chapter))
+                                doc))))
+
+
+(let ((html (find-engine 'html)))
+  (if (engine? html)
+      (begin
+        ;; Customizing the HTML output...
+	(engine-custom-set! html 'css "skribilo.css")
+        (engine-custom-set! html 'html-navtabs-produce-css? #f)
+        (engine-custom-set! html 'html-navtabs html-tabs))))
+
+
+
+;;;
+;;; List of useful URLs.
+;;;
+
+(define (wikipedia/markup . body)
+  (ref :url "http://en.wikipedia.org/wiki/Markup_language"
+     :text body))
+
+(define (wikipedia/markup-less . body)
+  (ref :url "http://en.wikipedia.org/wiki/Lightweight_markup_language"
+     :text body))
+
+(define (scheme . body)
+  (ref :url "http://schemers.org/" :text body))
+
+(define (guile . body)
+  (ref :url "http://www.gnu.org/software/guile/guile.html" :text body))
+
+(define (r6rs . body)
+  (ref :url "http://r6rs.org/" :text body))
+
+(define (latex . body)
+  (ref :url "http://www.latex-project.org/" :text body))
+  
+(define (context . body)
+  (ref :url "http://www.pragma-ade.nl/" :text body))
+
+(define (lout . body)
+  (ref :url "http://lout.sf.net/" :text body))
+
+(define (ploticus . body)
+  (ref :url "http://ploticus.sf.net/" :text body))
+
+(define (guile-lib . body)
+  (ref :url "http://home.gna.org/guile-lib/" :text body))
+
+(define (freedom . body)
+  (ref :url "http://www.gnu.org/philosophy/free-sw.html" :text body))
+
+(define (gpl . body)
+  (ref :url "http://www.gnu.org/licenses/gpl.html" :text body))
+
+(define (emacs/outline . body)
+  (ref :url "http://www.gnu.org/software/emacs/manual/html_node/Outline-Format.html"
+     :text body))
+
+(define (skribilo-ml . body)
+  (ref :url "http://lists.nongnu.org/mailman/listinfo/skribilo-users"
+     :text body))
+
+(define (git . body)
+  (ref :url "http://git.or.cz/" :text body))
+
+(define (skribe* . body)
+  (ref :url "http://www-sop.inria.fr/mimosa/fp/Skribe/" :text body))
+
+(define (scribe . body)
+  (ref :url "http://www-sop.inria.fr/mimosa/fp/Scribe/" :text body))
+
+(define (bigloo . body)
+  (ref :url "http://www-sop.inria.fr/mimosa/fp/Bigloo/" :text body))
+
+(define (stklos . body)
+  (ref :url "http://www.stklos.org/" :text body))
+
+
+;;;
+;;; The website.
+;;;
+
+(document :title [Skribilo: The Ultimate Document Programming Framework]
+   :author #f
+   :keywords '("Skribilo" "document programming"
+               "document formatting" "authoring"
+               "Scheme" "Guile"
+               "Skribe" "Lout" "LaTeX" "HTML")
+
+   (mark "intro")
+
+   (p [Skribilo is a ,(freedom [free]) document production tool that
+takes a structured document representation as its input and renders that
+document in a variety of output formats: HTML for on-line browsing, and
+,(lout [Lout]) and ,(latex [LaTeX]) for high-quality hard copies.])
+
+   (p [The input document can use Skribilo's ,(wikipedia/markup [markup
+language]) to provide information about the document's structure, which
+is similar to HTML or ,(latex [LaTeX]) and does not require expertise.
+Alternatively, it can use a simpler, ``,(wikipedia/markup-less
+[markup-less])'' format that borrows from ,(emacs/outline [Emacs'
+outline mode]) and from other conventions used in emails, Usenet and
+text.])
+
+   (p [Last but not least, Skribilo can be thought of as a complete
+,(emph [document programming framework]) for the ,(scheme [Scheme
+programming language]) that may be used to automate a variety of
+document generation tasks.  Skribilo uses ,(guile [GNU Guile]) 1.8 as
+the underlying Scheme implementation.])
+
+
+   (chapter :title [Features] :number #f :file #f
+
+      (itemize
+         (item [Output in a variety of formats: HTML, XML, ,(lout
+[Lout]), ,(latex [LaTeX]), ,(context [ConTeXt]).])
+         (item [Input using ,(skribe* [Skribe])'s markup (see
+,(ref :mark "self" :text [this example])) or using free form,
+markup-less text and conventions similar to those used in
+,(emacs/outline [Emacs' outline mode]).])
+         (item [Packages are available to produce: slides (overhead
+transparencies), pie charts, equation formatting, syntax highlighting of
+computer programs, and others.])
+         (item [Bibliography management, i.e., BibTeX on steroids thanks
+to the programmability brought by ,(scheme [Scheme]).])
+         (item [Use of a proper module system (currently that of ,(guile
+[Guile])) rather than ,(tt [load])-style interactions.])
+         (item [And much more!  :-)])))
+
+   (chapter :title [Availability] :number #f :file #f
+
+      (p [Releases are available from the ,(ref :text [download area]
+:url "http://dl.sv.nongnu.org/releases/skribilo/").])
+
+      (p [Skribilo is distributed under the terms of the ,(gpl [GNU
+General Public Licence]), version 2 or later.  In order to use Skribilo,
+you need the following pieces of software:
+
+,(itemize
+    (item [,(guile [GNU Guile]) 1.8.3 or later;])
+    (item [,(ref :url "http://www.nongnu.org/guile-reader/"
+               :text [Guile-Reader]) 0.3 or later;])
+    (item [either ,(lout [Lout]) (3.31 or later) or ,(latex [LaTeX]) to produce
+hard copies (PostScript/PDF);])
+    (item [optionally, ,(ploticus [Ploticus]) to produce pie charts
+(alternatively, ,(lout [Lout]) can be used for that purpose).]))]))
+
+   (chapter :title [Documentation] :number #f :file #f ;; FIXME: Do it!
+
+      (p [The user manual is available in the following formats:
+
+,(itemize
+    (item (ref :text [HTML] :url "doc/user.html"))
+    (item (ref :text [PDF] :url "doc/user.pdf")))]))
+
+   (chapter :title [Example] :number #f :file #f
+
+      (p [Here is a live example: the source code of this web page,
+colored using Skribilo's computer program coloring features.])
+
+      (mark "self")
+      (tt (prog
+	     (source :language skribe
+		:file "index.skb"))))
+
+   (chapter :title [Mailing List] :number #f :file #f
+      :ident "mailing-list"
+
+      (p [If you want to complain or tell how bright and shinning your
+life has become since you discovered Skribilo, then go ahead and
+subscribe to the ,(skribilo-ml [,(tt [skribilo-users]) mailing list])!
+If you want to suggest improvements, that's also where they should go!]))
+
+   (chapter :title [Development] :number #f :file #f
+
+      (p [Development is done using the ,(git [Git]) distributed
+revision control system.  You can fetch a copy of the source code
+repository using the following incantation:
+
+,(frame :class "code-excerpt" :border #f :margin #f
+    (code [git-clone git://git.sv.gnu.org/skribilo.git]))
+
+You can then happily hack on your side and eventually promote your
+changes ,(ref :ident "mailing-list" :text [on the mailing-list]).])
+      
+      (p [The repository can also be ,(ref :url
+"http://git.sv.gnu.org/gitweb/?p=skribilo.git;a=summary" :text
+[browsed on-line]).]))
+
+   (chapter :title [History] :number #f :file #f
+
+      (p [Skribilo is a direct descendant of ,(skribe* [Skribe]), a
+document production tool written by Manuel Serrano for ,(bigloo
+[Bigloo]) and ported to ,(stklos [STkLos]) by Erick Gallesio.
+Development of ,(skribe* [Skribe]) started around 2003 as a successor of
+Manuel's previous documentation system named ,(scribe [Scribe]).])
+
+      (p [Skribilo derives from Skribe 1.2d but it differs in a number
+of ways:
+
+,(itemize
+    (item [It contains new packages (pie charts, equation formatting)
+and a new engine (the ,(lout [Lout]) engine).])
+    (item [Symmetrically to the notion of engine (rendering back-ends),
+Skribilo has the concept of ,(emph [readers]).  A reader is the part
+that reads an input document in a specific syntax and returns an
+abstract syntax tree understandable by the core mechanisms.  Skribilo
+currently comes with two readers: one that implements the standard
+Skribe syntax, and one that reads free form text with annotations
+similar to those found in ,(emacs/outline [Emacs' outline mode]).])
+    (item [It's been reworked to be used as a framework or library,
+rather than as a stand-alone program.  As a result, the logical
+separation of modules has been improved, the globally shared state has
+been significantly reduced, and ,(ref :url
+"http://srfi.schemers.org/srfi-35/srfi-35.html" :text [SRFI-35
+exceptions]) are used rather than plain ,(tt [error]) or ,(tt [exit])
+calls.  The idea is to expose ,(emph [all the core mechanisms]) of
+Skribilo to the user, thereby blurring the border between the user
+program or document and the core of the system.])
+    (item [Although Skribilo only runs on ,(guile [GNU Guile]), care was
+taken to use mostly portable APIs (,(ref :url "http://srfi.schemers.org/"
+:text [SRFIs])) so that the code is intelligible to most Scheme
+programmers.]))]))
+
+    (chapter :title [Related Links] :number #f :file #f
+
+       (itemize
+          (item [,(skribe* [Skribe]), the father of Skribilo.  Its
+predecessor is ,(scribe [Scribe]) and their goals were expressed in
+,(ref :url "http://www-sop.inria.fr/mimosa/fp/Scribe/doc/scribe.html"
+:text [the Scribe white paper]) by Manuel Serrano and Erick Gallesio.])
+          (item [Andy Wingo's ,(ref :url
+"http://wingolog.org/software/guile-lib/texinfo/" :text [STexi]) (,(ref
+:text [Texinfo] :url "http://www.gnu.org/software/texinfo/") as
+S-expressions), available in ,(guile-lib [Guile-lib]).  The purely
+functional ,(ref :text (tt [fold-layout]) :url
+"http://home.gna.org/guile-lib/doc/ref/sxml.fold/") operator is also
+very interesting.])
+          (item [,(ref :url "http://okmij.org/ftp/Scheme/SXML.html"
+:text [SXML]), XML as S-expressions.])
+	  (item [,(ref :url
+	  "http://www.ccs.neu.edu/home/dorai/mistie/mistie.html" :text
+[Mistie]), a ``programmable filter'' in Scheme (for MzScheme) that
+allows the definition of filters from one markup language to another
+one.])
+	  (item [,(ref :url "http://www.it.usyd.edu.au/~jeff/nonpareil/"
+:text [Nonpareil]), Jeff Kingston's much anticipated successor to ,(lout
+[Lout]), both being purely functional document formatting
+systems/languages.  Although Nonpareil is more ambitious than Skribilo,
+the document entitled ,(it [Nonpareil Document Formatting]) shows
+interesting similarities between both systems: separation of document
+syntax and programming syntax (``readers'' and Scheme in Skribilo),
+representation of document structure separated from the representation
+of a laid out document (Nonpareil's ,(it [doc]) objects resemble
+Skribilo's ,(tt [<ast>]) objects; its ,(it [scene]) objects have no
+equivalent in Skribilo since Skribilo doesn't address text layout by
+itself).  It also includes interesting discussions about text selection
+and document traversal (Nonpareil's ,(it [doc]) objects have no parent
+pointers, unlike Skribilo's ,(tt [<ast>])).])
+	  (item [Good ol' ,(ref :url
+"http://www.gnu.org/software/texinfo/" :text [GNU Texinfo]) abstracts
+the various kinds of back-ends very well (in particular its
+cross-reference-related commands).])
+          (item [,(ref :url
+"http://www.coyotos.org/docs/osdoc/osdoc.html" :text [OSDoc]), a
+derivative of ,(ref :url "http://docbook.org/" :text [Docbook]).])
+          (item [Systems that produce documents in various formats from
+(almost) markup-less input text: ,(ref :url "http://txt2tags.sf.net/"
+:text [txt2tags]), ,(ref :url
+"http://os.inf.tu-dresden.de/~nf2/files/GOSH/" :text [GOSH]), ,(ref :url
+"http://mercnet.pt/plaindoc/pd.html" :text [PlainDoc]), ,(ref :url
+"http://www.methods.co.nz/asciidoc/" :text [AsciiDoc]), and many
+others.]))))
+
+
+;;; Local Variables:
+;;; coding: latin-1
+;;; ispell-local-dictionary: "american"
+;;; End:
+
+;;; arch-tag: fd51e0ce-d99f-4b70-8b92-9afbcfcf8855
