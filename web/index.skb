@@ -90,6 +90,10 @@
 
 (define (stklos . body)
   (ref :url "http://www.stklos.org/" :text body))
+  
+(define %user-sui
+  ;; Location of the User Manual's SUI file.
+  "doc/user.sui")
 
 
 ;;;
@@ -128,17 +132,23 @@ the underlying Scheme implementation.])
    (chapter :title [Features] :number #f :file #f
 
       (itemize
-         (item [Output in a variety of formats: HTML, XML, ,(lout
-[Lout]), ,(latex [LaTeX]), ,(context [ConTeXt]).])
-         (item [Input using ,(skribe* [Skribe])'s markup (see
-,(ref :mark "self" :text [this example])) or using free form,
-markup-less text and conventions similar to those used in
-,(emacs/outline [Emacs' outline mode]).])
-         (item [Packages are available to produce: slides (overhead
-transparencies), pie charts, equation formatting, syntax highlighting of
-computer programs, and others.])
-         (item [Bibliography management, i.e., BibTeX on steroids thanks
-to the programmability brought by ,(scheme [Scheme]).])
+         (item [Output in a ,(ref :skribe %user-sui :ident "engines"
+:text [variety of formats]): HTML, XML, ,(lout [Lout]), ,(latex
+[LaTeX]), ,(context [ConTeXt]).])
+         (item [Input using ,(skribe* [Skribe])'s ,(ref :skribe
+%user-sui :ident "skribe-syntax" :text [markup]) (see ,(ref :mark "self"
+:text [this example])) or using free form, markup-less text and
+conventions similar to those used in ,(ref :skribe %user-sui :ident
+"outline-syntax" :text [Emacs' outline mode]).])
+         (item [Packages are available to produce: ,(ref :skribe
+%user-sui :ident "slides" :text [slides]) (overhead transparencies),
+,(ref :skribe %user-sui :ident "pie-charts" :text [pie charts]), ,(ref
+:skribe %user-sui :ident "equations" :text [equation formatting]), ,(ref
+:skribe %user-sui :ident "programs" :text [syntax highlighting of
+computer programs]), and others.])
+         (item [,(ref :skribe %user-sui :chapter "Bibliographies" :text
+[Bibliography management]), i.e., BibTeX on steroids thanks to the
+programmability brought by ,(scheme [Scheme]).])
          (item [Use of a proper module system (currently that of ,(guile
 [Guile])) rather than ,(tt [load])-style interactions.])
          (item [And much more!  :-)])))
@@ -156,8 +166,8 @@ you need the following pieces of software:
     (item [,(guile [GNU Guile]) 1.8.3 or later;])
     (item [,(ref :url "http://www.nongnu.org/guile-reader/"
                :text [Guile-Reader]) 0.3 or later;])
-    (item [either ,(lout [Lout]) (3.31 or later) or ,(latex [LaTeX]) to produce
-hard copies (PostScript/PDF);])
+    (item [either ,(lout [Lout]) (3.31 or later), ,(latex [LaTeX]) or
+,(context [ConTeXt]) to produce hard copies (PostScript/PDF);])
     (item [optionally, ,(ploticus [Ploticus]) to produce pie charts
 (alternatively, ,(lout [Lout]) can be used for that purpose).]))]))
 

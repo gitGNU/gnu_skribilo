@@ -1,6 +1,6 @@
 ;;; eq.skb  --  Equation formatting.
 ;;;
-;;; Copyright 2006, 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2006, 2007, 2008  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 
 ;;; FIXME: This is a stub and must be completed!
 
-(chapter :title [Equation Formatting]
+(chapter :title [Equation Formatting] :ident "equations"
    
    (p [Skribilo comes with an equation formatting package.  This package
 may be loaded by adding the following form at the top of your document:]

@@ -31,6 +31,7 @@
 ;*    Computer programs                                                */
 ;*---------------------------------------------------------------------*/
 (chapter :title "Computer Programs" 
+         :ident "programs"
 
 (p [In a document describing a computer programming language, it is
 common to include excerpt of programs.  Program code is typically

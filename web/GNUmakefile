@@ -1,10 +1,16 @@
-SKRIBILO := skribilo -v2
+top_srcdir = ..
+
+SKRIBILO := $(top_srcdir)/src/pre-inst-skribilo -v2
 
 docs := index.skb
-products := $(docs:%.skb=%.html)
+products := doc $(docs:%.skb=%.html)
 
 
 all: $(products)
+
+# We need this dummy directory to have correct SUI references.
+doc:
+	ln -s $(top_srcdir)/doc/user doc
 
 %.html: %.skb
 	$(SKRIBILO) --target=html -o $@ $^
