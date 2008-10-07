@@ -311,7 +311,9 @@ derivative of ,(ref :url "http://docbook.org/" :text [Docbook]).])
 :text [txt2tags]), ,(ref :url
 "http://os.inf.tu-dresden.de/~nf2/files/GOSH/" :text [GOSH]), ,(ref :url
 "http://mercnet.pt/plaindoc/pd.html" :text [PlainDoc]), ,(ref :url
-"http://www.methods.co.nz/asciidoc/" :text [AsciiDoc]), and many
+"http://www.methods.co.nz/asciidoc/" :text [AsciiDoc]), ,(ref :url
+"http://docutils.sourceforge.net/rst.html" :text [reStructured Text
+(RST)]), ,(ref :url "http://www.t3x.org/bits/sd/" :text [SD]), and many
 others.])))
 	
    (chapter :title [The Name] :number #f :file #f
