@@ -19,7 +19,7 @@
 ;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
 ;;; USA.
 
-(define-module (skribilo engine latex)
+(define-module (skribilo engine info)
   :use-module (skribilo lib)
   :use-module (skribilo ast)
   :use-module (skribilo engine)
