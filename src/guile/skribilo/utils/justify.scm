@@ -56,7 +56,7 @@
 	 (cond
 	    ((= r len)
 	     str)
-	    ((char=? (string-ref str r) #a008)
+	    ((char=? (string-ref str r) #\bs)
 	     (string-set! str r #\Space)
 	     (loop (+ r 1)))
 	    (else
@@ -106,7 +106,7 @@
 ;*    contains #\spaces.                                               */
 ;*---------------------------------------------------------------------*/
 (define (output-token str)
-   ((car *justifiers*) 'output (string-replace str #\space #a008)))
+   ((car *justifiers*) 'output (string-replace str #\space #\bs)))
 
 ;*---------------------------------------------------------------------*/
 ;*    output-newline ...                                               */
@@ -132,8 +132,10 @@
 (define (output-flush margin)
    (for-each (if (> margin 0)
 		 (let ((m (make-string margin #\space)))
-		    (lambda (x) (print m (text-string x))))
-		 (lambda (x) (print (text-string x))))
+		    (lambda (x)
+                      (display m)
+                      (display (text-string x))))
+		 (lambda (x) (display (text-string x))))
 	     ((car *justifiers*) 'flush)))
 
 ;*---------------------------------------------------------------------*/
@@ -426,7 +428,7 @@
 
 (define (my-string-append . s)
    (newline (current-error-port))
-   (fprint (current-error-port) "s: " s)
+   (format (current-error-port) "s: ~a~%" s)
    (apply string-append s))
 
 
