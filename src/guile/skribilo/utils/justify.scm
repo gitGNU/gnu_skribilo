@@ -20,6 +20,7 @@
 ;;; USA.
 
 (define-module (skribilo utils justify)
+  :use-module (srfi srfi-13)
   :export (make-justifier output-flush
 
 	   *text-column-width*
@@ -86,11 +87,6 @@
 			  (lambda ()
 			     (output str)))))
 
-;*---------------------------------------------------------------------*/
-;*    *justifiers* ...                                                 */
-;*---------------------------------------------------------------------*/
-(define *justifiers* (list (make-justifier *text-column-width*
-					   *text-justification*)))
 (define *margin* 0)
 
 ;*---------------------------------------------------------------------*/
@@ -113,19 +109,7 @@
 ;*---------------------------------------------------------------------*/
 (define (output-newline)
    ((car *justifiers*) 'newline))
-   
-;*---------------------------------------------------------------------*/
-;*    pre-output ...                                                   */
-;*---------------------------------------------------------------------*/
-(define (pre-output val)
-   ((car *justifiers*) 'pre val))
-   
-;*---------------------------------------------------------------------*/
-;*    post-output ...                                                  */
-;*---------------------------------------------------------------------*/
-(define (post-output val)
-   ((car *justifiers*) 'post val))
-   
+
 ;*---------------------------------------------------------------------*/
 ;*    output-flush ...                                                 */
 ;*---------------------------------------------------------------------*/
@@ -174,12 +158,6 @@
 ;*    *spaces* ...                                                     */
 ;*---------------------------------------------------------------------*/
 (define *spaces* '(#\Space #\Tab #\Newline))
-
-;*---------------------------------------------------------------------*/
-;*    strtok ...                                                       */
-;*---------------------------------------------------------------------*/
-(define (strtok str delims)
-   (reverse (kotrts str delims)))
 
 ;*---------------------------------------------------------------------*/
 ;*    kotrts ...                                                       */
@@ -314,13 +292,6 @@
 ;*    tokens-justify ...                                               */
 ;*---------------------------------------------------------------------*/
 (define (tokens-justify justifier tokens width)
-   (define (reverse-line lines)
-      (let ((nl (string #\Newline)))
-         (let loop ((ls lines)
-                    (acc ""))
-            (if (null? ls)
-                acc
-                (loop (cdr ls) (string-append (car ls) nl acc))))))
    (let loop ((tokens    tokens)
               (line-len  0)
               (line     '())
@@ -372,7 +343,7 @@
 		((newline)
 		 (set! tokens (cons "\n" tokens)))
 		((flush)
-		 (let ((str (apply string-append (reverse! tokens))))
+		 (let ((str (string-concatenate (reverse! tokens))))
 		    (set! tokens '())
 		    (list str)))
 		((width)
@@ -426,10 +397,11 @@
 		   (else
 		    (error "justifier" "Illegal command" cmd))))))))
 
-(define (my-string-append . s)
-   (newline (current-error-port))
-   (format (current-error-port) "s: ~a~%" s)
-   (apply string-append s))
+;*---------------------------------------------------------------------*/
+;*    *justifiers* ...                                                 */
+;*---------------------------------------------------------------------*/
+(define *justifiers* (list (make-justifier *text-column-width*
+					   *text-justification*)))
 
 
 ;;; justify.scm ends here
