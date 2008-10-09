@@ -66,7 +66,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    string-replace ...                                               */
 ;*---------------------------------------------------------------------*/
-(define (string-replace str1 c1 c2)
+(define (string-replace-char str1 c1 c2)
    (let* ((len (string-length str1))
 	  (str2 (make-string len)))
       (let loop ((r 0))
@@ -102,7 +102,7 @@
 ;*    contains #\spaces.                                               */
 ;*---------------------------------------------------------------------*/
 (define (output-token str)
-   ((car *justifiers*) 'output (string-replace str #\space #\bs)))
+   ((car *justifiers*) 'output (string-replace-char str #\space #\bs)))
 
 ;*---------------------------------------------------------------------*/
 ;*    output-newline ...                                               */
