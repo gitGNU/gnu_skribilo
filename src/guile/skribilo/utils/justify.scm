@@ -1,40 +1,46 @@
-;=============== ~/prgm/project/scribe/scribetext/justify.scm ================
+;;; justify.scm  --  Producing justified text.
+;;;
+;;; Copyright 2008  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2001  Manuel Serrano
+;;;
+;;;
+;;; This program is free software; you can redistribute it and/or modify
+;;; it under the terms of the GNU General Public License as published by
+;;; the Free Software Foundation; either version 2 of the License, or
+;;; (at your option) any later version.
+;;;
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;;
+;;; You should have received a copy of the GNU General Public License
+;;; along with this program; if not, write to the Free Software
+;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+;;; USA.
 
-;-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----
-;*=====================================================================*/
-;*    serrano/prgm/project/scribe/scribetext/justify.scm               */
-;*    -------------------------------------------------------------    */
-;*    Author      :  Manuel Serrano                                    */
-;*    Creation    :  Thu Nov  1 09:21:20 2001                          */
-;*    Last change :  Sun Dec  9 14:59:11 2001 (serrano)                */
-;*    Copyright   :  2001 Manuel Serrano                               */
-;*    -------------------------------------------------------------    */
-;*    The justifiers                                                   */
-;*=====================================================================*/
+(define-module (skribilo utils justify)
+  :export (make-justifier output-flush
 
-;*---------------------------------------------------------------------*/
-;*    The module                                                       */
-;*---------------------------------------------------------------------*/
-(module __scribetext_justify
-   
-   (export (make-justifier::procedure ::int ::symbol)
-	   (output-flush ::int)
-	   
 	   *text-column-width*
 	   *text-justification*
 	   *margin*
-	   
-	   (output ::bstring)
-	   (output-token ::bstring)
-	   (output-center ::bstring)
-	   (output-newline)
-	   (justification-width::int)
-	   (with-justification ::procedure ::procedure . margin)
-	   (with-justification/noflush ::procedure ::procedure . margin))
-   
-   (eval   (export *text-column-width*)
-	   (export *text-justification*)))
 
+           output output-token output-center
+           output-newline justification-width
+	   with-justification with-justification/noflush))
+
+;;; Author: Manuel Serrano, Ludovic Courtès
+;;;
+;;; Commentary:
+;;;
+;;; Provide a set of tools that makes it easy to produce justified text,
+;;; i.e., text that automatically wraps after, say, 80 columns, indented
+;;; text, etc.
+;;;
+;;; Code:
+
+
 ;*---------------------------------------------------------------------*/
 ;*    *text-column-width* ...                                          */
 ;*---------------------------------------------------------------------*/
@@ -48,13 +54,13 @@
    (let ((len (string-length str)))
       (let loop ((r 0))
 	 (cond
-	    ((=fx r len)
+	    ((= r len)
 	     str)
 	    ((char=? (string-ref str r) #a008)
 	     (string-set! str r #\Space)
-	     (loop (+fx r 1)))
+	     (loop (+ r 1)))
 	    (else
-	     (loop (+fx r 1)))))))
+	     (loop (+ r 1)))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    string-replace ...                                               */
@@ -63,13 +69,13 @@
    (let* ((len (string-length str1))
 	  (str2 (make-string len)))
       (let loop ((r 0))
-	 (if (=fx r len)
+	 (if (= r len)
 	     str2
 	     (let ((c (string-ref str1 r)))
 		(if (char=? c c1)
 		    (string-set! str2 r c2)
 		    (string-set! str2 r c))
-		(loop (+fx r 1)))))))
+		(loop (+ r 1)))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    output-center ...                                                */
@@ -124,7 +130,7 @@
 ;*    output-flush ...                                                 */
 ;*---------------------------------------------------------------------*/
 (define (output-flush margin)
-   (for-each (if (>fx margin 0)
+   (for-each (if (> margin 0)
 		 (let ((m (make-string margin #\space)))
 		    (lambda (x) (print m (text-string x))))
 		 (lambda (x) (print (text-string x))))
@@ -142,7 +148,7 @@
 (define (with-justification justifier thunk . margin)
    (output-flush *margin*)
    (let ((old-margin *margin*))
-      (if (pair? margin) (set! *margin* (+fx *margin* (car margin))))
+      (if (pair? margin) (set! *margin* (+ *margin* (car margin))))
       (set! *justifiers* (cons justifier *justifiers*))
       (thunk)
       (output-flush *margin*)
@@ -154,7 +160,7 @@
 ;*---------------------------------------------------------------------*/
 (define (with-justification/noflush justifier thunk . margin)
    (let ((old-margin *margin*))
-      (if (pair? margin) (set! *margin* (+fx *margin* (car margin))))
+      (if (pair? margin) (set! *margin* (+ *margin* (car margin))))
       (set! *justifiers* (cons justifier *justifiers*))
       (thunk)
       (let ((res ((car *justifiers*) 'flush)))
@@ -176,7 +182,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    kotrts ...                                                       */
 ;*---------------------------------------------------------------------*/
-(define (kotrts str::bstring delims::pair)
+(define (kotrts str delims)
    (let ((stop (string-length str)))
       (let loop ((cur  0)
                  (mark #f)
@@ -201,7 +207,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    string-insert! ...                                               */
 ;*---------------------------------------------------------------------*/
-(define (string-insert! str-to::bstring str-from::bstring offset::int)
+(define (string-insert! str-to str-from offset)
    (let ((len1 (string-length str-to))
          (len2 (string-length str-from)))
       (if (> (+ len2 offset) len1)
@@ -218,7 +224,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    make-justified-line ...                                          */
 ;*---------------------------------------------------------------------*/
-(define (make-justified-line tokens::pair-nil width::int)
+(define (make-justified-line tokens width)
    (let ((result (make-string width #\space)))
       (cond
          ((null? tokens)
@@ -259,7 +265,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    make-formated-line ...                                           */
 ;*---------------------------------------------------------------------*/
-(define (make-formated-line tokens::pair-nil width::int cursor::int)
+(define (make-formated-line tokens width cursor)
    (let ((result (make-string width #\space)))
       (if (null? tokens)
           result
@@ -278,7 +284,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    make-centered-line ...                                           */
 ;*---------------------------------------------------------------------*/
-(define (make-centered-line tokens::pair-nil width::int)
+(define (make-centered-line tokens width)
    (make-formated-line tokens
 		       width
 		       (quotient (- width
@@ -289,13 +295,13 @@
 ;*---------------------------------------------------------------------*/
 ;*    make-flushleft-line ...                                          */
 ;*---------------------------------------------------------------------*/
-(define (make-flushleft-line tokens::pair-nil width::int)
+(define (make-flushleft-line tokens width)
    (make-formated-line tokens width 0))
 
 ;*---------------------------------------------------------------------*/
 ;*    make-flushright-line ...                                         */
 ;*---------------------------------------------------------------------*/
-(define (make-flushright-line tokens::pair-nil width::int)
+(define (make-flushright-line tokens width)
    (make-formated-line tokens
 		       width
 		       (- width
@@ -305,7 +311,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    tokens-justify ...                                               */
 ;*---------------------------------------------------------------------*/
-(define (tokens-justify justifier::procedure tokens::pair-nil width::int)
+(define (tokens-justify justifier tokens width)
    (define (reverse-line lines)
       (let ((nl (string #\Newline)))
          (let loop ((ls lines)
@@ -423,3 +429,5 @@
    (fprint (current-error-port) "s: " s)
    (apply string-append s))
 
+
+;;; justify.scm ends here
