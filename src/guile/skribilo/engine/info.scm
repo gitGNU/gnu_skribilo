@@ -213,7 +213,7 @@
 		(loop (cdr authors)
 		      rows
 		      (cons (car authors) row)
-		      (+fx cnum 1))))))
+		      (+ cnum 1))))))
       (info (apply table
 		    (if first
 			(cons (make-row (list (car authors)) :colspan cols)
@@ -246,7 +246,7 @@
 	  (if (string? title)
 	      (output (list->string
 		       (apply append
-			      (map (lambda (c) (list c #a008))
+			      (map (lambda (c) (list c #\bs))
 				   (string->list title)))))
 	      (info title))
 	  (output-newline)
@@ -492,7 +492,7 @@
 ;*    mailto ...                                                       */
 ;*---------------------------------------------------------------------*/
 (markup-writer 'mailto info-engine
-  :options (:text)
+  :options '(:text)
   :action (lambda (n e)
             (let ((email (markup-body n))
                   (text  (markup-option n :text)))
@@ -519,7 +519,7 @@
   :action (lambda (n e)
             (for-each (lambda (item)
                         (with-justification (make-justifier
-                                             (-fx (justification-width) 3)
+                                             (- (justification-width) 3)
                                              'left)
                                             (lambda ()
 					      (output "- ")
@@ -534,7 +534,7 @@
               (if (pair? items)
                   (let ((item (car items)))
 		    (with-justification (make-justifier
-					 (-fx (justification-width) 3)
+					 (- (justification-width) 3)
 					 'left)
 					(lambda ()
                                           (output (integer->string num))
@@ -548,7 +548,7 @@
             (for-each (lambda (item)
                         (with-justification
                          (make-justifier
-                          (-fx (justification-width) 3)
+                          (- (justification-width) 3)
                           'left)
                          (output item e)
                          3))
@@ -656,7 +656,7 @@
 ;*    info ::%table ...                                                */
 ;*---------------------------------------------------------------------*/
 (markup-writer 'table info-engine
-  :options (:border)
+  :options '(:border)
   :action (lambda (n e)
             (let ((border (markup-option n :border)))
               (output-flush *margin*)
