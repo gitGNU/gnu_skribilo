@@ -27,7 +27,7 @@
 	   *text-justification*
 	   *margin*
 
-           output output-token output-center
+           output-justified output-token output-center
            output-newline justification-width
 	   with-justification with-justification/noflush))
 
@@ -92,7 +92,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    output ...                                                       */
 ;*---------------------------------------------------------------------*/
-(define (output str)
+(define (output-justified str)
    ((car *justifiers*) 'output str))
 
 ;*---------------------------------------------------------------------*/
