@@ -1,42 +1,63 @@
-;*=====================================================================*/
-;*    serrano/prgm/project/scribe/scribetext/table.scm                 */
-;*    -------------------------------------------------------------    */
-;*    Author      :  Manuel Serrano                                    */
-;*    Creation    :  Mon Nov  5 06:41:44 2001                          */
-;*    Last change :  Fri Nov 23 11:04:56 2001 (serrano)                */
-;*    Copyright   :  2001 Manuel Serrano                               */
-;*    -------------------------------------------------------------    */
-;*    Table handling                                                   */
-;*=====================================================================*/
+;;; text-table.scm  --  Producing ASCII tables.
+;;;
+;;; Copyright 2008  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2001  Manuel Serrano
+;;;
+;;;
+;;; This program is free software; you can redistribute it and/or modify
+;;; it under the terms of the GNU General Public License as published by
+;;; the Free Software Foundation; either version 2 of the License, or
+;;; (at your option) any later version.
+;;;
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;;
+;;; You should have received a copy of the GNU General Public License
+;;; along with this program; if not, write to the Free Software
+;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+;;; USA.
 
-;*---------------------------------------------------------------------*/
-;*    The module                                                       */
-;*---------------------------------------------------------------------*/
-(module __scribetext_table
+(define-module (skribilo utils text-table)
+  :use-module (skribilo ast)
+  :use-module (skribilo table)
+  :use-module (skribilo utils justify)
+  :use-module (skribilo utils syntax)
 
-   (library scribeapi)
+  :export (table->ascii))
 
-   (import __scribetext_justify)
-   
-   (export (table->ascii ::%table ::procedure)))
+;;; Author: Manuel Serrano, Ludovic Courtès
+;;;
+;;; Commentary:
+;;;
+;;; Provide a procedure, `table->ascii', that produces a representation of
+;;; the given table using ASCII symbols.
+;;;
+;;; Code:
 
+(fluid-set! current-reader %skribilo-module-reader)
+
+
 ;*---------------------------------------------------------------------*/
 ;*    table->ascii ...                                                 */
 ;*---------------------------------------------------------------------*/
 (define (table->ascii obj scribe->ascii)
-   (with-access::%table obj (width nbcols rows)
-      (let* ((nc::long nbcols)
-	     (awidth (-fx (cond
-			     ((fixnum? width)
+   (let ((width  (markup-option obj :width))
+         (nbcols (table-column-count obj))
+         (rows   (markup-body obj)))
+      (let* ((nc nbcols)
+	     (awidth (- (cond
+			     ((integer? width)
 			      width)
-			     ((flonum? width)
+			     ((inexact? width)
 			      (inexact->exact (* width (justification-width))))
 			     (else
 			      (justification-width)))
 			  ;; remove one characters per columns separation
-			  (-fx nc 1)))
-	     (colswidth::vector (rows-requested-sizes obj nc awidth))
-	     (lcolswidth::pair-nil (vector->list colswidth))
+			  (- nc 1)))
+	     (colswidth (rows-requested-sizes obj nc awidth))
+	     (lcolswidth (vector->list colswidth))
 	     (nb-def-cols (length (filter (lambda (s) (= s 0)) lcolswidth)))
 	     (defcolwidth (if (= nb-def-cols 0)
 			      0
@@ -47,18 +68,18 @@
 	 ;; of the table, we now compute the exact col sizes
 	 (let loop ((i 0)
 		    (sum 0))
-	    (if (=fx i nc)
+	    (if (= i nc)
 		;; we adjust (because of modulo approx) the last column
-		(if (not (=fx sum awidth))
+		(if (not (= sum awidth))
 		    (vector-set! colswidth
-				 (-fx i 1)
-				 (+fx (vector-ref colswidth (-fx i 1))
-				      (-fx awidth sum))))
+				 (- i 1)
+				 (+ (vector-ref colswidth (- i 1))
+				      (- awidth sum))))
 		(if (= (vector-ref colswidth i) 0)
 		    (begin
 		       (vector-set! colswidth i defcolwidth)
-		       (loop (+fx i 1) (+fx sum defcolwidth)))
-		    (loop (+fx i 1) (+fx sum (vector-ref colswidth i))))))
+		       (loop (+ i 1) (+ sum defcolwidth)))
+		    (loop (+ i 1) (+ sum (vector-ref colswidth i))))))
 	 ;; at that point colswidth contains the width of each colums.
 	 (let ((lcolswidth (vector->list colswidth))
 	       (hrows (map (lambda (r)
@@ -87,39 +108,38 @@
 ;*---------------------------------------------------------------------*/
 ;*    table-row-format ...                                             */
 ;*---------------------------------------------------------------------*/
-(define (table-row-format row::%table-row nbcols::int colswidth scribe->ascii)
+(define (table-row-format row nbcols colswidth scribe->ascii)
    (define (cell-width cnum cspan)
-      (let ((v (do ((i cnum (+fx i 1))
-		    (w 0 (+fx w (vector-ref colswidth i))))
-		   ((=fx i (+fx cnum cspan)) w))))
-	 (+fx v (-fx cspan 1))))
-   (with-access::%table-row row (cells)
+      (let ((v (do ((i cnum (+ i 1))
+		    (w 0 (+ w (vector-ref colswidth i))))
+		   ((= i (+ cnum cspan)) w))))
+	 (+ v (- cspan 1))))
+   (let ((cells (markup-body row)))
       (let loop ((cells cells)
 		 (cnum 0)
 		 (res '()))
 	 (cond
 	    ((pair? cells)
 	     (let* ((cell (car cells))
-		    (cspan (%table-cell-colspan cell))
+		    (cspan (markup-option cell :colspan))
 		    (cell-width (cell-width cnum cspan)))
 		(loop (cdr cells)
-		      (+fx cnum cspan)
+		      (+ cnum cspan)
 		      (cons (table-cell-format cell
 					       cell-width
 					       scribe->ascii)
 			    res))))
-	    ((=fx cnum nbcols)
+	    ((= cnum nbcols)
 	     (reverse! res))
 	    (else
 	     (let ((eline (make-string (vector-ref colswidth cnum) #\space)))
 		(loop cells
-		      (+fx cnum 1)
-		      (cons (cons (instantiate::%table-data
-				     (body ""))
+		      (+ cnum 1)
+		      (cons (cons #f ;; XXX: It's unclear why we need it
 				  (list eline)) res))))))))
 
 ;*---------------------------------------------------------------------*/
-;*    table-cell-format ::table-cell ...                               */
+;*    table-cell-format table-cell ...                                 */
 ;*    -------------------------------------------------------------    */
 ;*    Output a table cell according to its WIDTH. At that time we have */
 ;*    to ignore the width that is specified in the cell because we     */
@@ -132,8 +152,9 @@
 ;*    is processed we display the cells. For that reason, we can't     */
 ;*    use WITH-JUSTIFICATION form.                                     */
 ;*---------------------------------------------------------------------*/
-(define (table-cell-format obj::%table-cell width scribe->ascii)
-   (with-access::%table-cell obj (align body)
+(define (table-cell-format obj width scribe->ascii)
+   (let ((align (markup-option obj :align))
+         (body  (markup-body obj)))
       (cons obj
 	    (let ((fmt (with-justification/noflush
 			(make-justifier width
@@ -162,17 +183,17 @@
 ;*    consider the VALIGN fields. That is, we complete the cell        */
 ;*    formating with empty blank line around the cell.                 */
 ;*---------------------------------------------------------------------*/
-(define (table-cell-vformat::pair p::pair nblines::int cwidth)
+(define (table-cell-vformat p nblines cwidth)
    (define (make-filler-lines num)
       (vector->list (make-vector num (make-string cwidth #\Space))))
    (let* ((cell (car p))
 	  (fmt (cdr p))
 	  (lfmt (length fmt)))
-      (if (=fx lfmt nblines)
+      (if (= lfmt nblines)
 	  fmt
 	  (let* ((new (- nblines lfmt))
 		 (new/2 (inexact->exact (/ new 2))))
-	     (case (%table-cell-valign cell)
+	     (case (markup-option cell :valign)
 		((top)
 		 (append fmt (make-filler-lines new)))
 		((bottom)
@@ -192,29 +213,29 @@
 (define (rows-requested-sizes table nbcols twidth)
    (let ((rsizes (make-vector nbcols 0)))
       (for-each (lambda (row)
-		   (let loop ((cells (%table-row-cells row))
+		   (let loop ((cells (markup-body row))
 			      (col 0))
 		      (if (pair? cells)
 			  (let* ((cell (car cells))
-				 (cspan (%table-cell-colspan cell))
-				 (swidth (%table-cell-width cell)))
+				 (cspan (markup-option cell :colspan))
+				 (swidth (markup-option cell :width)))
 			     (if (number? swidth)
-				 (let* ((swidth (if (fixnum? swidth)
+				 (let* ((swidth (if (integer? swidth)
 						    swidth
 						    (inexact->exact
 						     (* swidth twidth))))
 					(cswidth (/ swidth cspan)))
-				    (do ((j 0 (+fx j 1)))
-					((=fx j cspan)
+				    (do ((j 0 (+ j 1)))
+					((= j cspan)
 					 (loop (cdr cells)
-					       (+fx col cspan)))
+					       (+ col cspan)))
 					(if (< (vector-ref rsizes (+ col j))
 					       cswidth)
 					    (vector-set! rsizes
 							 (+ col j)
 							 cswidth))))
-				 (loop (cdr cells) (+fx col cspan)))))))
-		(%table-rows table))
+				 (loop (cdr cells) (+ col cspan)))))))
+		(markup-body table))
       rsizes))
 				       
 ;*---------------------------------------------------------------------*/
@@ -224,3 +245,6 @@
    (if (or (null? l1) (null? l2))
        '()
        (cons (f (car l1) (car l2)) (smallest-map f (cdr l1) (cdr l2)))))
+
+
+;;; text-table.scm ends here
