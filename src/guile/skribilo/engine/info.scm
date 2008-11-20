@@ -88,7 +88,7 @@
 ;*---------------------------------------------------------------------*/
 (markup-writer 'document info-engine
   :action (lambda (doc e)
-            (let loop ((c (ast-body doc)))
+            (let loop ((c (markup-body doc)))
               (cond
                ((null? c)
                 (values "Top" "(dir)" "(dir)"))
@@ -106,7 +106,7 @@
       (let ((top (if (document? parent)
 		     "Top"
 		     (block-title parent))))
-	 (let loop ((els (ast-body parent))
+	 (let loop ((els (markup-body parent))
 		    (prev #f))
 	    (cond
 	       ((null? els)
@@ -126,7 +126,7 @@
 ;*    node-menu ...                                                    */
 ;*---------------------------------------------------------------------*/
 (define (node-menu container e)
-  (let ((children (ast-body container)))
+  (let ((children (markup-body container)))
       (if (pair? (filter (lambda (x) (or (%chapter? x) (%section? x)))
 			 children))
 	  (begin
@@ -374,7 +374,7 @@
   :action (lambda (n e)
             (with-justification (make-justifier *text-column-width* 'verbatim)
                                 (lambda ()
-                                  (output (ast-body obj) e)
+                                  (output (markup-body obj) e)
                                   (output-newline)))))
 
 ;*---------------------------------------------------------------------*/
@@ -411,7 +411,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    info-chapter-ref ...                                             */
 ;*---------------------------------------------------------------------*/
-(define (info-chapter-ref obj::%chapter)
+(define (info-chapter-ref obj)
    (output "*Note ")
    (output (block-title obj))
    (output ":: "))
@@ -419,11 +419,11 @@
 ;*---------------------------------------------------------------------*/
 ;*    info ::%section-ref ...                                          */
 ;*---------------------------------------------------------------------*/
-(define (info obj::%section-ref)
+(define (info obj)
    (receive (_ section)
       (find-reference obj (current-document))
       (if (not (%section? section))
-	  (with-access::%section-ref obj (anchor)
+          (let ((anchor (markup-ident obj)))
 	     (warning "ref" "Can't find section -- " anchor)
 	     (output "section:???"))
 	  (info-section-ref section))))
@@ -431,8 +431,8 @@
 ;*---------------------------------------------------------------------*/
 ;*    info-section-ref ...                                             */
 ;*---------------------------------------------------------------------*/
-(define (info-section-ref obj::%section)
-   (with-access::%section obj (title)
+(define (info-section-ref obj)
+   (let ((title (markup-option obj :title)))
       (output "*Note ")
       (output title)
       (output ":: ")))
@@ -440,11 +440,11 @@
 ;*---------------------------------------------------------------------*/
 ;*    info ::%subsection-ref ...                                       */
 ;*---------------------------------------------------------------------*/
-(define (info obj::%subsection-ref)
+(define (info obj)
    (receive (_ subsection)
       (find-reference obj (current-document))
       (if (not (%subsection? subsection))
-	  (with-access::%subsection-ref obj (anchor)
+	  (let ((anchor (markup-ident obj)))
 	     (warning "ref" "Can't find subsection -- " anchor)
 	     (output "subsection:???"))
 	  (info-subsection-ref subsection))))
@@ -452,8 +452,8 @@
 ;*---------------------------------------------------------------------*/
 ;*    info-subsection-ref ...                                          */
 ;*---------------------------------------------------------------------*/
-(define (info-subsection-ref obj::%subsection)
-   (with-access::%subsection obj (title)
+(define (info-subsection-ref obj)
+   (let ((title (markup-option obj :title)))
       (output "*Note ")
       (output title)
       (output ":: ")))
@@ -461,11 +461,11 @@
 ;*---------------------------------------------------------------------*/
 ;*    info ::%subsubsection-ref ...                                    */
 ;*---------------------------------------------------------------------*/
-(define (info obj::%subsubsection-ref)
+(define (info obj)
    (receive (_ subsubsection)
       (find-reference obj (current-document))
       (if (not (%subsubsection? subsubsection))
-	  (with-access::%subsubsection-ref obj (anchor)
+	  (let ((anchor (markup-ident obj)))
 	     (warning "ref" "Can't find subsubsection -- " anchor)
 	     (output "subsubsection:???"))
 	  (info-subsubsection-ref subsubsection))))
@@ -473,8 +473,8 @@
 ;*---------------------------------------------------------------------*/
 ;*    info-subsubsection-ref ...                                       */
 ;*---------------------------------------------------------------------*/
-(define (info-subsubsection-ref obj::%subsubsection)
-   (with-access::%subsubsection obj (title)
+(define (info-subsubsection-ref obj)
+   (let ((title (markup-option obj :title)))
       (output "*Note ")
       (output title)
       (output ":: ")))
@@ -707,3 +707,5 @@
               (output label e)
               (output ")" e))))
 
+
+;;; info.scm ends here
