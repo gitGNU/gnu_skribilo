@@ -33,6 +33,7 @@
   :autoload   (skribilo output)        (output)
   :autoload   (skribilo debug)         (*debug*)
   :autoload   (skribilo utils justify) (make-justifier)
+  :autoload   (skribilo utils text-table) (table->ascii)
   :use-module (srfi srfi-8)
   :use-module (srfi srfi-13)
 
@@ -155,9 +156,11 @@
 ;*---------------------------------------------------------------------*/
 (markup-writer 'document info-engine
   :action (lambda (doc e)
-            (let ((title  (markup-option doc :title))
-                  (author (markup-option doc :author))
-                  (body   (markup-body doc)))
+            (let ((title     (markup-option doc :title))
+                  (author    (markup-option doc :author))
+                  (body      (markup-body doc))
+                  (footnotes (reverse!
+                              (container-env-get n 'footnote-env))))
               (scribe-document->info doc (if title title "")
                                      (if (list? authors)
                                          authors
@@ -172,15 +175,17 @@
                        (newline)
                        (print "-------------")
                        ;; FIXME: Handle footnotes.
-;;                        (for-each (lambda (fn)
-;;                                    (with-access::%footnote fn (number note id)
-;;                                                            (output (string-append
-;;                                                                     "*"
-;;                                                                     (number->string number)
-;;                                                                     ": "))
-;;                                                            (info note)
-;;                                                            (output-newline)))
-;;                                  footnotes)
+                       (for-each (lambda (fn)
+                                   (let ((label (markup-option fn :label))
+                                         (note  (markup-body fn))
+                                         (id    (markup-ident fn)))
+                                     (output (string-append "*"
+                                                            (number->string number)
+                                                            ": ")
+                                             e)
+                                     (output note e)
+                                     (output-newline)))
+                                 footnotes)
                        )))))))
 
 ;*---------------------------------------------------------------------*/
