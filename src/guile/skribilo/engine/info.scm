@@ -24,14 +24,10 @@
   :use-module (skribilo ast)
   :use-module (skribilo engine)
   :use-module (skribilo writer)
-  :use-module (skribilo location)
-  :use-module (skribilo utils strings)
   :use-module (skribilo utils syntax)
   :use-module (skribilo package base)
   :autoload   (skribilo parameters)    (*destination-file*)
-  :autoload   (skribilo evaluator)     (evaluate-document)
   :autoload   (skribilo output)        (output)
-  :autoload   (skribilo debug)         (*debug*)
   :autoload   (skribilo utils justify) (make-justifier)
   :autoload   (skribilo utils text-table) (table->ascii)
   :use-module (srfi srfi-8)
@@ -40,7 +36,6 @@
   :export (info-engine))
 
 (fluid-set! current-reader %skribilo-module-reader)
-
 
 
 (define info-engine
@@ -94,18 +89,18 @@
                 (values "Top" "(dir)" "(dir)"))
                ((or (is-markup? (car c) 'chapter)
                     (is-markup? (car c) 'section))
-                (values (block-title (car c)) "(dir)" "(dir)"))
+                (values (block-title (car c) e) "(dir)" "(dir)"))
                (else
                 (loop (cdr c)))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    node-next+prev+top ...                                           */
 ;*---------------------------------------------------------------------*/
-(define (node-next+prev+top section)
+(define (node-next+prev+top section e)
   (let ((parent (ast-parent section)))
       (let ((top (if (document? parent)
 		     "Top"
-		     (block-title parent))))
+		     (block-title parent e))))
 	 (let loop ((els (markup-body parent))
 		    (prev #f))
 	    (cond
@@ -113,11 +108,11 @@
 		(values top top top))
 	       ((eq? (car els) section)
 		(let ((p (if prev
-			     (block-title prev)
+			     (block-title prev e)
 			     top))
 		      (n (if (null? (cdr els))
 			     top
-			     (block-title (cadr els)))))
+			     (block-title (cadr els) e))))
 		   (values p n top)))
 	       (else
 		(loop (cdr els) (car els))))))))
@@ -127,7 +122,9 @@
 ;*---------------------------------------------------------------------*/
 (define (node-menu container e)
   (let ((children (markup-body container)))
-      (if (pair? (filter (lambda (x) (or (%chapter? x) (%section? x)))
+      (if (pair? (filter (lambda (x)
+                           (memq (markup-markup x)
+                                 '(chapter section)))
 			 children))
 	  (begin
 	     (newline)
@@ -157,15 +154,15 @@
 (markup-writer 'document info-engine
   :action (lambda (doc e)
             (let ((title     (markup-option doc :title))
-                  (author    (markup-option doc :author))
+                  (authors   (markup-option doc :author))
                   (body      (markup-body doc))
                   (footnotes (reverse!
-                              (container-env-get n 'footnote-env))))
+                              (container-env-get doc 'footnote-env))))
               (scribe-document->info doc (if title title "")
                                      (if (list? authors)
                                          authors
                                          (list authors))
-                                     body)
+                                     body e)
               (if (pair? footnotes)
                   (begin
                     (with-justification
@@ -179,10 +176,7 @@
                                    (let ((label (markup-option fn :label))
                                          (note  (markup-body fn))
                                          (id    (markup-ident fn)))
-                                     (output (string-append "*"
-                                                            (number->string number)
-                                                            ": ")
-                                             e)
+                                     (output (list "*" label ": ") e)
                                      (output note e)
                                      (output-newline)))
                                  footnotes)
@@ -191,9 +185,9 @@
 ;*---------------------------------------------------------------------*/
 ;*     scribe-document->info ...                                       */
 ;*---------------------------------------------------------------------*/
-(define (scribe-document->info obj title authors body)
+(define (scribe-document->info obj title authors body e)
    (define (info-authors1 author)
-      (info author)
+      (output author e)
       (output-newline)
       (output-newline))
    (define (info-authorsN authors cols first)
@@ -219,16 +213,17 @@
 		      rows
 		      (cons (car authors) row)
 		      (+ cnum 1))))))
-      (info (apply table
+      (output (apply table
 		    (if first
 			(cons (make-row (list (car authors)) :colspan cols)
 			      (make-rows (cdr authors)))
-			(make-rows authors)))))
+			(make-rows authors)))
+              e))
    (define (info-authors authors)
       (if (pair? authors)
 	  (begin
 	     (output-newline)
-	     (output "--o-0-o--")
+	     (output-justified "--o-0-o--")
 	     (output-newline)
 	     (output-newline)
 	     (let ((len (length authors)))
@@ -246,38 +241,37 @@
       (with-justification
        (make-justifier (justification-width) 'center)
        (lambda ()
-	  (output (make-string *text-column-width* #\=))
+	  (output-justified (make-string *text-column-width* #\=))
 	  (output-newline)
 	  (if (string? title)
-	      (output (list->string
+	      (output-justified
+                (list->string
 		       (apply append
 			      (map (lambda (c) (list c #\bs))
 				   (string->list title)))))
-	      (info title))
+	      (output title e))
 	  (output-newline)
 	  (info-authors authors)
-	  (output (make-string *text-column-width* #\=))
+	  (output-justified (make-string *text-column-width* #\=))
 	  (output-newline)
 	  (output-newline)
 	  (output-flush *margin*))))
-;; display the footer
-   (define (info-footer)
-      (if *scribe-footer* (info *scribe-footer*)))
+
    ;; the main node
    (receive (next prev top)
-      (node-next+prev+top obj)
+      (node-next+prev+top obj e)
       (newline)
       (info-node "Top" next prev top))
    ;; the title
    (info-title title authors)
    (output-flush 0)
    ;; the main info menu
-   (node-menu obj)
+   (node-menu obj e)
    ;; the body
-   (info body)
+   (output body e)
    (output-flush 0)
    ;; the footer of the document
-   (info-footer)
+   ;(info-footer)
    (output-flush 0)
    ;; we are done
    (newline)
@@ -327,7 +321,7 @@
   :action (lambda (n e)
             (with-justification (make-justifier (justification-width) 'center)
                                 (lambda ()
-                                  (output (%center-body obj) e)))))
+                                  (output (markup-body n) e)))))
 
 ;*---------------------------------------------------------------------*/
 ;*    info ::%flush ...                                                */
@@ -335,10 +329,10 @@
 (markup-writer 'flush info-engine
   :options '(:side)
   :action (lambda (n e)
-            (let ((side (markup-option :side)))
+            (let ((side (markup-option n :side)))
               (with-justification (make-justifier (justification-width) side)
                                   (lambda ()
-                                    (output (%flush-body obj) e))))))
+                                    (output (markup-body n) e))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    *ornaments* ...                                                  */
@@ -374,7 +368,7 @@
   :action (lambda (n e)
             (with-justification (make-justifier *text-column-width* 'verbatim)
                                 (lambda ()
-                                  (output (markup-body obj) e)
+                                  (output (markup-body n) e)
                                   (output-newline)))))
 
 ;*---------------------------------------------------------------------*/
@@ -386,10 +380,22 @@
 ;*---------------------------------------------------------------------*/
 ;*    info ::%reference ...                                            */
 ;*---------------------------------------------------------------------*/
-;; FIXME: Implement `ref' using `info-chapter-ref', etc.
-;; (markup-writer 'ref info-engine
-;;   :action (lambda (n e)
-;;             #f))
+(markup-writer 'ref info-engine
+  :action (lambda (n e)
+            (let ((target (handle-ast (markup-body n))))
+              (case (markup-markup target)
+                ((chapter)
+                 (info-chapter-ref target e))
+                ((section)
+                 (info-section-ref target e))
+                ((subsection)
+                 (info-subsection-ref target e))
+                ((subsubsection)
+                 (info-subsubsection-ref target e))
+                (else
+                 (skribe-warning/ast 1 target
+                                     "ref: don't know how to refer to target")
+                 (output-justified "section:???"))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    info ::%url-ref ...                                              */
@@ -397,87 +403,51 @@
 (markup-writer 'url-ref info-engine
   :options '(:url :text)
   :action (lambda (n e)
-            (let ((url  (markup-option :url))
-                  (text (markup-option :text)))
+            (let ((url  (markup-option n :url))
+                  (text (markup-option n :text)))
               (if text
                   (begin
-                    (output "*Note ")
+                    (output-justified "*Note ")
                     (output text e)
-                    (output " (")))
+                    (output-justified " (")))
               (output url e)
-              (if text (output ")"))
-              (output ":: "))))
+              (if text (output-justified ")"))
+              (output-justified ":: "))))
 
 ;*---------------------------------------------------------------------*/
 ;*    info-chapter-ref ...                                             */
 ;*---------------------------------------------------------------------*/
-(define (info-chapter-ref obj)
-   (output "*Note ")
-   (output (block-title obj))
-   (output ":: "))
-
-;*---------------------------------------------------------------------*/
-;*    info ::%section-ref ...                                          */
-;*---------------------------------------------------------------------*/
-(define (info obj)
-   (receive (_ section)
-      (find-reference obj (current-document))
-      (if (not (%section? section))
-          (let ((anchor (markup-ident obj)))
-	     (warning "ref" "Can't find section -- " anchor)
-	     (output "section:???"))
-	  (info-section-ref section))))
+(define (info-chapter-ref obj e)
+   (output-justified "*Note ")
+   (output (block-title obj e) e)
+   (output-justified ":: "))
 
 ;*---------------------------------------------------------------------*/
 ;*    info-section-ref ...                                             */
 ;*---------------------------------------------------------------------*/
-(define (info-section-ref obj)
+(define (info-section-ref obj e)
    (let ((title (markup-option obj :title)))
-      (output "*Note ")
-      (output title)
-      (output ":: ")))
-   
-;*---------------------------------------------------------------------*/
-;*    info ::%subsection-ref ...                                       */
-;*---------------------------------------------------------------------*/
-(define (info obj)
-   (receive (_ subsection)
-      (find-reference obj (current-document))
-      (if (not (%subsection? subsection))
-	  (let ((anchor (markup-ident obj)))
-	     (warning "ref" "Can't find subsection -- " anchor)
-	     (output "subsection:???"))
-	  (info-subsection-ref subsection))))
+      (output-justified "*Note ")
+      (output title e)
+      (output-justified ":: ")))
 
 ;*---------------------------------------------------------------------*/
 ;*    info-subsection-ref ...                                          */
 ;*---------------------------------------------------------------------*/
-(define (info-subsection-ref obj)
+(define (info-subsection-ref obj e)
    (let ((title (markup-option obj :title)))
-      (output "*Note ")
-      (output title)
-      (output ":: ")))
-   
-;*---------------------------------------------------------------------*/
-;*    info ::%subsubsection-ref ...                                    */
-;*---------------------------------------------------------------------*/
-(define (info obj)
-   (receive (_ subsubsection)
-      (find-reference obj (current-document))
-      (if (not (%subsubsection? subsubsection))
-	  (let ((anchor (markup-ident obj)))
-	     (warning "ref" "Can't find subsubsection -- " anchor)
-	     (output "subsubsection:???"))
-	  (info-subsubsection-ref subsubsection))))
+      (output-justified "*Note ")
+      (output title e)
+      (output-justified ":: ")))
 
 ;*---------------------------------------------------------------------*/
 ;*    info-subsubsection-ref ...                                       */
 ;*---------------------------------------------------------------------*/
-(define (info-subsubsection-ref obj)
+(define (info-subsubsection-ref obj e)
    (let ((title (markup-option obj :title)))
-      (output "*Note ")
-      (output title)
-      (output ":: ")))
+      (output-justified "*Note ")
+      (output title e)
+      (output-justified ":: ")))
 
 ;*---------------------------------------------------------------------*/
 ;*    info ::%biblio-ref ...                                           */
@@ -489,9 +459,9 @@
             (let ((text (markup-option n :text))
                   (bib  (markup-option n :bib)))
               (if text (output text e))
-              (output " [")
+              (output-justified " [")
               (output bib e)
-              (output "]"))))
+              (output-justified "]"))))
 
 ;*---------------------------------------------------------------------*/
 ;*    mailto ...                                                       */
@@ -527,10 +497,10 @@
                                              (- (justification-width) 3)
                                              'left)
                                             (lambda ()
-					      (output "- ")
+					      (output-justified "- ")
 					      (output item e))
                                             3))
-                      items)))
+                      (markup-body n))))
 
 (markup-writer 'enumerate info-engine
   :action (lambda (n e)
@@ -542,9 +512,9 @@
 					 (- (justification-width) 3)
 					 'left)
 					(lambda ()
-                                          (output (integer->string num))
-                                          (output " - ")
-                                          (info item))
+                                          (output-justified (number->string num))
+                                          (output-justified " - ")
+                                          (output item e))
 					3)
 		    (loop (+ num 1) (cdr items)))))))
 
@@ -557,7 +527,7 @@
                           'left)
                          (output item e)
                          3))
-                      items)))
+                      (markup-body n))))
 
 ;*---------------------------------------------------------------------*/
 ;*    info ::%section ...                                              */
@@ -569,9 +539,9 @@
                   (title (markup-option n :title)))
               (output-newline)
               (output-flush *margin*)
-              (let ((t (block-title n)))
+              (let ((t (block-title n e)))
                 (receive (next prev top)
-                    (node-next+prev+top n)
+                    (node-next+prev+top n e)
                   (info-node t next prev top)
                   (print t)
                   (print (make-string (string-length t) #\=))))
@@ -589,9 +559,9 @@
             (let ((body  (markup-body n))
                   (title (markup-option n :title)))
               (output-flush *margin*)
-              (let ((t (block-title n)))
+              (let ((t (block-title n e)))
                 (receive (next prev top)
-                    (node-next+prev+top n)
+                    (node-next+prev+top n e)
                   (info-node t next prev top)
                   (print t)
                   (print (make-string (string-length t) #\-))))
@@ -606,9 +576,9 @@
             (let ((body  (markup-body n))
                   (title (markup-option n :title)))
               (output-flush *margin*)
-              (let ((t (block-title n)))
+              (let ((t (block-title n e)))
                 (receive (next prev top)
-                    (node-next+prev+top n)
+                    (node-next+prev+top n e)
                   (info-node t next prev top)
                   (print t)
                   (print (make-string (string-length t) #\~))))
@@ -634,9 +604,9 @@
                   (title  (markup-option n :title)))
               (output-newline)
               (output-flush *margin*)
-              (let ((t (block-title n)))
+              (let ((t (block-title n e)))
                 (receive (next prev top)
-                    (node-next+prev+top n)
+                    (node-next+prev+top n e)
                   (info-node t next prev top)
                   (print t)
                   (print (make-string (string-length t) #\*))))
@@ -655,7 +625,7 @@
                            (inexact->exact
                             (* (exact->inexact (justification-width))
                                (/ (exact->inexact width) 100.))))))
-                (output (make-string w #\-))))))
+                (output-justified (make-string w #\-))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    info ::%table ...                                                */
@@ -667,14 +637,16 @@
               (output-flush *margin*)
               (if border
                   (border-table->info n)
-                  (table->ascii n info))
+                  (table->ascii n (lambda (obj)
+                                    (output obj e))))
               (output-flush *margin*))))
 
 ;*---------------------------------------------------------------------*/
 ;*    border-table->info ...                                           */
 ;*---------------------------------------------------------------------*/
 (define (border-table->info table)
-   (table->ascii table info))
+   (table->ascii table (lambda (obj)
+                         (output obj info-engine))))
 
 ;*---------------------------------------------------------------------*/
 ;*    info ::%figure ...                                               */
@@ -689,9 +661,9 @@
               (output body e)
               (output-newline)
               (output-newline)
-              (output "Fig. ")
-              (output (number->string number))
-              (output ": ")
+              (output-justified "Fig. ")
+              (output-justified (number->string number))
+              (output-justified ": ")
               (output legend e)
               (output-newline))))
 
