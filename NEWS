@@ -6,6 +6,10 @@ Copyright (C) 2005, 2006, 2007, 2008  Ludovic Courtès <ludo@gnu.org>
 
 
 
+* New in Skribilo 0.9.2
+
+** Improved configure-time diagnostics
+
 * New in Skribilo 0.9.1
 
 ** Improved `configure' diagnostics and build/installation fixes
