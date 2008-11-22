@@ -47,6 +47,9 @@ GUILE_MODULE_REQUIRED([srfi srfi-35])
 # Need SRFI-37, available in Guile >= 1.8.3.
 GUILE_MODULE_REQUIRED([srfi srfi-37])
 
+# Make sure we're not using the broken SRFI-35 from Guile-Lib <= 0.1.6.
+SKR_GUILE_SRFI_35_WORKS
+
 
 # Look for `convert', from ImageMagick.
 AC_PATH_PROG([CONVERT], [convert])
