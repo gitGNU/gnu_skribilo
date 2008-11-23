@@ -20,7 +20,7 @@
 
 (define-module (skribilo condition)
   :autoload   (srfi srfi-1)  (find)
-  :autoload   (srfi srfi-34) (guard)
+  :autoload   (srfi srfi-34) (with-exception-handler)
   :use-module (srfi srfi-35)
   :use-module (srfi srfi-39)
   :autoload   (skribilo utils syntax) (_ N_)
@@ -118,12 +118,26 @@
 ;;; Convenience functions.
 ;;;
 
+(define (show-stack-trace)
+  ;; Display a backtrace to stderr if possible.
+  (let ((stack (make-stack #t)))
+    (if stack
+        (begin
+          (format (current-error-port) "~%Call stack:~%")
+          (display-backtrace stack (current-error-port)))
+        (begin
+          (format (current-error-port) (_ "Call stack trace not available.~%"))
+          (format (current-error-port) (_ "Use `GUILE=\"guile --debug\" skribilo ...' for a detailed stack trace."))))))
+
 (define (%call-with-skribilo-error-catch thunk exit exit-val)
-  (guard (c ((invalid-argument-error? c)
+  (with-exception-handler
+   (lambda (c)
+     (cond  ((invalid-argument-error? c)
 	     (format (current-error-port)
                      (_ "in `~a': invalid argument: ~S~%")
 		     (invalid-argument-error:proc-name c)
 		     (invalid-argument-error:argument c))
+             (show-stack-trace)
 	     (exit exit-val))
 
 	    ((too-few-arguments-error? c)
@@ -131,6 +145,7 @@
                      (_ "in `~a': too few arguments: ~S~%")
 		     (too-few-arguments-error:proc-name c)
 		     (too-few-arguments-error:arguments c))
+             (show-stack-trace)
              (exit exit-val))
 
 	    ((file-search-error? c)
@@ -138,24 +153,28 @@
                      (_ "~a: not found in path `~S'~%")
 		     (file-error:file-name c)
 		     (file-search-error:path c))
+             (show-stack-trace)
 	     (exit exit-val))
 
 	    ((file-open-error? c)
 	     (format (current-error-port)
                      (_ "~a: cannot open file~%")
 		     (file-error:file-name c))
+             (show-stack-trace)
 	     (exit exit-val))
 
 	    ((file-write-error? c)
 	     (format (current-error-port)
                      (_ "~a: cannot write to file~%")
 		     (file-error:file-name c))
+             (show-stack-trace)
 	     (exit exit-val))
 
 	    ((file-error? c)
 	     (format (current-error-port)
                      (_ "file error: ~a~%")
 		     (file-error:file-name c))
+             (show-stack-trace)
 	     (exit exit-val))
 
 	    ((skribilo-error? c)
@@ -165,13 +184,15 @@
 		   (format (current-error-port)
 			   (_ "undefined skribilo error: ~S~%")
 			   c)))
+             (show-stack-trace)
 	     (exit exit-val))
 
             ((message-condition? c)
              (format (current-error-port) (condition-message c))
-             (exit exit-val)))
+             (show-stack-trace)
+             (exit exit-val))))
 
-	 (thunk)))
+   thunk))
 
 (define-macro (call-with-skribilo-error-catch thunk)
   `(call/cc (lambda (cont)
