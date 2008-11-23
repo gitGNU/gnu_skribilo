@@ -118,8 +118,11 @@
 		 (let ((m (make-string margin #\space)))
 		    (lambda (x)
                       (display m)
-                      (display (text-string x))))
-		 (lambda (x) (display (text-string x))))
+                      (display (text-string x))
+                      (newline)))
+		 (lambda (x)
+                   (display (text-string x))
+                   (newline)))
 	     ((car *justifiers*) 'flush)))
 
 ;*---------------------------------------------------------------------*/
