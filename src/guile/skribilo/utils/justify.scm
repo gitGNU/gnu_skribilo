@@ -85,7 +85,7 @@
    (let ((justifier (make-justifier (justification-width) 'center)))
       (with-justification justifier
 			  (lambda ()
-			     (output str)))))
+			     (output-justified str)))))
 
 (define *margin* 0)
 
