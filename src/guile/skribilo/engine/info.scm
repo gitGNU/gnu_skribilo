@@ -28,7 +28,7 @@
   :use-module (skribilo package base)
   :autoload   (skribilo parameters)    (*destination-file*)
   :autoload   (skribilo output)        (output)
-  :autoload   (skribilo utils justify) (make-justifier)
+  :autoload   (skribilo utils justify) (make-justifier with-justification)
   :autoload   (skribilo utils text-table) (table->ascii)
   :use-module (srfi srfi-8)
   :use-module (srfi srfi-13)
@@ -59,7 +59,8 @@
 ;;
 
 (define (print . args)
-  (for-each display args))
+  (for-each display args)
+  (newline))
 
 (define (%block? obj)
   (and (markup? obj)
@@ -70,7 +71,7 @@
 ;*    info-node ...                                                    */
 ;*---------------------------------------------------------------------*/
 (define (info-node node next prev up)
-   (print "")
+   (print "\n")
    (print "File: " (info-dest)
 	  ",  Node: " node
 	  ",  Next: " next
@@ -79,43 +80,38 @@
    (newline))
 
 ;*---------------------------------------------------------------------*/
-;*    node-next+prev+top ::%document ...                               */
-;*---------------------------------------------------------------------*/
-(markup-writer 'document info-engine
-  :action (lambda (doc e)
-            (let loop ((c (markup-body doc)))
-              (cond
-               ((null? c)
-                (values "Top" "(dir)" "(dir)"))
-               ((or (is-markup? (car c) 'chapter)
-                    (is-markup? (car c) 'section))
-                (values (block-title (car c) e) "(dir)" "(dir)"))
-               (else
-                (loop (cdr c)))))))
-
-;*---------------------------------------------------------------------*/
 ;*    node-next+prev+top ...                                           */
 ;*---------------------------------------------------------------------*/
 (define (node-next+prev+top section e)
-  (let ((parent (ast-parent section)))
-      (let ((top (if (document? parent)
-		     "Top"
-		     (block-title parent e))))
-	 (let loop ((els (markup-body parent))
-		    (prev #f))
+  (if (document? section)
+      (let loop ((c (markup-body section)))
+        (cond
+         ((null? c)
+          (values "Top" "(dir)" "(dir)"))
+         ((or (is-markup? (car c) 'chapter)
+              (is-markup? (car c) 'section))
+          (values (block-title (car c) e) "(dir)" "(dir)"))
+         (else
+          (loop (cdr c)))))
+      (let ((parent (ast-parent section)))
+        (let ((top (if (document? parent)
+                       "Top"
+                       (block-title parent e))))
+          (let loop ((els (markup-body parent))
+                     (prev #f))
 	    (cond
-	       ((null? els)
-		(values top top top))
-	       ((eq? (car els) section)
-		(let ((p (if prev
-			     (block-title prev e)
-			     top))
-		      (n (if (null? (cdr els))
-			     top
-			     (block-title (cadr els) e))))
-		   (values p n top)))
-	       (else
-		(loop (cdr els) (car els))))))))
+             ((null? els)
+              (values top top top))
+             ((eq? (car els) section)
+              (let ((p (if prev
+                           (block-title prev e)
+                           top))
+                    (n (if (null? (cdr els))
+                           top
+                           (block-title (cadr els) e))))
+                (values n p top)))
+             (else
+              (loop (cdr els) (car els)))))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    node-menu ...                                                    */
@@ -123,8 +119,9 @@
 (define (node-menu container e)
   (let ((children (markup-body container)))
       (if (pair? (filter (lambda (x)
-                           (memq (markup-markup x)
-                                 '(chapter section)))
+                           (and (markup? x)
+                                (memq (markup-markup x)
+                                      '(chapter section))))
 			 children))
 	  (begin
 	     (newline)
@@ -133,7 +130,7 @@
 	     (for-each (lambda (c)
 			  (if (%block? c)
 			      (print "* " (block-title c e) "::")))
-		       (reverse children))))
+		       children)))
       (newline)))
 
 ;*---------------------------------------------------------------------*/
@@ -152,6 +149,7 @@
 ;*    info ::%document ...                                             */
 ;*---------------------------------------------------------------------*/
 (markup-writer 'document info-engine
+  :options '(:title :author :ending)
   :action (lambda (doc e)
             (let ((title     (markup-option doc :title))
                   (authors   (markup-option doc :author))
@@ -171,7 +169,6 @@
                        (newline)
                        (newline)
                        (print "-------------")
-                       ;; FIXME: Handle footnotes.
                        (for-each (lambda (fn)
                                    (let ((label (markup-option fn :label))
                                          (note  (markup-body fn))
@@ -180,7 +177,9 @@
                                      (output note e)
                                      (output-newline)))
                                  footnotes)
-                       )))))))
+                       ))))
+              ;; FIXME: Handle `:ending'.
+              )))
 
 ;*---------------------------------------------------------------------*/
 ;*     scribe-document->info ...                                       */
@@ -281,6 +280,9 @@
 ;*    info ::%author ...                                               */
 ;*---------------------------------------------------------------------*/
 (markup-writer 'author info-engine
+  :options '(:name :title :affiliation :email :url :address :phone
+             :photo :align)  ;; XXX: These two aren't actually supported.
+
   :action (lambda (n e)
             (let ((name        (markup-option n :name))
                   (title       (markup-option n :title))

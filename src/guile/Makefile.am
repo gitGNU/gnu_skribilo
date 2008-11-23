@@ -39,7 +39,9 @@ nobase_dist_module_DATA =						\
   skribilo/reader.scm skribilo/resolve.scm				\
   skribilo/source.scm skribilo/parameters.scm skribilo/verify.scm	\
   skribilo/writer.scm skribilo/ast.scm skribilo/location.scm		\
-  skribilo/condition.scm skribilo/sui.scm
+  skribilo/condition.scm skribilo/sui.scm				\
+  skribilo/table.scm skribilo/utils/justify.scm				\
+  skribilo/utils/text-table.scm
 
 nobase_dist_module_DATA +=			\
   $(readers) $(engines) $(packages)
@@ -51,7 +53,7 @@ engines =						\
   skribilo/engine/base.scm skribilo/engine/context.scm	\
   skribilo/engine/html.scm skribilo/engine/html4.scm	\
   skribilo/engine/latex.scm skribilo/engine/lout.scm	\
-  skribilo/engine/xml.scm
+  skribilo/engine/xml.scm skribilo/engine/info.scm
 
 packages =								\
   skribilo/package/acmproc.scm skribilo/package/french.scm		\
