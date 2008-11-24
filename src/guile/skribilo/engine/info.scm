@@ -97,7 +97,7 @@
         (let ((top (if (document? parent)
                        "Top"
                        (block-title parent e))))
-          (let loop ((els (markup-body parent))
+          (let loop ((els  (filter %block? (markup-body parent)))
                      (prev #f))
 	    (cond
              ((null? els)
@@ -383,6 +383,10 @@
 ;*    info ::%reference ...                                            */
 ;*---------------------------------------------------------------------*/
 (markup-writer 'ref info-engine
+  :options '(:text :page text kind
+             :chapter :section :subsection :subsubsection
+             :figure :mark :handle :ident)
+
   :action (lambda (n e)
             (let ((target (handle-ast (markup-body n))))
               (case (markup-markup target)
@@ -493,6 +497,7 @@
 ;*    info ::%list ...                                                 */
 ;*---------------------------------------------------------------------*/
 (markup-writer 'itemize info-engine
+  :options '(:symbol)
   :action (lambda (n e)
             (for-each (lambda (item)
                         (with-justification (make-justifier
@@ -505,6 +510,7 @@
                       (markup-body n))))
 
 (markup-writer 'enumerate info-engine
+  :options '(:symbol)
   :action (lambda (n e)
             (let loop ((num   1)
                        (items (markup-body n)))
@@ -521,13 +527,15 @@
 		    (loop (+ num 1) (cdr items)))))))
 
 (markup-writer 'description info-engine
+  :options '(:symbol)
   :action (lambda (n e)
             (for-each (lambda (item)
                         (with-justification
                          (make-justifier
                           (- (justification-width) 3)
                           'left)
-                         (output item e)
+                         (lambda ()
+                           (output item e))
                          3))
                       (markup-body n))))
 
@@ -633,7 +641,9 @@
 ;*    info ::%table ...                                                */
 ;*---------------------------------------------------------------------*/
 (markup-writer 'table info-engine
-  :options '(:border)
+  :options '(:border :width
+             ;; FIXME: We don't actually support the following.
+             :frame :rules :cellpadding :rulecolor)
   :action (lambda (n e)
             (let ((border (markup-option n :border)))
               (output-flush *margin*)
@@ -642,6 +652,13 @@
                   (table->ascii n (lambda (obj)
                                     (output obj e))))
               (output-flush *margin*))))
+
+;*---------------------------------------------------------------------*/
+;*    info ::&the-bibliography ...                                     */
+;*---------------------------------------------------------------------*/
+(markup-writer '&the-bibliography info-engine
+  :action (lambda (n e)
+            (output-justified "[FIXME: Bibliography not implemented yet.]")))
 
 ;*---------------------------------------------------------------------*/
 ;*    border-table->info ...                                           */
@@ -654,7 +671,7 @@
 ;*    info ::%figure ...                                               */
 ;*---------------------------------------------------------------------*/
 (markup-writer 'figure info-engine
-  :options '(:legend :number)
+  :options '(:legend :number :multicolumns)
   :action (lambda (n e)
             (let ((body   (markup-body n))
                   (legend (markup-option n :legend))
@@ -664,7 +681,8 @@
               (output-newline)
               (output-newline)
               (output-justified "Fig. ")
-              (output-justified (number->string number))
+              (and (number? number)
+                   (output-justified (number->string number)))
               (output-justified ": ")
               (output legend e)
               (output-newline))))
