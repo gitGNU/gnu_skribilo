@@ -50,14 +50,14 @@
 	     (awidth (- (cond
 			     ((integer? width)
 			      width)
-			     ((inexact? width)
+			     ((and (number? width) (inexact? width))
 			      (inexact->exact (* width (justification-width))))
 			     (else
 			      (justification-width)))
 			  ;; remove one characters per columns separation
 			  (- nc 1)))
 	     (colswidth (rows-requested-sizes obj nc awidth))
-	     (lcolswidth (vector->list colswidth))
+	     (lcolswidth (map round-to-exact (vector->list colswidth)))
 	     (nb-def-cols (length (filter (lambda (s) (= s 0)) lcolswidth)))
 	     (defcolwidth (if (= nb-def-cols 0)
 			      0
@@ -81,7 +81,7 @@
 		       (loop (+ i 1) (+ sum defcolwidth)))
 		    (loop (+ i 1) (+ sum (vector-ref colswidth i))))))
 	 ;; at that point colswidth contains the width of each colums.
-	 (let ((lcolswidth (vector->list colswidth))
+	 (let ((lcolswidth (map round-to-exact (vector->list colswidth)))
 	       (hrows (map (lambda (r)
 			      (table-row-format r nc colswidth scribe->ascii))
 			   rows)))
@@ -111,9 +111,10 @@
 (define (table-row-format row nbcols colswidth scribe->ascii)
    (define (cell-width cnum cspan)
       (let ((v (do ((i cnum (+ i 1))
-		    (w 0 (+ w (vector-ref colswidth i))))
+		    (w 0 (+ w (round-to-exact (vector-ref colswidth i)))))
 		   ((= i (+ cnum cspan)) w))))
 	 (+ v (- cspan 1))))
+
    (let ((cells (markup-body row)))
       (let loop ((cells cells)
 		 (cnum 0)
@@ -192,7 +193,7 @@
       (if (= lfmt nblines)
 	  fmt
 	  (let* ((new (- nblines lfmt))
-		 (new/2 (inexact->exact (/ new 2))))
+		 (new/2 (inexact->exact (round (/ new 2)))))
 	     (case (markup-option cell :valign)
 		((top)
 		 (append fmt (make-filler-lines new)))
@@ -237,14 +238,20 @@
 				 (loop (cdr cells) (+ col cspan)))))))
 		(markup-body table))
       rsizes))
-				       
-;*---------------------------------------------------------------------*/
-;*    smallest-map ...                                                 */
-;*---------------------------------------------------------------------*/
+
+
+;;;
+;;; Convenience functions.
+;;;
+
 (define (smallest-map f l1 l2)
    (if (or (null? l1) (null? l2))
        '()
        (cons (f (car l1) (car l2)) (smallest-map f (cdr l1) (cdr l2)))))
 
+(define (round-to-exact w)
+  (if (inexact? w)
+      (inexact->exact (round w))
+      (round w)))
 
 ;;; text-table.scm ends here

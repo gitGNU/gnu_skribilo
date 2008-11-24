@@ -21,6 +21,9 @@
 
 (define-module (skribilo utils justify)
   :use-module (srfi srfi-13)
+  :autoload   (srfi srfi-34)       (raise)
+  :use-module (srfi srfi-35)
+  :use-module (skribilo condition)
   :export (make-justifier output-flush
 
 	   *text-column-width*
@@ -219,7 +222,7 @@
                  (nb-chars   (apply + (map string-length
                                            tokens)))
                  (all-spaces (- width nb-chars))
-                 (one-spaces (/ all-spaces
+                 (one-spaces (/ all-spaces 1.0
                                 (- nb-tokens 1)))
                  (cursor     (string-length (car tokens))))
              (string-insert! result (car tokens) 0)
@@ -268,12 +271,15 @@
 ;*    make-centered-line ...                                           */
 ;*---------------------------------------------------------------------*/
 (define (make-centered-line tokens width)
+  (let ((width (if (inexact? width)
+                   (inexact->exact (round width))
+                   (round width))))
    (make-formated-line tokens
 		       width
 		       (quotient (- width
 				    (+ (apply + (map string-length tokens))
 				       (- (length tokens) 1)))
-				 2)))
+				 2))))
 
 ;*---------------------------------------------------------------------*/
 ;*    make-flushleft-line ...                                          */
@@ -337,6 +343,11 @@
 ;*    make-justifier ...                                               */
 ;*---------------------------------------------------------------------*/
 (define (make-justifier width policy)
+   (and (or (not (number? width)) (< width 0))
+        (raise (condition
+                (&invalid-argument-error (proc-name "make-justifier")
+                                         (argument  width)))))
+
    (let ((tokens '()))
       (if (eq? policy 'verbatim)
 	  (lambda (cmd . vals)
@@ -393,7 +404,11 @@
 		       (if (pair? ntokens)
 			   (let ((toks (reverse! ntokens)))
 			      (set! tokens '())
-			      (tokens-justify justifier toks width))
+			      (tokens-justify justifier toks
+                                              (if (inexact? width)
+                                                  (round
+                                                   (inexact->exact width))
+                                                  (round width))))
 			   '())))
 		   ((width)
 		    width)
