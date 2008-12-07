@@ -472,7 +472,7 @@
 			       (make-column ie pref)))
 			   (else
 			    (table :width 100.
-			       ;;:&skribe-eval-location loc
+			       :&location loc
 			       :class "index-table"
 			       (make-sub-tables ie nc pref))))))
 		 (output (evaluate-document t e) e))))
