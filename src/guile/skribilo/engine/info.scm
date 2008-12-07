@@ -28,7 +28,8 @@
   :use-module (skribilo package base)
   :autoload   (skribilo parameters)    (*destination-file*)
   :autoload   (skribilo output)        (output)
-  :autoload   (skribilo utils justify) (make-justifier with-justification)
+  :autoload   (skribilo utils justify) (output-justified make-justifier
+                                        with-justification)
   :autoload   (skribilo utils text-table) (table->ascii)
   :use-module (srfi srfi-8)
   :use-module (srfi srfi-13)
@@ -43,7 +44,11 @@
      :version 1.0
      :format "info"
      :delegate (find-engine 'base)
-     :filter #f ;; XXX: Do we need something?
+     :filter (lambda (str)
+               ;; Justify all the strings that are to be output.
+               (with-output-to-string
+                 (lambda ()
+                   (output-justified str))))
      :custom '()))
 
 ;*---------------------------------------------------------------------*/
@@ -142,8 +147,7 @@
       (let ((title (if title title subtitle)))
 	 (if (string? title)
 	     title
-	     (with-output-to-string 
-		(lambda () (output title e)))))))
+             (ast->string title)))))
 
 ;*---------------------------------------------------------------------*/
 ;*    info ::%document ...                                             */
