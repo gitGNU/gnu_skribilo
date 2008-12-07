@@ -343,17 +343,17 @@
 ;*---------------------------------------------------------------------*/
 ;*    *ornaments* ...                                                  */
 ;*---------------------------------------------------------------------*/
-(define *ornaments*
-   `((bold "{\\textbf{" "}}")
-     (emph "*" "*")
-     (underline "_" "_")
-     (it "{\\textit{" "}}")
-     (samp "{\\textit{" "}}")
-     (sc "{\\sc{" "}}")
-     (sup "^" "")
-     (sub "_" "")
-     (code "`" "'")
-     (samp "`" "'")))
+(define %ornaments
+   `((bold      "*" "*")
+     (emph      "_" "_")
+     (underline "*" "*")
+     (it        "_" "_")
+     (samp      "_" "_")
+     (sc        "" "")
+     (sup       "^" "")
+     (sub       "_" "")
+     (code      "`" "'")
+     (samp      "`" "'")))
 
 ;*---------------------------------------------------------------------*/
 ;*    info ::%ornament ...                                             */
@@ -363,9 +363,11 @@
                   (before (cadr ornament))
                   (after  (caddr ornament)))
               (markup-writer name info-engine
-                             :before before
-                             :after after)))
-          *ornaments*)
+                             :before (lambda (n e)
+                                       (output-justified before))
+                             :after  (lambda (n e)
+                                       (output-justified after)))))
+          %ornaments)
 
 ;*---------------------------------------------------------------------*/
 ;*    info ::%pre ...                                                  */
