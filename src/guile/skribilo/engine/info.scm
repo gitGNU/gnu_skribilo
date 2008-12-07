@@ -415,14 +415,12 @@
   :action (lambda (n e)
             (let ((url  (markup-option n :url))
                   (text (markup-option n :text)))
-              (if text
-                  (begin
-                    (output-justified "*Note ")
-                    (output text e)
-                    (output-justified " (")))
-              (output url e)
-              (if text (output-justified ")"))
-              (output-justified ":: "))))
+              (and text
+                   (begin
+                     (output text e)
+                     (output-justified " (")))
+              (output-justified url)
+              (and text (output-justified ")")))))
 
 ;*---------------------------------------------------------------------*/
 ;*    info-chapter-ref ...                                             */
