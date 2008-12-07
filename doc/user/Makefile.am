@@ -26,6 +26,9 @@ EXTRA_DIST += src/api1.skb						\
   src/outline.txt src/scheme.scm
 
 
+skrinfodir = $(infodir)
+skrinfo_DATA = skribilo.info
+
 html_DATA = user.html user.sui
 dist_html_DATA = skribilo.css
 BUILT_SOURCES = lout/front-page.lout
@@ -49,6 +52,10 @@ endif
 
 load_path = $(top_srcdir)/doc/modules
 
+
+skribilo.info: user.skb
+	GUILE_LOAD_PATH=$(load_path):$$GUILE_LOAD_PATH \
+	$(skribilo) $(skrflags) --target=info -o $@ $<
 
 .skb.html:
 	GUILE_LOAD_PATH=$(load_path):$$GUILE_LOAD_PATH \

@@ -238,7 +238,8 @@ of documentation ``evaluation''.])))
 ;;; table of contents
 (resolve (lambda (n e env)
 	   (cond ((and (not (engine-format? "latex" e))
-	   	       (not (engine-format? "lout" e)))
+	   	       (not (engine-format? "lout" e))
+		       (not (engine-format? "info" e)))
                   (list
                      (and (not (engine-format? "html" e))
                           (chapter :title "Table of Contents"
@@ -250,7 +251,8 @@ of documentation ``evaluation''.])))
                            *function-index* *package-index*
                            (default-index)))))
 
-                 ((not (engine-format? "lout" e))
+                 ((and (not (engine-format? "lout" e))
+		       (not (engine-format? "info" e)))
                   (chapter :title "Index" :ident "Index"
                      (mark "global index")
                      (the-index :column (if (engine-format? "latex") 2 3)
