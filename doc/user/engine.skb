@@ -163,6 +163,7 @@ list of available customs is shown for each engine, along with each
 custom's default value and a description.]))
       
       (subsection :title [Writing New Engines]
+	          :ident "custom-engine"
 	 
 	 (p [Writing new engines (i.e., output formats) and making them
 available to Skribilo is an easy task.  Essentially, this boils down to
@@ -190,7 +191,9 @@ must be bound, in that module, to a variable called, say, ,(tt
 Guile's load path; for instance, you can adjust the ,(tt
 [GUILE_LOAD_PATH]) environment variable.]))
 
-This is all it takes to extend Skribilo's set of engines!])))
+This is all it takes to extend Skribilo's set of engines!  Note that
+this mechanism is the same as that of ,(emph [readers]) (see ,(numref
+:text [Section] :ident "custom-syntax")).])))
 
    ;; existing engines
    (include "htmle.skb")

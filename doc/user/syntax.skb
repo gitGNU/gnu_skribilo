@@ -226,7 +226,45 @@ compiler does]), would look like this:]
 	 
         [This should give you an idea of the wonderful, life-changing
 things that can be achieved with a bit of ,(emph [document
-programming]).])))
+programming]).]))
+   
+   (section :title [Writing New Readers]
+            :ident "custom-syntax"
+      
+      (p [Skribilo is extensible and makes it easy to add ,(emph [custom
+readers]), allowing the use of virtually any input syntax.  A reader is
+essentially a procedure like R5RS' ,(tt [read]), i.e., a one-argument
+procedure that takes a port and returns an S-expression.  The returned
+S-expression should be a valid ``document program'' as shown in ,(ref
+:ident "scheme-syntax").])
+      
+      (p [The are a few additional details, though.  Implementations of
+readers are required to use the ,(tt [(skribilo reader)]) modules and
+the ,(tt [define-reader]) macro.  In addition, the reader must live in
+its own module, under the ,(tt [(skribilo reader)]) module hierarchy, so
+that the reader lookup mechanism (used by the ,(tt [--reader]) option of
+the compiler) can find it.  This mechanism is the same as that used for
+engines (see ,(numref :text [Section] :ident "custom-engine")).  A
+skeleton for a reader would be like this:]
+    
+	(example :legend [Writing a new reader.]
+	 (prgm :language scheme [
+(define-module (skribilo reader my-reader)
+  :use-module (skribilo reader)
+  :export (reader-specification))
+
+(define (make-my-reader)
+  (lambda (port)
+    ...))
+
+(define-reader my-reader  ;; the reader name
+  "0.1"                   ;; a version number
+  make-my-reader)         ;; the procedure that returns
+                          ;; a reader procedure
+]))
+	
+      	[Users and encouraged to look at examples in the Skribilo
+source for additional details.])))
 
 
 ;;; Local Variables:
