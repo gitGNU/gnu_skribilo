@@ -49,10 +49,11 @@ number or string specifies a number to be used in lieu of the
 automatically computed number.])
 	      (:toc ,[This argument controls if the chapter must
 be referenced in the ,(ref :mark "toc" :text "table of contents").])
-	      (:file [The argument must be a boolean. A value of
-,(tt "#t") tells the Skribe compiler to compile that chapter in a separate
-file. A value of ,(tt "#f") tells the Skribe compiler to embed the chapter
-in the main target file.])
+	      (:file [The argument must be a boolean or a string.  A
+value of ,(tt "#t") tells the compiler to store that chapter in a
+separate file; a value of ,(tt "#f") tells the compiler to embed the
+chapter in the main target file.  When the argument is a string, it is
+used as the name of the file for this chapter.])
 	      (#!rest node... [The nodes of the chapter.]))
 	    :see-also '(document section toc))
 
@@ -82,10 +83,11 @@ number or string specifies a number to be used in lieu of the
 automatically computed number.])
 	      (:toc ,[This argument controls if the chapter must
 be referenced in the ,(ref :mark "toc" :text "table of contents").])
-	      (:file [The argument must be a boolean. A value of
-,(tt "#t") tells the Skribe compiler to compile that section in a separate
-file. A value of ,(tt "#f") tells the Skribe compiler to embed the chapter
-in the main target file.])
+	      (:file [The argument must be a boolean or a string.  A
+value of ,(tt "#t") tells the compiler to store that section in a
+separate file; a value of ,(tt "#f") tells the compiler to embed the
+section in the main target file.  When the argument is a string, it is
+used as the name of the file for this section.])
 	      (#!rest node... [The nodes of the section.]))
 	    :others '(subsection subsubsection)
 	    :see-also '(document chapter paragraph toc)))
