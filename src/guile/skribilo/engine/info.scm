@@ -517,6 +517,7 @@
 (markup-writer 'itemize info-engine
   :options '(:symbol)
   :action (lambda (n e)
+            (output-newline)
             (for-each (lambda (item)
                         (with-justification (make-justifier
                                              (- (justification-width) 3)
@@ -525,11 +526,13 @@
 					      (output-justified "- ")
 					      (output item e))
                                             3))
-                      (markup-body n))))
+                      (markup-body n))
+            (output-newline)))
 
 (markup-writer 'enumerate info-engine
   :options '(:symbol)
   :action (lambda (n e)
+            (output-newline)
             (let loop ((num   1)
                        (items (markup-body n)))
               (if (pair? items)
@@ -542,11 +545,13 @@
                                           (output-justified " - ")
                                           (output item e))
 					3)
-		    (loop (+ num 1) (cdr items)))))))
+		    (loop (+ num 1) (cdr items)))))
+            (output-newline)))
 
 (markup-writer 'description info-engine
   :options '(:symbol)
   :action (lambda (n e)
+            (output-newline)
             (for-each (lambda (item)
                         (with-justification
                          (make-justifier
@@ -555,7 +560,8 @@
                          (lambda ()
                            (output item e))
                          3))
-                      (markup-body n))))
+                      (markup-body n))
+            (output-newline)))
 
 ;*---------------------------------------------------------------------*/
 ;*    info ::%section ...                                              */
