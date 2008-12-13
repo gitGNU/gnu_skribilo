@@ -418,6 +418,11 @@
                  (info-subsection-ref target e))
                 ((subsubsection)
                  (info-subsubsection-ref target e))
+                ((mark)
+                 ;; We can't refer directly to marks, so refer to the
+                 ;; enclosing section as an approximation.
+                 (let ((parent (find1-up %block? target)))
+                   (info-chapter-ref parent e)))
                 (else
                  (skribe-warning/ast 1 target
                                      "ref: don't know how to refer to target")
