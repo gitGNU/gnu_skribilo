@@ -50,6 +50,12 @@ GUILE_MODULE_REQUIRED([srfi srfi-37])
 # Make sure we're not using the broken SRFI-35 from Guile-Lib <= 0.1.6.
 SKR_GUILE_SRFI_35_WORKS
 
+# Check for SXML and HTMLPrag from Guile-Lib, needed for the `rss-2' reader.
+GUILE_MODULE_AVAILABLE([have_sxml_simple], [(sxml simple)])
+GUILE_MODULE_AVAILABLE([have_htmlprag],    [(htmlprag)])
+if test "x$have_sxml_simple$have_htmlprag" != "xyesyes"; then
+  AC_MSG_WARN([Guile-Lib modules needed by the `rss-2' reader are missing.])
+fi
 
 # Look for `convert', from ImageMagick.
 AC_PATH_PROG([CONVERT], [convert])

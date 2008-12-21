@@ -50,7 +50,7 @@ programs to produce PS/PDF files:
   * ConTeXt
     http://www.pragma-ade.nl/
 
-Optionally, to produce pie charts, you may want to use:
+To produce pie charts, you may want to use:
 
   * Ploticus
     http://ploticus.sourceforge.net/
@@ -59,6 +59,11 @@ To convert images in the `fig' format:
 
   * Xfig, Transfig
     http://xfig.org/
+
+To be able to use the `rss-2' reader, you will need:
+
+  * Guile-Lib (specifically, `sxml' and `htmlprag' modules)
+    http://home.gna.org/guile-lib/
 
 This is it!
 
