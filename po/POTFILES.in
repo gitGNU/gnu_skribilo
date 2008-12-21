@@ -12,3 +12,4 @@ src/guile/skribilo/index.scm
 src/guile/skribilo/source.scm
 src/guile/skribilo/sui.scm
 src/guile/skribilo/verify.scm
+src/guile/skribilo/engine/lout.scm

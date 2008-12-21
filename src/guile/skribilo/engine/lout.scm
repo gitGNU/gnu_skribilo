@@ -24,6 +24,7 @@
   :use-module (skribilo config)
   :use-module (skribilo engine)
   :use-module (skribilo writer)
+  :use-module (skribilo condition)
   :use-module (skribilo utils keywords)
   :use-module (skribilo utils strings)
   :use-module (skribilo utils syntax)
@@ -37,6 +38,8 @@
   :use-module (srfi srfi-11)
   :use-module (srfi srfi-13)
   :use-module (srfi srfi-14)
+  :autoload   (srfi srfi-34)  (raise)
+  :use-module (srfi srfi-35)
   :autoload   (ice-9 popen)   (open-output-pipe)
   :autoload   (ice-9 rdelim)  (read-line)
 
@@ -2399,18 +2402,24 @@
 						 (if (list? efmt)
 						     efmt
 						     '("eps"))))))
-		(if url ;; maybe we should run `wget' then?  :-)
-		    (skribe-error 'lout "Image URLs not supported" url))
-		(if (not (string? img))
-		    (skribe-error 'lout "Illegal image" file)
-		    (begin
-		      (if width
-			  (format #t "\n~a @Wide" (lout-width width)))
-		      (if height
-			  (format #t "\n~a @High" (lout-width height)))
-		      (if zoom
-			  (format #t "\n~a @Scale" zoom))
-		      (format #t "\n@IncludeGraphic { \"~a\" }\n" img))))))
+		(cond (url ;; maybe we should run `wget' then?  :-)
+                       (skribe-warning/ast 1 n
+                                           (_ "image URLs not supported")))
+
+                      ((string? img)
+                       (if width
+                           (format #t "\n~a @Wide" (lout-width width)))
+                       (if height
+                           (format #t "\n~a @High" (lout-width height)))
+                       (if zoom
+                           (format #t "\n~a @Scale" zoom))
+                       (format #t "\n@IncludeGraphic { \"~a\" }\n" img))
+
+                      (else
+                       (raise (condition
+                               (&invalid-argument-error
+                                (proc-name "image/lout")
+                                (argument  img)))))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    Ornaments ...                                                    */
