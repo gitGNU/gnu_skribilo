@@ -47,7 +47,8 @@ nobase_dist_module_DATA +=			\
   $(readers) $(engines) $(packages)
 
 readers =							\
-  skribilo/reader/skribe.scm skribilo/reader/outline.scm
+  skribilo/reader/skribe.scm skribilo/reader/outline.scm	\
+  skribilo/reader/rss-2.scm
 
 engines =						\
   skribilo/engine/base.scm skribilo/engine/context.scm	\

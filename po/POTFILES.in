@@ -13,3 +13,4 @@ src/guile/skribilo/source.scm
 src/guile/skribilo/sui.scm
 src/guile/skribilo/verify.scm
 src/guile/skribilo/engine/lout.scm
+src/guile/skribilo/reader/rss-2.scm

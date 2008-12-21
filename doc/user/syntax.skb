@@ -210,6 +210,25 @@ documents that can be output in variety of formats (see ,(numref :text
 markup-less document format, there are many things that cannot be done
 using it, most notably tables, bibliographies, and cross-references.]))
    
+   (section :title [The RSS 2.0 Syntax]
+            :ident "rss2-syntax"
+      
+      (p [RSS 2.0 (aka. ,(ref :url "http://en.wikipedia.org/wiki/RSS" :text
+(emph [Really Simple Syndication]))) is supported as an input syntax.
+To use it, just pass ,(tt [--reader=rss-2]) to the compiler.  This
+makes it possible to generate Skribilo documents from RSS 2.0 feeds,
+which can be useful or at least funny.  Consider the following example:]
+
+   (disp :verb #t [
+$ wget http://planet.gnu.org/rss20.xml
+$ skribilo -R rss-2 -t lout -c column-number=2 < rss20.xml \\
+  | lout | ps2pdf - > gnu-planet.pdf
+])
+
+[It produces a two-column PDF file with the contents of the RSS feed of
+GNU Planet, where each item of the feed is mapped to a Skribilo
+``chapter''.]))
+   
    (section :title [Documents in Scheme Programs]
             :ident "scheme-syntax"
       
