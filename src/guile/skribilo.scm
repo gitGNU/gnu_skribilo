@@ -41,6 +41,7 @@
   :use-module  (skribilo config)
 
   :autoload    (srfi srfi-1)     (alist-cons)
+  :use-module  (srfi srfi-13)
   :use-module  (srfi srfi-37)
   :use-module  (srfi srfi-39)
 
@@ -67,6 +68,7 @@ specified reader syntax, and produce its output using the specified engine.
   -R, --reader=READER    Use READER to parse the input file, e.g., `skribe'
                          (default) or `outline'.
   -t, --target=ENGINE    Use ENGINE as the output engine, e.g., `html'.
+  -c, --custom=C=VAL     Use VAL as the value of ENGINE's custom C.
   -o, --output=FILE      Write output to FILE.
       --compat=COMPAT    Use COMPAT as the compatibility layer, e.g., `skribe'.
 
@@ -166,6 +168,29 @@ Report bugs to <~a>.~%"
         (option '(#\t "target") #t #f
                 (lambda (opt name arg result)
                   (alist-cons :target arg result)))
+        (option '(#\c "custom") #t #f
+                (lambda (opt name arg result)
+                  (let ((=-pos (string-index arg #\=)))
+                    (if (not =-pos)
+                        (leave (_ "~a: missing value for custom") arg)
+                        (let ((custom (string-take arg =-pos))
+                              (value  (string-drop arg (+ =-pos 1))))
+                          (catch 'read-error
+                            (lambda ()
+                              (let ((custom (string->symbol custom))
+                                    (value
+                                     (with-input-from-string value read))
+                                    (result
+                                     (alist-delete :customs result eq?))
+                                    (customs
+                                     (assoc-ref result :customs)))
+                                (alist-cons
+                                 :customs
+                                 (alist-cons custom value customs)
+                                 result)))
+                            (lambda (key . args)
+                              (leave (_ "~a: invalid custom value")
+                                     value))))))))
         (option '(#\o "output") #t #f
                 (lambda (opt name arg result)
                   (if (assoc :output result)
@@ -242,6 +267,7 @@ Report bugs to <~a>.~%"
     (:source-path ".")
     (:image-path  ".")
     (:sui-path    ".")
+    (:customs)
     (:watched-symbols)))
 
 (define (parse-args args)
@@ -266,6 +292,7 @@ options."
 
 	 (reader-name       (string->symbol (assoc-ref options :reader)))
 	 (engine            (string->symbol (assoc-ref options :target)))
+         (customs           (assoc-ref options :customs))
          (input-file        (assoc-ref options :input))
 	 (output-file       (assoc-ref options :output))
 
@@ -315,6 +342,14 @@ options."
 
       ;; Load the user rc file (FIXME)
       ;;(load-rc)
+
+      (or (null? customs)
+          (let ((engine (lookup-engine engine)))
+            (for-each (lambda (custom+value)
+                        (let ((custom (car custom+value))
+                              (value  (cdr custom+value)))
+                          (engine-custom-set! engine custom value)))
+                      customs)))
 
       ;; Evaluate expressions passed as `--eval'.
       (for-each (lambda (expr)

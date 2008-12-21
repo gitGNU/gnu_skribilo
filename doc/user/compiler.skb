@@ -80,6 +80,9 @@ conventions of Emacs' Outline mode (see ,(numref :text [Section] :ident
 	`(#\t "engine" ,[Use ,(tt "engine") as the engine, i.e., as
 the output format.  For details on engines and for a list of supported
 engines, see ,(numref :text [Chapter] :ident "engines").])
+	`(#\c "custom=value" ,[Set engine
+custom ,(tt [custom]) to ,(tt [value]), a constant.  See Section ,(ref
+:subsection "Engine Customs") for more information on customs.])
 	`("compat" "compat" ,[Use ,(tt "compat") as the compatibility
 mode.  This defaults to ,(tt [skribilo]).  Specifying ,(tt [skribe])
 enables the ,(ref :text [Skribe] :url *skribe-url*) compatibility mode,
