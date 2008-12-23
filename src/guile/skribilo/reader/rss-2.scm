@@ -93,13 +93,12 @@
          (string-append "rss-2: " fmt "~%")
          args))
 
-(define (html-string->parse-tree str)
-  ;; Remove the leading `*TOP*'.
-  (cdr (html->shtml str)))
-
 (define (generic-tag->skribe tag)
   (let loop ((tag tag))
     (match tag
+      (('*TOP* body ...)
+       `(list ,@(map loop body)))
+
       ((? string? tag)
        tag)
 
@@ -235,7 +234,7 @@
       (('*PI* 'xml (? string? body))
        ;; Seen on MS-generated code: an <xml> tag in the middle of the
        ;; <description>!
-       `(list ,@(loop (html-string->parse-tree body))))
+       `(list ,@(loop (html->shtml body))))
 
       (((? symbol? unsupported-tag) rest ...)
        (warn* (_ "tag `~s' ignored") tag)
@@ -279,15 +278,15 @@
   (let ((title (find-tag item 'title))
 	(date  (find-tag item 'pubDate))
 	(desc  (find-tag item 'description)))
-    `(,markup :title ',(cadr title)
+    `(,markup :title ,(generic-tag->skribe (html->shtml (cadr title)))
 
               (p (bold ,(string-trim-both
                          (date->string (english-date->date (cadr date))
                                        "~e ~B ~Y")))
                  ".  ")
 
-	      ,@(generic-tag->skribe
-		 (html-string->parse-tree (cadr desc))))))
+	      ,(generic-tag->skribe
+                (html->shtml (cadr desc))))))
 
 (define (feed->document feed)
   ;; Return a Skribilo `(document ...)' S-exp from FEED, the SXML tree of an
@@ -300,7 +299,7 @@
         (let ((title   (channel-title (car channels)))
               (single? (null? (cdr channels))))
           ;; When there's only one channel, promote items as chapters.
-          `(document :title ,title
+          `(document :title ,(generic-tag->skribe (html->shtml title))
              ,@(if single?
                    (map (lambda (item)
                           (item->section item 'chapter))
