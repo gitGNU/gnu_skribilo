@@ -10,6 +10,7 @@ Copyright (C) 2005, 2006, 2007, 2008  Ludovic Courtès <ludo@gnu.org>
 
 ** Improved configure-time diagnostics
 ** `skribilo' now displays a call stack trace upon error when possible
+** `skribilo' now installs the user-specified locale
 ** New `--custom' compiler option
 ** Using `(image :url ...)' with `lout' yields a warning, not an error
 ** New `rss-2' input syntax, for RSS 2.0 feeds

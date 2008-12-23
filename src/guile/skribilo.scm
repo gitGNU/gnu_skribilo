@@ -319,6 +319,8 @@ options."
       ;; The environment in which the document is evaluated.
       (make-user-module (string->symbol compat)))
 
+    ;; Install the user-specified locale.
+    (setlocale LC_ALL "")
 
     (if (> (*debug*) 4)
 	(set! %load-hook
