@@ -30,13 +30,12 @@
 
 
 (define-macro (test-match name pattern xml)
+  ;; Test whether the RSS feed in XML matches PATTERN.
   `(test-equal ,name #t
      (match (%rss2-read (open-input-string ,xml))
        (,pattern #t)
        (_        #f))))
 
-;; Since `match' doesn't support keywords, help it.
-(define (kw:title? x) (eq? x #:title))
 
 
 (test-begin "rss-2")
