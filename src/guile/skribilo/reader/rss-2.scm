@@ -185,9 +185,7 @@
                         (keys   '())
                         (result '()))
                (if (null? items)
-                   (begin
-                     (format (current-error-port) "ITEMS = ~s~%" result)
-                     (reverse result))
+                   (reverse result)
                    (match (car items)
                      ((or ('dt ('@ _ ...) text ...)
                           ('dt text ...))
