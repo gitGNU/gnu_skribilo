@@ -32,7 +32,7 @@ skrinfo_DATA = skribilo.info
 html_DATA = user.html user.sui
 dist_html_DATA = skribilo.css
 BUILT_SOURCES = lout/front-page.lout
-CLEANFILES = $(BUILT_SOURCES) $(html_DATA)
+CLEANFILES = $(BUILT_SOURCES) $(html_DATA) skribilo.info
 
 skribilo = $(top_builddir)/src/pre-inst-skribilo
 skrflags  = -I $(srcdir) -P $(top_srcdir)/doc/img		\
