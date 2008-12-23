@@ -1,0 +1,95 @@
+;;; Excercise RSS 2.0 reader.                  -*- Scheme -*-
+;;;
+;;; Copyright (C) 2008  Ludovic Courtès <ludo@gnu.org>
+;;;
+;;; This file is part of Skribilo.
+;;;
+;;; Skribilo is free software; you can redistribute it and/or modify it
+;;; under the terms of the GNU Lesser General Public License as published by
+;;; the Free Software Foundation; either version 3 of the License, or (at
+;;; your option) any later version.
+;;;
+;;; Skribilo is distributed in the hope that it will be useful, but
+;;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser
+;;; General Public License for more details.
+;;;
+;;; You should have received a copy of the GNU Lesser General Public License
+;;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+(define-module (tests rss-2)
+  :use-module (ice-9 match)
+  :use-module (skribilo reader)
+  :use-module (srfi srfi-64))
+
+(if (or (not (false-if-exception (resolve-interface '(sxml simple))))
+        (not (false-if-exception (resolve-interface '(htmlprag)))))
+    (exit 77))
+
+(define %rss2-read #f)
+
+
+(define-macro (test-match name pattern xml)
+  `(test-equal ,name #t
+     (match (%rss2-read (open-input-string ,xml))
+       (,pattern #t)
+       (_        #f))))
+
+;; Since `match' doesn't support keywords, help it.
+(define (kw:title? x) (eq? x #:title))
+
+
+(test-begin "rss-2")
+
+(test-eq    "make-reader" #t
+  (begin
+    (set! %rss2-read (make-reader 'rss-2))
+    (procedure? %rss2-read)))
+
+(test-match "basic"
+  `(document ,'#:title (list "The Channel")
+      (chapter ,'#:title (list "Foo Bar")
+         ,_
+         (list "Hello world.")))
+
+"<?xml version=\"1.0\" encoding=\"iso-8859-1\" ?>
+ <rss version=\"2.0\">
+ <channel>
+   <title>The Channel</title>
+   <link>http://example.net/</link>
+   <description>Some channel description...</description>
+
+   <item>
+     <title>Foo Bar</title>
+     <pubDate>Mon, 06 Jun 2005 23:05:00 +0200</pubDate>
+     <description>Hello world.</description>
+   </item>
+ </channel>
+ </rss>")
+
+(test-match "with HTML markup"
+  `(document ,'#:title (list (emph "The") " Channel")
+      (chapter ,'#:title (list "Foo " (bold "&") " Bar")
+         ,_
+         (list (p "Hello world."))))
+
+"<?xml version=\"1.0\" encoding=\"iso-8859-1\" ?>
+ <rss version=\"2.0\">
+ <channel>
+   <title>&lt;em&gt;The&lt;/em&gt; Channel</title>
+   <link>http://example.net/</link>
+   <description>Some channel description...</description>
+
+   <item>
+     <title>Foo &lt;b&gt;&amp;&lt;/b&gt; Bar</title>
+     <pubDate>Mon, 06 Jun 2005 23:05:00 +0200</pubDate>
+     <description>&lt;P&gt;Hello world.&lt;/P&gt;</description>
+   </item>
+ </channel>
+ </rss>")
+
+(test-end "rss-2")
+
+
+(exit (= (test-runner-fail-count (test-runner-current)) 0))
+

@@ -107,4 +107,5 @@ AC_OUTPUT([Makefile
 	   doc/user/Makefile
 	   doc/modules/Makefile
 	   doc/man/Makefile
+	   tests/Makefile
 	   emacs/Makefile])
