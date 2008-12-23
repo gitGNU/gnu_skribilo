@@ -93,8 +93,9 @@
          (string-append "rss-2: " fmt "~%")
          args))
 
-(define (generic-tag->skribe tag)
-  (let loop ((tag tag))
+(define (shtml->skribe tree)
+  ;; Turn TREE, an SHTML tree, to Skribe/Skribilo document tree (S-exp).
+  (let loop ((tag tree))
     (match tag
       (('*TOP* body ...)
        `(list ,@(map loop body)))
@@ -278,14 +279,14 @@
   (let ((title (find-tag item 'title))
 	(date  (find-tag item 'pubDate))
 	(desc  (find-tag item 'description)))
-    `(,markup :title ,(generic-tag->skribe (html->shtml (cadr title)))
+    `(,markup :title ,(shtml->skribe (html->shtml (cadr title)))
 
               (p (bold ,(string-trim-both
                          (date->string (english-date->date (cadr date))
                                        "~e ~B ~Y")))
                  ".  ")
 
-	      ,(generic-tag->skribe
+	      ,(shtml->skribe
                 (html->shtml (cadr desc))))))
 
 (define (feed->document feed)
@@ -299,7 +300,7 @@
         (let ((title   (channel-title (car channels)))
               (single? (null? (cdr channels))))
           ;; When there's only one channel, promote items as chapters.
-          `(document :title ,(generic-tag->skribe (html->shtml title))
+          `(document :title ,(shtml->skribe (html->shtml title))
              ,@(if single?
                    (map (lambda (item)
                           (item->section item 'chapter))
