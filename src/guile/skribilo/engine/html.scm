@@ -1,6 +1,6 @@
 ;;; html.scm  --  HTML engine.
 ;;;
-;;; Copyright 2005, 2006, 2007, 2008  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2006, 2007, 2008, 2009  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -936,7 +936,10 @@
 			      (format #t "<a name=\"footnote-~a\">"
 				      (string-canonicalize
 				       (container-ident fn)))
-			      (format #t "<sup><small>~a</small></sup></a>: "
+                              (format #t "<a href=\"#footnote-site-~a\">"
+                                      (string-canonicalize
+                                       (container-ident fn)))
+			      (format #t "<sup><small>~a</small></sup></a></a> "
 				      (markup-option fn :label))
 			      (output (markup-body fn) e)
 			      (display "\n<br>\n")
@@ -1383,9 +1386,12 @@
 (markup-writer 'footnote
    :options '(:label)
    :action (lambda (n e)
+              (format #t "<a name=\"footnote-site-~a\">"
+                      (string-canonicalize (container-ident n)))
 	      (format #t "<a href=\"#footnote-~a\"><sup><small>~a</small></sup></a>"
 		      (string-canonicalize (container-ident n))
-		      (markup-option n :label))))
+		      (markup-option n :label))
+              (format #t "</a>")))
 
 ;*---------------------------------------------------------------------*/
 ;*    linebreak ...                                                    */

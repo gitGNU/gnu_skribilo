@@ -1,4 +1,4 @@
-Copyright (C) 2005, 2006, 2007, 2008  Ludovic Courtès <ludo@gnu.org>
+Copyright (C) 2005, 2006, 2007, 2008, 2009  Ludovic Courtès <ludo@gnu.org>
 
   Copying and distribution of this file, with or without modification,
   are permitted in any medium without royalty provided the copyright
@@ -14,6 +14,7 @@ Copyright (C) 2005, 2006, 2007, 2008  Ludovic Courtès <ludo@gnu.org>
 ** New `--custom' compiler option
 ** Using `(image :url ...)' with `lout' yields a warning, not an error
 ** New `rss-2' input syntax, for RSS 2.0 feeds
+** HTML engine: footnotes now yield hyperlinks back to the call site
 
 * New in Skribilo 0.9.1
 
