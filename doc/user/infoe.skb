@@ -1,0 +1,47 @@
+;;; info.skb  --  Documentation of the Info engine.
+;;;
+;;; Copyright 2009  Ludovic Courtès <ludo@gnu.org>
+;;;
+;;;
+;;; This program is free software; you can redistribute it and/or modify
+;;; it under the terms of the GNU General Public License as published by
+;;; the Free Software Foundation; either version 2 of the License, or
+;;; (at your option) any later version.
+;;;
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;;
+;;; You should have received a copy of the GNU General Public License
+;;; along with this program; if not, write to the Free Software
+;;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+;;; USA.
+
+(section :title "Info Engine" :file #t
+   (mark "info-engine")
+   (index "Info" :note "Engine")
+
+   (p [The ,(tt [info]) engine produces GNU,(~)Info files for on-line
+browsing with GNU,(~)Emacs of with the stand-alone Info reader of ,(ref
+:text [GNU,(~)Texinfo] :url "http://www.gnu.org/software/texinfo/").])
+   
+   (p [For each ,(markup-ref "chapter"), ,(markup-ref "section"), etc.,
+an Info node is created, whose name is inferred from the ,(param :title)
+option.  However, Info node names have to be unique, which the ,(param
+:title) options are not necessarily.  Thus, the Info engine does two
+things:
+
+,(enumerate
+    (item [It warns you about duplicate Info node titles.])
+    (item [It allows you to choose a different node name to avoid
+conflicts, using the ,(param :info-node) option of ,(markup-ref
+"chapter"), etc.]))
+
+Most markups shown in ,(numref :text [Chapter] :ident "std-markups") are
+meaningfully rendered in Info, including tables.]))
+
+;;; Local Variables:
+;;; coding: latin-1
+;;; ispell-local-dictionary: "american"
+;;; End:

@@ -1,6 +1,6 @@
 ;;; engine.skb  --  The description of the Skribe engines
 ;;;
-;;; Copyright 2008  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2008, 2009  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -200,6 +200,7 @@ this mechanism is the same as that of ,(emph [readers]) (see ,(numref
    (include "loute.skb")
    (include "latexe.skb")
    (include "contexte.skb")
+   (include "infoe.skb")
    (include "xmle.skb"))
 
 

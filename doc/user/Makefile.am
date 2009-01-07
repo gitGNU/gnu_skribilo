@@ -1,7 +1,7 @@
 # Chapters and sections.
 EXTRA_DIST = bib.skb char.skb colframe.skb document.skb emacs.skb	\
   engine.skb enumeration.skb eq.skb examples.skb figure.skb		\
-  font.skb footnote.skb htmle.skb image.skb index.skb			\
+  font.skb footnote.skb htmle.skb image.skb index.skb infoe.skb		\
   justify.skb latexe.skb loute.skb lib.skb line.skb links.skb		\
   markup.skb ornament.skb package.skb pie.skb prgm.skb sectioning.skb	\
   skribilo-config.skb compiler.skb skribeinfo.skb slide.skb spacing.skb	\
