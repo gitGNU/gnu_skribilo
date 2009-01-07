@@ -14,6 +14,8 @@ Copyright (C) 2005, 2006, 2007, 2008, 2009  Ludovic Courtès <ludo@gnu.org>
 ** New `--custom' compiler option
 ** Using `(image :url ...)' with `lout' yields a warning, not an error
 ** New `rss-2' input syntax, for RSS 2.0 feeds
+** New Info engine, to produce `.info' files browseable with Emacs
+** New `:info-node' option for `chapter', `section', etc.
 ** HTML engine: footnotes now yield hyperlinks back to the call site
 ** HTML engine: footnotes are properly printed for same-file chapters
 
