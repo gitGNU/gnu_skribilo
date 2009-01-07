@@ -1,6 +1,6 @@
 ;;; api.scm  --  The style for documenting Scheme APIs.
 ;;;
-;;; Copyright 2005, 2006, 2007, 2008  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2006, 2007, 2008, 2009  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -161,14 +161,66 @@
                           customs)
                 (display "\n@LP\n")))))
 
-(define (punctuate lst)
-  ;; Punctuate words (ASTs) listed in LST.
+
+;*---------------------------------------------------------------------*/
+;*    Info configuration                                               */
+;*---------------------------------------------------------------------*/
+
+(let ((ie (find-engine 'info)))
+  (markup-writer 'doc-markup ie
+    :action (lambda (n e)
+              (let ((protos (markup-option n 'prototypes))
+                    (opts   (markup-option n 'options))
+                    (params (markup-option n 'parameters))
+                    (see    (markup-option n 'see-also)))
+                (output (linebreak) e)
+                (for-each (lambda (p)
+                            (output (list (linebreak) p) e))
+                          protos)
+
+                (output (linebreak) e)
+                (and (pair? opts)
+                     (output
+                      (description
+                       (map (lambda (o)
+                              (let ((name    (car o))
+                                    (engines (cadr o))
+                                    (desc    (caddr o)))
+                                (item :key (list (tt name)
+                                                 " (supported by "
+                                                 (punctuate engines #f)
+                                                 ")")
+                                      desc)))
+                            opts))
+                      e))
+
+                (and (pair? params)
+                     (output
+                      (description
+                       (map (lambda (p)
+                              (let ((name (car p))
+                                    (desc (cdr p)))
+                                (item :key (tt name)
+                                      desc)))
+                            params))
+                      e))
+
+                (and (pair? see)
+                     (output (list "See also " (punctuate see)) e))
+
+                (output (linebreak) e)))))
+
+(define* (punctuate lst :optional (period? #t))
+  ;; Punctuate words (ASTs) listed in LST.  If PERIOD? is true, add a
+  ;; terminating period.
   (or (null? lst)
-      (reverse (cons "."
-                     (cdr (fold (lambda (word result)
-                                  (cons* ", " word result))
-                                '()
-                                lst))))))
+      (let ((items (cdr (fold (lambda (word result)
+                                (cons* ", " word result))
+                              '()
+                              lst))))
+        (reverse (if period?
+                     (cons "." items)
+                     items)))))
 
 
 ;*---------------------------------------------------------------------*/
@@ -468,15 +520,18 @@
       (map (lambda (e)
 	      (let* ((id (engine-ident e))
 		     (s (symbol->string id)))
-		 (if (engine-format? "latex")
-		     (list s " ")
-		     (list (if sui
-			       (ref :skribe sui 
-				  :mark (string-append s "-engine") 
-				  :text s)
-			       (ref :mark (string-append s "-engine") 
-				  :text s))
-			   " "))))
+		 (cond ((engine-format? "latex")
+                        (list s " "))
+                       ((engine-format? "info")
+                        s)
+                       (else
+                        (list (if sui
+                                  (ref :skribe sui 
+                                       :mark (string-append s "-engine") 
+                                       :text s)
+                                  (ref :mark (string-append s "-engine") 
+                                       :text s))
+                              " ")))))
 	   (if (pair? force-engines) 
 	       force-engines 
 	       (filter (lambda (e)
@@ -648,7 +703,7 @@
 			 (subsubsection :title "See also" :number #f :toc #f
 			    (p so)
 			    (! "\\noindent"))))))
-          (define (doc-markup.lout)
+          (define (doc-markup.generic)
 	     (let ((df (map (lambda (f)
 			       (cons (param (car f)) (cadr f)))
 			    dformals))
@@ -698,8 +753,9 @@
 		(cond
 		   ((engine-format? "latex")
 		    (doc-markup.latex))
-                   ((engine-format? "lout")
-                    (doc-markup.lout))
+                   ((or (engine-format? "lout")
+                        (engine-format? "info"))
+                    (doc-markup.generic))
 		   (else
 		    (center (doc-markup.html)))))))))
 
