@@ -3,7 +3,7 @@
            ;; referred to by the expanded macros.
            %test-begin %test-comp2 %test-comp2body %test-on-test-begin
            %test-evaluate-with-catch %test-on-test-end %test-report-result
-           %test-end
+           %test-end %test-comp1body
 
            test-begin ;; must be listed first, since in Kawa (at least) it is "magic".
            test-end test-assert test-eqv test-eq test-equal
