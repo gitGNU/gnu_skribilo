@@ -15,6 +15,10 @@ Copyright (C) 2005, 2006, 2007, 2008, 2009  Ludovic Courtès <ludo@gnu.org>
 ** Using `(image :url ...)' with `lout' yields a warning, not an error
 ** New `rss-2' input syntax, for RSS 2.0 feeds
 ** HTML engine: footnotes now yield hyperlinks back to the call site
+** HTML engine: footnotes are properly printed for same-file chapters
+
+Previously, footnotes would not get printed in the case of chapters that
+are not output in a separate file.
 
 * New in Skribilo 0.9.1
 
