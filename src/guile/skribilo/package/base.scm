@@ -1,6 +1,6 @@
 ;;; base.scm -- The base markup package of Skribe/Skribilo.
 ;;;
-;;; Copyright 2005, 2006, 2007, 2008  Ludovic Courtès  <ludo@gnu.org>
+;;; Copyright 2005, 2006, 2007, 2008, 2009  Ludovic Courtès  <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -200,7 +200,8 @@
 			opts
 			:key
 			(ident #f) (class "chapter")
-			title (html-title #f) (file #f) (toc #t) (number #t))
+			title (html-title #f) (info-node #f)
+                        (file #f) (toc #t) (number #t))
    (new container
       (markup 'chapter)
       (ident (or ident (symbol->string (gensym "chapter"))))
@@ -227,7 +228,7 @@
 			opts
 			:key
 			(ident #f) (class "section")
-			title (file #f) (toc #t) (number #t))
+			title info-node (file #f) (toc #t) (number #t))
    (new container
       (markup 'section)
       (ident (or ident (symbol->string (gensym "section"))))
@@ -255,7 +256,7 @@
 			   opts
 			   :key
 			   (ident #f) (class "subsection")
-			   title (file #f) (toc #t) (number #t))
+			   title info-node (file #f) (toc #t) (number #t))
    (new container
       (markup 'subsection)
       (ident (or ident (symbol->string (gensym "subsection"))))
@@ -280,7 +281,7 @@
 			      opts
 			      :key
 			      (ident #f) (class "subsubsection")
-			      title (file #f) (toc #f) (number #t))
+			      title info-node (file #f) (toc #f) (number #t))
    (new container
       (markup 'subsubsection)
       (ident (or ident (symbol->string (gensym "subsubsection"))))

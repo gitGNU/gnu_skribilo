@@ -143,12 +143,14 @@
 ;*    block-title ::%chapter ...                                       */
 ;*---------------------------------------------------------------------*/
 (define (block-title obj e)
-  (let ((title    (markup-option obj :title))
-        (subtitle (markup-option obj :subtitle)))
-      (let ((title (if title title subtitle)))
-	 (if (string? title)
-	     title
-             (ast->string title)))))
+  (or (let ((title (markup-option obj :info-node)))
+        (and title (ast->string title)))
+      (let ((title    (markup-option obj :title))
+            (subtitle (markup-option obj :subtitle)))
+        (let ((title (if title title subtitle)))
+          (if (string? title)
+              title
+              (ast->string title))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    check-node-title-conflicts ...                                   */
@@ -600,7 +602,7 @@
 ;*    info ::%section ...                                              */
 ;*---------------------------------------------------------------------*/
 (markup-writer 'section info-engine
-  :options '(:title :html-title :number :toc :file :env)
+  :options '(:title :info-node :number :toc :file :env)
   :action (lambda (n e)
             (let ((body  (markup-body n))
                   (title (markup-option n :title)))
@@ -621,7 +623,7 @@
 ;*    info ::%subsection ...                                           */
 ;*---------------------------------------------------------------------*/
 (markup-writer 'subsection info-engine
-  :options '(:title :html-title :number :toc :env :file)
+  :options '(:title :info-node :number :toc :env :file)
   :action (lambda (n e)
             (let ((body  (markup-body n))
                   (title (markup-option n :title)))
@@ -638,7 +640,7 @@
 ;*    info ::%subsubsection ...                                        */
 ;*---------------------------------------------------------------------*/
 (markup-writer 'subsubsection info-engine
-  :options '(:title :html-title :number :toc :env :file)
+  :options '(:title :info-node :number :toc :env :file)
   :action (lambda (n e)
             (let ((body  (markup-body n))
                   (title (markup-option n :title)))
@@ -664,7 +666,7 @@
 ;*    info ::%chapter ...                                              */
 ;*---------------------------------------------------------------------*/
 (markup-writer 'chapter info-engine
-  :options '(:title :number :file :toc :html-title :env)
+  :options '(:title :number :file :toc :info-node :env)
   :action (lambda (n e)
             (let ((body   (markup-body n))
                   (file   (markup-option n :file))
