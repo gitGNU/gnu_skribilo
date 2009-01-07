@@ -1,6 +1,6 @@
 ;;; info.scm  --  GNU Info engine.
 ;;;
-;;; Copyright 2008  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2008, 2009  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2001, 2002  Manuel Serrano
 ;;;
 ;;;
@@ -31,6 +31,7 @@
   :autoload   (skribilo utils justify) (output-justified make-justifier
                                         with-justification)
   :autoload   (skribilo utils text-table) (table->ascii)
+  :autoload   (srfi srfi-1)            (fold)
   :use-module (srfi srfi-8)
   :use-module (srfi srfi-13)
 
@@ -150,11 +151,38 @@
              (ast->string title)))))
 
 ;*---------------------------------------------------------------------*/
+;*    check-node-title-conflicts ...                                   */
+;*---------------------------------------------------------------------*/
+(define (check-node-title-conflicts doc e)
+  ;; Check whether Info node titles are unique and issue a warning if they're
+  ;; not.  Since we compute node titles based on the `:title' option of
+  ;; sections, we can't guarantee uniqueness so the best we can do is report
+  ;; about it.
+  (let ((sections (search-down %block? doc)))
+    (fold (lambda (section section+title)
+            (let* ((title      (block-title section e))
+                   (same-named (assoc title section+title string=?)))
+              (if (pair? same-named)
+                  (begin
+                    (skribe-warning/ast 1 section
+                                        (format #f
+                                                (_ "Info node title `~A' already used")
+                                                title))
+                    (skribe-warning/ast 1 (cdr same-named)
+                                        (_ "previous occurrence was here"))
+                    section+title)
+                  (alist-cons title section section+title))))
+          '()
+          sections)
+    #t))
+
+;*---------------------------------------------------------------------*/
 ;*    info ::%document ...                                             */
 ;*---------------------------------------------------------------------*/
 (markup-writer 'document info-engine
   :options '(:title :author :ending)
   :action (lambda (doc e)
+            (check-node-title-conflicts doc e)
             (let ((title     (markup-option doc :title))
                   (authors   (markup-option doc :author))
                   (body      (markup-body doc))
