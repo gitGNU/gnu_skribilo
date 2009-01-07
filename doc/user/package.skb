@@ -1,6 +1,6 @@
 ;;; package.skb  --  Packages
 ;;;
-;;; Copyright 2007, 2008  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2007, 2008, 2009  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2001, 2004, 2005  Manuel Serrano
 ;;;
 ;;;
@@ -231,6 +231,7 @@ the tabs). The attribute ,(param :no-tabs) disable tabs for this
 container.]))
 
       (subsubsection :title [Example]
+	             :info-node [Package Example]
 
 	 (resolve (lambda (n e env)
 	            ;; XXX: In Lout, the sample code is unbreakable for

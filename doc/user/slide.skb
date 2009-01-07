@@ -1,6 +1,6 @@
 ;;; slide.skb  --  Slides
 ;;;
-;;; Copyright 2006, 2008  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2006, 2008, 2009  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2004  Manuel Serrano
 ;;;
 ;;;
@@ -189,6 +189,8 @@ output format does not support embedded application.]))
 ;*    Example                                                          */
 ;*---------------------------------------------------------------------*/
 (section :title "Example"
+         :info-node "Slide Example"
+
    (p [Here is a complete example of Skribilo slides:])
    
    (if (and (engine-format? "html") 

@@ -1,6 +1,6 @@
 ;;; skribilo-config.skb  --  The `skribilo-config' tool
 ;;;
-;;; Copyright 2007, 2008  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2007, 2008, 2009  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2004  Manuel Serrano
 ;;;
 ;;;
@@ -32,10 +32,13 @@ program that gives information about the current configuration.])
 
 ;; Synopsis
 (section :title "Synopsis" :number #f
+         :info-node "skribilo-config Synopsis"
+
 (compiler-command "skribilo-config" "options"))
 
 ;; Description
 (section :title "Description" :number #f
+         :info-node "skribilo-config Description"
    
    (p [The ,(code "skribilo-config") program gives information about the
 Skribilo configuration, such as the module installation path, version
