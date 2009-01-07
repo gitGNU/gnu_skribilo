@@ -543,7 +543,9 @@
              (if k
                  (begin
                    (output k e)
-                   (display ": ")))
+                   (output-newline)
+                   ;; FIXME: We should indent the body.
+                   ))
              (output (markup-body n) e))))
 
 ;*---------------------------------------------------------------------*/
