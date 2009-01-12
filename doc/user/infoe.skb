@@ -23,7 +23,7 @@
    (index "Info" :note "Engine")
 
    (p [The ,(tt [info]) engine produces GNU,(~)Info files for on-line
-browsing with GNU,(~)Emacs of with the stand-alone Info reader of ,(ref
+browsing with GNU,(~)Emacs or with the stand-alone Info reader of ,(ref
 :text [GNU,(~)Texinfo] :url "http://www.gnu.org/software/texinfo/").])
    
    (p [For each ,(markup-ref "chapter"), ,(markup-ref "section"), etc.,
@@ -39,7 +39,9 @@ conflicts, using the ,(param :info-node) option of ,(markup-ref
 "chapter"), etc.]))
 
 Most markups shown in ,(numref :text [Chapter] :ident "std-markups") are
-meaningfully rendered in Info, including tables.]))
+meaningfully rendered in Info, including tables.  However, since Info is
+a text-only format, markups such as ,(markup-ref "image") do not yield a
+graphical output as with other engines.]))
 
 ;;; Local Variables:
 ;;; coding: latin-1
