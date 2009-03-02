@@ -1,7 +1,7 @@
 ;;; prog.scm  --  All the stuff for the prog markup
 ;;;
+;;; Copyright 2006, 2007, 2009  Ludovic Courtès  <ludo@gnu.org>
 ;;; Copyright 2003  Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
-;;; Copyright 2006, 2007  Ludovic Courtès  <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -60,7 +60,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    extract-string-mark ...                                          */
 ;*---------------------------------------------------------------------*/
-(define (extract-string-mark line mark regexp)
+(define (extract-string-mark line regexp)
   (let ((match (pregexp-match regexp line)))
     (if match
         (values (match:substring match 1)
@@ -72,25 +72,25 @@
 ;*    -------------------------------------------------------------    */
 ;*    Extract the prog mark from a line.                               */
 ;*---------------------------------------------------------------------*/
-(define (extract-mark line mark regexp)
+(define (extract-mark line regexp)
    (cond
       ((not regexp)
        (values #f line))
       ((string? line)
-       (extract-string-mark line mark regexp))
+       (extract-string-mark line regexp))
       ((list? line)
        (let loop ((ls line)
 		  (res '()))
 	  (if (null? ls)
 	      (values #f line)
 	      (let-values (((m l)
-                            (extract-mark (car ls) mark regexp)))
+                            (extract-mark (car ls) regexp)))
 		 (if (not m)
 		     (loop (cdr ls) (cons l res))
 		     (values m (append (reverse! res) (cons l (cdr ls)))))))))
       ((node? line)
        (let-values (((m l)
-                     (extract-mark (node-body line) mark regexp)))
+                     (extract-mark (node-body line) regexp)))
 	  (if (not m)
 	      (values #f line)
 	      (begin
@@ -189,7 +189,7 @@
 	 (if (null? lines)
 	     (reverse! res)
              (let-values (((m l)
-                           (extract-mark (car lines) mark regexp)))
+                           (extract-mark (car lines) regexp)))
 		(let* ((line-ident (symbol->string (gensym "&prog-line")))
 		       (n (new markup
 			     (markup  '&prog-line)
