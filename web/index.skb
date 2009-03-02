@@ -308,12 +308,14 @@ cross-reference-related commands).])
 derivative of ,(ref :url "http://docbook.org/" :text [Docbook]).])
           (item [Systems that produce documents in various formats from
 (almost) markup-less input text: ,(ref :url "http://txt2tags.sf.net/"
-:text [txt2tags]), ,(ref :url
-"http://os.inf.tu-dresden.de/~nf2/files/GOSH/" :text [GOSH]), ,(ref :url
-"http://mercnet.pt/plaindoc/pd.html" :text [PlainDoc]), ,(ref :url
-"http://www.methods.co.nz/asciidoc/" :text [AsciiDoc]), ,(ref :url
-"http://docutils.sourceforge.net/rst.html" :text [reStructured Text
-(RST)]), ,(ref :url "http://www.t3x.org/attic/index.html#sd" :text [SD]), and many
+:text [txt2tags]), ,(ref :url "http://www.maplefish.com/todd/aft.html"
+:text [AFT]), ,(ref :url "http://os.inf.tu-dresden.de/~nf2/files/GOSH/"
+:text [GOSH]), ,(ref :url "http://mercnet.pt/plaindoc/pd.html" :text
+[PlainDoc]), ,(ref :url "http://www.methods.co.nz/asciidoc/" :text
+[AsciiDoc]), ,(ref :url "http://docutils.sourceforge.net/rst.html" :text
+[reStructured Text (RST)]), ,(ref :url
+"http://www.t3x.org/attic/index.html#sd" :text [SD]), ,(ref :url
+"http://triptico.com/software/grutatxt.html" :text [Grutatxt]), and many
 others.])))
 	
    (chapter :title [The Name] :number #f :file #f
