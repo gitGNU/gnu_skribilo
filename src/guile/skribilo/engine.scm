@@ -1,6 +1,6 @@
 ;;; engine.scm	-- Skribilo engines.
 ;;;
-;;; Copyright 2005, 2007, 2008  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2007, 2008, 2009  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
 ;;;
 ;;;
@@ -22,12 +22,7 @@
 (define-module (skribilo engine)
   :use-module (skribilo debug)
   :use-module (skribilo utils syntax)
-  :use-module ((skribilo lib) :select (%procedure-arity))
   :use-module (skribilo condition)
-
-  ;; `(skribilo writer)' depends on this module so it needs to be loaded
-  ;; after we defined `<engine>' and the likes.
-  :autoload (skribilo writer) (<writer>)
 
   :use-module (oop goops)
   :use-module (ice-9 optargs)
@@ -43,7 +38,7 @@
 	   default-engine default-engine-set!
 	   make-engine copy-engine find-engine lookup-engine
 	   engine-custom engine-custom-set! engine-custom-add!
-	   engine-format? engine-add-writer!
+	   engine-format?
 	   processor-get-engine
 	   push-default-engine pop-default-engine
 
@@ -352,65 +347,6 @@ otherwise the requested engine is returned."
       (if (unspecified? old)
 	  (engine-custom-set! e id (list val))
 	  (engine-custom-set! e id (cons val old)))))
-
-(define (engine-add-writer! e ident pred upred opt before action
-			    after class valid)
-  ;; Add a writer to engine E.  If IDENT is a symbol, then it should denote
-  ;; a markup name and the writer being added is specific to that markup.  If
-  ;; IDENT is `#t' (for instance), then it is assumed to be a ``free writer''
-  ;; that may apply to any kind of markup for which PRED returns true.
-
-  (define (check-procedure name proc arity)
-    (if (or (not (procedure? proc))
-            (not (equal? (%procedure-arity proc) arity)))
-        (raise (condition (&invalid-argument-error
-                           (proc-name 'engine-add-writer!)
-                           (argument  proc))))
-        #t))
-
-  (define (check-output name proc)
-    (and proc (or (string? proc) (check-procedure name proc 2))))
-
-  ;;
-  ;; Engine-add-writer! starts here
-  ;;
-  (or (engine? e)
-      (raise (condition (&invalid-argument-error
-                         (proc-name 'engine-add-writer!)
-                         (argument  e)))))
-
-  ;; check the options
-  (or (eq? opt 'all) (list? opt)
-      (raise (condition (&invalid-argument-error
-                         (proc-name 'engine-add-writer!)
-                         (argument  opt)))))
-
-  ;; check the correctness of the predicate
-  (if pred
-      (check-procedure "predicate" pred 2))
-
-  ;; check the correctness of the validation proc
-  (if valid
-      (check-procedure "validate" valid 2))
-
-  ;; check the correctness of the three actions
-  (check-output "before" before)
-  (check-output "action" action)
-  (check-output "after" after)
-
-  ;; create a new writer and bind it
-  (let ((n (make <writer>
-	     :ident (if (symbol? ident) ident 'all)
-	     :class class :pred pred :upred upred :options opt
-	     :before before :action action :after after
-	     :validate valid)))
-    (if (symbol? ident)
-	(let ((writers (slot-ref e 'writers)))
-	  (hashq-set! writers ident
-		      (cons n (hashq-ref writers ident '()))))
-	(slot-set! e 'free-writers
-		   (cons n (slot-ref e 'free-writers))))
-    n))
 
 
 
