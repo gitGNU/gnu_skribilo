@@ -34,7 +34,6 @@
   :use-module (srfi srfi-35)
   :use-module (skribilo condition)
   :use-module (skribilo debug)
-  :use-module (skribilo output)
   :use-module (skribilo ast)
 
   :use-module (oop goops)
@@ -162,7 +161,9 @@
       (else
        (let ((m  (make-writer-predicate markup predicate class))
 	     (ac (if (eq? action 'unspecified)
-		     (lambda (n e) (output (markup-body n) e))
+		     (lambda (n e)
+                       ((@ (skribilo output) output)
+                        (markup-body n) e))
 		     action)))
 	 (engine-add-writer! e markup m predicate
 			     options before ac after class validate))))))
