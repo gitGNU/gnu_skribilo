@@ -1,6 +1,6 @@
 ;;; writer.scm  --  Markup writers.
 ;;;
-;;; Copyright 2005, 2006, 2008  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2006, 2008, 2009  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
 ;;;
 ;;;
@@ -36,7 +36,6 @@
   :use-module (skribilo debug)
   :use-module (skribilo output)
   :use-module (skribilo ast)
-  :use-module ((skribilo lib) :select (%procedure-arity))
 
   :use-module (oop goops)
   :use-module (ice-9 optargs))
@@ -89,6 +88,15 @@
 	     (proc node e)))))
 
 
+(define %using-vm?
+  ;; #t if using Guile's VM.
+  (false-if-exception (resolve-module '(system vm program))))
+
+(define (%procedure-arity proc)
+  (if (and %using-vm?
+           ((@ (system vm program) program?) proc))
+      (car ((@ (system vm program) program-arity) proc))
+      (car (procedure-property proc 'arity))))
 
 (define (make-writer-predicate markup predicate class)
   (let* ((t2 (if class

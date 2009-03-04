@@ -26,7 +26,7 @@
            skribe-warning skribe-warning/ast
            skribe-message
 
-	   type-name %procedure-arity)
+	   type-name)
 
   :export-syntax (new define-markup define-simple-markup
                   define-simple-container define-processor-markup)
@@ -225,12 +225,5 @@
 (define (skribe-message fmt . obj)
   (when (> (*verbose*) 0)
     (apply format (current-error-port) fmt obj)))
-
-
-;;;
-;;; %PROCEDURE-ARITY
-;;;
-(define (%procedure-arity proc)
-  (car (procedure-property proc 'arity)))
 
 ;;; lib.scm ends here
