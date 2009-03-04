@@ -1,7 +1,7 @@
 ;;; lib.scm -- Utilities.
 ;;;
+;;; Copyright 2005, 2007, 2009  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
-;;; Copyright 2005, 2007  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -53,19 +53,14 @@
 ;;; NEW
 ;;;
 
-(define %types-module (current-module))
-
 (define-macro (new class . parameters)
   ;; Thanks to the trick below, modules don't need to import `(oop goops)'
   ;; and `(skribilo ast)' in order to make use of `new'.
-  (let* ((class-name (symbol-append '< class '>))
-	 (actual-class (module-ref %types-module class-name)))
-    `(let ((make ,make)
-	   (,class-name ,actual-class))
-       (make ,class-name
-	 ,@(concatenate (map (lambda (x)
-                               `(,(symbol->keyword (car x)) ,(cadr x)))
-                             parameters))))))
+  (let ((class-name (symbol-append '< class '>)))
+    `((@ (oop goops) make) (@@ (skribilo lib) ,class-name)
+      ,@(concatenate (map (lambda (x)
+                            `(,(symbol->keyword (car x)) ,(cadr x)))
+                          parameters)))))
 
 ;;;
 ;;; DEFINE-MARKUP
