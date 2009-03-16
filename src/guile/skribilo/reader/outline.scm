@@ -1,6 +1,6 @@
 ;;; outline.scm  --  A reader for Emacs' outline syntax.
 ;;;
-;;; Copyright 2006, 2008  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2006, 2008, 2009  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -23,6 +23,7 @@
   :use-module (skribilo reader)
   :use-module (ice-9 optargs)
 
+  :use-module (srfi srfi-1)
   :use-module (srfi srfi-11)
   :use-module (srfi srfi-13)
   :use-module (srfi srfi-14)
@@ -57,14 +58,20 @@
 ;;; Tools.
 ;;;
 
-(define (apply-any procs args)
+(define (apply-any procs args value-count)
   "Apply the procedure listed in @var{procs} to @var{args} until one of these
-procedure returns true."
+procedure returns true.  @var{value-count} is the number of values returned
+by the procedures in @var{procs}."
   (let loop ((procs procs))
     (if (null? procs)
-	#f
-	(let ((result (apply (car procs) args)))
-	  (if result result (loop (cdr procs)))))))
+	(apply values (make-list value-count #f))
+	(call-with-values
+            (lambda ()
+              (apply (car procs) args))
+          (lambda results
+            (if (every not results)
+                (loop (cdr procs))
+                (apply values results)))))))
 
 (define (make-markup name body)
   "Return a clean markup form, i.e., an s-exp whose @code{car} is a symbol
@@ -193,26 +200,25 @@ takes a string and returns a list."
 			       (cdr rx+proc)))
 		       markup-alist))
 	 (procs (map (lambda (rx+proc)
-		       (make-markup-processor (car rx+proc) (cdr rx+proc)))
-		     markups)))
+                       (make-markup-processor (car rx+proc) (cdr rx+proc)))
+                     markups)))
     (lambda (line)
       (let self ((line line))
 	;;(format #t "self: ~a~%" line)
 	(cond ((string? line)
-	       (let ((result (apply-any procs (list line))))
-		 (if result
-		     (let-values (((before body after proc-body)
-				   result))
-		       (let ((body+
-			      (if (string=? (string-append before body after)
-					    line)
-				  body (self body))))
-			 (if (and (null-string? before)
-				  (null-string? after))
-			     (proc-body body+)
-			     (append-trees (self before)
-					   (proc-body body+)
-					   (self after)))))
+               (let-values (((before body after proc-body)
+                             (apply-any procs (list line) 4)))
+                 (if (and before body after proc-body)
+                     (let ((body+
+                            (if (string=? (string-append before body after)
+                                          line)
+                                body (self body))))
+                       (if (and (null-string? before)
+                                (null-string? after))
+                           (proc-body body+)
+                           (append-trees (self before)
+                                         (proc-body body+)
+                                         (self after))))
 		     line)))
 	      (else
 	       (error "line-processor: internal error" line)))))))
@@ -307,12 +313,14 @@ to @var{node-type}."
 	    (let loop ((line (read-line port))
 		       (body '()))
 
-	      (let ((subnode (and (not (eof-object? line))
-				  (apply-any subnode-procs
-					     (list line port)))))
-		(cond (subnode
-		       (let-values (((line node) subnode))
-			 (loop line (cons node body))))
+              (let-values (((matching-line node)
+                            (if (eof-object? line)
+                                (values #f #f)
+                                (apply-any subnode-procs
+                                           (list line port)
+                                           2))))
+		(cond ((and matching-line node)
+                       (loop matching-line (cons node body)))
 
 		      ((or (eof-object? line)
 			   (regexp-exec rx line)
@@ -399,10 +407,10 @@ to @var{node-type}."
 	      (reverse! doc))
 	  (if (empty-line? line)
 	      (self (read-line port) doc)
-	      (let ((result (apply-any node-procs (list line port))))
-		(if result
-		    (let-values (((line node) result))
-		      (self line (cons node doc)))
+              (let-values (((matching-line node)
+                            (apply-any node-procs (list line port) 2)))
+		(if (and matching-line node)
+                    (self matching-line (cons node doc))
 		    (let ((par (process-paragraph line line-proc port)))
 		      (self (read-line port)
 			    (cons par doc))))))))))
