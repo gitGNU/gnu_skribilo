@@ -29,7 +29,7 @@
   :use-module (srfi srfi-1)
   :export (xml-engine))
 
-(fluid-set! current-reader %skribilo-module-reader)
+(skribilo-module-syntax)
 
 
 

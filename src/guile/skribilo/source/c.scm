@@ -27,7 +27,7 @@
   :use-module (srfi srfi-39)
   :export (c c-language java))
 
-(fluid-set! current-reader %skribilo-module-reader)
+(skribilo-module-syntax)
 
 
 ;;;

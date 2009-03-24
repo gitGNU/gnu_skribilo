@@ -41,7 +41,7 @@
   :export (make-diff-document
            make-diff-document-from-files))
 
-(fluid-set! current-reader %skribilo-module-reader)
+(skribilo-module-syntax)
 
 ;;; Author: Ludovic Courtès
 ;;;

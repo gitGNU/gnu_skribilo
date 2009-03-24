@@ -49,7 +49,7 @@
            unknown-engine-error:engine-name))
 
 
-(fluid-set! current-reader %skribilo-module-reader)
+(skribilo-module-syntax)
 
 
 ;;;

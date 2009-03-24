@@ -42,7 +42,7 @@
 	   *scribe-tforeground* *scribe-title-font* *scribe-author-font*
 	   *scribe-chapter-numbering* *scribe-footer* *scribe-prgm-color*))
 
-(fluid-set! current-reader %skribilo-module-reader)
+(skribilo-module-syntax)
 
 ;;; Author: Manuel Serrano, Ludovic Courtès
 ;;;

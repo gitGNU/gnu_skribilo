@@ -1,6 +1,6 @@
 ;;; ast.scm  --  Skribilo abstract syntax trees.
 ;;;
-;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
+;;; Copyright 2003, 2004, 2009  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;; Copyright 2005, 2006, 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
@@ -92,7 +92,7 @@
 ;;;
 ;;; Code:
 
-(fluid-set! current-reader %skribilo-module-reader)
+(skribilo-module-syntax)
 
 
 

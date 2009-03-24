@@ -27,7 +27,7 @@
   :autoload    (srfi srfi-60) (bitwise-and arithmetic-shift)
   :export (color->rgb document-used-colors))
 
-(fluid-set! current-reader %skribilo-module-reader)
+(skribilo-module-syntax)
 
 
 

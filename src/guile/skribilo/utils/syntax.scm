@@ -22,7 +22,7 @@
   :use-module (system reader library)
   :use-module (system reader compat) ;; make sure `current-reader' exists
   :use-module (system reader confinement)
-  :export (%skribilo-module-reader
+  :export (%skribilo-module-reader skribilo-module-syntax
            _ N_)
   :export-syntax (unwind-protect unless when))
 
@@ -58,6 +58,10 @@
              (list 'reader/record-positions)
              '())))
 
+(define-macro (skribilo-module-syntax)
+  "Install the syntax reader for Skribilo modules."
+  (fluid-set! current-reader %skribilo-module-reader)
+  #t)
 
 
 (define-macro (unwind-protect expr1 expr2)

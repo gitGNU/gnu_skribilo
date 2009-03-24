@@ -41,7 +41,7 @@
            LaTeX TeX !latex
            skribe-color->latex-rgb))
 
-(fluid-set! current-reader %skribilo-module-reader)
+(skribilo-module-syntax)
 
 
 

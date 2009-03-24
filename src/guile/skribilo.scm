@@ -49,7 +49,7 @@
 
 
 ;; Install the Skribilo module syntax reader.
-(fluid-set! current-reader %skribilo-module-reader)
+(skribilo-module-syntax)
 
 (if (not (keyword? :kw))
     (error "guile-reader sucks"))

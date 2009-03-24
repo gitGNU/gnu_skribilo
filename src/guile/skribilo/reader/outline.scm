@@ -34,7 +34,7 @@
   :export (reader-specification
            make-outline-reader))
 
-(fluid-set! current-reader %skribilo-module-reader)
+(skribilo-module-syntax)
 
 ;;; Author:  Ludovic Courtès
 ;;;

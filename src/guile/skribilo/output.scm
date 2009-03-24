@@ -40,7 +40,7 @@
 	       output-error? output-unresolved-error? output-writer-error?))
 
 
-(fluid-set! current-reader %skribilo-module-reader)
+(skribilo-module-syntax)
 
 
 ;;;

@@ -40,7 +40,7 @@
   :export (%slide-latex-mode %slide-latex-initialize! *slide-advi-scale*))
 
 
-(fluid-set! current-reader %skribilo-module-reader)
+(skribilo-module-syntax)
 
 
 (define %slide-latex-mode 'seminar)

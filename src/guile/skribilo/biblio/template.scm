@@ -37,7 +37,7 @@
            make-bib-entry-template/default
            make-bib-entry-template/skribe))
 
-(fluid-set! current-reader %skribilo-module-reader)
+(skribilo-module-syntax)
 
 ;;; Author: Manuel Serrano, Ludovic Courtès
 ;;;

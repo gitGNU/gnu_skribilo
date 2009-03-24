@@ -49,7 +49,7 @@
 	     (srfi srfi-39))
 
 
-(fluid-set! current-reader %skribilo-module-reader)
+(skribilo-module-syntax)
 
 
 ;;;

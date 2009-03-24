@@ -73,7 +73,7 @@
 ;;;
 ;;; Code:
 
-(fluid-set! current-reader %skribilo-module-reader)
+(skribilo-module-syntax)
 
 
 

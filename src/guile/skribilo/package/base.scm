@@ -42,7 +42,7 @@
 
   :replace (symbol))
 
-(fluid-set! current-reader %skribilo-module-reader)
+(skribilo-module-syntax)
 
 ;;; Author: Manuel Serrano
 ;;; Commentary:

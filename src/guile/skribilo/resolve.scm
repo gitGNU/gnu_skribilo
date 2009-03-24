@@ -35,7 +35,7 @@
 	   resolve-counter resolve-parent resolve-ident
 	   *document-being-resolved*))
 
-(fluid-set! current-reader %skribilo-module-reader)
+(skribilo-module-syntax)
 
 
 

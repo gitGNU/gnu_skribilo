@@ -37,7 +37,7 @@
 
   :export (info-engine))
 
-(fluid-set! current-reader %skribilo-module-reader)
+(skribilo-module-syntax)
 
 
 (define info-engine

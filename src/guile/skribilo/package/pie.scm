@@ -35,7 +35,7 @@
   :export     (%ploticus-program %ploticus-debug?
                pie-sliceweight-value pie-remove-markup))
 
-(fluid-set! current-reader %skribilo-module-reader)
+(skribilo-module-syntax)
 
 
 

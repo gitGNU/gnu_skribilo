@@ -30,7 +30,7 @@
 
   :replace (chapter section subsection subsubsection))
 
-(fluid-set! current-reader %skribilo-module-reader)
+(skribilo-module-syntax)
 
 ;;; Author: Ludovic Courtès
 ;;;

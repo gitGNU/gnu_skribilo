@@ -30,7 +30,7 @@
 
   :export (make-prog-body resolve-line))
 
-(fluid-set! current-reader %skribilo-module-reader)
+(skribilo-module-syntax)
 
 
 ;;;

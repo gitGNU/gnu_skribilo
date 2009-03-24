@@ -28,7 +28,7 @@
   :use-module (skribilo utils syntax)
   :autoload   (skribilo engine lout) (lout-color-specification))
 
-(fluid-set! current-reader %skribilo-module-reader)
+(skribilo-module-syntax)
 
 
 

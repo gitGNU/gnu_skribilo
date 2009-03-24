@@ -24,7 +24,7 @@
   :use-module (srfi srfi-39)
   :export-syntax (debug-item debug-bold with-debug))
 
-(fluid-set! current-reader %skribilo-module-reader)
+(skribilo-module-syntax)
 
 
 ;;;

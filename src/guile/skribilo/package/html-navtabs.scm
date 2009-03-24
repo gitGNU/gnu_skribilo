@@ -31,7 +31,7 @@
   :use-module (skribilo utils strings)
   :use-module (skribilo utils syntax))
 
-(fluid-set! current-reader %skribilo-module-reader)
+(skribilo-module-syntax)
 
 
 (define (unspecified? obj)

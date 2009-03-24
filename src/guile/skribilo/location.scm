@@ -21,7 +21,7 @@
 
 (define-module (skribilo location)
   :use-module (oop goops)
-  :use-module ((skribilo utils syntax) :select (%skribilo-module-reader))
+  :use-module ((skribilo utils syntax) :select (skribilo-module-syntax))
   :autoload   (srfi srfi-13)  (string-prefix?)
   :export (<location> location? ast-location
 	   location-file location-line location-column
@@ -35,7 +35,7 @@
 ;;;
 ;;; Code:
 
-(fluid-set! current-reader %skribilo-module-reader)
+(skribilo-module-syntax)
 
 
 ;;;

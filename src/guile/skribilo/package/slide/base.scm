@@ -33,7 +33,7 @@
 
   :export (%slide-outline-itemize-symbols))
 
-(fluid-set! current-reader %skribilo-module-reader)
+(skribilo-module-syntax)
 
 
 

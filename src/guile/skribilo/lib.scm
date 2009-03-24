@@ -46,7 +46,7 @@
   :use-module (oop goops))
 
 
-(fluid-set! current-reader %skribilo-module-reader)
+(skribilo-module-syntax)
 
 
 ;;;

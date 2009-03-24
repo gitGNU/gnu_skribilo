@@ -39,7 +39,7 @@
   :export (context-engine
            ConTeXt TeX))
 
-(fluid-set! current-reader %skribilo-module-reader)
+(skribilo-module-syntax)
 
 
 

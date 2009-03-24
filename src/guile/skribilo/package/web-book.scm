@@ -26,7 +26,7 @@
   :use-module (skribilo engine)
   :use-module (skribilo package base))
 
-(fluid-set! current-reader %skribilo-module-reader)
+(skribilo-module-syntax)
 
 
 

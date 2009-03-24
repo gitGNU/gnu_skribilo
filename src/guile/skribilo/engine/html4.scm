@@ -33,7 +33,7 @@
   :use-module (srfi srfi-1)
   :use-module ((srfi srfi-19) :renamer (symbol-prefix-proc 's19:)))
 
-(fluid-set! current-reader %skribilo-module-reader)
+(skribilo-module-syntax)
 
 
 (define (find-children node)

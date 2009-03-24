@@ -48,7 +48,7 @@
            html-width html-class html-markup-class
            html-title-authors))
 
-(fluid-set! current-reader %skribilo-module-reader)
+(skribilo-module-syntax)
 
 
 

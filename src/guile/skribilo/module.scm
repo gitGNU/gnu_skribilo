@@ -25,7 +25,7 @@
   :export (make-user-module user-module-flavor
            *skribilo-user-module*))
 
-(fluid-set! current-reader %skribilo-module-reader)
+(skribilo-module-syntax)
 
 ;;; Author:  Ludovic Courtès
 ;;;

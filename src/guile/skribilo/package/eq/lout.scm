@@ -28,7 +28,7 @@
   :use-module (skribilo utils syntax)
   :use-module (srfi srfi-1))
 
-(fluid-set! current-reader %skribilo-module-reader)
+(skribilo-module-syntax)
 
 
 

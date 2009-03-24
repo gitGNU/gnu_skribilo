@@ -58,7 +58,7 @@
 ;;;
 ;;;    For more information on Lout, see http://lout.sf.net/ .
 
-(fluid-set! current-reader %skribilo-module-reader)
+(skribilo-module-syntax)
 
 
 

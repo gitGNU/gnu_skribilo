@@ -34,7 +34,7 @@
   :use-module (ice-9 optargs)
   :use-module (ice-9 match))
 
-(fluid-set! current-reader %skribilo-module-reader)
+(skribilo-module-syntax)
 
 
 

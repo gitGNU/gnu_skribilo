@@ -1,6 +1,6 @@
 ;;; sui.scm -- Skribe URL Indices
 ;;;
-;;; Copyright 2005, 2006, 2007, 2008  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2006, 2007, 2008, 2009  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -41,7 +41,7 @@
            sui-find-ref sui-search-ref sui-filter
            document-sui sui-referenced-file sui-marks sui-blocks))
 
-(fluid-set! current-reader %skribilo-module-reader)
+(skribilo-module-syntax)
 
 
 ;;; Author: Manuel Serrano, Ludovic Courtès

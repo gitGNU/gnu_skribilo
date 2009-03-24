@@ -34,7 +34,7 @@
 
   :use-module (srfi srfi-1))
 
-(fluid-set! current-reader %skribilo-module-reader)
+(skribilo-module-syntax)
 
 ;; FIXME: The purpose of this package is unclear, and it relies on "documents
 ;; made of sections" (according to the doc), which sucks (we want all

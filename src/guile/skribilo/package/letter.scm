@@ -32,7 +32,7 @@
   :use-module (skribilo utils syntax)
   :use-module (ice-9 optargs))
 
-(fluid-set! current-reader %skribilo-module-reader)
+(skribilo-module-syntax)
 
 
 ;*---------------------------------------------------------------------*/

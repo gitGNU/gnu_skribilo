@@ -41,7 +41,7 @@
 				    lout-verbatim-encoding))
 
 
-(fluid-set! current-reader %skribilo-module-reader)
+(skribilo-module-syntax)
 
 
 ;;; TODO:

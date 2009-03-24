@@ -37,7 +37,7 @@
 
   :export (abstract references acm-copyright))
 
-(fluid-set! current-reader %skribilo-module-reader)
+(skribilo-module-syntax)
 
 
 
