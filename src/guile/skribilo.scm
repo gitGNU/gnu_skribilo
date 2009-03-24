@@ -1,6 +1,6 @@
 ;;; skribilo.scm  --  The Skribilo document processor.
 ;;;
-;;; Copyright 2005, 2006, 2007, 2008  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2006, 2007, 2008, 2009  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
 ;;;
 ;;;
@@ -40,7 +40,7 @@
   :use-module  (skribilo parameters)
   :use-module  (skribilo config)
 
-  :autoload    (srfi srfi-1)     (alist-cons)
+  :use-module  (srfi srfi-1)
   :use-module  (srfi srfi-13)
   :use-module  (srfi srfi-37)
   :use-module  (srfi srfi-39)
