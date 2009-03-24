@@ -1,7 +1,7 @@
 ;;; location.scm -- Skribilo source location.
 ;;;
+;;; Copyright 2005, 2007, 2009  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
-;;; Copyright 2005, 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -89,6 +89,7 @@
                   (if (null? depth) 0 (car depth))))
         (stack (make-stack #t)))
     (and stack
+         (< depth (stack-length stack))
          (let* ((frame  (stack-ref stack depth))
                 (source (frame-source frame)))
            (and source
