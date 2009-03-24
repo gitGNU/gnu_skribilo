@@ -1,0 +1,30 @@
+# Compilation with Guile-VM's compiler (aka. Guile 2.x).
+
+if ENABLE_GUILE_VM
+
+# XXX: This expression relies on a GNU extension.
+GOBJECTS = $(SOURCES:%.scm=%.go)
+
+nobase_nodist_module_DATA =				\
+  $(SOURCES) $(GOBJECTS) $(SOURCES_NOT_COMPILED)
+
+.scm.go:
+	$(MKDIR_P) `dirname $@`
+	$(GUILE) -L $(srcdir)				\
+	  -c "(use-modules (system base compile)	\
+	                   (skribilo condition))	\
+	      (read-set! keywords 'prefix)		\
+	      (call-with-skribilo-error-catch/exit	\
+	        (lambda ()				\
+	          (compile-file \"$<\" \"$@\")))"
+
+CLEANFILES += $(GOBJECTS)
+
+SUFFIXES += .go
+
+else !ENABLE_GUILE_VM
+
+nobase_nodist_module_DATA =			\
+  $(SOURCES) $(SOURCES_NOT_COMPILED)
+
+endif !ENABLE_GUILE_VM

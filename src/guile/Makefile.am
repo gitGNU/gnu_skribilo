@@ -1,4 +1,4 @@
-# Copyright 2005, 2006, 2007, 2008  Ludovic Courtès <ludo@gnu.org>
+# Copyright 2005, 2006, 2007, 2008, 2009  Ludovic Courtès <ludo@gnu.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ EXTRA_DIST =						\
   skribilo/utils/images.scm.in skribilo/config.in	\
   srfi/srfi-64.scm srfi/srfi-64.upstream.scm
 
-nobase_dist_module_DATA =						\
+SOURCES =								\
   skribilo.scm diff.scm							\
   skribilo/biblio/bibtex.scm skribilo/biblio/author.scm			\
   skribilo/biblio/abbrev.scm skribilo/biblio/template.scm		\
@@ -44,8 +44,11 @@ nobase_dist_module_DATA =						\
   skribilo/table.scm skribilo/utils/justify.scm				\
   skribilo/utils/text-table.scm
 
-nobase_dist_module_DATA +=			\
-  $(readers) $(engines) $(packages)
+SOURCES += $(readers) $(packages)
+
+# XXX: Currently, engines cannot be compiled due to a VM limitation.
+# See http://thread.gmane.org/gmane.lisp.guile.devel/8240 for details.
+SOURCES_NOT_COMPILED = $(engines)
 
 readers =							\
   skribilo/reader/skribe.scm skribilo/reader/outline.scm	\
@@ -75,14 +78,14 @@ nobase_module_DATA =				\
   skribilo/config.scm
 
 # Generated files part of the distribution.
-nobase_dist_module_DATA +=					\
+SOURCES +=							\
   skribilo/source/lisp-lex.scm skribilo/source/xml-lex.scm	\
   skribilo/source/c-lex.scm
 
 CLEANFILES = $(nobase_module_DATA)
 
-
 include $(top_srcdir)/substitute.am
+include $(top_srcdir)/guile-vm.am
 
 .in.scm:
 	$(substitute) "$^" > "$@.tmp" &&	\

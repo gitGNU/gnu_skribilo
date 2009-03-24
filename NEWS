@@ -22,6 +22,11 @@ Copyright (C) 2005, 2006, 2007, 2008, 2009  Ludovic Courtès <ludo@gnu.org>
 Previously, footnotes would not get printed in the case of chapters that
 are not output in a separate file.
 
+** New experimental `--enable-guile-vm' configure switch
+
+This allows compilation with the compiler of "Guile-VM", i.e., the
+future Guile 2.x.
+
 * New in Skribilo 0.9.1
 
 ** Improved `configure' diagnostics and build/installation fixes

@@ -19,3 +19,5 @@ src/skribilo
 src/skribilo-config
 src/pre-inst-skribilo
 src/guile/skribilo/config.scm
+*.go
+*.go.*
