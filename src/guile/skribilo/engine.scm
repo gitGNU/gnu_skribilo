@@ -354,14 +354,12 @@ otherwise the requested engine is returned."
 ;;; Current engine.
 ;;;
 
-;; At this point, we're almost done with the bootstrap process.
-
 (define *current-engine*
-  ;; By default, use the HTML engine.
-  (make-parameter (lookup-engine 'html)
+  (make-parameter #f
 		  (lambda (val)
 		    (cond ((symbol? val) (lookup-engine val))
 			  ((engine? val) val)
+                          ((not val)     val)
 			  (else
 			   (raise (condition (&invalid-argument-error
                                               (proc-name '*current-engine*)
