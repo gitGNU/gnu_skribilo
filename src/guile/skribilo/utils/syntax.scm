@@ -1,6 +1,6 @@
 ;;; syntax.scm  --  Syntactic candy for Skribilo modules.
 ;;;
-;;; Copyright 2005, 2006, 2007, 2008  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2006, 2007, 2008, 2009  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -19,11 +19,10 @@
 ;;; USA.
 
 (define-module (skribilo utils syntax)
-  :use-module (skribilo reader)
   :use-module (system reader library)
   :use-module (system reader compat) ;; make sure `current-reader' exists
   :use-module (system reader confinement)
-  :export (%skribe-reader %skribilo-module-reader
+  :export (%skribilo-module-reader
            _ N_)
   :export-syntax (unwind-protect unless when))
 
@@ -59,9 +58,6 @@
              (list 'reader/record-positions)
              '())))
 
-(define %skribe-reader
-  ;; The Skribe syntax reader.
-  (make-reader 'skribe))
 
 
 (define-macro (unwind-protect expr1 expr2)

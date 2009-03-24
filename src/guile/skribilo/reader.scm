@@ -1,6 +1,6 @@
 ;;; reader.scm  --  Skribilo's front-end (aka. reader) interface.
 ;;;
-;;; Copyright 2005  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2005, 2009  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -26,7 +26,7 @@
   :autoload   (srfi srfi-34) (raise)
   :use-module (srfi srfi-35)
   :export (%make-reader lookup-reader make-reader
-	   %default-reader *document-reader*
+	   *document-reader*
 
 	   &reader-search-error reader-search-error?
 	   reader-search-error:reader)
@@ -95,12 +95,10 @@ raised."
          (make (reader:make spec)))
     (make)))
 
-(define %default-reader (make-reader 'skribe))
-
 
 ;;; Current document reader.
 
-(define *document-reader* (make-parameter %default-reader))
+(define *document-reader* (make-parameter #f))
 
 
 ;;; reader.scm ends here

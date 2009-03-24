@@ -1,6 +1,6 @@
 ;;; compat.scm  --  Skribe compatibility module.
 ;;;
-;;; Copyright 2005, 2006, 2007  Ludovic Courtès  <ludovic.courtes@laas.fr>
+;;; Copyright 2005, 2006, 2007, 2009  Ludovic Courtès  <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -185,7 +185,7 @@
 (define-public skribe-eval         evaluate-document)
 (define-public skribe-eval-port    evaluate-document-from-port)
 
-(set! %skribe-reader #f)
+(define %skribe-reader #f)
 (define*-public (skribe-read #:optional (port (current-input-port)))
   (if (not %skribe-reader)
       (set! %skribe-reader (make-reader 'skribe)))

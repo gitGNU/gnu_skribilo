@@ -1,8 +1,8 @@
 ;;; biblio.scm  --  Bibliography functions.
 ;;;
+;;; Copyright 2005, 2006, 2007, 2009  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2001, 2002, 2003, 2004  Manuel Serrano
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
-;;; Copyright 2005, 2006, 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
 ;;; it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
   :use-module (srfi srfi-39)
   :use-module (skribilo condition)
 
-  :autoload   (skribilo reader)       (%default-reader)
+  :autoload   (skribilo reader)       (*document-reader*)
   :autoload   (skribilo parameters)   (*bib-path*)
   :autoload   (skribilo ast)          (<markup> <handle> is-markup?)
   :autoload   (skribilo lib)          (skribe-warning)
@@ -195,7 +195,7 @@
 ;;;
 
 (define (parse-bib table port)
-  (let ((read %default-reader)) ;; FIXME: We should use a fluid
+  (let ((read (*document-reader*)))
     (if (not (bib-table? table))
         (raise (condition
                 (&invalid-argument-error (proc-name "parse-bib")
