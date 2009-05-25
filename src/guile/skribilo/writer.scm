@@ -278,7 +278,7 @@
   (define (matching-writer writers)
     (find (lambda (w)
 	    (and (if class (equal? (writer-class w) class) #t)
-		 (or (unspecified? pred)
+		 (or (eq? pred 'unspecified)
 		     (eq? (slot-ref w 'upred) pred))))
 	  writers))
 
@@ -334,13 +334,13 @@
 
 
 (define* (copy-markup-writer markup old-engine ;; #:optional new-engine
-			      :key (predicate 'unspecified)
-				   (class 'unspecified)
-				   (options 'unspecified)
-				   (validate 'unspecified)
-				   (before 'unspecified)
-				   (action 'unspecified)
-				   (after 'unspecified)
+			      :key (predicate *unspecified*)
+				   (class     *unspecified*)
+				   (options   *unspecified*)
+				   (validate  *unspecified*)
+				   (before    *unspecified*)
+				   (action    *unspecified*)
+				   (after     *unspecified*)
                               :rest args)
     (define new-engine
       ;; XXX: Work around `lambda*' suckingness (see `markup-writer').

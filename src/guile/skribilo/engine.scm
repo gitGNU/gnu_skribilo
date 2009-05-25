@@ -344,7 +344,7 @@ otherwise the requested engine is returned."
 
 (define (engine-custom-add! e id val)
    (let ((old (engine-custom e id)))
-      (if (unspecified? old)
+      (if (eq? old 'unspecified)
 	  (engine-custom-set! e id (list val))
 	  (engine-custom-set! e id (cons val old)))))
 
