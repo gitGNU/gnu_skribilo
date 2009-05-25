@@ -58,6 +58,14 @@
 (if (not (engine? base-engine))
     (error "bootstrap problem: base engine broken" base-engine))
 
+(define unspecified?
+  ;; XXX: Hack to recognize the unspecified value as understood by
+  ;; `engine-custom' et al.
+  (let ((really-unspecified? unspecified?))
+    (lambda (x)
+      (or (really-unspecified? x)
+          (eq? x 'unspecified)))))
+
 ;*---------------------------------------------------------------------*/
 ;*    html-file-default ...                                            */
 ;*---------------------------------------------------------------------*/
