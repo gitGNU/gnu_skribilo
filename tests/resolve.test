@@ -1,0 +1,131 @@
+;;; Excercise the `resolve' routines.                  -*- Scheme -*-
+;;;
+;;; Copyright (C) 2009  Ludovic Courtès <ludo@gnu.org>
+;;;
+;;; This file is part of Skribilo.
+;;;
+;;; Skribilo is free software; you can redistribute it and/or modify it
+;;; under the terms of the GNU Lesser General Public License as published by
+;;; the Free Software Foundation; either version 3 of the License, or (at
+;;; your option) any later version.
+;;;
+;;; Skribilo is distributed in the hope that it will be useful, but
+;;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser
+;;; General Public License for more details.
+;;;
+;;; You should have received a copy of the GNU Lesser General Public License
+;;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+(define-module (tests resolve)
+  :use-module (skribilo ast)
+  :use-module (skribilo engine)
+  :use-module (skribilo resolve)
+  :use-module (skribilo package base)
+  :use-module (srfi srfi-64))
+
+(define %engine
+  (find-engine 'base))
+
+
+(test-begin "resolve")
+
+(test-assert "parents"
+  (let* ((doc (document #:title "Doc"
+                (chapter #:title "C"
+                  (section #:title "S"
+                    (p "par")))))
+         (ch  (car (markup-body doc)))
+         (sec (car (markup-body ch)))
+         (par (car (markup-body sec))))
+    (and (is-markup? ch 'chapter)
+         (eq? (ast-parent ch) 'unspecified)
+         (begin
+           (resolve! doc %engine '())
+           (and (eq? (ast-parent ch) doc)
+                (eq? (ast-parent sec) ch)
+                (eq? (ast-parent par) sec))))))
+
+(test-assert "unresolved node in body"
+  (let* ((resolved? #f)
+         (doc (document #:title "Doc"
+                (resolve (lambda (n e env)
+                           (set! resolved? #t))))))
+    (and (not resolved?)
+         (begin
+           (resolve! doc %engine '())
+           resolved?))))
+
+(test-assert "unresolved node in unresolved node in body"
+  (let* ((resolved? #f)
+         (doc (document #:title "Doc"
+                (resolve (lambda (n e env)
+                           (resolve (lambda (n e env)
+                                      (set! resolved? #t))))))))
+    (and (not resolved?)
+         (begin
+           (resolve! doc %engine '())
+           resolved?))))
+
+(test-assert "unresolved node in options"
+  (let* ((resolved? #f)
+         (doc (document #:title
+                (resolve (lambda (n e env)
+                           (set! resolved? #t)))
+                "body...")))
+    (and (not resolved?)
+         (begin
+           (resolve! doc %engine '())
+           resolved?))))
+
+(test-assert "unresolved node in processor body"
+  (let* ((resolved? #f)
+         (doc (document #:title
+                (processor #:combinator (lambda (e1 e2) e1)
+                           (resolve (lambda (n e env)
+                                      (set! resolved? #t)))))))
+    (and (not resolved?)
+         (begin
+           (resolve! doc %engine '())
+           resolved?))))
+
+(test-assert "unresolved node product has a parent"
+  (let* ((doc (document #:title "Doc"
+                (resolve (lambda (n e env)
+                           (chapter #:title "C"))))))
+    (resolve! doc %engine '())
+
+    (let ((ch (car (markup-body doc))))
+      (and (is-markup? ch 'chapter)
+           (eq? (ast-parent ch) doc)))))
+
+(test-assert "node bindings"
+  (let* ((doc (document #:title "Doc"
+                (chapter #:title "C" #:ident "c"
+                  (section #:title "S" #:ident "s"))))
+         (ch  (car (markup-body doc)))
+         (sec (car (markup-body ch))))
+    (and (not (document-lookup-node doc "c"))
+         (not (document-lookup-node doc "s"))
+         (begin
+           (resolve! doc %engine '())
+           (and (eq? (document-lookup-node doc "c") ch)
+                (eq? (document-lookup-node doc "s") sec))))))
+
+(test-assert "unresolved node bindings"
+  ;; Make sure nodes returned by `unresolved' nodes are eventually bound.
+  (let* ((doc (document #:title "Doc"
+                (resolve (lambda (n e env)
+                           (chapter #:title "C" #:ident "c"
+                             (section #:title "S" #:ident "s")))))))
+    (and (not (document-lookup-node doc "c"))
+         (not (document-lookup-node doc "s"))
+         (begin
+           (resolve! doc %engine '())
+           (and (is-markup? (document-lookup-node doc "c") 'chapter)
+                (is-markup? (document-lookup-node doc "s") 'section))))))
+
+(test-end "resolve")
+
+
+(exit (= (test-runner-fail-count (test-runner-current)) 0))
