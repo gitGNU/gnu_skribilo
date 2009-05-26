@@ -110,7 +110,7 @@
 
 (test-assert "unresolved node in processor body"
   (let* ((resolved? #f)
-         (doc (document #:title
+         (doc (document #:title "Doc"
                 (processor #:combinator (lambda (e1 e2) e1)
                            (resolve (lambda (n e env)
                                       (set! resolved? #t)))))))
