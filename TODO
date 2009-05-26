@@ -1,6 +1,6 @@
 -*- Org -*-
 
-Copyright 2007, 2008  Ludovic Courtès <ludo@gnu.org>
+Copyright 2007, 2008, 2009  Ludovic Courtès <ludo@gnu.org>
 
   Copying and distribution of this file, with or without modification,
   are permitted in any medium without royalty provided the copyright
@@ -13,7 +13,7 @@ headings below.
 
 XXX: Check items in `[[file:src/guile/README::Skribilo%20Outline][src/guile/README]]'.
 
-* Important Items (Release Blockers)
+* Important Items (1.0 Release Blockers)
 
 ** Update the documentation, remove Skribe legacy stuff
 
@@ -37,12 +37,20 @@ things like that.
 Currently, our CSS makes `code' fixed-width in HTML, but it's not so in
 Lout et al.
 
+** Validate HTML output
+
+Probably with [[http://www.htmlhelp.com/tools/validator/offline/index.html.en][`wdg-html-validator']], or OpenSP, since xmllint(1) doesn't
+do the job (can't load the DTD, returns zero even in the presence of
+parse errors, etc.).
+
+** Clean Info output
+
 * Small Items, Known Bugs
 
 ** Fix the HTML engine for `html-left-margin'
 Left margin doesn't display well when CSS is being used.
 ** `eq' package: Handle `:number' in the HTML back-end
-
+** `slide' package: Remove `%slide-the-slides'
 
 * Longer-Term Items
 
@@ -60,7 +68,6 @@ Likewise, there's no replacement for the `*load-options*' mechanism
 implemented by `skribe-load' (see, e.g., `web-article').
 
 ** Add new engines
-*** Write an Info engine based on Scribe's one
 *** Write an XHTML engine
 *** Render equations using MathML when rendering to HTML
 *** Write a [[GUI]]
@@ -80,6 +87,12 @@ Such as `skribilo-to-bibtex', `bibtex-to-skribilo', etc.
 In `[[file:src/guile/skribilo/module.scm][(skribilo module)]]', the default user-module should not contain any
 filesystem-related primitives, nor any standard module allowing such
 operations (e.g., `(ice-9 popen)').
+
+** Deal with identifier scope in nested documents at the engine level
+Now that node identifiers are scoped, node identifiers in nested
+documents could collide with identifiers in the parent document(s).
+Thus, engines should work to avoid collisions.  That said, nested
+documents are not very useful, except in the user manual.
 
 * Much Longer Term Items
 ** Move to a purely functional style
