@@ -192,6 +192,17 @@
                 (eq? (ast-parent x) sub)
                 (eq? (ast-document x) sub))))))
 
+(test-assert "node bindings in processor body"
+  (let* ((doc (document #:title "Doc"
+                (processor #:combinator (lambda (e1 e2) e1)
+                  (chapter #:ident "c")))))
+    (resolve! doc %engine '())
+    (let* ((proc (car (markup-body doc)))
+           (ch   (car (markup-body proc)))
+           (ch*  (document-lookup-node doc "c")))
+      (format (current-error-port) "~A vs ~A~%" ch ch*)
+      (eq? ch ch*))))
+
 (test-end "resolve")
 
 

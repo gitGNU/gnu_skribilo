@@ -510,6 +510,9 @@
                  (document-bind-node! doc node)
                  (loop (markup-body node) doc))
 
+                ((node? node)
+                 (loop (node-body node) doc))
+
                 ((pair? node)
                  (for-each (lambda (n) (loop n doc)) node))
 

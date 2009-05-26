@@ -206,7 +206,7 @@
 
          ;; Bind non-unresolved children of RES now so that unresolved
          ;; children of RES (if any) can look them up in the next `resolve!'
-         ;; run.  (XXX: This largely duplicated `document-bind-nodes!'.)
+         ;; run.  (XXX: This largely duplicates `document-bind-nodes!'.)
          (let loop ((node res)
                     (doc  (ast-document node)))
            (if (ast? node)
@@ -223,6 +223,9 @@
                  ((markup? node)
                   (document-bind-node! doc node)
                   (loop (markup-body node) doc))
+
+                 ((node? node)
+                  (loop (node-body node) doc))
 
                  ((pair? node)
                   (for-each (lambda (n) (loop n doc)) node))
