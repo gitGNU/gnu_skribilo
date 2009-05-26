@@ -1,6 +1,6 @@
 ;;; resolve.scm  --  Skribilo reference resolution.
 ;;;
-;;; Copyright 2005, 2006, 2008  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2006, 2008, 2009  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
 ;;;
 ;;;
@@ -202,15 +202,34 @@
 
        (let* ((proc (slot-ref node 'proc))
               (res  (proc node engine env))
-              (loc  (ast-loc node))
-              (doc  (ast-document node)))
-         (ast-fold (lambda (node result)
-                     (if (markup? node)
-                         (document-bind-node! doc node))
-                     (if (ast? node)
-                         (ast-loc-set! node loc)))
-                   #t ;; unused
-                   res)
+              (loc  (ast-loc node)))
+
+         ;; Bind non-unresolved children of RES now so that unresolved
+         ;; children of RES (if any) can look them up in the next `resolve!'
+         ;; run.  (XXX: This largely duplicated `document-bind-nodes!'.)
+         (let loop ((node res)
+                    (doc  (ast-document node)))
+           (if (ast? node)
+               (ast-loc-set! node loc))
+
+           (cond ((document? node)
+                  ;; Bind NODE in its parent's document.  This is so
+                  ;; that (i) a sub-document is bound in its parent
+                  ;; document, and (ii) a node within a sub-document
+                  ;; is bound in this sub-document.
+                  (document-bind-node! doc node)
+                  (loop (markup-body node) node))
+
+                 ((markup? node)
+                  (document-bind-node! doc node)
+                  (loop (markup-body node) doc))
+
+                 ((pair? node)
+                  (for-each (lambda (n) (loop n doc)) node))
+
+                 ((command? node)
+                  (loop (command-body node) doc))))
+
          (debug-item "res=" res)
          (*unresolved* #t)
          res))))
