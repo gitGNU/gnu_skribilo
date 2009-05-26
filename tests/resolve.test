@@ -119,6 +119,17 @@
            (resolve! doc %engine '())
            resolved?))))
 
+(test-assert "unresolved node in nested document"
+  (let* ((resolved? #f)
+         (doc (document #:title "Outer"
+                (document #:title "Inner"
+                  (resolve (lambda (n e env)
+                             (set! resolved? #t)))))))
+    (and (not resolved?)
+         (begin
+           (resolve! doc %engine '())
+           resolved?))))
+
 (test-assert "unresolved node product has a parent"
   (let* ((doc (document #:title "Doc"
                 (resolve (lambda (n e env)
@@ -200,7 +211,6 @@
     (let* ((proc (car (markup-body doc)))
            (ch   (car (markup-body proc)))
            (ch*  (document-lookup-node doc "c")))
-      (format (current-error-port) "~A vs ~A~%" ch ch*)
       (eq? ch ch*))))
 
 (test-end "resolve")
