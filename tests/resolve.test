@@ -46,6 +46,36 @@
                 (eq? (ast-parent sec) ch)
                 (eq? (ast-parent par) sec))))))
 
+(test-assert "root document has no parent"
+  (let ((doc (document #:title "Doc")))
+    (resolve! doc %engine '())
+    (and (not (ast-parent doc))
+         (eq? doc (ast-document doc)))))
+
+(test-assert "nested document has a parent"
+  ;; Nested documents are sometimes used in the manual.
+  (let* ((doc (document #:title "Doc"
+                (document #:title "Nested Doc"
+                  (chapter #:title "C"))))
+         (sub (car (markup-body doc)))
+         (ch  (car (markup-body sub))))
+    (resolve! doc %engine '())
+    (and (not (ast-parent doc))
+         (document? sub)
+         (eq? doc (ast-document doc))
+         (eq? doc (ast-parent sub)))))
+
+(test-assert "nested document is its own `ast-document'"
+  (let* ((doc (document #:title "Doc"
+                (document #:title "Nested Doc"
+                  (chapter #:title "C"))))
+         (sub (car (markup-body doc)))
+         (ch  (car (markup-body sub))))
+    (resolve! doc %engine '())
+    (and (document? sub)
+         (eq? sub (ast-document sub))
+         (eq? sub (ast-document ch)))))
+
 (test-assert "unresolved node in body"
   (let* ((resolved? #f)
          (doc (document #:title "Doc"
@@ -124,6 +154,25 @@
            (resolve! doc %engine '())
            (and (is-markup? (document-lookup-node doc "c") 'chapter)
                 (is-markup? (document-lookup-node doc "s") 'section))))))
+
+(test-assert "nested document bindings"
+  ;; Bindings in nested documents are scoped.  This was not the case prior
+  ;; to 0.9.2.
+  (let* ((doc (document #:title "Doc"
+                (chapter #:ident "outer")
+                (document #:title "Nested Doc"
+                  (chapter #:ident "inner"))))
+         (out (car  (markup-body doc)))
+         (sub (cadr (markup-body doc)))
+         (in  (car  (markup-body sub))))
+    (resolve! doc %engine '())
+    (and (let ((x (document-lookup-node doc "outer")))
+           (and (is-markup? x 'chapter)
+                (eq? (ast-document x) doc)))
+         (not (document-lookup-node doc "inner"))
+         (let ((x (document-lookup-node sub "inner")))
+           (and (is-markup? x 'chapter)
+                (eq? (ast-document x) sub))))))
 
 (test-end "resolve")
 

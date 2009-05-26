@@ -496,11 +496,26 @@
   (if (document-nodes-bound? doc)
       #t
       (begin
-	(ast-fold (lambda (node result)
-		    (if (markup? node) (document-bind-node! doc node))
-		    #t)
-		  #t ;; unused
-		  doc)
+        (let loop ((node doc)
+                   (doc  doc))
+          (cond ((document? node)
+                 ;; Bind NODE in its parent's document.  This is so
+                 ;; that (i) a sub-document is bound in its parent
+                 ;; document, and (ii) a node within a sub-document
+                 ;; is bound in this sub-document.
+                 (document-bind-node! doc node)
+                 (loop (markup-body node) node))
+
+                ((markup? node)
+                 (document-bind-node! doc node)
+                 (loop (markup-body node) doc))
+
+                ((pair? node)
+                 (for-each (lambda (n) (loop n doc)) node))
+
+                ((command? node)
+                 (loop (command-body node) doc))))
+
 	(slot-set! doc 'nodes-bound? #t))))
 
 
