@@ -28,6 +28,8 @@ are not output in a separate file.
 This allows compilation with the compiler of "Guile-VM", i.e., the
 future Guile 2.x.
 
+** New test suite (run "make check")
+
 * New in Skribilo 0.9.1
 
 ** Improved `configure' diagnostics and build/installation fixes
