@@ -5,14 +5,23 @@
 	      :affiliation [The Organization]
 	      :address (ref :url "http://example.org/"))
 
-   (if (engine-format? "html")
-       (slide :title "Table of Contents" :number #f :toc #f
-	  ;; HTML-specific table of contents.
-	  (toc :chapter #f :section #f :subsection #f :subsubsection #f)))
-;;;	       :slide #t)))
-  
+   (slide :title "Table of Contents" :number #f
+
+      ;; "Manually" produce a list of the slides.  This works by traversing
+      ;; the whole document tree, looking for `slide' nodes.
+      (p
+       (resolve (lambda (n e env)
+                  (let ((slides (search-down (lambda (n)
+                                               (is-markup? n 'slide))
+                                             (ast-document n))))
+                    (itemize
+                     (map (lambda (n)
+                            (item (ref :handle (handle n)
+                                       :text (markup-option n :text))))
+                          slides)))))))
+
    (slide :title "Introduction" :vspace 0.3
-      
+
       (p [This is a simple slide, not grouped in any topic.]))
 
    (slide-topic :title "Interactive Features" :outline? #t
