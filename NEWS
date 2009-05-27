@@ -23,6 +23,7 @@ Previously, footnotes would not get printed in the case of chapters that
 are not output in a separate file.
 
 ** HTML engine: use ". " as the default chapter number-title separator
+** Improved rendering of pie charts with Ploticus
 ** New experimental `--enable-guile-vm' configure switch
 
 This allows compilation with the compiler of "Guile-VM", i.e., the

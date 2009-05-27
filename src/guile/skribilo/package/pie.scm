@@ -1,6 +1,6 @@
 ;;; pie.scm  --  An pie-chart formatting package.
 ;;;
-;;; Copyright 2005, 2006, 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2005, 2006, 2007, 2009  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -202,19 +202,9 @@ the string \"hello\".  Implement `sliceweight' markups too."
 
 	 (initial-angle (or (markup-option pie :initial-angle)
 			    0))
-	 (radius (or ;;FIXME
-		  (markup-option pie :radius) 3))
-	 (max-radius (+ radius (apply max detached)))
-
-	 ;; center coordinates must take into account (i) the
-	 ;; maxium radius when detached slices are considered and
-	 ;; (ii) the fact that labels may get displayed to the
-	 ;; left of the pie.
-	 ;; FIXME: labels to the left (ii) end up being truncated
-	 ;; when the radius is e.g. < 2.
-	 (center `(,(+ max-radius
-		       (* max-radius max-radius)) .
-		       ,(* max-radius max-radius))))
+	 (radius (or (markup-option pie :radius)
+                     ;; 2.5cm is the default used in `pie.pl'.
+                     2.5)))
 
     (string-concatenate
 	   (append (list "#proc getdata\n" "data: ")
@@ -233,8 +223,13 @@ the string \"hello\".  Implement `sliceweight' markups too."
 		     "datafield: " "1" "\n")
 		   `("firstslice: " ,(number->string initial-angle) "\n")
 		   `("radius: " ,(number->string radius) "\n")
-		   `("center: " ,(number->string (car center))
-		     " " ,(number->string (cdr center)) "\n")
+
+                   ;; This value is the default used in `pie.pl'.  It happens
+                   ;; to work well (at least in PNG output) for 1 < RADIUS < 4.
+                   ;; XXX: For RADIUS beyond that, the pie or labels are
+                   ;; often truncated.
+		   `("center: 6.25 6.25\n")
+
 		   `("labelmode: "
 		     ,(case (markup-option
 			     pie :labels)
