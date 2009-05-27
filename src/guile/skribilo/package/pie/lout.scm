@@ -119,14 +119,3 @@
 	     (output (markup-body node) engine)
 	     (display " }\n")))
 
-(markup-writer 'sliceweight (find-engine 'base)
-   ;; This writer should work for every engine, provided the `pie' markup has
-   ;; a proper `&total-weight' option.
-   :options '(:percentage?)
-   :action (lambda (node engine)
-	      (let ((pct? (markup-option node :percentage?)))
-		 (output (number->string
-			  (pie-sliceweight-value node pct?))
-			 engine))))
-
-;;; arch-tag: b5221e30-f80e-4b72-a281-83ce19ddb755

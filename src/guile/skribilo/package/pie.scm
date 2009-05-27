@@ -300,10 +300,14 @@ the string \"hello\".  Implement `sliceweight' markups too."
 	    (error "slice: this writer should never be invoked")))
 
 (markup-writer 'sliceweight (find-engine 'base)
-  :options '(:percentage?)
-  :action (lambda (node engine)
-	    ;; Nothing to do here.
-	    (error "sliceweight: this writer should never be invoked")))
+   ;; This writer should work for every engine, provided the `pie' markup has
+   ;; a proper `&total-weight' option.
+   :options '(:percentage?)
+   :action (lambda (node engine)
+	      (let ((pct? (markup-option node :percentage?)))
+		 (output (number->string
+			  (pie-sliceweight-value node pct?))
+			 engine))))
 
 
 ;;;
