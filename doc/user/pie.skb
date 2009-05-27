@@ -67,6 +67,56 @@ of ,(tt [pie]) can be used to create pie charts no entirely filled.])
 	(example-produce
 	  (example :legend "Specifying the layout of a pie chart"
 	     (prgm :file "src/pie2.skb"))
-	  (disp (include "src/pie2.skb"))))))
-	
-;;; arch-tag: 60382016-3a63-4466-83e0-46a259cb39ab
+	  (disp (include "src/pie2.skb"))))
+   
+      (p [The available markups and their options are described below.])
+      
+      (doc-markup 'pie
+      		  `((:title         ,[The title of the pie chart.])
+		    (:initial-angle ,[The initial angle of the pie, in degrees.])
+		    (:total         ,[If a number, specifies the
+"weight" of the whole pie; in this case, if the pie's slices don't add
+up to that number, then part of the pie is shown as empty.  If ,(code
+[#f]), the total that is used is the sum of the weight of each slice.])
+                    (:radius        ,[The pie's radius.  How this value
+is interpreted depends on the engine used.])
+                    (:fingers?      ,[Indicates whether to add "fingers"
+(arrows) from labels to slices when labels are outside of slices.])
+	            (:labels        ,[A symbol indicating where slice
+labels are rendered: ,(code [outside]) to have them appear outside of
+the pie, ,(code [inside]) to have them appear inside the pie, and ,(code
+[legend]) to have them appear in a separate legend.]))
+	           :source "skribilo/package/pie.scm"
+		   :see-also '(slice))
+      
+      (doc-markup 'slice
+      		  `((#!rest label ,[The label of the node.  It can
+contain arbitrary markup, notably instances of ,(markup-ref
+"sliceweight").  However, some engines, such as the Ploticus-based
+rendering, are not able to render markup other than ,(markup-ref
+"sliceweight"); consequently, they render the label as though it were
+markup-free.])
+		    (:weight      ,[An integer indicating the weight of this
+slice.])
+	            (:color       ,[The background color of the slice.])
+		    (:detach?     ,[Indicates whether the slice should be
+detached from the pie.]))
+	           :source "skribilo/package/pie.scm"
+		   :see-also '(pie sliceweight))
+      
+      (p [As seen in the examples above, the body of a ,(markup-ref
+"slice") markup can contain instances of ,(markup-ref "sliceweight") to
+represent the weight of the slice:])
+      
+      (doc-markup 'sliceweight
+            	  `((:percentage? ,[Indicates whether the slice's weight
+should be shown as a percentage of the total pie weight or as a raw
+weight.]))
+	           :see-also '(slice)
+		   :source "skribilo/package/pie.scm")))
+      
+
+;; Local Variables:
+;; coding: latin-1
+;; ispell-local-dictionary: "american"
+;; End:

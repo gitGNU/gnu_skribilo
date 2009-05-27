@@ -44,7 +44,7 @@
 ;;;
 
 (define-markup (pie :rest opts
-		    :key (ident #f) (title "Pie Chart")
+		    :key (ident #f) (class "pie") (title "Pie Chart")
 		    (initial-angle 0) (total #f) (radius 3)
 		    (fingers? #t) (labels 'outside)
 		    (class "pie"))
@@ -56,7 +56,8 @@
 	(body (the-body opts))))
 
 (define-markup (slice :rest opts
-		      :key (ident #f) (weight 1) (color "white") (detach? #f))
+		      :key (ident #f) (class "pie-slice")
+                           (weight 1) (color "white") (detach? #f))
    (new container
 	(markup 'slice)
 	(ident (or ident (symbol->string (gensym "slice"))))
@@ -68,7 +69,8 @@
 	(body (the-body opts))))
 
 (define-markup (sliceweight :rest opts
-			    :key (ident #f) (percentage? #f))
+			    :key (ident #f) (class "pie-sliceweight")
+                                 (percentage? #f))
    (new markup
 	(markup 'sliceweight)
 	(ident (or ident (symbol->string (gensym "sliceweight"))))
@@ -251,6 +253,7 @@ the string \"hello\".  Implement `sliceweight' markups too."
 		   `("colors: " ,@colors "\n")))))
 
 (markup-writer 'pie (find-engine 'base)
+  :options '(:title :initial-angle :total :radius :labels)
   :action (lambda (node engine)
 	    (let* ((fmt (select-output-format engine))
 		   (pie-file (string-append (markup-ident node) "."
@@ -291,11 +294,13 @@ the string \"hello\".  Implement `sliceweight' markups too."
 			engine))))
 
 (markup-writer 'slice (find-engine 'base)
+  :options '(:weight :color :detach?)
   :action (lambda (node engine)
 	    ;; Nothing to do here
 	    (error "slice: this writer should never be invoked")))
 
 (markup-writer 'sliceweight (find-engine 'base)
+  :options '(:percentage?)
   :action (lambda (node engine)
 	    ;; Nothing to do here.
 	    (error "sliceweight: this writer should never be invoked")))

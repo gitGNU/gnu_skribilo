@@ -1,6 +1,6 @@
 ;;; lout.scm  --  Lout implementation of the `pie' package.
 ;;;
-;;; Copyright 2005, 2006, 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2005, 2006, 2007, 2009  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -49,6 +49,7 @@
 ;;;
 
 (markup-writer 'pie (find-engine 'lout)
+   :options '(:title :initial-angle :total :radius :labels :fingers?)
    :before (lambda (node engine)
 	      (let* ((weights (map (lambda (slice)
 				     (markup-option slice :weight))
@@ -121,6 +122,7 @@
 (markup-writer 'sliceweight (find-engine 'base)
    ;; This writer should work for every engine, provided the `pie' markup has
    ;; a proper `&total-weight' option.
+   :options '(:percentage?)
    :action (lambda (node engine)
 	      (let ((pct? (markup-option node :percentage?)))
 		 (output (number->string

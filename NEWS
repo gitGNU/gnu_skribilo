@@ -30,6 +30,7 @@ This allows compilation with the compiler of "Guile-VM", i.e., the
 future Guile 2.x.
 
 ** New test suite (run "make check")
+** Various documentation fixes, improvements and additions
 
 * New in Skribilo 0.9.1
 
