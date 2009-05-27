@@ -23,6 +23,7 @@
 (define-module (skribilo ast)
   :use-module (oop goops)
 
+  :use-module (srfi srfi-1)
   :use-module (srfi srfi-13)
   :use-module (srfi srfi-34)
   :use-module (srfi srfi-35)
@@ -30,7 +31,6 @@
   :use-module (skribilo utils syntax)
 
   :autoload (skribilo location) (location?)
-  :autoload (srfi srfi-1)  (fold concatenate)
 
   :use-module (ice-9 optargs)
 
