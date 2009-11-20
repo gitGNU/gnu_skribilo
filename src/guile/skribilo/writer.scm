@@ -87,31 +87,10 @@
 	     (proc node e)))))
 
 
-(define %procedure-arity
-  (eval-case ((load-toplevel)
-              ;; Here we assume Guile's interpreter is used, either from
-              ;; Guile 1.8 or from Guile-VM (aka. Guile 2.x) but using both
-              ;; compiled procedures (aka. "programs") and good old
-              ;; interpreter procedures.
-              ;;
-              ;; This happens, e.g., while compiling Skribilo itself where
-              ;; some of the files loaded by the compiler are already
-              ;; compiled while others are interpreted.
-              (let* ((vm       (resolve-module '(system vm program)))
-                     (program? (false-if-exception
-                                (module-ref vm 'program?))))
-                (lambda (proc)
-                  (if (and (procedure? program?)
-                           (program? proc))
-                      (car ((module-ref vm 'program-arity) proc))
-                      (car (procedure-property proc 'arity))))))
-
-             (else
-              ;; Here we assume Guile-VM compiled code.
-              (lambda (proc)
-                (if ((@ (system vm program) program?) proc)
-                    (car ((@ (system vm program) program-arity) proc))
-                    (car (procedure-property proc 'arity)))))))
+(define (%procedure-arity proc)
+  ;; Return the number of required arguments for PROC.  This technique is
+  ;; known to work with Guile 1.8 and Guile 1.9.5.
+  (car (procedure-property proc 'arity)))
 
 (define (make-writer-predicate markup predicate class)
   (let* ((t2 (if class
@@ -123,7 +102,7 @@
 	  ((or (not (procedure? predicate))
                (not (eq? (%procedure-arity predicate) 2)))
            (raise (condition (&invalid-argument-error
-                              (proc-name make-writer-predicate)
+                              (proc-name 'make-writer-predicate)
                               (argument  predicate)))))
 	  (else
 	   (if (procedure? t2)
