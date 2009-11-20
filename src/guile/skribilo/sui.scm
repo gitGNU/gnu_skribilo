@@ -26,7 +26,6 @@
   :autoload   (skribilo reader)     (make-reader)
   :autoload   (skribilo engine)     (find-engine)
   :autoload   (skribilo evaluator)  (evaluate-document)
-  :autoload   (skribilo engine html)(html-file)
   :use-module (skribilo condition)
   :use-module (skribilo utils strings)
   :use-module (skribilo utils syntax)
@@ -294,6 +293,13 @@
 ;*    sui-referenced-file ...                                          */
 ;*---------------------------------------------------------------------*/
 (define (sui-referenced-file n e)
+
+   ;; Hack to avoid a compile-time dependency on the HTML engine, which would
+   ;; create a dependency loop:
+   ;; (package base) -> (sui) -> (engine html) -> (package base).
+   (define html-file
+     (@ (skribilo engine html) html-file))
+
    (let ((file (html-file n e)))
       (if (member (file-suffix file) '("skb" "sui" "skr" "html"))
 	  (string-append (strip-ref-base (file-prefix file)) ".html")
