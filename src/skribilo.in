@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright 2005, 2006, 2007, 2008  Ludovic Courtès  <ludo@gnu.org>
+# Copyright 2005, 2006, 2007, 2008, 2009  Ludovic CourtÃ¨s  <ludo@gnu.org>
 #
 #
 # This program is free software; you can redistribute it and/or modify
@@ -20,9 +20,12 @@
 
 # The `skribilo' executable.
 
-# Don't pass `--debug' by default (for performance reason).  When
+# Don't pass `--debug' by default (for performance reasons).  When
 # needed, the use should explicitly set the `GUILE' environment
 # variable to, e.g., "guile --debug".
+
+GUILE_LOAD_COMPILED_PATH="@guilemoduledir@:$GUILE_LOAD_COMPILED_PATH"
+export GUILE_LOAD_COMPILED_PATH
 
 main='(module-ref (resolve-interface '\''(skribilo)) '\'skribilo')'
 exec ${GUILE-@GUILE@} -L "@guilemoduledir@" -c "

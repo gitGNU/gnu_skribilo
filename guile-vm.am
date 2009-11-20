@@ -1,3 +1,4 @@
+
 # Compilation with Guile-VM's compiler (aka. Guile 2.x).
 
 if ENABLE_GUILE_VM
@@ -8,15 +9,20 @@ GOBJECTS = $(SOURCES:%.scm=%.go)
 nobase_nodist_module_DATA =				\
   $(SOURCES) $(GOBJECTS) $(SOURCES_NOT_COMPILED)
 
+# Compiler warnings.
+guile_warnings = unused-variable unbound-variable arity-mismatch
+
 .scm.go:
 	$(MKDIR_P) `dirname $@`
-	$(GUILE) -L $(srcdir)				\
-	  -c "(use-modules (system base compile)	\
-	                   (skribilo condition))	\
-	      (read-set! keywords 'prefix)		\
-	      (call-with-skribilo-error-catch/exit	\
-	        (lambda ()				\
-	          (compile-file \"$<\" \"$@\")))"
+	GUILE_AUTO_COMPILE=0					\
+	GUILE_LOAD_COMPILED_PATH="$(builddir):$(top_builddir)/src/guile:$$GUILE_LOAD_COMPILED_PATH" \
+	$(GUILE) --debug -L "$(srcdir)" -L "$(top_srcdir)/src/guile"	\
+	  -c "(use-modules (system base compile)		\
+	                   (skribilo condition))		\
+	      (call-with-skribilo-error-catch/exit		\
+	        (lambda ()					\
+	          (compile-file \"$<\" #:output-file \"$@\"	\
+			        #:opts '(#:warnings ($(guile_warnings))))))"
 
 CLEANFILES += $(GOBJECTS)
 

@@ -51,14 +51,19 @@ endif
 
 
 load_path = $(top_srcdir)/doc/modules
+load_compiled_path = $(top_builddir)/doc/modules
 
 
 skribilo.info: user.skb
-	GUILE_LOAD_PATH=$(load_path):$$GUILE_LOAD_PATH \
+	GUILE_LOAD_PATH=$(load_path):$$GUILE_LOAD_PATH	\
+	GUILE_LOAD_COMPILED_PATH=$(load_compiled_path):$$GUILE_LOAD_COMPILED_PATH \
+	GUILE_AUTO_COMPILE=0				\
 	$(skribilo) $(skrflags) --target=info -o $@ $<
 
 .skb.html:
-	GUILE_LOAD_PATH=$(load_path):$$GUILE_LOAD_PATH \
+	GUILE_LOAD_PATH=$(load_path):$$GUILE_LOAD_PATH	\
+	GUILE_LOAD_COMPILED_PATH=$(load_compiled_path):$$GUILE_LOAD_COMPILED_PATH \
+	GUILE_AUTO_COMPILE=0				\
 	$(skribilo) $(skrflags) --target=html -o $@ $<
 
 if HAVE_LOUT
@@ -93,15 +98,21 @@ if HAVE_PS2PDF
 endif
 
 .skb.lout:
-	GUILE_LOAD_PATH=$(load_path):$$GUILE_LOAD_PATH \
+	GUILE_LOAD_PATH=$(load_path):$$GUILE_LOAD_PATH	\
+	GUILE_LOAD_COMPILED_PATH=$(load_compiled_path):$$GUILE_LOAD_COMPILED_PATH \
+	GUILE_AUTO_COMPILE=0				\
 	$(skribilo) $(skrflags) --target=lout -o $@ $<
 
 .skb.tex:
-	GUILE_LOAD_PATH=$(load_path):$$GUILE_LOAD_PATH \
+	GUILE_LOAD_PATH=$(load_path):$$GUILE_LOAD_PATH	\
+	GUILE_LOAD_COMPILED_PATH=$(load_compiled_path):$$GUILE_LOAD_COMPILED_PATH \
+	GUILE_AUTO_COMPILE=0				\
 	$(skribilo) $(skrflags) --target=latex -o $@ $<
 
 .skb.ctx:
-	GUILE_LOAD_PATH=$(load_path):$$GUILE_LOAD_PATH \
+	GUILE_LOAD_PATH=$(load_path):$$GUILE_LOAD_PATH		\
+	GUILE_LOAD_COMPILED_PATH=$(load_compiled_path):$$GUILE_LOAD_COMPILED_PATH \
+	GUILE_AUTO_COMPILE=0					\
 	$(skribilo) $(skrflags) --target=context -o $@ $<
 
 

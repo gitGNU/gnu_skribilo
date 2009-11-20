@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright 2007  Ludovic Courtès  <ludo@gnu.org>
+# Copyright 2007, 2009  Ludovic CourtÃ¨s <ludo@gnu.org>
 #
 #
 # This program is free software; you can redistribute it and/or modify
@@ -20,6 +20,9 @@
 
 # A pre-installation `skribilo' executable that makes sure to load
 # stuff from the source directory rather than the installation directory.
+
+GUILE_LOAD_COMPILED_PATH="@abs_top_builddir@/src/guile:$GUILE_LOAD_COMPILED_PATH"
+export GUILE_LOAD_COMPILED_PATH
 
 main='(module-ref (resolve-interface '\''(skribilo)) '\'skribilo')'
 exec ${GUILE-@GUILE@} -L "@abs_top_srcdir@/src/guile"   \
