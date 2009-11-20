@@ -46,8 +46,7 @@
 (define-markup (pie :rest opts
 		    :key (ident #f) (class "pie") (title "Pie Chart")
 		    (initial-angle 0) (total #f) (radius 3)
-		    (fingers? #t) (labels 'outside)
-		    (class "pie"))
+		    (fingers? #t) (labels 'outside))
    (new container
 	(markup 'pie)
 	(ident (or ident (symbol->string (gensym "pie"))))
