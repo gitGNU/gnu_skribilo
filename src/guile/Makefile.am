@@ -44,11 +44,7 @@ SOURCES =								\
   skribilo/table.scm skribilo/utils/justify.scm				\
   skribilo/utils/text-table.scm
 
-SOURCES += $(readers) $(packages)
-
-# XXX: Currently, engines cannot be compiled due to a VM limitation.
-# See http://thread.gmane.org/gmane.lisp.guile.devel/8240 for details.
-SOURCES_NOT_COMPILED = $(engines)
+SOURCES += $(readers) $(packages) $(engines)
 
 readers =							\
   skribilo/reader/skribe.scm skribilo/reader/outline.scm	\
