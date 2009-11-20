@@ -1,6 +1,7 @@
 ;;; manual.scm  --  Skribilo manuals and documentation style.
+;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2007, 2008  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2007, 2008, 2009  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -41,7 +42,7 @@
   :use-module (srfi srfi-13)
   :use-module (srfi srfi-37))
 
-(fluid-set! current-reader %skribilo-module-reader)
+(skribilo-module-syntax)
 
 
 ;*---------------------------------------------------------------------*/

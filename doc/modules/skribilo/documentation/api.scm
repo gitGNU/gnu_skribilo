@@ -1,4 +1,5 @@
 ;;; api.scm  --  The style for documenting Scheme APIs.
+;;; -*- coding: iso-8859-1 -*-
 ;;;
 ;;; Copyright 2005, 2006, 2007, 2008, 2009  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
@@ -27,7 +28,7 @@
   :use-module (skribilo output)
   :use-module (skribilo lib) ;; `define-markup'
   :use-module (skribilo utils compat)
-  :use-module (skribilo utils syntax) ;; `%skribilo-module-reader'
+  :use-module (skribilo utils syntax) ;; `skribilo-module-syntax'
 
   :use-module (skribilo package base)
   :use-module (skribilo documentation manual)
@@ -37,7 +38,7 @@
   :use-module (ice-9 match)
   :use-module (ice-9 optargs))
 
-(fluid-set! current-reader %skribilo-module-reader)
+(skribilo-module-syntax)
 
 
 ;*---------------------------------------------------------------------*/
@@ -824,7 +825,3 @@
                                 (map make-row-for-custom
                                      (filter cadr args))))))))))))
 
-
-;;; Local Variables:
-;;; coding: latin-1
-;;; End:

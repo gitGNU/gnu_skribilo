@@ -1,7 +1,8 @@
 ;;; extension.scm  --  The Skribilo package for documenting extensions.
+;;; -*- coding: iso-8859-1 -*-
 ;;;
+;;; Copyright 2007, 2009  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
-;;; Copyright 2007  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -41,7 +42,7 @@
 
   :use-module (ice-9 optargs))
 
-(fluid-set! current-reader %skribilo-module-reader)
+(skribilo-module-syntax)
 
 
 ;*---------------------------------------------------------------------*/
