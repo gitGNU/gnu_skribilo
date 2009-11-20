@@ -1,6 +1,6 @@
-;;; user.skb  --  The Skribilo user manual.
+;;; user.skb  --  The Skribilo user manual.     -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2005, 2006, 2007, 2008  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2006, 2007, 2008, 2009  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2001, 2002, 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -266,7 +266,6 @@ of documentation ``evaluation''.])))
                   #f)))))
 
 ;; Local Variables:
-;; coding: latin-1
 ;; comment-start: ";"
 ;; comment-end: ""
 ;; ispell-local-dictionary: "american"

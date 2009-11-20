@@ -1,7 +1,7 @@
 ;;; eval.scm  --  Skribilo evaluator.
 ;;;
+;;; Copyright 2005, 2006, 2009  Ludovic Courtès  <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
-;;; Copyright 2005, 2006, 2007  Ludovic Courtès  <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -188,6 +188,12 @@
 	   ;; Load it
 	   (with-input-from-file filep
 	     (lambda ()
+               (cond-expand (guile-2
+                             ;; Use the encoding specified by the `coding:'
+                             ;; comment.
+                             (let ((p (current-input-port)))
+                               (set-port-encoding! p
+                                                   (file-encoding p)))))
 	       (evaluate-document-from-port (current-input-port) ei
                                             :module module
                                             :reader reader)))
@@ -215,6 +221,10 @@
 
     (with-input-from-file full-path
       (lambda ()
+        (cond-expand (guile-2
+                      ;; Use the encoding specified by the `coding:' comment.
+                      (let ((p (current-input-port)))
+                        (set-port-encoding! p (file-encoding p)))))
         (save-module-excursion
           (lambda ()
             (set-current-module module)
