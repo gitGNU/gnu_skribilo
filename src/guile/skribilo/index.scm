@@ -1,6 +1,6 @@
-;;; index.scm
+;;; index.scm -- Document indices.        -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2005, 2006, 2008  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2006, 2008, 2009  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -20,8 +20,8 @@
 ;;; USA.
 
 (define-module (skribilo index)
-  :use-syntax (skribilo utils syntax)
-  :use-syntax (skribilo lib)
+  :use-module (skribilo utils syntax)
+  :use-module (skribilo lib)
 
   :use-module (skribilo ast)
   :autoload   (srfi srfi-34)          (raise)

@@ -1,4 +1,4 @@
-;;; lib.scm -- Utilities.
+;;; lib.scm -- Utilities.                 -*- coding: iso-8859-1 -*-
 ;;;
 ;;; Copyright 2005, 2007, 2009  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
@@ -26,10 +26,10 @@
            skribe-warning skribe-warning/ast
            skribe-message
 
-	   type-name)
+	   type-name
 
-  :export-syntax (new define-markup define-simple-markup
-                  define-simple-container define-processor-markup)
+           new define-markup define-simple-markup
+           define-simple-container define-processor-markup)
 
   ;; Re-exported because used in `define-markup'.
   :re-export  (invocation-location)

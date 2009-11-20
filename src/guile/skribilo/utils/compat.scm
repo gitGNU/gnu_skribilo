@@ -1,4 +1,5 @@
 ;;; compat.scm  --  Skribe compatibility module.
+;;; -*- coding: iso-8859-1 -*-
 ;;;
 ;;; Copyright 2005, 2006, 2007, 2009  Ludovic Courtès  <ludo@gnu.org>
 ;;;
@@ -294,7 +295,7 @@
   '())
 
 (define-macro (printf . args)   `(format #t ,@args))
-(export-syntax printf)
+(export printf)
 (define-public fprintf			format)
 
 (define-public (fprint port . args)

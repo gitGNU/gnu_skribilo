@@ -1,4 +1,5 @@
 ;;; reader.scm  --  Skribilo's front-end (aka. reader) interface.
+;;; -*- coding: iso-8859-1 -*-
 ;;;
 ;;; Copyright 2005, 2009  Ludovic Courtès <ludo@gnu.org>
 ;;;
@@ -29,8 +30,9 @@
 	   *document-reader*
 
 	   &reader-search-error reader-search-error?
-	   reader-search-error:reader)
-  :export-syntax (define-reader define-public-reader reader?))
+	   reader-search-error:reader
+
+           define-reader define-public-reader reader?))
 
 ;;; Author:  Ludovic Courtès
 ;;;

@@ -20,9 +20,9 @@
 ;;; USA.
 
 (define-module (skribilo package base)
-  :use-syntax (skribilo lib)
-  :use-syntax (skribilo utils syntax)
-  :use-syntax (ice-9 optargs)
+  :use-module (skribilo lib)
+  :use-module (skribilo utils syntax)
+  :use-module (ice-9 optargs)
 
   :use-module (skribilo ast)
   :use-module (skribilo resolve)

@@ -1,7 +1,7 @@
-;;; debug.scm  --  Debugging facilities.
+;;; debug.scm  --  Debugging facilities.  -*- coding: iso-8859-1 -*-
 ;;;
+;;; Copyright 2005, 2006, 2009  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
-;;; Copyright 2005, 2006  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
 ;;; it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 (define-module (skribilo debug)
   :use-module (skribilo utils syntax)
   :use-module (srfi srfi-39)
-  :export-syntax (debug-item debug-bold with-debug))
+  :export (debug-item debug-bold with-debug))
 
 (skribilo-module-syntax)
 
