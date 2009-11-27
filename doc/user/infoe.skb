@@ -1,4 +1,5 @@
 ;;; info.skb  --  Documentation of the Info engine.
+;;; -*- coding: iso-8859-1 -*-
 ;;;
 ;;; Copyright 2009  Ludovic Courtès <ludo@gnu.org>
 ;;;
@@ -44,6 +45,5 @@ a text-only format, markups such as ,(markup-ref "image") do not yield a
 graphical output as with other engines.]))
 
 ;;; Local Variables:
-;;; coding: latin-1
 ;;; ispell-local-dictionary: "american"
 ;;; End:

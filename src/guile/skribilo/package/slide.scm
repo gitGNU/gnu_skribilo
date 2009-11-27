@@ -1,6 +1,7 @@
 ;;; slide.scm  --  Overhead transparencies.
+;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2006, 2007, 2008  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2006, 2007, 2008, 2009  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;

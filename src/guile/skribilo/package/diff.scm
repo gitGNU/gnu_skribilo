@@ -1,4 +1,5 @@
 ;;; diff.scm  --  A document difference highlighting package.
+;;; -*- coding: iso-8859-1 -*-
 ;;;
 ;;; Copyright 2007  Ludovic Courtès <ludo@gnu.org>
 ;;;

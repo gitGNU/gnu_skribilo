@@ -1,4 +1,4 @@
--*- mode: outline; coding: latin-1; -*-
+-*- mode: outline; coding: iso-8859-1; -*-
 
 Title: Demonstrating Skribilo's Outline Syntax
 Author: Ludovic Courtès

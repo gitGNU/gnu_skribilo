@@ -1,4 +1,5 @@
 ;;; web-book.scm  --  The web book style.
+;;; -*- coding: iso-8859-1 -*-
 ;;;
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;; Copyright 2007  Ludovic Courtès <ludo@chbouib.org>

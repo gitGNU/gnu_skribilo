@@ -1,4 +1,5 @@
 ;;; context.scm  --  ConTeXt engine.
+;;; -*- coding: iso-8859-1 -*-
 ;;;
 ;;; Copyright 2007, 2008  Ludovic Courtès <ludo@chbouib.org>
 ;;; Copyright 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>

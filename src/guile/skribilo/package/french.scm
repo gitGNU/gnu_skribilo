@@ -1,7 +1,8 @@
 ;;; french.scm  --  French Skribe style
+;;; -*- coding: iso-8859-1 -*-
 ;;;
+;;; Copyright 2007, 2009  Ludovic Courtès <ludo@chbouib.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
-;;; Copyright 2007  Ludovic Courtès <ludo@chbouib.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify

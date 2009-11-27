@@ -1,4 +1,5 @@
 ;;; output.scm  --  Skribilo output stage.
+;;; -*- coding: iso-8859-1 -*-
 ;;;
 ;;; Copyright 2005, 2006, 2008  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>

@@ -1,4 +1,5 @@
 ;;; bib.skb  --  The Skribilo bibliography.
+;;; -*- coding: iso-8859-1 -*-
 ;;;
 ;;; Copyright 2007, 2008  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2001, 2002, 2003, 2004  Manuel Serrano
@@ -337,6 +338,5 @@ These suffixes are:
    ))
 
 ;;; Local Variables:
-;;; coding: latin-1
 ;;; ispell-local-dictionary: "american"
 ;;; End:

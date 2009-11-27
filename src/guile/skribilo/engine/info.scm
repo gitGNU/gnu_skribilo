@@ -1,4 +1,5 @@
 ;;; info.scm  --  GNU Info engine.
+;;; -*- coding: iso-8859-1 -*-
 ;;;
 ;;; Copyright 2008, 2009  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2001, 2002  Manuel Serrano

@@ -1,4 +1,5 @@
 ;;; html-navtabs.scm  --  Producing HTML navigation tabs.
+;;; -*- coding: iso-8859-1 -*-
 ;;;
 ;;; Copyright 2004  Manuel Serrano
 ;;; Copyright 2007  Ludovic Courtès <ludo@gnu.org>

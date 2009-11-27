@@ -1,4 +1,5 @@
 ;;; parameters.scm  --  Skribilo settings as parameter objects.
+;;; -*- coding: iso-8859-1 -*-
 ;;;
 ;;; Copyright 2005, 2008  Ludovic Courtès <ludo@gnu.org>
 ;;;

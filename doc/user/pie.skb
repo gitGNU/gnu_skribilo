@@ -1,4 +1,5 @@
 ;;; pie.skb  --  Pie charts.
+;;; -*- coding: iso-8859-1 -*-
 ;;;
 ;;; Copyright 2006, 2009  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
@@ -117,6 +118,5 @@ weight.]))
       
 
 ;; Local Variables:
-;; coding: latin-1
 ;; ispell-local-dictionary: "american"
 ;; End:

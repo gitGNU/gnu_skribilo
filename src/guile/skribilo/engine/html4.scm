@@ -1,4 +1,5 @@
 ;;; html4.scm  --  HTML 4.01 engine.
+;;; -*- coding: iso-8859-1 -*-
 ;;;
 ;;; Copyright 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
 ;;; Copyright 2007  Ludovic Courtès <ludo@chbouib.org>

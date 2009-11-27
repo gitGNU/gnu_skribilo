@@ -1,4 +1,5 @@
 ;;; table.scm  --  Routines to operate on `table' markups.
+;;; -*- coding: iso-8859-1 -*-
 ;;;
 ;;; Copyright 2008  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2001  Manuel Serrano

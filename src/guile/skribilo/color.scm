@@ -1,4 +1,5 @@
 ;;; color.scm -- Color management.
+;;; -*- coding: iso-8859-1 -*-
 ;;;
 ;;; Copyright 2006, 2007  Ludovic Courtès  <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>

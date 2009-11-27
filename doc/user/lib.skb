@@ -1,4 +1,5 @@
 ;;; lib.skb  --  Standard library.
+;;; -*- coding: iso-8859-1 -*-
 ;;;
 ;;; Copyright 2007, 2008  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003  Erick Gallesio <eg@essi.fr>
@@ -115,6 +116,5 @@ under which Skribilo modules were installed:]
 
 
 ;;; Local Variables:
-;;; coding: latin-1
 ;;; ispell-local-dictionary: "american"
 ;;; End:

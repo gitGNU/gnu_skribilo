@@ -1,4 +1,5 @@
 ;;; context.skb  --  Documentation of the ConTeXt engine.
+;;; -*- coding: iso-8859-1 -*-
 ;;;
 ;;; Copyright 2008  Ludovic Courtès <ludo@gnu.org>
 ;;;
@@ -53,6 +54,5 @@ output.])
 	 :source "skribilo/engine/context.scm")))
 
 ;;; Local Variables:
-;;; coding: latin-1
 ;;; ispell-local-dictionary: "american"
 ;;; End:

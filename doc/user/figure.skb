@@ -1,4 +1,5 @@
 ;;; figure.skb  --  Figures.
+;;; -*- coding: iso-8859-1 -*-
 ;;;
 ;;; Copyright 2008  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003  Manuel Serrano
@@ -70,6 +71,5 @@ display the list of figures of a document is included below.])
  (disp (include "src/api15.skb")))))
 
 ;;; Local Variables:
-;;; coding: latin-1
 ;;; ispell-local-dictionary: "american"
 ;;; End:

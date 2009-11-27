@@ -1,6 +1,7 @@
 ;;; latex.scm  --  LaTeX engine.
+;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2007  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2007, 2009  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -1745,8 +1746,3 @@
 ;*    Restore the base engine                                          */
 ;*---------------------------------------------------------------------*/
 (default-engine-set! (find-engine 'base))
-
-
-;;; Local Variables:
-;;; coding: latin-1
-;;; End:

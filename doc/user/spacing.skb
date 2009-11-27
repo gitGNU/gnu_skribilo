@@ -1,6 +1,7 @@
 ;;; spacing.skb  --  Spacing.
+;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2007, 2009  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -32,5 +33,3 @@ unbreakable and breakable space, respectively:])
    (doc-markup '~ '() :common-args '((:class "The node class.")))
 
    (doc-markup 'breakable-space '()))
-	
-;;; arch-tag: a6a542b9-6bf0-406d-8cf1-3cfffbdfa40d

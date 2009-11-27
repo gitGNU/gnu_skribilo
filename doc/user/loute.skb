@@ -1,4 +1,5 @@
 ;;; loute.skb  --  Documentation of the Lout engine.
+;;; -*- coding: iso-8859-1 -*-
 ;;;
 ;;; Copyright 2008  Ludovic Courtès <ludo@gnu.org>
 ;;;
@@ -220,6 +221,5 @@ is ,(tt [#f]).]))
 		  illustration :key (file #f) ident alt) ...))))
 
 ;;; Local Variables:
-;;; coding: latin-1
 ;;; ispell-local-dictionary: "american"
 ;;; End:

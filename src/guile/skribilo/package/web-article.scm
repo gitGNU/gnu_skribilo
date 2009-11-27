@@ -1,4 +1,5 @@
 ;;; web-article.scm  --  A style to produce web articles.
+;;; -*- coding: iso-8859-1 -*-
 ;;;
 ;;; Copyright 2007, 2008  Ludovic Courtès <ludo@chbouib.org>
 ;;; Copyright 2003, 2004  Manuel Serrano

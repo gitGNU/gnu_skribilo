@@ -1,4 +1,5 @@
 ;;; prog.scm  --  All the stuff for the prog markup
+;;; -*- coding: iso-8859-1 -*-
 ;;;
 ;;; Copyright 2006, 2007, 2009  Ludovic Courtès  <ludo@gnu.org>
 ;;; Copyright 2003  Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
