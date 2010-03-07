@@ -10,7 +10,7 @@ nobase_nodist_module_DATA =				\
   $(SOURCES) $(GOBJECTS) $(SOURCES_NOT_COMPILED)
 
 # Compiler warnings.
-guile_warnings = unused-variable unbound-variable arity-mismatch
+guile_warnings = unused-variable unused-toplevel unbound-variable arity-mismatch
 
 .scm.go:
 	$(MKDIR_P) `dirname $@`
