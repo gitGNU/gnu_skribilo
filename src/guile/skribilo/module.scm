@@ -96,6 +96,22 @@
 ;;; Run-time document modules.
 ;;;
 
+(define maybe-set-module-name!
+  ;; In Guile 2.x, `psyntax' expect module names to be actually bound using
+  ;; `nested-define!' (see the definition of `module-name' in `boot-9.scm').
+  ;; Thus, if we want to change a custom module name, we should also do the
+  ;; `nested-define!' magic.  Failing to do that results in errors like:
+  ;;
+  ;;   <unnamed port>: In expression (use-modules (foo)):
+  ;;   <unnamed port>: Wrong number of arguments to #<program 8868a0 (y)>
+  ;;
+  ;; (Observed on Guile 1.9.5.)
+  ;;
+  ;; Consequently, on Guile 2.x, we just let Guile choose a module name and
+  ;; do the right thing.
+  (cond-expand ((not guile-2) set-module-name!)
+               (else          (lambda (m n) #t))))
+
 (define (make-skribe-user-module)
   "Return a new module that imports all the necessary bindings required for
 execution of legacy Skribe code/documents."
@@ -105,7 +121,7 @@ execution of legacy Skribe code/documents."
                                                     (car name+bindings)
                                                     (cdr name+bindings)))
                          %skribe-user-autoloads)))
-    (set-module-name! the-module '(skribe-user))
+    (maybe-set-module-name! the-module '(skribe-user))
     (module-use-interfaces! the-module
                             (cons the-scm-module
                                   (append (map resolve-interface
@@ -117,7 +133,7 @@ execution of legacy Skribe code/documents."
   "Return a new module that imports all the necessary bindings required for
 Skribilo documents."
   (let* ((the-module (make-module)))
-    (set-module-name! the-module '(skribilo-user))
+    (maybe-set-module-name! the-module '(skribilo-user))
     (module-use-interfaces! the-module
                             (cons the-scm-module
                                   (map resolve-interface
