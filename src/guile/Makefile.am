@@ -26,6 +26,7 @@ EXTRA_DIST =						\
 
 SOURCES =								\
   skribilo.scm diff.scm							\
+  skribilo/config.scm							\
   skribilo/biblio/bibtex.scm skribilo/biblio/author.scm			\
   skribilo/biblio/abbrev.scm skribilo/biblio/template.scm		\
   skribilo/utils/syntax.scm skribilo/utils/compat.scm			\
@@ -68,10 +69,6 @@ packages =								\
   skribilo/package/pie/lout.scm skribilo/package/eq/lout.scm		\
   skribilo/package/slide/base.scm skribilo/package/slide/latex.scm	\
   skribilo/package/slide/html.scm skribilo/package/slide/lout.scm
-
-# Generated files not part of the distribution.
-nobase_module_DATA =				\
-  skribilo/config.scm
 
 # Generated files part of the distribution.
 SOURCES +=							\
