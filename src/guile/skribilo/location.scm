@@ -1,7 +1,7 @@
 ;;; location.scm -- Skribilo source location.
 ;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2005, 2007, 2009  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2007, 2009, 2010  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
 ;;;
 ;;;
@@ -78,6 +78,10 @@
 ;;;
 ;;; Getting an invocation's location.
 ;;;
+
+(cond-expand
+ (guile-2 (use-modules (system vm frame)))
+ (else    #t))
 
 (define (invocation-location . depth)
   ;; Return a location object denoting the place of invocation of this
