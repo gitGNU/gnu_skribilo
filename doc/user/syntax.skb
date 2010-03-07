@@ -190,6 +190,7 @@ to the native ,(tt [skribe]) syntax:])
 	      (flush :side 'left
 		(pre (with-input-from-file src
 			(lambda ()
+			  (set-correct-file-encoding!)
 			  (let loop ((line   (read-line))
 				     (result '()))
 			    (if (eof-object? line)
@@ -201,9 +202,9 @@ to the native ,(tt [skribe]) syntax:])
 	   (with-output-to-string
 	     (lambda ()
 	       (let* ((read  (make-reader 'outline))
-		      (input (open-input-file src))
-		      (sexp  (read input)))
-		 (pretty-print sexp :width 65)))))))
+		      (input (open-input-file src)))
+		 (set-correct-file-encoding! input)
+		 (pretty-print (read input) :width 65)))))))
       
       (p [The ,(tt [outline]) mode makes it possible to quickly create
 documents that can be output in variety of formats (see ,(numref :text

@@ -189,12 +189,7 @@
 	   ;; Load it
 	   (with-input-from-file filep
 	     (lambda ()
-               (cond-expand (guile-2
-                             ;; Use the encoding specified by the `coding:'
-                             ;; comment.
-                             (let ((p (current-input-port)))
-                               (set-port-encoding! p
-                                                   (file-encoding p)))))
+               (set-correct-file-encoding!)
 	       (evaluate-document-from-port (current-input-port) ei
                                             :module module
                                             :reader reader)))
@@ -222,10 +217,7 @@
 
     (with-input-from-file full-path
       (lambda ()
-        (cond-expand (guile-2
-                      ;; Use the encoding specified by the `coding:' comment.
-                      (let ((p (current-input-port)))
-                        (set-port-encoding! p (file-encoding p)))))
+        (set-correct-file-encoding!)
         (save-module-excursion
           (lambda ()
             (set-current-module module)

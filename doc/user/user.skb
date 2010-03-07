@@ -50,7 +50,8 @@
 	     (skribilo evaluator)
 	     (skribilo config)
 	     (skribilo index)
-	     (skribilo lib))  ;; for `skribe-warning'
+	     (skribilo lib)   ;; for `skribe-warning'
+	     (skribilo utils syntax)) ;; `set-correct-file-encoding!'
 
 ;*---------------------------------------------------------------------*/
 ;*    SRFIs							       */

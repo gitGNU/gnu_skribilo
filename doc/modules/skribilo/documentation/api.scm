@@ -28,7 +28,7 @@
   :use-module (skribilo output)
   :use-module (skribilo lib) ;; `define-markup'
   :use-module (skribilo utils compat)
-  :use-module (skribilo utils syntax) ;; `skribilo-module-syntax'
+  :use-module (skribilo utils syntax)
 
   :use-module (skribilo package base)
   :use-module (skribilo documentation manual)
@@ -243,6 +243,7 @@
 			path)
 	  (with-input-from-file f
 	     (lambda ()
+                (set-correct-file-encoding!)
 		(let loop ((exp (read)))
 		   (if (eof-object? exp)
 		       (skribe-error 'api-search-definition

@@ -1,7 +1,7 @@
 -*- mode: outline; coding: iso-8859-1; -*-
 
 Title: Demonstrating Skribilo's Outline Syntax
-Author: Ludovic Courtès
+Author: Ludovic Courtes
 Keywords: Skribilo outline Emacs
 
 This document aims to *demonstrate*

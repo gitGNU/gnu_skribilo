@@ -1,6 +1,6 @@
-;;; syntax.scm  --  Syntactic candy for Skribilo modules.
+;;; syntax.scm  --  Syntactic candy for Skribilo modules. -*- coding: utf-8 -*-
 ;;;
-;;; Copyright 2005, 2006, 2007, 2008, 2009  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2006, 2007, 2008, 2009, 2010  Ludovic CourtÃ¨s <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -23,10 +23,11 @@
   :use-module (system reader compat) ;; make sure `current-reader' exists
   :use-module (system reader confinement)
   :export (%skribilo-module-reader skribilo-module-syntax
-           _ N_)
-  :export-syntax (unwind-protect unless when))
+           set-correct-file-encoding!
+           _ N_
+           unwind-protect unless when))
 
-;;; Author:  Ludovic Courtès
+;;; Author:  Ludovic CourtÃ¨s
 ;;;
 ;;; Commentary:
 ;;;
@@ -83,6 +84,21 @@
             (car exprs)
             `(begin ,@exprs))))
 
+(cond-expand
+ (guile-2
+  (define-syntax set-correct-file-encoding!
+    (syntax-rules ()
+      ((_)
+       (set-correct-file-encoding! (current-input-port)))
+      ((_ port)
+       ;; Use the encoding specified by the `coding:' comment.
+       (let ((e (false-if-exception (file-encoding port))))
+         (and (string? e)
+              (set-port-encoding! port e)))))))
+ (else
+  (define-macro (set-correct-file-encoding! . p)
+    #f)))
+
 
 ;;;
 ;;; Gettext support.
@@ -97,11 +113,5 @@
 
 (define (N_ msg msgplural n)
   (ngettext msg msgplural n %skribilo-text-domain))
-
-
-;;; Local Variables:
-;;; mode: scheme
-;;; coding: latin-1
-;;; End:
 
 ;;; syntax.scm ends here

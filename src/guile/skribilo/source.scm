@@ -1,7 +1,7 @@
 ;;; source.scm	-- Highlighting source files.
 ;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2005, 2008, 2009  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2008, 2009, 2010  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
 ;;;
 ;;;
@@ -110,6 +110,7 @@
 					      (path (*source-path*)))))
 	(with-input-from-file p
 	  (lambda ()
+            (set-correct-file-encoding!)
 	    (if (> (*verbose*) 0)
 		(format (current-error-port) "  [source file: ~S]\n" p))
 	    (let ((startl (if (string? start) (string-length start) -1))
@@ -194,6 +195,7 @@
 
 	 (else
 	  (let ((ip (open-input-file p)))
+             (set-correct-file-encoding! ip)
 	     (if (> (*verbose*) 0)
 		 (format (current-error-port) "  [source file: ~S]\n" p))
 	     (if (not (input-port? ip))

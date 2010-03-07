@@ -387,11 +387,7 @@ options."
         (if input-file
             (with-input-from-file input-file
               (lambda ()
-                (cond-expand (guile-2
-                              ;; Use the encoding specified by the `coding:'
-                              ;; comment.
-                              (let ((p (current-input-port)))
-                                (set-port-encoding! p (file-encoding p)))))
+                (set-correct-file-encoding!)
                 (doskribe user-module)))
             (doskribe user-module))
 
