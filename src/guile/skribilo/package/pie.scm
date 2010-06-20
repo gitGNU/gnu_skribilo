@@ -1,7 +1,7 @@
 ;;; pie.scm  --  An pie-chart formatting package.
-;;; -*- coding: iso-8859-1 -*-
+;;; -*- coding: utf-8 -*-
 ;;;
-;;; Copyright 2005, 2006, 2007, 2009  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2006, 2007, 2009, 2010  Ludovic CourtÃ¨s <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 ;;; USA.
 
 (define-module (skribilo package pie)
-  :autoload   (skribilo ast)    (markup? markup-ident ast-parent)
+  :use-module (skribilo ast)
   :autoload   (skribilo output) (output)
   :use-module (skribilo writer)
   :use-module (skribilo engine)
