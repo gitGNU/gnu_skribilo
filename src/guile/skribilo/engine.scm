@@ -1,7 +1,7 @@
 ;;; engine.scm	-- Skribilo engines.
 ;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2005, 2007, 2008, 2009  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2007, 2008, 2009, 2010  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
 ;;;
 ;;;
@@ -27,6 +27,7 @@
 
   :use-module (oop goops)
   :use-module (ice-9 optargs)
+  :use-module (ice-9 format)
 
   :autoload   (srfi srfi-34)  (raise guard)
   :use-module (srfi srfi-35)
@@ -144,6 +145,12 @@
 
 (define (engine-symbol-table obj)
   (slot-ref obj 'symbol-table))
+
+(define-method (write (e <engine>) (p <port>))
+  (format p "#<~a ~a ~x>"
+          (class-name (class-of e))
+          (engine-ident e)
+          (object-address e)))
 
 
 
