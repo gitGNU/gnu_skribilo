@@ -277,8 +277,14 @@
 (define (engine-loaded? id)
   "Check whether engine @var{id} is already loaded."
   ;; Trick taken from `resolve-module' in `boot-9.scm'.
-  (nested-ref the-root-module
-	      `(%app modules ,@(engine-id->module-name id))))
+  (cond-expand (guile-2
+                (nested-ref-module (resolve-module '() #f)
+                                   (engine-id->module-name id)))
+               (else
+                ;; This method works for 1.8 but is deprecated in 1.9/2.0 and
+                ;; doesn't work with 1.9.11 anyway.
+                (nested-ref the-root-module
+                            `(%app modules ,@(engine-id->module-name id))))))
 
 ;; A mapping of engine names to hooks.
 (define %engine-load-hook (make-hash-table))
