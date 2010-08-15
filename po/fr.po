@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: ludo@gnu.org\n"
-"POT-Creation-Date: 2008-12-21 23:53+0100\n"
+"POT-Creation-Date: 2010-07-16 16:46+0200\n"
 "PO-Revision-Date: 2007-02-05 16:02+0100\n"
 "Last-Translator: Ludovic Courtès <ludo@gnu.org>\n"
 "Language-Team: fr <LL@li.org>\n"
@@ -62,88 +62,88 @@ msgstr ""
 msgid "undefined AST error: ~a~%"
 msgstr "erreur skribilo indéfinie : ~S~%"
 
-#: src/guile/skribilo/biblio.scm:110
+#: src/guile/skribilo/biblio.scm:111
 #, scheme-format
 msgid "~a:~a:~a: invalid bibliography entry: ~a~%"
 msgstr "~a:~a:~a: entrée de bibliographie incorrecte : ~a~%"
 
-#: src/guile/skribilo/biblio.scm:113
+#: src/guile/skribilo/biblio.scm:114
 #, scheme-format
 msgid "invalid bibliography entry: ~a~%"
 msgstr "entrée de bibliographie incorrecte : ~a~%"
 
-#: src/guile/skribilo/biblio.scm:117
+#: src/guile/skribilo/biblio.scm:118
 #, scheme-format
 msgid "invalid bibliography entry template: `~a', in `~a'~%"
 msgstr "patron de bibliographie incorrect : `~a', dans `~a'~%"
 
-#: src/guile/skribilo/biblio.scm:122
+#: src/guile/skribilo/biblio.scm:123
 #, fuzzy, scheme-format
 msgid "invalid bibliography entry s-exp: `~a'~%"
 msgstr "entrée de bibliographie incorrecte : ~a~%"
 
-#: src/guile/skribilo/biblio.scm:126
+#: src/guile/skribilo/biblio.scm:127
 #, scheme-format
 msgid "undefined bibliography error: ~a~%"
 msgstr "erreur de bibliographie indéfinie : ~a~%"
 
-#: src/guile/skribilo/condition.scm:130
+#: src/guile/skribilo/condition.scm:131
 #, scheme-format
 msgid "Call stack trace not available.~%"
 msgstr ""
 
-#: src/guile/skribilo/condition.scm:131
+#: src/guile/skribilo/condition.scm:132
 #, scheme-format
 msgid ""
 "Use `GUILE=\"guile --debug\" skribilo ...' for a detailed stack trace.~%"
 msgstr ""
 
-#: src/guile/skribilo/condition.scm:149
+#: src/guile/skribilo/condition.scm:150
 #, scheme-format
 msgid "in `~a': invalid argument: ~S~%"
 msgstr "dans `~a': argument incorrect: ~S~%"
 
-#: src/guile/skribilo/condition.scm:156
+#: src/guile/skribilo/condition.scm:157
 #, scheme-format
 msgid "in `~a': too few arguments: ~S~%"
 msgstr "dans `~a': trop peu d'arguments: ~S~%"
 
-#: src/guile/skribilo/condition.scm:163
+#: src/guile/skribilo/condition.scm:164
 #, scheme-format
 msgid "~a: not found in path `~S'~%"
 msgstr "~a: non trouvé dans le chemin `~S'~%"
 
-#: src/guile/skribilo/condition.scm:170
+#: src/guile/skribilo/condition.scm:171
 #, scheme-format
 msgid "~a: cannot open file~%"
 msgstr "~a: échec d'ouverture du fichier~%"
 
-#: src/guile/skribilo/condition.scm:176
+#: src/guile/skribilo/condition.scm:177
 #, scheme-format
 msgid "~a: cannot write to file~%"
 msgstr "~a: échec en écriture sur le fichier~%"
 
-#: src/guile/skribilo/condition.scm:182
+#: src/guile/skribilo/condition.scm:183
 #, scheme-format
 msgid "file error: ~a~%"
 msgstr "erreur de fichier : ~a~%"
 
-#: src/guile/skribilo/condition.scm:191
+#: src/guile/skribilo/condition.scm:192
 #, scheme-format
 msgid "undefined skribilo error: ~S~%"
 msgstr "erreur skribilo indéfinie : ~S~%"
 
-#: src/guile/skribilo/condition.scm:201
+#: src/guile/skribilo/condition.scm:202
 #, fuzzy, scheme-format
 msgid "unexpected error condition: ~A~%"
 msgstr "erreur skribilo indéfinie : ~S~%"
 
-#: src/guile/skribilo/engine.scm:77
+#: src/guile/skribilo/engine.scm:74
 #, scheme-format
 msgid "unknown engine `~a'~%"
 msgstr ""
 
-#: src/guile/skribilo/engine.scm:82
+#: src/guile/skribilo/engine.scm:79
 #, fuzzy, scheme-format
 msgid "undefined engine error: ~A~%"
 msgstr "erreur skribilo indéfinie : ~S~%"
@@ -153,59 +153,68 @@ msgstr "erreur skribilo indéfinie : ~S~%"
 msgid "the-index: char-offset `~A' out of bounds~%"
 msgstr ""
 
-#: src/guile/skribilo/source.scm:69
+#: src/guile/skribilo/source.scm:70
 #, scheme-format
 msgid "source language `~a' does not have an extractor~%"
 msgstr ""
 
-#: src/guile/skribilo/source.scm:74
+#: src/guile/skribilo/source.scm:75
 #, scheme-format
 msgid "source definition of `~a' in language `~a' not found~%"
 msgstr ""
 
-#: src/guile/skribilo/source.scm:80
+#: src/guile/skribilo/source.scm:81
 #, fuzzy, scheme-format
 msgid "undefined source error: ~A~%"
 msgstr "erreur skribilo indéfinie : ~S~%"
 
-#: src/guile/skribilo/sui.scm:82
+#: src/guile/skribilo/sui.scm:81
 #, scheme-format
 msgid "invalid SUI form: ~A~%"
 msgstr ""
 
-#: src/guile/skribilo/sui.scm:87
+#: src/guile/skribilo/sui.scm:86
 #, fuzzy, scheme-format
 msgid "undefined sui error: ~A~%"
 msgstr "erreur skribilo indéfinie : ~S~%"
 
-#: src/guile/skribilo/verify.scm:74
+#: src/guile/skribilo/verify.scm:75
 #, scheme-format
 msgid "option `~a' of markup `~a' not supported by engine `~a'~%"
 msgstr ""
 
-#: src/guile/skribilo/verify.scm:81
+#: src/guile/skribilo/verify.scm:82
 #, fuzzy, scheme-format
 msgid "undefined verify error: ~a~%"
 msgstr "erreur skribilo indéfinie : ~S~%"
 
-#: src/guile/skribilo/engine/lout.scm:2407
+#: src/guile/skribilo/engine/lout.scm:2409
 msgid "image URLs not supported"
+msgstr ""
+
+#: src/guile/skribilo/engine/info.scm:172
+#, scheme-format
+msgid "Info node title `~A' already used"
+msgstr ""
+
+#: src/guile/skribilo/engine/info.scm:175
+msgid "previous occurrence was here"
 msgstr ""
 
 #: src/guile/skribilo/reader/rss-2.scm:70
 msgid "input is not a valid RSS 2.0 feed"
 msgstr ""
 
-#: src/guile/skribilo/reader/rss-2.scm:243
+#: src/guile/skribilo/reader/rss-2.scm:241
 #, scheme-format
 msgid "tag `~s' ignored"
 msgstr ""
 
-#: src/guile/skribilo/reader/rss-2.scm:250
+#: src/guile/skribilo/reader/rss-2.scm:248
 #, scheme-format
 msgid "skipping tag `~a'~%"
 msgstr ""
 
-#: src/guile/skribilo/reader/rss-2.scm:301
+#: src/guile/skribilo/reader/rss-2.scm:299
 msgid "no RSS 2.0 channels found in feed"
 msgstr ""
