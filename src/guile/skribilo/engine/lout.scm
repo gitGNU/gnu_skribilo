@@ -1,7 +1,7 @@
 ;;; lout.scm  --  A Lout engine.
 ;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2004, 2005, 2006, 2007, 2008, 2009  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2004, 2005, 2006, 2007, 2008, 2009, 2010  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -1170,9 +1170,10 @@
                (if (memq doc-type '(report slides))
                    (let ((date-line (engine-custom e 'date-line)))
 		     (display "  @DateLine { ")
-		     (if (or (string? date-line) (ast? date-line))
-			 (output date-line e)
-			 (display (if date-line "Yes" "No")))
+                     (case date-line
+                       ((#t) (display "Yes"))
+                       ((#f) (display "No"))
+                       (else (output date-line e)))
 		     (display " }\n")))
 
                ;; Output options specific to one of the document types.
