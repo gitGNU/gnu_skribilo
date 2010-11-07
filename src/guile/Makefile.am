@@ -84,6 +84,8 @@ nobase_nodist_module_DATA +=				\
   skribilo/config.scm skribilo/config.go		\
   skribilo/utils/images.scm skribilo/utils/images.go
 
+BUILT_SOURCES = skribilo/config.scm
+
 .in.scm:
 	$(substitute) "$^" > "$@.tmp" &&	\
 	mv "$@.tmp" "$@"
