@@ -1,6 +1,6 @@
 ;;; lout.scm  --  Lout implementation of the `eq' package.
 ;;;
-;;; Copyright 2005, 2006, 2007, 2008  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2006, 2007, 2008, 2010  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -59,9 +59,11 @@
 (markup-writer 'eq (find-engine 'lout)
    :options '(:inline? :align-with :div-style :mul-style :number)
    :before (lambda (node engine)
-             (let* ((parent (ast-parent node))
-                    (displayed? (is-markup? parent 'eq-display))
-                    (number (equation-number-string node)))
+             (let ((displayed? (case (markup-option node :inline?)
+                                 ((auto) (is-markup? (ast-parent node)
+                                                     'eq-display))
+                                 (else   (not (markup-option node :inline?)))))
+                   (number     (equation-number-string node)))
                ;; Note: The `@BypassNumber' option appeared in Lout 3.36.
                (if (and displayed? (not (*embedded-renderer*)))
                    (display (if (string? number)
