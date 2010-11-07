@@ -970,22 +970,13 @@
 	  (string-append (number->string width) "p"))))
 
 ;*---------------------------------------------------------------------*/
-;*    lout-font-size ...                                               */
+;*    lout-size-ratio ...                                              */
 ;*---------------------------------------------------------------------*/
-(define (lout-font-size size)
-   (case size
-      ((4) "3.5f")
-      ((3) "2.0f")
-      ((2) "1.5f")
-      ((1) "1.2f")
-      ((0) "1.0f")
-      ((-1) "0.8f")
-      ((-2) "0.5f")
-      ((-3) "0.3f")
-      ((-4) "0.2f")
-      (else (if (number? size)
-		(if (< size 0) "0.3f" "1.5f")
-		"1.0f"))))
+(define (lout-size-ratio size)
+  ;; Return a font or break ratio for SIZE, an integer.  If SIZE is zero, 1.0
+  ;; is returned; if it's positive, then a ratio > 1 is returned; if it's
+  ;; negative, a ratio < 1 is returned.
+  (expt 1.2 size))
 
 (define (lout-color-specification skribe-color)
   ;; Return a Lout color name, ie. a string which is either an English color
@@ -1737,8 +1728,8 @@
 (markup-writer 'font
    :options '(:size :face)
    :before (lambda (n e)
-	     (let ((size (lout-font-size (markup-option n :size))))
-	       (format #t "\n~a @Font { " size)))
+	     (let ((ratio (lout-size-ratio (markup-option n :size))))
+	       (format #t "\n~af @Font ~avx @Break { " ratio ratio)))
    :after (lambda (n e)
 	    (display " }\n")))
 
