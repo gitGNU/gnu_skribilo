@@ -1,7 +1,7 @@
 ;;; html.scm  --  HTML engine.
 ;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2005, 2006, 2007, 2008, 2009  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2006, 2007, 2008, 2009, 2011  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -608,6 +608,15 @@
 
                  ;; Record the file name, for use by `html-file-default'.
                  (markup-option-add! n :file (*destination-file*))
+
+                 (cond-expand
+                  (guile-2
+                   ;; Make sure the output is suitable encoded.
+                   (and=> (engine-custom e 'charset)
+                          (lambda (charset)
+                            (set-port-encoding! (current-output-port)
+                                                charset))))
+                  (else #t))
 
 		 (&html-generic-document n title e)))
 
