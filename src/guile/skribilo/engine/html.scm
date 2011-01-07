@@ -1303,7 +1303,7 @@
 		 (display " -->\n")
 		 (display "<a name=\"")
 		 (display (string-canonicalize ident))
-		 (display "\"></a>\n")
+		 (display "\"></a>")
 		 (display "<center><h1")
 		 (html-class n)
 		 (display ">")
@@ -1341,7 +1341,7 @@
       (display " -->\n")
       (display "<a name=\"")
       (display (string-canonicalize ident))
-      (display "\"></a>\n")
+      (display "\"></a>")
       (if c
 	  (format #t "<div class=\"~a-title\">" c)
 	  (format #t "<div class=\"skribilo-~a-title\">" (markup-markup n)))
@@ -1616,7 +1616,7 @@
 			   (html-class item)
 			   (display ">")
 			    (if ident  ;; produce an anchor
-				(format #t "\n<a name=\"~a\"></a>\n"
+				(format #t "\n<a name=\"~a\"></a>"
 					(string-canonicalize ident)))
 			   (output item e)
 			    (display "</li>\n")))
@@ -1637,7 +1637,7 @@
 			   (html-class item)
 			   (display ">")
 			    (if ident  ;; produce an anchor
-				(format #t "\n<a name=\"~a\"></a>\n" ident))
+				(format #t "\n<a name=\"~a\"></a>" ident))
 			   (output item e)
 			    (display "</li>\n")))
 			(markup-body n)))
@@ -1706,7 +1706,7 @@
 		    (legend (markup-option n :legend)))
 		 (display "<a name=\"")
 		 (display (string-canonicalize ident))
-		 (display "\"></a>\n")
+		 (display "\"></a>")
 		 (output (markup-body n) e)
 		 (display "<br>\n")
 		 (output (new markup
