@@ -1,4 +1,4 @@
-SUBDIRS = user modules man
+SUBDIRS = modules user man
 
 EXTRA_DIST =					\
   dir/dir.skb					\
