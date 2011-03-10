@@ -1,6 +1,6 @@
 ;;; skribilo.scm  --  The Skribilo document processor.
 ;;;
-;;; Copyright 2005, 2006, 2007, 2008, 2009  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2006, 2007, 2008, 2009, 2011  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
 ;;;
 ;;;
@@ -375,24 +375,27 @@ options."
       (if (and output-file (file-exists? output-file))
           (delete-file output-file))
 
-      (parameterize ((*destination-file* output-file)
-                     (*source-file*      input-file)
-                     (*skribilo-output-port*
-                      (if (string? output-file)
-                          (open-output-file output-file)
-                          (current-output-port))))
+      ;; Choose UTF-8 as the default encoding so that string ports will
+      ;; accept all of Unicode.
+      (default-to-utf-8
+        (parameterize ((*destination-file* output-file)
+                       (*source-file*      input-file)
+                       (*skribilo-output-port*
+                        (if (string? output-file)
+                            (open-output-file output-file)
+                            (current-output-port))))
 
-        (setvbuf (*skribilo-output-port*) _IOFBF 16384)
+          (setvbuf (*skribilo-output-port*) _IOFBF 16384)
 
-        (if input-file
-            (with-input-from-file input-file
-              (lambda ()
-                (set-correct-file-encoding!)
-                (doskribe user-module)))
-            (doskribe user-module))
+          (if input-file
+              (with-input-from-file input-file
+                (lambda ()
+                  (set-correct-file-encoding!)
+                  (doskribe user-module)))
+              (doskribe user-module))
 
-        ;; Make sure the output port is flushed before we leave.
-        (force-output (*skribilo-output-port*))))))
+          ;; Make sure the output port is flushed before we leave.
+          (force-output (*skribilo-output-port*)))))))
 
 
 ;;; Local Variables:

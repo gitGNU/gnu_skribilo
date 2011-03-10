@@ -1,6 +1,6 @@
 ;;; syntax.scm  --  Syntactic candy for Skribilo modules. -*- coding: utf-8 -*-
 ;;;
-;;; Copyright 2005, 2006, 2007, 2008, 2009, 2010  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -24,6 +24,7 @@
   :use-module (system reader confinement)
   :export (%skribilo-module-reader skribilo-module-syntax
            set-correct-file-encoding!
+           default-to-utf-8
            _ N_
            unwind-protect unless when))
 
@@ -94,10 +95,18 @@
        ;; Use the encoding specified by the `coding:' comment.
        (let ((e (false-if-exception (file-encoding port))))
          (and (string? e)
-              (set-port-encoding! port e)))))))
+              (set-port-encoding! port e))))))
+
+  (define-syntax default-to-utf-8
+    (syntax-rules ()
+      ((_ body ...)
+       (with-fluids ((%default-port-encoding "UTF-8"))
+         body ...)))))
  (else
   (define-macro (set-correct-file-encoding! . p)
-    #f)))
+    #f)
+
+  (define-macro (default-to-utf-8 . rest) #t)))
 
 
 ;;;
