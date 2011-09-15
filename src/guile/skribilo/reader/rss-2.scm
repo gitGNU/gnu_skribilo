@@ -1,6 +1,6 @@
 ;;; rss-2.scm  --  A reader for RSS 2.0 files.
 ;;;
-;;; Copyright 2008  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2008, 2011  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -208,8 +208,9 @@
                                (and (pair? x) (loop x)))
                              body)))
 
-      ((or ((and (or 'tr 'th 'td 'tc) tag) ('@ _ ...) body ...)
-           ((and (or 'tr 'th 'td 'tc) tag) body ...))
+      ;; XXX: Putting the second pattern first yields to match failures.
+      ((or ((and (or 'tr 'th 'td 'tc) tag) body ...)
+           ((and (or 'tr 'th 'td 'tc) tag) ('@ _ ...) body ...))
        `(,tag ,@(map loop body)))
 
       (('*ENTITY* "additional" "nbsp")
