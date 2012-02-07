@@ -58,7 +58,7 @@
   (ref :url "http://www.pragma-ade.nl/" :text body))
 
 (define (lout . body)
-  (ref :url "http://lout.sf.net/" :text body))
+  (ref :url "http://savannah.nongnu.org/projects/lout/" :text body))
 
 (define (ploticus . body)
   (ref :url "http://ploticus.sf.net/" :text body))
@@ -268,6 +268,19 @@ entitled ,(ref :url
 "http://www-sop.inria.fr/mimosa/Manuel.Serrano/publi/jfp05/article.html"
 :text (it [Skribe: A Functional Authoring Language])) provides further
 insight.])
+	  (item [,(ref :url
+"http://docs.racket-lang.org/scribble/index.html" :text [Scribble]), the
+documentation system of Racket, is similar in spirit to Skribilo/Skribe.
+It has ,(ref :url
+"http://docs.racket-lang.org/scribble/getting-started.html" :text
+[different syntax]) and ,(ref :url
+"http://docs.racket-lang.org/scribble/base.html" :text [markup]).  ,(ref
+:skribe %user-sui :ident "engines" :text [Like Skribilo]), it supports
+several ,(ref :url "http://docs.racket-lang.org/scribble/renderer.html"
+:text "renderers").  It does not seem to provide an API to work with the
+AST, and things like ,(ref :url
+"http://git.savannah.gnu.org/cgit/skribilo.git/tree/src/guile/skribilo/resolve.scm"
+:text (tt [resolve])).])
           (item [Andy Wingo's ,(ref :url
 "http://wingolog.org/software/guile-lib/texinfo/" :text [STexi]) (,(ref
 :text [Texinfo] :url "http://www.gnu.org/software/texinfo/") as
