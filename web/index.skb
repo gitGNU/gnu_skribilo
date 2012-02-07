@@ -129,7 +129,7 @@ text.])
    (p [Last but not least, Skribilo can be thought of as a complete
 ,(emph [document programming framework]) for the ,(scheme [Scheme
 programming language]) that may be used to automate a variety of
-document generation tasks.  Skribilo uses ,(guile [GNU Guile]) 1.8 as
+document generation tasks.  Skribilo uses ,(guile [GNU Guile]) 1.8 or 2.0 as
 the underlying Scheme implementation.])
 
 
@@ -167,7 +167,7 @@ General Public Licence]), version 2 or later.  In order to use Skribilo,
 you need the following pieces of software:
 
 ,(itemize
-    (item [,(guile [GNU Guile]) 1.8.3 or later;])
+    (item [,(guile [GNU Guile]) 1.8.3 or later, or 2.0;])
     (item [,(ref :url "http://www.nongnu.org/guile-reader/"
                :text [Guile-Reader]) 0.3 or later;])
     (item [either ,(lout [Lout]) (3.31 or later), ,(latex [LaTeX]) or
