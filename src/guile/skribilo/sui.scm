@@ -1,12 +1,12 @@
 ;;; sui.scm -- Skribe URL Indices
 ;;;
-;;; Copyright 2005, 2006, 2007, 2008, 2009  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2006, 2007, 2008, 2009, 2012  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
 ;;; it under the terms of the GNU General Public License as published by
-;;; the Free Software Foundation; either version 2 of the License, or
+;;; the Free Software Foundation; either version 3 of the License, or
 ;;; (at your option) any later version.
 ;;;
 ;;; This program is distributed in the hope that it will be useful,
@@ -297,10 +297,9 @@
    ;; Hack to avoid a compile-time dependency on the HTML engine, which would
    ;; create a dependency loop:
    ;; (package base) -> (sui) -> (engine html) -> (package base).
-   (define html-file
-     (@ (skribilo engine html) html-file))
 
-   (let ((file (html-file n e)))
+   (let* ((html-file (@ (skribilo engine html) html-file))
+          (file      (html-file n e)))
       (if (member (file-suffix file) '("skb" "sui" "skr" "html"))
 	  (string-append (strip-ref-base (file-prefix file)) ".html")
 	  file)))
