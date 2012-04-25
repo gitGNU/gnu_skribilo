@@ -1,6 +1,6 @@
 ;;; debug.scm  --  Debugging facilities.  -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2005, 2006, 2009  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2006, 2009, 2012  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -102,18 +102,25 @@
 ;;;
 ;;; debug-item
 ;;;
-(define-macro (debug-item . args)
-  `(if (*debug-item?*) (%do-debug-item ,@args)))
 
-(define-public (%do-debug-item . args)
+(define (%do-debug-item . args)
   (begin
     (display (*debug-margin*) (*debug-port*))
     (display (debug-color (- (*debug-depth*) 1) "- ") (*debug-port*))
     (for-each (lambda (a) (display a (*debug-port*))) args)
     (newline (*debug-port*))))
 
-;;(define-macro (debug-item  . args)
-;;  `())
+(cond-expand
+ (guile-2
+  (define-syntax-rule (debug-item args ...)
+    (if (*debug-item?*)
+        (%do-debug-item args ...))))
+ (else
+  (begin
+    ;; Work around Guile 1.8's broken macro support.
+    (export %do-debug-item)
+    (define-macro (debug-item . args)
+      `(if (*debug-item?*) (%do-debug-item ,@args))))))
 
 
 ;;;
@@ -127,7 +134,7 @@
 ;;;
 ;;; %with-debug
 ;;;
-(define-public (%do-with-debug lvl lbl thunk)
+(define (%do-with-debug lvl lbl thunk)
   (parameterize ((*margin-level* lvl)
                  (*debug-item?* #t))
     (display (*debug-margin*) (*debug-port*))
@@ -139,16 +146,30 @@
     (%with-debug-margin (debug-color (*debug-depth*) "  |")
                         thunk)))
 
-(define-macro (with-debug level label . body)
-  ;; We have this as a macro in order to avoid procedure calls in the
-  ;; non-debugging case.  Unfortunately, the macro below duplicates BODY,
-  ;; which has a negative impact on memory usage and startup time (XXX).
-  (if (number? level)
-      `(if (or (>= (*debug*) ,level)
-               (memq ,label (*watched-symbols*)))
-           (%do-with-debug ,level ,label (lambda () ,@body))
-           (begin ,@body))
-      (error "with-debug: syntax error")))
+;; We have this as a macro in order to avoid procedure calls in the
+;; non-debugging case.  Unfortunately, the macro below duplicates BODY,
+;; which has a negative impact on memory usage and startup time (XXX).
+(cond-expand
+ (guile-2
+  (define-syntax with-debug
+    (lambda (s)
+      (syntax-case s ()
+        ((_ level label body ...)
+         (integer? (syntax->datum #'level))
+         #'(if (or (>= (*debug*) level)
+                   (memq label (*watched-symbols*)))
+               (%do-with-debug level label (lambda () body ...))
+               (begin body ...)))))))
+ (else
+  (begin
+    (export %do-with-debug)
+    (define-macro (with-debug level label . body)
+      (if (number? level)
+          `(if (or (>= (*debug*) ,level)
+                   (memq ,label (*watched-symbols*)))
+               (%do-with-debug ,level ,label (lambda () ,@body))
+               (begin ,@body))
+          (error "with-debug: syntax error"))))))
 
 
 ; Example:
