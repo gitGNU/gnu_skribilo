@@ -34,6 +34,9 @@ dist_html_DATA = skribilo.css
 BUILT_SOURCES = lout/front-page.lout
 CLEANFILES = $(BUILT_SOURCES) $(html_DATA) skribilo.info
 
+# `user.sui' is produced by the HTML engine.
+user.sui: user.html
+
 skribilo = $(top_builddir)/src/pre-inst-skribilo
 skrflags  = -I $(srcdir) -P $(top_srcdir)/doc/img		\
 	    -S $(srcdir) -S $(top_srcdir)/src/guile		\
