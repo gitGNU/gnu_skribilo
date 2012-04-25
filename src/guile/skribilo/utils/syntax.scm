@@ -1,6 +1,7 @@
 ;;; syntax.scm  --  Syntactic candy for Skribilo modules. -*- coding: utf-8 -*-
 ;;;
-;;; Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011,
+;;;   2012  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -23,10 +24,10 @@
   :use-module (system reader compat) ;; make sure `current-reader' exists
   :use-module (system reader confinement)
   :export (%skribilo-module-reader skribilo-module-syntax
-           set-correct-file-encoding!
-           default-to-utf-8
-           _ N_
-           unwind-protect unless when))
+                                   set-correct-file-encoding!
+                                   default-to-utf-8
+                                   _ N_
+                                   unwind-protect))
 
 ;;; Author:  Ludovic Courtès
 ;;;
@@ -69,21 +70,28 @@
 (define-macro (unwind-protect expr1 expr2)
   ;; This is no completely correct.
   `(dynamic-wind
-       (lambda () #f)
-       (lambda () ,expr1)
-       (lambda () ,expr2)))
+     (lambda () #f)
+     (lambda () ,expr1)
+     (lambda () ,expr2)))
 
-(define-macro (unless condition . exprs)
-  `(if (not ,condition)
-       ,(if (null? (cdr exprs))
-            (car exprs)
-            `(begin ,@exprs))))
+(cond-expand
+ ((not guile-2)
+  ;; In Guile 2.x these macros are defined in the core.
+  (begin
+    (define-macro (unless condition . exprs)
+      `(if (not ,condition)
+           ,(if (null? (cdr exprs))
+                (car exprs)
+                `(begin ,@exprs))))
 
-(define-macro (when condition . exprs)
-  `(if ,condition
-       ,(if (null? (cdr exprs))
-            (car exprs)
-            `(begin ,@exprs))))
+    (define-macro (when condition . exprs)
+      `(if ,condition
+           ,(if (null? (cdr exprs))
+                (car exprs)
+                `(begin ,@exprs))))
+
+    (export when unless)))
+ (else (begin)))
 
 (cond-expand
  (guile-2
