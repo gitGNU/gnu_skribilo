@@ -38,12 +38,6 @@ AM_CONDITIONAL([ENABLE_GUILE_VM],
   [test "x$enable_guile_vm" = "xyes" && \
    $GUILE_TOOLS compile --help 2>&1 >/dev/null])
 
-# Guile-Lint (http://www.geocities.com/user42_kevin/guile-lint/index.html)
-AC_PATH_PROG([GUILE_LINT], [guile-lint])
-AC_SUBST([GUILE_LINT])
-AM_CONDITIONAL([HAVE_GUILE_LINT], test "x$GUILE_LINT" != "x")
-
-
 # Need Guile-Reader.
 GUILE_MODULE_REQUIRED([system reader])
 

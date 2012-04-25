@@ -13,6 +13,4 @@ CLEANFILES =
 
 SUFFIXES =
 
-lintable = $(EXTRA_DIST)
-include $(top_srcdir)/guile-lint.am
 include $(top_srcdir)/guile-vm.am

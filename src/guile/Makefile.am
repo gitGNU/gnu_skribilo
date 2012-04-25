@@ -134,8 +134,3 @@ clean-local:
 	echo '           lexer-ungetc))' >> "$@" &&			\
 	cat "$@.tmp" >> "$@" &&						\
 	rm "$@.tmp"
-
-
-lintable = $(nobase_dist_module_DATA) $(nobase_module_DATA)
-
-include $(top_srcdir)/guile-lint.am
