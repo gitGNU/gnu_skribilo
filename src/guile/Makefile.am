@@ -21,7 +21,7 @@ EXTRA_DIST =						\
   README						\
   skribilo/source/lisp-lex.l				\
   skribilo/source/xml-lex.l skribilo/source/c-lex.l	\
-  skribilo/utils/images.scm.in skribilo/config.in	\
+  skribilo/utils/images.in skribilo/config.in		\
   srfi/srfi-64.scm srfi/srfi-64.upstream.scm
 
 SOURCES =								\
@@ -93,7 +93,9 @@ nobase_nodist_module_DATA +=			\
 endif ENABLE_GUILE_VM
 
 
-BUILT_SOURCES = skribilo/config.scm
+BUILT_SOURCES =					\
+  skribilo/config.scm				\
+  skribilo/utils/images.scm
 
 .in.scm:
 	$(substitute) "$^" > "$@.tmp" &&	\

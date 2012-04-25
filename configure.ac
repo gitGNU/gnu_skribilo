@@ -105,7 +105,6 @@ AC_OUTPUT([Makefile
 	   po/Makefile.in
 	   src/Makefile
 	   src/guile/Makefile
-	   src/guile/skribilo/utils/images.scm
            doc/Makefile
 	   doc/user/Makefile
 	   doc/modules/Makefile
