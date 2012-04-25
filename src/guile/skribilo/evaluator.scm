@@ -1,7 +1,7 @@
 ;;; eval.scm  --  Skribilo evaluator.
 ;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2005, 2006, 2009  Ludovic Courtès  <ludo@gnu.org>
+;;; Copyright 2005, 2006, 2009, 2012  Ludovic Courtès  <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
 ;;;
 ;;;
@@ -60,8 +60,11 @@
   ;; Evaluate EXPR in the current module.  EXPR is an arbitrary S-expression
   ;; that may contain calls to the markup functions defined in a markup
   ;; package such as `(skribilo package base)', e.g., `(bold "hello")'.
-  (let ((opts (debug-options)))
-    (dynamic-wind
+  (cond-expand
+   (guile-2 (eval expr module))
+   (else
+    (let ((opts (debug-options)))
+      (dynamic-wind
         (lambda ()
           ;; Force use of the debugging evaluator so that we can track source
           ;; location.
@@ -71,7 +74,7 @@
           (eval expr module))
         (lambda ()
           ;; Restore previous evaluator options.
-          (debug-options opts)))))
+          (debug-options opts)))))))
 
 
 ;;;
