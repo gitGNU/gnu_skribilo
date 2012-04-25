@@ -55,11 +55,14 @@
 		     (_ "unexpected character in Skribilo module"))
 		    chr)))
 
-         ;; By default, don't record positions: this yields a nice read
-         ;; performance improvement.
-         (if (memq 'debug (debug-options))
-             (list 'reader/record-positions)
-             '())))
+         (cond-expand
+          (guile-2 '(reader/record-positions))
+          (else
+           ;; On Guile 1.8, don't record positions by default: this yields a
+           ;; nice read performance improvement.
+           (if (memq 'positions (debug-options))
+               (list 'reader/record-positions)
+               '())))))
 
 (define-macro (skribilo-module-syntax)
   "Install the syntax reader for Skribilo modules."
