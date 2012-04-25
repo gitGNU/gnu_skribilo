@@ -1,7 +1,7 @@
 ;;; writer.scm  --  Markup writers.
 ;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2005, 2006, 2008, 2009  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2006, 2008, 2009, 2012  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
 ;;;
 ;;;
@@ -89,9 +89,11 @@
 
 
 (define (%procedure-arity proc)
-  ;; Return the number of required arguments for PROC.  This technique is
-  ;; known to work with Guile 1.8 and Guile 1.9.5.
-  (car (procedure-property proc 'arity)))
+  ;; Return the minimum number of required arguments for PROC.
+  (cond-expand (guile-2
+                (car (procedure-minimum-arity proc)))
+               (else
+                (car (procedure-property proc 'arity)))))
 
 (define (make-writer-predicate markup predicate class)
   (let* ((t2 (if class

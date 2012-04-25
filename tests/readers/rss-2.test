@@ -20,8 +20,10 @@
 (define-module (tests rss-2)
   :use-module (ice-9 match)
   :use-module (skribilo reader)
-  :use-module (srfi srfi-64)
-  :use-module (ice-9 syncase))
+  :use-module (srfi srfi-64))
+
+(cond-expand (guile-2 (begin))
+             (else    (use-modules (ice-9 syncase))))
 
 (if (or (not (false-if-exception (resolve-interface '(sxml simple))))
         (not (false-if-exception (resolve-interface '(htmlprag)))))
