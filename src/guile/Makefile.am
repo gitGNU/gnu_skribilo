@@ -1,4 +1,4 @@
-# Copyright 2005, 2006, 2007, 2008, 2009, 2010  Ludovic Courtès <ludo@gnu.org>
+# Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012  Ludovic Courtès <ludo@gnu.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -80,9 +80,18 @@ include $(top_srcdir)/substitute.am
 include $(top_srcdir)/guile-vm.am
 
 # Generated files not part of the distribution.
-nobase_nodist_module_DATA +=				\
-  skribilo/config.scm skribilo/config.go		\
-  skribilo/utils/images.scm skribilo/utils/images.go
+nobase_nodist_module_DATA +=			\
+  skribilo/config.scm				\
+  skribilo/utils/images.scm
+
+if ENABLE_GUILE_VM
+
+nobase_nodist_module_DATA +=			\
+ skribilo/config.go				\
+ skribilo/utils/images.go
+
+endif ENABLE_GUILE_VM
+
 
 BUILT_SOURCES = skribilo/config.scm
 
