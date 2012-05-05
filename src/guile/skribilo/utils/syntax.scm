@@ -113,11 +113,13 @@
       ((_ body ...)
        (with-fluids ((%default-port-encoding "UTF-8"))
          body ...)))))
+
  (else
   (define-macro (set-correct-file-encoding! . p)
     #f)
 
-  (define-macro (default-to-utf-8 . rest) #t)))
+  (define-macro (default-to-utf-8 . body)
+    `(begin ,@body))))
 
 
 ;;;
