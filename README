@@ -29,10 +29,10 @@ Requirements
 
 You need at least:
 
-  * GNU Guile >= 1.8.3
+  * GNU Guile >= 1.8.3 (2.0.x recommended)
     http://www.gnu.org/software/guile/
 
-  * Guile-Reader >= 0.3
+  * Guile-Reader >= 0.6
     http://www.nongnu.org/guile-reader/
 
   * ImageMagick, used to convert images from one format to another
@@ -74,7 +74,7 @@ Development
 A copy of the source code repository can be obtained with Git
 (http://git.or.cz/), using the following incantation:
 
-  git-clone git://git.sv.gnu.org/skribilo.git
+  git clone git://git.sv.gnu.org/skribilo.git
 
 You can then send patches to the <skribilo-users@nongnu.org> mailing
 list!
@@ -97,7 +97,7 @@ Ludovic Courtès <ludo@chbouib.org>.
 
 
 
-Copyright 2007, 2008  Ludovic Courtès <ludo@gnu.org>
+Copyright 2007, 2008, 2012  Ludovic Courtès <ludo@gnu.org>
 
   Copying and distribution of this file, with or without modification,
   are permitted in any medium without royalty provided the copyright
