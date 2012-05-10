@@ -1,7 +1,7 @@
 ;;; latex.scm  --  LaTeX engine.
 ;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2007, 2009  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2007, 2009, 2012  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -356,6 +356,7 @@
 	 :delegate (find-engine 'base)
 	 :filter (make-string-replace latex-encoding)
 	 :custom '((documentclass "\\documentclass{article}")
+                   (encoding "UTF-8")
                    (class-has-chapters? #f)
 		   (usepackage "\\usepackage{epsfig}\n")
 		   (predocument "\\newdimen\\oldframetabcolsep\n\\newdimen\\oldcolortabcolsep\n\\newdimen\\oldpretabcolsep\n")
@@ -517,6 +518,16 @@
 		 (if dc
 		     (begin (display dc) (newline))
 		     (display "\\documentclass{article}\n")))
+
+              (cond-expand
+               (guile-2
+                (let ((encoding (engine-custom e 'encoding)))
+                  (set-port-encoding! (current-output-port) encoding)
+                  (set-port-conversion-strategy! (current-output-port) 'error)
+                  (if (string-ci=? encoding "UTF-8") ; FIXME: other encodings?
+                      (display "\\usepackage[utf8]{inputenc}\n"))))
+               (else #t))
+
 	      (if (latex-color? e)
 		  (display (engine-custom e 'color-usepackage)))
 	      (if (engine-custom e 'hyperref)

@@ -611,7 +611,7 @@
 
                  (cond-expand
                   (guile-2
-                   ;; Make sure the output is suitable encoded.
+                   ;; Make sure the output is suitably encoded.
                    (and=> (engine-custom e 'charset)
                           (lambda (charset)
                             (set-port-encoding! (current-output-port)

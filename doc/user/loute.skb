@@ -1,7 +1,7 @@
 ;;; loute.skb  --  Documentation of the Lout engine.
 ;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2008  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2008, 2012  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -61,6 +61,10 @@ directives.])
 	  (inline-definitions-proc ,[A procedure that is passed the
 engine and returns Lout definitions to be included at the beginning of
 the document as a string.])
+          (encoding ,[The encoding of the output document,(footnote
+[This option is supported when Guile 2.0+ is being used.]).  As of
+Lout,(~)3.39, only ,(code ["ISO-8859-1"]) and ,(code ["ISO-8859-2"]) are
+supported.])
 
 	  (initial-font     ,[Lout specification of the document font.])
 	  (initial-break    ,[Lout specification of the default

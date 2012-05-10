@@ -1,7 +1,7 @@
 ;;; latexe.skb  --  Documentation of the LaTeX engine.
 ;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2007, 2008  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2007, 2008, 2012  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -37,6 +37,8 @@ used to produce high-quality PostScript of PDF files for printing.])
       
       (doc-engine 'latex
 	 `((documentclass ,[A string declaring the LaTeX document class.])
+           (encoding ,[The encoding of the output document,(footnote
+[This option is supported when Guile 2.0+ is being used.]).])
            (class-has-chapters? ,[A boolean indicating whether the
 document class has a ,(code [chapter]) markup.  If ,(code "#f"), then
 Skribilo's ,(code [chapter]) is mapped to LaTeX' ,(code [section]), and

@@ -1,7 +1,7 @@
 ;;; info.scm  --  GNU Info engine.
 ;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2008, 2009  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2008, 2009, 2012  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2001, 2002  Manuel Serrano
 ;;;
 ;;;
@@ -186,6 +186,11 @@
   :options '(:title :author :ending)
   :action (lambda (doc e)
             (check-node-title-conflicts doc e)
+
+            (cond-expand
+             (guile-2 (set-port-encoding! (current-output-port) "UTF-8"))
+             (else #t))
+
             (let ((title     (markup-option doc :title))
                   (authors   (markup-option doc :author))
                   (body      (markup-body doc))
