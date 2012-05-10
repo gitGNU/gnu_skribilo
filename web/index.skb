@@ -22,7 +22,8 @@
         ;; Customizing the HTML output...
 	(engine-custom-set! html 'css "skribilo.css")
         (engine-custom-set! html 'html-navtabs-produce-css? #f)
-        (engine-custom-set! html 'html-navtabs html-tabs))))
+        (engine-custom-set! html 'html-navtabs html-tabs)
+        (engine-custom-set! html 'charset "UTF-8"))))
 
 
 
@@ -121,8 +122,8 @@ document in a variety of output formats: HTML for on-line browsing, and
    (p [The input document can use Skribilo's ,(wikipedia/markup [markup
 language]) to provide information about the document's structure, which
 is similar to HTML or ,(latex [LaTeX]) and does not require expertise.
-Alternatively, it can use a simpler, ``,(wikipedia/markup-less
-[markup-less])'' format that borrows from ,(emacs/outline [Emacs'
+Alternatively, it can use a simpler, “,(wikipedia/markup-less
+[markup-less])” format that borrows from ,(emacs/outline [Emacs'
 outline mode]) and from other conventions used in emails, Usenet and
 text.])
 
@@ -225,7 +226,7 @@ changes ,(ref :ident "mailing-list" :text [on the mailing-list]).])
 
       (p [Skribilo is a direct descendant of ,(skribe* [Skribe]), a
 document production tool written by Manuel Serrano for ,(bigloo
-[Bigloo]) and ported to ,(stklos [STkLos]) by Erick Gallesio.
+[Bigloo]) and ported to ,(stklos [STkLos]) by Érick Gallesio.
 Development of ,(skribe* [Skribe]) started around 2003 as a successor of
 Manuel's previous documentation system named ,(scribe [Scribe]).])
 
@@ -262,7 +263,7 @@ programmers.]))]))
           (item [,(skribe* [Skribe]), the father of Skribilo.  Its
 predecessor is ,(scribe [Scribe]) and their goals were expressed in
 ,(ref :url "http://www-sop.inria.fr/mimosa/fp/Scribe/doc/scribe.html"
-:text (it [the Scribe white paper])) by Manuel Serrano and �rick
+:text (it [the Scribe white paper])) by Manuel Serrano and Érick
 Gallesio.  Their 2005 Journal of Functional Programming (JFP) article
 entitled ,(ref :url
 "http://www-sop.inria.fr/mimosa/Manuel.Serrano/publi/jfp05/article.html"
@@ -295,7 +296,7 @@ tree] :url "http://okmij.org/ftp/Scheme/parent-pointers.txt") is a good
 source of inspiration.])
 	  (item [,(ref :url
 	  "http://www.ccs.neu.edu/home/dorai/mistie/mistie.html" :text
-[Mistie]), a ``programmable filter'' in Scheme (for MzScheme) that
+[Mistie]), a “programmable filter” in Scheme (for MzScheme) that
 allows the definition of filters from one markup language to another
 one.])
 	  (item [,(ref :url "http://www.it.usyd.edu.au/~jeff/nonpareil/"
@@ -304,7 +305,7 @@ one.])
 systems/languages.  Although Nonpareil is more ambitious than Skribilo,
 the document entitled ,(it [Nonpareil Document Formatting]) shows
 interesting similarities between both systems: separation of document
-syntax and programming syntax (``readers'' and Scheme in Skribilo),
+syntax and programming syntax (“readers” and Scheme in Skribilo),
 representation of document structure separated from the representation
 of a laid out document (Nonpareil's ,(it [doc]) objects resemble
 Skribilo's ,(tt [<ast>]) objects; its ,(it [scene]) objects have no
@@ -335,18 +336,18 @@ others.])))
       
       (p [Skribilo is an ,(wikipedia/esperanto [Esperanto]) noun, which
 literally means ,(ref :url
-"http://www.reta-vortaro.de/revo/art/skrib.html#skrib.0ilo" :text [``a
-tool to write'']) (prefix ``,(ref :url
-"http://www.reta-vortaro.de/revo/art/skrib.html" :text [skrib])''
-relates to writing, while suffix ``,(ref :text [-ilo] :url
-"http://www.reta-vortaro.de/revo/art/il.html")'' designates a tool).
-Interestingly, ``,(skribe* [skribe])'', which is the name of the tool
-Skribilo is based on, is an adverb meaning ``writing'' in
+"http://www.reta-vortaro.de/revo/art/skrib.html#skrib.0ilo" :text [“a
+tool to write”]) (prefix “,(ref :url
+"http://www.reta-vortaro.de/revo/art/skrib.html" :text [skrib])”
+relates to writing, while suffix “,(ref :text [-ilo] :url
+"http://www.reta-vortaro.de/revo/art/il.html")” designates a tool).
+Interestingly, “,(skribe* [skribe])”, which is the name of the tool
+Skribilo is based on, is an adverb meaning “writing” in
 ,(wikipedia/esperanto [Esperanto]).])))
 
 
 ;;; Local Variables:
-;;; coding: latin-1
+;;; coding: utf-8
 ;;; ispell-local-dictionary: "american"
 ;;; End:
 
