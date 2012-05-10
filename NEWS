@@ -1,4 +1,4 @@
-Copyright (C) 2005, 2006, 2007, 2008, 2009  Ludovic Courtès <ludo@gnu.org>
+Copyright (C) 2005, 2006, 2007, 2008, 2009, 2012  Ludovic Courtès <ludo@gnu.org>
 
   Copying and distribution of this file, with or without modification,
   are permitted in any medium without royalty provided the copyright
@@ -23,6 +23,8 @@ Previously, footnotes would not get printed in the case of chapters that
 are not output in a separate file.
 
 ** HTML engine: use ". " as the default chapter number-title separator
+** HTML engine: the `charset' custom changes the output encoding
+** Lout/LaTeX engine: new `encoding' custom
 ** Improved rendering of pie charts with Ploticus
 ** New experimental `--enable-guile-vm' configure switch
 
