@@ -1,6 +1,6 @@
 ;;; env.scm  --  The environment variables for the documentation.
 ;;;
-;;; Copyright 2005, 2006, 2007, 2008, 2009  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2006, 2007, 2008, 2009, 2012  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -23,8 +23,8 @@
   :use-module (skribilo config)
   :use-module (skribilo engine))
 
-(define-public *serrano-url* "http://www.inria.fr/mimosa/Manuel.Serrano")
-(define-public *serrano-mail* "Manuel.Serrano@sophia.inria.fr")
+(define-public *serrano-url* "http://www-sop.inria.fr/members/Manuel.Serrano/")
+(define-public *serrano-mail* "manuel.serrano@inria.fr")
 (define-public *courtes-mail* "ludo@gnu.org")
 (define-public *html-url* "http://www.w3.org/TR/html4")
 (define-public *html-form* "interact/forms.html")
