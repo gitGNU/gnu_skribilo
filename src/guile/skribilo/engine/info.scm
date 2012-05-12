@@ -276,22 +276,17 @@
 		    (info-authorsN authors 3 #t)))))))
    ;; display the title and the authors
    (define (info-title title authors)
+      (let ((title (ast->string title)))
+        (display title)
+        (newline)
+        (display (make-string (string-length title) #\*))
+        (newline))
+
       (with-justification
        (make-justifier (justification-width) 'center)
        (lambda ()
-	  (output-justified (make-string *text-column-width* #\=))
-	  (output-newline)
-	  (if (string? title)
-	      (output-justified
-                (list->string
-		       (apply append
-			      (map (lambda (c) (list c #\bs))
-				   (string->list title)))))
-	      (output title e))
 	  (output-newline)
 	  (info-authors authors)
-	  (output-justified (make-string *text-column-width* #\=))
-	  (output-newline)
 	  (output-newline)
 	  (output-flush *margin*))))
 
