@@ -1,6 +1,6 @@
 ;;; skribilo.scm  --  The Skribilo document processor.
 ;;;
-;;; Copyright 2005, 2006, 2007, 2008, 2009, 2011  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
 ;;;
 ;;;
@@ -61,39 +61,60 @@
 ;;;
 
 (define (skribilo-show-help)
-  (format #t "Usage: skribilo [OPTIONS] [INPUT]
+  (display (_ "Usage: skribilo [OPTIONS] [INPUT]"))
+  (display (_ "
 Process Skribilo document from file INPUT (or the standard input) using the
 specified reader syntax, and produce its output using the specified engine.
-
+"))
+  (display (_ "
   -R, --reader=READER    Use READER to parse the input file, e.g., `skribe'
-                         (default) or `outline'.
-  -t, --target=ENGINE    Use ENGINE as the output engine, e.g., `html'.
-  -c, --custom=C=VAL     Use VAL as the value of ENGINE's custom C.
-  -o, --output=FILE      Write output to FILE.
-      --compat=COMPAT    Use COMPAT as the compatibility layer, e.g., `skribe'.
-
-  -I, --doc-path=DIR     Prepend DIR to the document include path.
-  -B, --bib-path=DIR     Prepend DIR to the bibliography include path.
-  -S, --source-path=DIR  Prepend DIR to the source include path.
-  -P, --image-path=DIR   Prepend DIR to the image include path.
-  -U, --sui-path=DIR     Prepend DIR to the Skribe URL Index (SUI) search path.
-
-  -b, --base=BASE        Strip BASE from all hyperlinks (`html' engine).
+                         (default) or `outline'."))
+  (display (_ "
+  -t, --target=ENGINE    Use ENGINE as the output engine, e.g., `html'."))
+  (display (_ "
+  -c, --custom=C=VAL     Use VAL as the value of ENGINE's custom C."))
+  (display (_ "
+  -o, --output=FILE      Write output to FILE."))
+  (display (_ "
+      --compat=COMPAT    Use COMPAT as the compatibility layer, e.g., `skribe'."))
+  (newline)
+  (display (_ "
+  -I, --doc-path=DIR     Prepend DIR to the document include path."))
+  (display (_ "
+  -B, --bib-path=DIR     Prepend DIR to the bibliography include path."))
+  (display (_ "
+  -S, --source-path=DIR  Prepend DIR to the source include path."))
+  (display (_ "
+  -P, --image-path=DIR   Prepend DIR to the image include path."))
+  (display (_ "
+  -U, --sui-path=DIR     Prepend DIR to the Skribe URL Index (SUI) search path."))
+  (newline)
+  (display (_ "
+  -b, --base=BASE        Strip BASE from all hyperlinks (`html' engine)."))
+  (display (_ "
   -e, --eval=EXPR        Prepend EXPR to the list of expressions to be
-                         evaluted before the input file is processed.
-  -p, --preload=FILE     Preload FILE before processing the input file.
-
-  -v, --verbose[=LEVEL]  Be verbose, unless LEVEL is 0.
-  -w, --warning[=LEVEL]  Issue warnings, unless LEVEL is 0.
+                         evaluted before the input file is processed."))
+  (display (_ "
+  -p, --preload=FILE     Preload FILE before processing the input file."))
+  (newline)
+  (display (_ "
+  -v, --verbose[=LEVEL]  Be verbose, unless LEVEL is 0."))
+  (display (_ "
+  -w, --warning[=LEVEL]  Issue warnings, unless LEVEL is 0."))
+  (display (_ "
   -g, --debug[=ARG]      Issue debugging output, unless ARG is 0.  If ARG is
                          not a number, it is interpreted as a symbol to be
-                         watched.
-      --no-color         Disable colored debugging output.
-
-  -h, --help             Give this help list
-  -V, --version          Print program version
-
-Report bugs to <~a>.~%"
+                         watched."))
+  (display (_ "
+      --no-color         Disable colored debugging output."))
+  (newline)
+  (display (_ "
+  -h, --help             Give this help list"))
+  (display (_ "
+  -V, --version          Print program version"))
+  (newline)
+  (format #t (_ "
+Report bugs to <~a>.~%")
           (skribilo-bug-report-address)))
 
 (define (skribilo-show-version)
