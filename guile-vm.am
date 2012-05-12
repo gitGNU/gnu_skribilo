@@ -20,11 +20,13 @@ guile_warnings =							\
 	GUILE_LOAD_COMPILED_PATH="$(builddir):$(top_builddir)/src/guile:$$GUILE_LOAD_COMPILED_PATH" \
 	$(GUILE) -L "$(srcdir)" -L "$(top_srcdir)/src/guile"	\
 	  -c "(use-modules (system base compile)		\
+	                   (system base message)		\
 	                   (skribilo condition))		\
-	      (call-with-skribilo-error-catch/exit		\
-	        (lambda ()					\
-	          (compile-file \"$<\" #:output-file \"$@\"	\
-			        #:opts '(#:warnings ($(guile_warnings))))))"
+	      (with-fluids ((*current-warning-prefix* \"\"))	\
+		(call-with-skribilo-error-catch/exit		\
+		  (lambda ()					\
+		    (compile-file \"$<\" #:output-file \"$@\"	\
+				  #:opts '(#:warnings ($(guile_warnings)))))))"
 
 CLEANFILES += $(GOBJECTS)
 
