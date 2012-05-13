@@ -87,9 +87,9 @@
            (info-dest) node next next prev prev up))
 
 ;*---------------------------------------------------------------------*/
-;*    node-next+prev+top ...                                           */
+;*    node-next+prev+up ...                                           */
 ;*---------------------------------------------------------------------*/
-(define (node-next+prev+top section e)
+(define (node-next+prev+up section e)
   ;; Return the next, previous, and up node of SECTION.
 
   (define (ast-prev+next n)
@@ -300,7 +300,7 @@
 
    ;; the main node
    (receive (next prev top)
-      (node-next+prev+top obj e)
+      (node-next+prev+up obj e)
       (newline)
       (info-node "Top" next prev top))
    ;; the title
@@ -619,7 +619,7 @@
               (output-flush *margin*)
               (let ((t (block-title n e)))
                 (receive (next prev top)
-                    (node-next+prev+top n e)
+                    (node-next+prev+up n e)
                   (info-node t next prev top)
                   (print t)
                   (print (make-string (string-length t) #\=))))
@@ -638,7 +638,7 @@
               (output-flush *margin*)
               (let ((t (block-title n e)))
                 (receive (next prev top)
-                    (node-next+prev+top n e)
+                    (node-next+prev+up n e)
                   (info-node t next prev top)
                   (print t)
                   (print (make-string (string-length t) #\-))))
@@ -654,7 +654,7 @@
               (output-flush *margin*)
               (let ((t (block-title n e)))
                 (receive (next prev top)
-                    (node-next+prev+top n e)
+                    (node-next+prev+up n e)
                   (info-node t next prev top)
                   (print t)
                   (print (make-string (string-length t) #\~))))
@@ -680,7 +680,7 @@
               (output-flush *margin*)
               (let ((t (block-title n e)))
                 (receive (next prev top)
-                    (node-next+prev+top n e)
+                    (node-next+prev+up n e)
                   (info-node t next prev top)
                   (print t)
                   (print (make-string (string-length t) #\*))))

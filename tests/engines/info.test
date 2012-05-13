@@ -30,7 +30,7 @@
   (find-engine 'info))
 
 (define node-next+prev+up
-  (@@ (skribilo engine info) node-next+prev+top))
+  (@@ (skribilo engine info) node-next+prev+up))
 
 
 (test-begin "info")
