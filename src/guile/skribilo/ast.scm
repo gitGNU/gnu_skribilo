@@ -32,6 +32,7 @@
 
   :autoload (skribilo location) (location?)
 
+  :use-module (ice-9 match)
   :use-module (ice-9 optargs)
 
   :export (<ast> ast? ast-loc ast-loc-set!
@@ -42,6 +43,7 @@
 	   <unresolved> unresolved? unresolved-proc
 	   <handle> handle? handle-ast handle-body
 	   <node> node? node-options node-loc node-body
+                  node-children
 	   <processor> processor? processor-combinator processor-engine
 
 	   <markup> markup? markup-options is-markup?
@@ -273,6 +275,21 @@
                (slot-ref b 'required-options))
        (equal? (node-body a)
                (node-body b))))
+
+(define (node-children n)
+  ;; Return the children of N, even those found in sub-lists of N's body.
+  (reverse
+   (let loop ((body   (node-body n))
+              (result '()))
+     (match body
+       (()
+        result)
+       (((? node? n) rest ...)
+        (loop rest (cons n result)))
+       (((sub-list ...) rest ...)
+        (loop rest (loop sub-list result)))
+       ((_ rest ...)
+        (loop rest result))))))
 
 (define node-loc	   ast-loc)
 

@@ -1,6 +1,6 @@
 ;;; Excercise the AST routines.                  -*- Scheme -*-
 ;;;
-;;; Copyright (C) 2009  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright (C) 2009, 2012  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;; This file is part of Skribilo.
 ;;;
@@ -98,6 +98,17 @@
          (every (lambda (n) (is-markup? n 'section)) lst)
          (equal? (map markup-ident lst)
                  (map number->string (iota 2))))))
+
+(test-assert "node-children"
+  (let* ((doc (document
+               (chapter #:ident "0" (section #:ident "s"))
+               (list (chapter #:ident "1"))
+               "hey"
+               (list "foo"
+                     (chapter #:ident "2"))))
+         (lst (node-children doc)))
+    (equal? (map markup-ident lst)
+            '("0" "1" "2"))))
 
 (test-end "ast")
 
