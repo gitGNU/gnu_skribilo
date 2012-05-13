@@ -314,6 +314,10 @@
 		   (log-file
 		    (cond-expand (mzscheme
 				  (open-output-file log-file-name 'truncate/replace))
+                                 (guile-2
+                                  (with-fluids ((%default-port-encoding
+                                                 "UTF-8"))
+                                    (open-output-file log-file-name)))
 				 (else (open-output-file log-file-name)))))
 	      (display "%%%% Starting test " log-file)
 	      (display suite-name log-file)
@@ -565,7 +569,11 @@
   (define-syntax %test-evaluate-with-catch
     (syntax-rules ()
       ((%test-evaluate-with-catch test-expression)
-       (catch #t (lambda () test-expression) (lambda (key . args) #f))))))
+       (catch #t
+         (lambda () test-expression)
+         (lambda (key . args) #f)
+         (lambda (key . args)
+           (display-backtrace (make-stack #t) (current-error-port))))))))
  (kawa
   (define-syntax %test-evaluate-with-catch
     (syntax-rules ()
