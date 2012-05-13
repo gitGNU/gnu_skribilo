@@ -132,21 +132,16 @@
 ;*    node-menu ...                                                    */
 ;*---------------------------------------------------------------------*/
 (define (node-menu container e)
-  (let ((children (markup-body container)))
-      (if (pair? (filter (lambda (x)
-                           (and (markup? x)
-                                (memq (markup-markup x)
-                                      '(chapter section))))
-			 children))
-	  (begin
-	     (newline)
-	     (print "* Menu:")
-	     (newline)
-	     (for-each (lambda (c)
-			  (if (%block? c)
-			      (print "* " (block-title c e) "::")))
-		       children)))
-      (newline)))
+  (let ((children (filter %block? (node-children container))))
+    (if (pair? children)
+        (begin
+          (newline)
+          (print "* Menu:")
+          (newline)
+          (for-each (lambda (c)
+                      (print "* " (block-title c e) "::"))
+                    children)))
+    (newline)))
 
 ;*---------------------------------------------------------------------*/
 ;*    block-title ::%chapter ...                                       */
