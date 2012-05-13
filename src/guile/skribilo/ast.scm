@@ -2,7 +2,7 @@
 ;;;
 ;;; Copyright 2003, 2004, 2009  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
 ;;; Copyright 2003, 2004  Manuel Serrano
-;;; Copyright 2005, 2006, 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2005, 2006, 2007, 2012  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -544,8 +544,8 @@
 ;;;
 
 (define (ast-fold proc init ast)
-  ;; Apply PROC to each node in AST (per `node?'), in a way similar to `fold'
-  ;; (in SRFI-1).
+  ;; Do a depth-first traversal of AST, applying PROC to each node in AST
+  ;; (per `node?'), in a way similar to SRFI-1 `fold'.
   (let loop ((ast ast)
 	     (result init))
     (cond ((pair? ast)

@@ -1,0 +1,97 @@
+;;; Test the Info engine.                        -*- Scheme -*-
+;;;
+;;; Copyright (C) 2012  Ludovic Courtès <ludo@gnu.org>
+;;;
+;;; This file is part of Skribilo.
+;;;
+;;; Skribilo is free software; you can redistribute it and/or modify it
+;;; under the terms of the GNU General Public License as published by
+;;; the Free Software Foundation; either version 3 of the License, or (at
+;;; your option) any later version.
+;;;
+;;; Skribilo is distributed in the hope that it will be useful, but
+;;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser
+;;; General Public License for more details.
+;;;
+;;; You should have received a copy of the GNU General Public License
+;;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+(define-module (tests engines info)
+  :use-module (skribilo ast)
+  :use-module (skribilo engine)
+  :use-module (skribilo resolve)
+  :use-module (skribilo package base)
+  :use-module (srfi srfi-1)
+  :use-module (srfi srfi-11)
+  :use-module (srfi srfi-64))
+
+(define %info
+  (find-engine 'info))
+
+(define node-next+prev+up
+  (@@ (skribilo engine info) node-next+prev+top))
+
+
+(test-begin "info")
+
+(test-assert "empty document"
+  (let*-values (((doc) (document #:title "t"))
+                ((next prev up) (node-next+prev+up doc %info)))
+    (and (equal? next "Top")
+         (equal? prev "(dir)")
+         (equal? up "(dir)"))))
+
+(test-assert "two chapters"
+  (let ((doc (document #:title "t"
+                       (chapter #:title "c" "body")
+                       (chapter #:title "d" "body"))))
+    (resolve! doc %info '())
+    (let-values (((next prev up) (node-next+prev+up doc %info)))
+      (and (equal? up "(dir)")
+           (equal? prev "(dir)")
+           (equal? next "c")
+           (let*-values (((ch) (car (markup-body doc)))
+                         ((next prev up) (node-next+prev+up ch %info)))
+             (and (equal? up "Top")
+                  (equal? prev "Top")
+                  (equal? next "d")))
+           (let*-values (((ch) (cadr (markup-body doc)))
+                         ((next prev up) (node-next+prev+up ch %info)))
+             (and (equal? up "Top")
+                  (equal? prev "c")
+                  (not next)))))))
+
+(test-assert "nest"
+  (let ((doc (document #:title "t"
+                       "hello"
+                       (chapter #:ident "c" #:title "c"
+                                (p "body")
+                                (section #:ident "s" #:title "s" "body"))
+                       (chapter #:ident "d" #:title "d" "body"))))
+    (resolve! doc %info '())
+    (and (let*-values (((ch) (document-lookup-node doc "c"))
+                       ((next prev up) (node-next+prev+up ch %info)))
+           (and (equal? up "Top")
+                (equal? prev "Top")
+                (equal? next "d")))
+         (let*-values (((sec) (document-lookup-node doc "s"))
+                       ((next prev up) (node-next+prev+up sec %info)))
+           (and (equal? up "c")
+                (not prev)
+                (not next)))
+         (let*-values (((sec) (document-lookup-node doc "d"))
+                       ((next prev up) (node-next+prev+up sec %info)))
+           (and (equal? up "Top")
+                (equal? prev "c")
+                (not next))))))
+
+(test-end "info")
+
+
+(exit (= (test-runner-fail-count (test-runner-current)) 0))
+
+;; Local Variables:
+;; coding: utf-8
+;; eval: (put 'test-assert 'scheme-indent-function 1)
+;; End:

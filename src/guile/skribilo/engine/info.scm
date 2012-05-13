@@ -34,7 +34,11 @@
   :autoload   (skribilo utils text-table) (table->ascii)
   :autoload   (srfi srfi-1)            (fold)
   :use-module (srfi srfi-8)
+  :use-module (srfi srfi-11)
   :use-module (srfi srfi-13)
+  :use-module (srfi srfi-26)
+  :use-module (ice-9 match)
+  :use-module (ice-9 format)
 
   :export (info-engine))
 
@@ -79,17 +83,35 @@
 ;*---------------------------------------------------------------------*/
 (define (info-node node next prev up)
    (print "\n")
-   (print "File: " (info-dest)
-	  ",  Node: " node
-	  ",  Next: " next
-	  ",  Prev: " prev
-	  ",  Up: " up)
-   (newline))
+   (format #t "File: ~a,  Node: ~a,  ~:[~*~;Next: ~a,  ~]~:[~*~;Prev: ~a,  ~]Up: ~a~%"
+           (info-dest) node next next prev prev up))
 
 ;*---------------------------------------------------------------------*/
 ;*    node-next+prev+top ...                                           */
 ;*---------------------------------------------------------------------*/
 (define (node-next+prev+top section e)
+  ;; Return the next, previous, and up node of SECTION.
+
+  (define (ast-prev+next n)
+    ;; Return the nodes around N at its level.
+    (define p
+      (ast-parent n))
+
+    (let loop ((nodes (filter %block? (node-children p)))
+               (prev  (and (eq? p (ast-document n)) p)))
+      (match nodes
+        (((? (cut eq? n <>)))
+         (values prev #f))
+        (((? (cut eq? n <>)) next _ ...)
+         (values prev next))
+        ((prev rest ...)
+         (loop rest prev)))))
+
+  (define (title n)
+    (if (document? n)
+        "Top"
+        (block-title n e)))
+
   (if (document? section)
       (let loop ((c (markup-body section)))
         (cond
@@ -100,25 +122,11 @@
           (values (block-title (car c) e) "(dir)" "(dir)"))
          (else
           (loop (cdr c)))))
-      (let ((parent (ast-parent section)))
-        (let ((top (if (document? parent)
-                       "Top"
-                       (block-title parent e))))
-          (let loop ((els  (filter %block? (markup-body parent)))
-                     (prev #f))
-	    (cond
-             ((null? els)
-              (values top top top))
-             ((eq? (car els) section)
-              (let ((p (if prev
-                           (block-title prev e)
-                           top))
-                    (n (if (null? (cdr els))
-                           top
-                           (block-title (cadr els) e))))
-                (values n p top)))
-             (else
-              (loop (cdr els) (car els)))))))))
+      (let-values (((parent)    (ast-parent section))
+                   ((prev next) (ast-prev+next section)))
+        (values (and=> next title)
+                (and=> prev title)
+                (title parent)))))
 
 ;*---------------------------------------------------------------------*/
 ;*    node-menu ...                                                    */
