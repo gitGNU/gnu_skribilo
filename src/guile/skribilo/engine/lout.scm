@@ -378,8 +378,9 @@
 (define *lout-debug?* #f)
 
 (define-macro (lout-debug fmt . args)
-  `(and *lout-debug?*
-        (format (current-error-port) (string-append ,fmt "~%") ,@args)))
+  (let ((fmt (string-append fmt "~%")))
+    `(and *lout-debug?*
+          (format (current-error-port) ,fmt ,@args))))
 
 (define (lout-tagify ident)
   ;; Return an "clean" identifier (a string) based on `ident' (a string),
@@ -1722,8 +1723,8 @@
 	       ;; linebreak.  However, the LaTeX engine doesn't seem to
 	       ;; agree.
 	       ;(display "\n@LP")
-	       (format #t (string-append "\n@Tbl # frame\n"
-				      "  rule { yes }\n"))
+	       (display (string-append "\n@Tbl # frame\n"
+                                       "  rule { yes }\n"))
 	       (if border (format #t     "  rulewidth { ~a }\n"
 				      (lout-width border)))
 	       (if width  (format #t     "  width { ~a }\n"
@@ -2557,7 +2558,7 @@
                  (if (and (eq? kind 'mark) ident show-page-num?)
 
                      ;; Marks don't have a number.
-                     (format #t (lout-page-of ident))
+                     (display (lout-page-of ident))
 
                      ;; Don't output a section/whatever number when text is
                      ;; provided in order to be consistent with the HTML
@@ -2571,7 +2572,7 @@
                            (display " ")
                            (display number))
                          (if (and ident show-page-num?)
-                             (format #t (lout-page-of ident)))))))))
+                             (display (lout-page-of ident)))))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    lout-make-url-breakable ...                                      */
