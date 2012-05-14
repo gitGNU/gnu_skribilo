@@ -13,4 +13,4 @@ CLEANFILES =
 
 SUFFIXES =
 
-include $(top_srcdir)/guile-vm.am
+include $(top_srcdir)/guilec.am

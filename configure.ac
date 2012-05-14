@@ -10,11 +10,6 @@ AM_INIT_AUTOMAKE([gnu no-define check-news readme-alpha])
 
 AC_CONFIG_SRCDIR([src/guile/skribilo/reader.scm])
 
-# Options.
-AC_ARG_ENABLE([guile-vm],
-  [AS_HELP_STRING([--enable-guile-vm],
-    [compile source files for use with Guile-VM (aka. Guile 2.x)])])
-
 # GNU Gettext.
 AM_GNU_GETTEXT([external])
 AM_GNU_GETTEXT_VERSION([0.16.1])
@@ -32,11 +27,12 @@ AC_ARG_WITH([guilemoduledir],
 # Look for Guile.
 GUILE_PROGS
 GUILE_SITE_DIR
+AC_PATH_PROGS([GUILD], [guild guile-tools])
 
-# Guile-VM's compiler (aka. Guile 2.0.x).
-AM_CONDITIONAL([ENABLE_GUILE_VM],
-  [test "x$enable_guile_vm" = "xyes" && \
-   $GUILE_TOOLS compile --help 2>&1 >/dev/null])
+# GNU Guile 2.0.x and its compiler.
+AM_CONDITIONAL([HAVE_GUILE2],
+  [test "x$GUILD" != "x" && \
+   "$GUILD" compile --help 2>&1 >/dev/null])
 
 # Need Guile-Reader.
 GUILE_MODULE_REQUIRED([system reader])

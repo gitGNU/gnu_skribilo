@@ -77,20 +77,20 @@ SOURCES +=							\
 CLEANFILES = $(nobase_nodist_module_DATA)
 
 include $(top_srcdir)/substitute.am
-include $(top_srcdir)/guile-vm.am
+include $(top_srcdir)/guilec.am
 
 # Generated files not part of the distribution.
 nobase_nodist_module_DATA +=			\
   skribilo/config.scm				\
   skribilo/utils/images.scm
 
-if ENABLE_GUILE_VM
+if HAVE_GUILE2
 
 nobase_nodist_module_DATA +=			\
  skribilo/config.go				\
  skribilo/utils/images.go
 
-endif ENABLE_GUILE_VM
+endif HAVE_GUILE2
 
 
 BUILT_SOURCES =					\

@@ -1,7 +1,7 @@
 
 # Compilation with Guile-VM's compiler (aka. Guile 2.x).
 
-if ENABLE_GUILE_VM
+if HAVE_GUILE2
 
 # XXX: This expression relies on a GNU extension.
 GOBJECTS = $(SOURCES:%.scm=%.go)
@@ -40,9 +40,9 @@ SUFFIXES += .go
 skr_install_go_files = install-nobase_nodist_moduleDATA
 $(skr_install_go_files): install-nobase_dist_moduleDATA
 
-else !ENABLE_GUILE_VM
+else !HAVE_GUILE2
 
 nobase_dist_module_DATA = $(SOURCES) $(SOURCES_NOT_COMPILED)
 nobase_nodist_module_DATA =
 
-endif !ENABLE_GUILE_VM
+endif !HAVE_GUILE2

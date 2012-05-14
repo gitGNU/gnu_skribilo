@@ -26,11 +26,7 @@ are not output in a separate file.
 ** HTML engine: the `charset' custom changes the output encoding
 ** Lout/LaTeX engine: new `encoding' custom
 ** Improved rendering of pie charts with Ploticus
-** New experimental `--enable-guile-vm' configure switch
-
-This allows compilation with the compiler of "Guile-VM", i.e., the
-future Guile 2.x.
-
+** On Guile 2.0, modules are compiled and `.go' files are installed
 ** New test suite (run "make check")
 ** Various documentation fixes, improvements and additions
 
