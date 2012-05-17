@@ -1,7 +1,7 @@
 ;;; slide.scm  --  Overhead transparencies.
 ;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2006, 2007, 2008, 2009  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2006, 2007, 2008, 2009, 2012  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -50,6 +50,16 @@
 ;*---------------------------------------------------------------------*/
 (define %slide-the-slides '())
 (define %slide-the-counter 0)
+
+;*---------------------------------------------------------------------*/
+;*    slide-vspace ...                                                 */
+;*---------------------------------------------------------------------*/
+(define-markup (slide-vspace :rest opt :key (unit 'cm))
+   (new markup
+      (markup 'slide-vspace)
+      (loc &invocation-location)
+      (options `((:unit ,unit) ,@(the-options opt :unit)))
+      (body (the-body opt))))
 
 ;*---------------------------------------------------------------------*/
 ;*    slide ...                                                        */
@@ -150,16 +160,6 @@
    (new markup
       (loc    &invocation-location)
       (markup 'slide-pause)))
-
-;*---------------------------------------------------------------------*/
-;*    slide-vspace ...                                                 */
-;*---------------------------------------------------------------------*/
-(define-markup (slide-vspace :rest opt :key (unit 'cm))
-   (new markup
-      (markup 'slide-vspace)
-      (loc &invocation-location)
-      (options `((:unit ,unit) ,@(the-options opt :unit)))
-      (body (the-body opt))))
 
 ;*---------------------------------------------------------------------*/
 ;*    slide-embed ...                                                  */

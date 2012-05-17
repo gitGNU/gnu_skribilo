@@ -135,6 +135,31 @@
 	  (body #f))))
 
 ;*---------------------------------------------------------------------*/
+;*    handle ...                                                       */
+;*---------------------------------------------------------------------*/
+(define-markup (handle :rest opts
+		       :key (ident #f) (class "handle") value section)
+   (let ((body (the-body opts)))
+      (cond
+	 (section
+	  (error 'handle "Illegal handle `section' option" section)
+	  (new unresolved
+             (loc  &invocation-location)
+	     (proc (lambda (n e env)
+		      (let ((s (resolve-ident section 'section n env)))
+			 (new handle
+                            (loc   &invocation-location)
+			    (ast s)))))))
+	 ((and (pair? body)
+	       (null? (cdr body))
+	       (markup? (car body)))
+	  (new handle
+             (loc &invocation-location)
+	     (ast (car body))))
+	 (else
+	  (skribe-error 'handle "Illegal handle" opts)))))
+
+;*---------------------------------------------------------------------*/
 ;*    toc ...                                                          */
 ;*---------------------------------------------------------------------*/
 (define-markup (toc :rest
@@ -962,31 +987,6 @@
 ;*---------------------------------------------------------------------*/
 (define-processor-markup html-processor)
 (define-processor-markup tex-processor)
-
-;*---------------------------------------------------------------------*/
-;*    handle ...                                                       */
-;*---------------------------------------------------------------------*/
-(define-markup (handle :rest opts
-		       :key (ident #f) (class "handle") value section)
-   (let ((body (the-body opts)))
-      (cond
-	 (section
-	  (error 'handle "Illegal handle `section' option" section)
-	  (new unresolved
-             (loc  &invocation-location)
-	     (proc (lambda (n e env)
-		      (let ((s (resolve-ident section 'section n env)))
-			 (new handle
-                            (loc   &invocation-location)
-			    (ast s)))))))
-	 ((and (pair? body)
-	       (null? (cdr body))
-	       (markup? (car body)))
-	  (new handle
-             (loc &invocation-location)
-	     (ast (car body))))
-	 (else
-	  (skribe-error 'handle "Illegal handle" opts)))))
 
 ;*---------------------------------------------------------------------*/
 ;*    mailto ...                                                       */

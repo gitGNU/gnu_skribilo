@@ -1,6 +1,6 @@
 ;;; lib.scm -- Utilities.                 -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2005, 2007, 2009  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2007, 2009, 2012  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
 ;;;
 ;;;
@@ -65,50 +65,97 @@
 ;;;
 ;;; DEFINE-MARKUP
 ;;;
-(define-macro (define-markup bindings . body)
-  ;; This is just an `(ice-9 optargs)' kind of `lambda*', with DSSSL
-  ;; keyword-style conversion enabled.  However, using `(ice-9 optargs)', the
-  ;; `:rest' argument can only appear last, which is not what Skribe/DSSSL
-  ;; expect, hence `fix-rest-arg'.  In addition, all keyword arguments are
-  ;; allowed (hence `:allow-other-keys'); they are then checked by `verify'.
-  (define (fix-rest-arg args)
-    (let loop ((args          args)
-	       (result        '())
-	       (rest-arg      '())
-               (has-keywords? #f))
-      (cond ((null? args)
-             (let ((result (if has-keywords?
-                               (cons :allow-other-keys result)
-                               result)))
-               (append! (reverse! result) rest-arg)))
 
-	    ((list? args)
-	     (let ((is-rest-arg? (eq? (car args) :rest))
-                   (is-keyword?  (eq? (car args) :key)))
-               (if is-rest-arg?
-                   (loop (cddr args)
-                         result
-                         (list (car args) (cadr args))
-                         (or has-keywords? is-keyword?))
-                   (loop (cdr args)
-                         (cons (car args) result)
-                         rest-arg
-                         (or has-keywords? is-keyword?)))))
+(define (dsssl->guile-formals args)
+  ;; When using `(ice-9 optargs)', the `:rest' argument can only appear last,
+  ;; which is not what Skribe/DSSSL expect'.  In addition, all keyword
+  ;; arguments are allowed (hence `:allow-other-keys'); they are then checked
+  ;; by `verify'.  This procedure shuffles ARGS accordingly.
 
-	    ((pair? args)
-	     (loop '()
-		   (cons (car args) result)
-		   (list #:rest (cdr args))
-                   has-keywords?)))))
+  (let loop ((args          args)
+             (result        '())
+             (rest-arg      '())
+             (has-keywords? #f))
+    (cond ((null? args)
+           (let ((result (if has-keywords?
+                             (cons :allow-other-keys result)
+                             result)))
+             (append (reverse result) rest-arg)))
 
-  (let ((name (car bindings))
-	(opts (cdr bindings)))
-    `(define*-public ,(cons name (fix-rest-arg opts))
-       ;; Memorize the invocation location.  Note: the invocation depth
-       ;; passed to `invocation-location' was determined experimentally and
-       ;; may change as Guile changes (XXX).
-       (let ((&invocation-location (invocation-location 3)))
-         ,@body))))
+          ((list? args)
+           (let ((is-rest-arg? (eq? (car args) :rest))
+                 (is-keyword?  (eq? (car args) :key)))
+             (if is-rest-arg?
+                 (loop (cddr args)
+                       result
+                       (list (car args) (cadr args))
+                       (or has-keywords? is-keyword?))
+                 (loop (cdr args)
+                       (cons (car args) result)
+                       rest-arg
+                       (or has-keywords? is-keyword?)))))
+
+          ((pair? args)
+           (loop '()
+                 (cons (car args) result)
+                 (list :rest (cdr args))
+                 has-keywords?)))))
+
+;; `define-markup' is similar to Guile's `lambda*', with DSSSL
+;; keyword style, and a couple other differences handled by
+;; `dsssl->guile-formals'.
+
+(cond-expand
+ (guile-2
+  ;; On Guile 2.0, `define-markup' generates a macro for the markup, such
+  ;; that the macro captures its invocation source location using
+  ;; `current-source-location'.
+
+  (define-syntax define-markup
+    (lambda (s)
+      (syntax-case s ()
+        ;; Note: Use a dotted pair for formals, to allow for dotted forms
+        ;; like: `(define-markup (foo x . rest) ...)'.
+        ((_ (name . formals) body ...)
+         (let ((formals  (map (lambda (s)
+                                (datum->syntax #'formals s))
+                              (dsssl->guile-formals (syntax->datum #'formals))))
+               (internal (symbol-append '% (syntax->datum #'name)
+                                        '-internal)))
+           (with-syntax ((internal/loc (datum->syntax #'name internal)))
+             #`(begin
+                 (define* (internal/loc loc #,@formals)
+                   (syntax-parameterize ((&invocation-location
+                                          (identifier-syntax loc)))
+                     body ...))
+                 (define-syntax name
+                   (lambda (s)
+                     (syntax-case s ()
+                       ((_ . args)
+                        #'(let ((loc (source-properties->location
+                                      (current-source-location))))
+                            (internal/loc loc . args)))
+                       (_
+                        #'(lambda args
+                            (let ((loc (source-properties->location
+                                        (current-source-location))))
+                              (apply internal/loc loc args)))))))
+                 internal/loc                     ; mark it as used
+                 (export name)))))))))
+
+ (else                                            ; Guile 1.8
+  ;; On Guile 1.8, a markup is a procedure.  Its invocation source location
+  ;; is captured by walking the stack, which is fragile.
+
+  (define-macro (define-markup bindings . body)
+    (let ((name (car bindings))
+          (opts (cdr bindings)))
+      `(define*-public ,(cons name (dsssl->guile-formals opts))
+         ;; Memorize the invocation location.  Note: the invocation depth
+         ;; passed to `invocation-location' was determined experimentally and
+         ;; may change as Guile changes (XXX).
+         (let ((&invocation-location (invocation-location 3)))
+           ,@body))))))
 
 
 ;;;

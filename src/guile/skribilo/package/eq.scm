@@ -1,7 +1,7 @@
 ;;; eq.scm  --  An equation formatting package.
 ;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2005, 2006, 2007, 2008, 2009  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2006, 2007, 2008, 2009, 2012  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This file is part of Skribilo.
@@ -28,7 +28,7 @@
   :use-module (skribilo condition)
   :use-module (skribilo utils syntax)
   :use-module (skribilo utils keywords) ;; `the-options', etc.
-  :autoload   (skribilo package base) (it symbol sub sup)
+  :use-module (skribilo package base)
   :autoload   (skribilo engine lout)  (lout-illustration)
   :autoload   (skribilo resolve)      (resolve-counter)
 

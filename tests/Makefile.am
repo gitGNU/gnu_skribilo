@@ -7,7 +7,8 @@ TESTS =						\
   ast.test					\
   resolve.test					\
   readers/rss-2.test				\
-  engines/info.test
+  engines/info.test				\
+  location.test
 
 EXTRA_DIST = $(TESTS)
 

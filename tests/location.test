@@ -1,0 +1,101 @@
+;;; Check the AST source location info.                  -*- Scheme -*-
+;;;
+;;; Copyright (C) 2012  Ludovic Courtès <ludo@gnu.org>
+;;;
+;;; This file is part of Skribilo.
+;;;
+;;; Skribilo is free software; you can redistribute it and/or modify it
+;;; under the terms of the GNU Lesser General Public License as published by
+;;; the Free Software Foundation; either version 3 of the License, or (at
+;;; your option) any later version.
+;;;
+;;; Skribilo is distributed in the hope that it will be useful, but
+;;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser
+;;; General Public License for more details.
+;;;
+;;; You should have received a copy of the GNU Lesser General Public License
+;;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+(define-module (tests location)
+  :use-module (skribilo ast)
+  :use-module (skribilo reader)
+  :use-module (skribilo evaluator)
+  :use-module (skribilo package base)
+  :use-module (skribilo location)
+  :use-module (srfi srfi-1)
+  :use-module (srfi srfi-64)
+  :use-module (ice-9 match))
+
+(cond-expand (guile-2 (begin))
+             (else    (use-modules (ice-9 syncase))))
+
+(define-syntax call-with-code
+  (syntax-rules ()
+    ((_ strings ... thunk)
+     (let ((s (string-join '(strings ...) "\n")))
+       (call-with-input-string s
+         (lambda (p)
+           (set-port-filename! p "the-file.skb")
+           (set-port-line! p 0)
+           (set-port-column! p 0)
+           (thunk p)))))))
+
+(define (location->list loc)
+  (and (location? loc)
+       (list (location-file loc)
+             (location-line loc)
+             (location-column loc))))
+
+(define (locations ast)
+  ;; Return a location tree for AST and its children.
+  (let loop ((ast ast))
+    (cond ((node? ast)
+           (and=> (location->list (ast-loc ast))
+                  (lambda (loc)
+                    (append loc (map loop (node-children ast))))))
+          ((ast? ast)
+           (location->list (ast-loc ast)))
+          (else
+           '()))))
+
+(define-syntax test-location
+  (syntax-rules ()
+    ((_ name expected doc)
+     (test-equal name
+       'expected
+       (call-with-code doc
+         (lambda (p)
+           (pk (locations (evaluate-ast-from-port p)))))))))
+
+(*document-reader* (make-reader 'skribe))
+
+
+(test-begin "location")
+
+(test-location "document"
+  ("the-file.skb" 1 1)
+  "(document)")
+
+(test-location "document + sections"
+  ("the-file.skb" 2 5
+     ("the-file.skb" 3 7)
+     ("the-file.skb" 4 7
+        ("the-file.skb" 5 9
+           ("the-file.skb" 6 11))))
+  "                                               ; 1
+    (document                                     ; 2
+      (chapter :title \"foo\")                    ; 3
+      (chapter :title \"bar\"                     ; 4
+        (section :title \"baz\"                   ; 5
+          (p [Paragraph.]))))")                   ; 6
+
+(test-end "location")
+
+
+(exit (= (test-runner-fail-count (test-runner-current)) 0))
+
+;; Local Variables:
+;; eval: (put 'call-with-code 'scheme-indent-function 1)
+;; eval: (put 'test-location 'scheme-indent-function 1)
+;; End:

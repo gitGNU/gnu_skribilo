@@ -1,7 +1,7 @@
 ;;; location.scm -- Skribilo source location.
 ;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2005, 2007, 2009, 2010  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2007, 2009, 2010, 2012  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
 ;;;
 ;;;
@@ -26,7 +26,8 @@
   :autoload   (srfi srfi-13)  (string-prefix?)
   :export (<location> location? ast-location
 	   location-file location-line location-column
-           invocation-location))
+           invocation-location
+           source-properties->location))
 
 ;;; Author:  Ludovic Courtès
 ;;;
@@ -95,17 +96,19 @@
         (stack (make-stack #t)))
     (and stack
          (< depth (stack-length stack))
-         (let* ((frame  (stack-ref stack depth))
-                (source (frame-source frame)))
-           (and source
-                (let ((file (source-property source 'filename))
-                      (line (source-property source 'line))
-                      (col  (source-property source 'column)))
-                  (and file
-                       (make <location> :file file
-                             :line (and line (+ line 1))
-                             :column col))))))))
+         (let ((frame (stack-ref stack depth)))
+           (source-properties->location (frame-source frame))))))
 
-;;; arch-tag: d68fa45d-a200-465e-a3c2-eb2861907f83
+(define (source-properties->location loc)
+  "Return a location object based on the info in LOC, an alist as returned
+by Guile's `source-properties', `frame-source', `current-source-location',
+etc."
+  (let ((file (assq-ref loc 'filename))
+        (line (assq-ref loc 'line))
+        (col  (assq-ref loc 'column)))
+    (and file (make <location>
+                :file file
+                :line (and line (+ line 1))
+                :column (and col (+ col 1))))))
 
 ;;; location.scm ends here.
