@@ -1,7 +1,7 @@
 ;;; html.scm  --  HTML engine.
 ;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2005, 2006, 2007, 2008, 2009, 2011  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -608,16 +608,6 @@
 
                  ;; Record the file name, for use by `html-file-default'.
                  (markup-option-add! n :file (*destination-file*))
-
-                 (cond-expand
-                  (guile-2
-                   ;; Make sure the output is suitably encoded.
-                   (and=> (engine-custom e 'charset)
-                          (lambda (charset)
-                            (set-port-encoding! (current-output-port)
-                                                charset))))
-                  (else #t))
-
 		 (&html-generic-document n title e)))
 
    :after (lambda (n e)
@@ -1177,6 +1167,15 @@
 ;*    &html-generic-document ...                                       */
 ;*---------------------------------------------------------------------*/
 (define (&html-generic-document n title e)
+  (define (set-output-encoding)
+    (cond-expand
+     (guile-2
+      ;; Make sure the output is suitably encoded.
+      (and=> (engine-custom e 'charset)
+             (lambda (charset)
+               (set-port-encoding! (current-output-port) charset))))
+     (else #t)))
+
    (let* ((id (markup-ident n))
 	  (header (new markup
 		     (markup '&html-chapter-header)
@@ -1248,10 +1247,13 @@
       ;; No file must be opened for documents. These files are
       ;; directly opened by Skribe
       (if (document? n)
-	  (output html e)
+          (begin
+            (set-output-encoding)
+            (output html e))
           (parameterize ((*destination-file* (html-file n e)))
             (with-output-to-file (*destination-file*)
               (lambda ()
+                (set-output-encoding)
 		(output html e)))))))
 
 ;*---------------------------------------------------------------------*/
