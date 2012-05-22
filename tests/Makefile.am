@@ -12,4 +12,4 @@ TESTS =						\
 
 EXTRA_DIST = $(TESTS)
 
-CLEANFILES = ast.log resolve.log rss-2.log
+CLEANFILES = ast.log resolve.log rss-2.log location.log info.log
