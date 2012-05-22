@@ -28,7 +28,7 @@
 	       ;;(srfi srfi-34) (srfi srfi-35) - not in Guile 1.6.7
 	       (srfi srfi-39))
   (cond-expand ((not guile-2)
-                (ice-9 syncase))
+                (use-modules (ice-9 syncase)))
                (else (begin))))
  (sisc
   (require-extension (srfi 9 34 35 39)))
