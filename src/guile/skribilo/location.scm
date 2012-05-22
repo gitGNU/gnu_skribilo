@@ -96,8 +96,10 @@
         (stack (make-stack #t)))
     (and stack
          (< depth (stack-length stack))
-         (let ((frame (stack-ref stack depth)))
-           (source-properties->location (frame-source frame))))))
+         (let* ((frame  (stack-ref stack depth))
+                (source (frame-source frame))
+                (props  (and=> source source-properties)))
+           (and=> props source-properties->location)))))
 
 (define (source-properties->location loc)
   "Return a location object based on the info in LOC, an alist as returned
