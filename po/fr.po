@@ -8,15 +8,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: ludo@gnu.org\n"
-"POT-Creation-Date: 2010-07-16 16:46+0200\n"
+"POT-Creation-Date: 2012-05-14 23:41+0200\n"
 "PO-Revision-Date: 2007-02-05 16:02+0100\n"
 "Last-Translator: Ludovic Courtès <ludo@gnu.org>\n"
 "Language-Team: fr <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/guile/skribilo/utils/syntax.scm:53
+#: src/guile/skribilo/utils/syntax.scm:55
 msgid "unexpected character in Skribilo module"
 msgstr "caractère inattendu dans le module Skribilo"
 
@@ -37,27 +38,27 @@ msgstr ""
 msgid "PhD Thesis"
 msgstr "Thèse de doctorat"
 
-#: src/guile/skribilo/ast.scm:138
+#: src/guile/skribilo/ast.scm:140
 #, scheme-format
 msgid "orphan node: ~a~%"
 msgstr ""
 
-#: src/guile/skribilo/ast.scm:145
+#: src/guile/skribilo/ast.scm:147
 #, scheme-format
 msgid "cycle found in AST: ~a~%"
 msgstr ""
 
-#: src/guile/skribilo/ast.scm:152
+#: src/guile/skribilo/ast.scm:154
 #, scheme-format
 msgid "~a: unknown markup option for `~a'~%"
 msgstr ""
 
-#: src/guile/skribilo/ast.scm:160
+#: src/guile/skribilo/ast.scm:162
 #, scheme-format
 msgid "`~a' (~a): markup identifier already bound~%"
 msgstr ""
 
-#: src/guile/skribilo/ast.scm:168
+#: src/guile/skribilo/ast.scm:170
 #, fuzzy, scheme-format
 msgid "undefined AST error: ~a~%"
 msgstr "erreur skribilo indéfinie : ~S~%"
@@ -188,16 +189,16 @@ msgstr ""
 msgid "undefined verify error: ~a~%"
 msgstr "erreur skribilo indéfinie : ~S~%"
 
-#: src/guile/skribilo/engine/lout.scm:2409
+#: src/guile/skribilo/engine/lout.scm:2422
 msgid "image URLs not supported"
 msgstr ""
 
-#: src/guile/skribilo/engine/info.scm:172
+#: src/guile/skribilo/engine/info.scm:175
 #, scheme-format
 msgid "Info node title `~A' already used"
 msgstr ""
 
-#: src/guile/skribilo/engine/info.scm:175
+#: src/guile/skribilo/engine/info.scm:178
 msgid "previous occurrence was here"
 msgstr ""
 
@@ -205,16 +206,165 @@ msgstr ""
 msgid "input is not a valid RSS 2.0 feed"
 msgstr ""
 
-#: src/guile/skribilo/reader/rss-2.scm:241
+#: src/guile/skribilo/reader/rss-2.scm:242
 #, scheme-format
 msgid "tag `~s' ignored"
 msgstr ""
 
-#: src/guile/skribilo/reader/rss-2.scm:248
+#: src/guile/skribilo/reader/rss-2.scm:249
 #, scheme-format
 msgid "skipping tag `~a'~%"
 msgstr ""
 
-#: src/guile/skribilo/reader/rss-2.scm:299
+#: src/guile/skribilo/reader/rss-2.scm:300
 msgid "no RSS 2.0 channels found in feed"
+msgstr ""
+
+#: src/guile/skribilo.scm:64
+msgid "Usage: skribilo [OPTIONS] [INPUT]"
+msgstr ""
+
+#: src/guile/skribilo.scm:65
+msgid ""
+"\n"
+"Process Skribilo document from file INPUT (or the standard input) using the\n"
+"specified reader syntax, and produce its output using the specified engine.\n"
+msgstr ""
+
+#: src/guile/skribilo.scm:69
+msgid ""
+"\n"
+"  -R, --reader=READER    Use READER to parse the input file, e.g., `skribe'\n"
+"                         (default) or `outline'."
+msgstr ""
+
+#: src/guile/skribilo.scm:72
+msgid ""
+"\n"
+"  -t, --target=ENGINE    Use ENGINE as the output engine, e.g., `html'."
+msgstr ""
+
+#: src/guile/skribilo.scm:74
+msgid ""
+"\n"
+"  -c, --custom=C=VAL     Use VAL as the value of ENGINE's custom C."
+msgstr ""
+
+#: src/guile/skribilo.scm:76
+msgid ""
+"\n"
+"  -o, --output=FILE      Write output to FILE."
+msgstr ""
+
+#: src/guile/skribilo.scm:78
+msgid ""
+"\n"
+"      --compat=COMPAT    Use COMPAT as the compatibility layer, e.g., "
+"`skribe'."
+msgstr ""
+
+#: src/guile/skribilo.scm:81
+msgid ""
+"\n"
+"  -I, --doc-path=DIR     Prepend DIR to the document include path."
+msgstr ""
+
+#: src/guile/skribilo.scm:83
+msgid ""
+"\n"
+"  -B, --bib-path=DIR     Prepend DIR to the bibliography include path."
+msgstr ""
+
+#: src/guile/skribilo.scm:85
+msgid ""
+"\n"
+"  -S, --source-path=DIR  Prepend DIR to the source include path."
+msgstr ""
+
+#: src/guile/skribilo.scm:87
+msgid ""
+"\n"
+"  -P, --image-path=DIR   Prepend DIR to the image include path."
+msgstr ""
+
+#: src/guile/skribilo.scm:89
+msgid ""
+"\n"
+"  -U, --sui-path=DIR     Prepend DIR to the Skribe URL Index (SUI) search "
+"path."
+msgstr ""
+
+#: src/guile/skribilo.scm:92
+msgid ""
+"\n"
+"  -b, --base=BASE        Strip BASE from all hyperlinks (`html' engine)."
+msgstr ""
+
+#: src/guile/skribilo.scm:94
+msgid ""
+"\n"
+"  -e, --eval=EXPR        Prepend EXPR to the list of expressions to be\n"
+"                         evaluted before the input file is processed."
+msgstr ""
+
+#: src/guile/skribilo.scm:97
+msgid ""
+"\n"
+"  -p, --preload=FILE     Preload FILE before processing the input file."
+msgstr ""
+
+#: src/guile/skribilo.scm:100
+msgid ""
+"\n"
+"  -v, --verbose[=LEVEL]  Be verbose, unless LEVEL is 0."
+msgstr ""
+
+#: src/guile/skribilo.scm:102
+msgid ""
+"\n"
+"  -w, --warning[=LEVEL]  Issue warnings, unless LEVEL is 0."
+msgstr ""
+
+#: src/guile/skribilo.scm:104
+msgid ""
+"\n"
+"  -g, --debug[=ARG]      Issue debugging output, unless ARG is 0.  If ARG "
+"is\n"
+"                         not a number, it is interpreted as a symbol to be\n"
+"                         watched."
+msgstr ""
+
+#: src/guile/skribilo.scm:108
+msgid ""
+"\n"
+"      --no-color         Disable colored debugging output."
+msgstr ""
+
+#: src/guile/skribilo.scm:111
+msgid ""
+"\n"
+"  -h, --help             Give this help list"
+msgstr ""
+
+#: src/guile/skribilo.scm:113
+msgid ""
+"\n"
+"  -V, --version          Print program version"
+msgstr ""
+
+#: src/guile/skribilo.scm:116
+#, scheme-format
+msgid ""
+"\n"
+"Report bugs to <~a>.~%"
+msgstr ""
+
+#: src/guile/skribilo.scm:196
+#, scheme-format
+msgid "~a: missing value for custom"
+msgstr ""
+
+#: src/guile/skribilo.scm:213
+#, scheme-format
+msgid "~a: invalid custom value"
 msgstr ""
