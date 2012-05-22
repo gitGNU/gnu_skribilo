@@ -32,14 +32,13 @@
 
 (define-syntax call-with-code
   (syntax-rules ()
-    ((_ strings ... thunk)
-     (let ((s (string-join '(strings ...) "\n")))
-       (call-with-input-string s
-         (lambda (p)
-           (set-port-filename! p "the-file.skb")
-           (set-port-line! p 0)
-           (set-port-column! p 0)
-           (thunk p)))))))
+    ((_ string thunk)
+     (call-with-input-string string
+       (lambda (p)
+         (set-port-filename! p "the-file.skb")
+         (set-port-line! p 0)
+         (set-port-column! p 0)
+         (thunk p))))))
 
 (define (location->list loc)
   (and (location? loc)
