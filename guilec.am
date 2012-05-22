@@ -19,6 +19,7 @@ guile_warnings =							\
 	GUILE_AUTO_COMPILE=0					\
 	GUILE_LOAD_COMPILED_PATH="$(builddir):$(top_builddir)/src/guile:$$GUILE_LOAD_COMPILED_PATH" \
 	$(GUILE) -L "$(srcdir)" -L "$(top_srcdir)/src/guile"	\
+	  -L "$(top_builddir)/src/guile"			\
 	  -c "(use-modules (system base compile)		\
 	                   (system base message)		\
 	                   (skribilo condition))		\
