@@ -1,7 +1,7 @@
 ;;; api.scm  --  The style for documenting Scheme APIs.
 ;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2005, 2006, 2007, 2008, 2009  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2006, 2007, 2008, 2009, 2012  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -529,9 +529,9 @@
                        (else
                         (list (if sui
                                   (ref :skribe sui 
-                                       :mark (string-append s "-engine") 
+                                       :ident (string-append s "-engine")
                                        :text s)
-                                  (ref :mark (string-append s "-engine") 
+                                  (ref :ident (string-append s "-engine")
                                        :text s))
                               " ")))))
 	   (if (pair? force-engines) 

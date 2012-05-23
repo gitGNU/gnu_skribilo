@@ -1,7 +1,7 @@
 ;;; htmle.skb  --  Documentation of the HTML engine.
 ;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2008  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2008, 2012  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -21,8 +21,7 @@
 ;;; along with Skribilo.  If not, see <http://www.gnu.org/licenses/>.
 
 
-(section :title "HTML Engine" :file #t
-   (mark "html-engine")
+(section :title "HTML Engine" :file #t :ident "html-engine"
    (index "HTML" :note "Engine")
 
    (p [The HTML engine produces---guess what!---HTML output.  It can be

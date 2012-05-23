@@ -203,7 +203,7 @@ customs.] :chapter "Engines")])
       (subsubsection :title [HTML Engine Customization]
    
 	 (p [,(tt [html-navtabs]) is to be used in conjunction with the
-,(ref :text (code "html-engine") :mark "html-engine")
+,(ref :text (code "html-engine") :ident "html-engine")
 engine.  Specifically, it adds the following new customization to this
 engine:])
 

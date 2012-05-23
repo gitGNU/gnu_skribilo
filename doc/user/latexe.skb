@@ -24,8 +24,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    Document                                                         */
 ;*---------------------------------------------------------------------*/
-(section :title "LaTeX Engine" :file #t
-   (mark "latex-engine")
+(section :title "LaTeX Engine" :file #t :ident "latex-engine"
    (index "LaTeX" :note "Engine")
 
    (p [Not surprisingly, the LaTeX engine produces ,(ref :url

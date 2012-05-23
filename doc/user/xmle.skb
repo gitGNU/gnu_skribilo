@@ -1,7 +1,7 @@
 ;;; xmle.skb  --  The documentation of the XML engine
 ;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2008  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2008, 2012  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -24,8 +24,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    Document                                                         */
 ;*---------------------------------------------------------------------*/
-(section :title "XML Engine" :file #t
-   (mark "xml-engine")
+(section :title "XML Engine" :file #t :ident "xml-engine"
    (index "XML" :note "Engine")
 
    (p [The XML engine produces a simple XML representation of Skribilo

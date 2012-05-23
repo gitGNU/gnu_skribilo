@@ -1,7 +1,7 @@
 ;;; links.skb  --  Links and cross-references.
 ;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2008  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2008, 2012  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -182,7 +182,7 @@ of a SUI file is:])
 
 (p [SUI files can be automatically produced by the Skribilo compiler.
 For instance, in order to produce the SUI file of this user
-manual, one should set the ,(ref :mark "html-engine" :text [,(tt
+manual, one should set the ,(ref :ident "html-engine" :text [,(tt
 [emit-sui]) HTML custom]) to ,(tt [#t]); a ,(tt [user.sui]) file will
 then be produced when the manual is compiled to HTML:]
 

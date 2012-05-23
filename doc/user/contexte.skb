@@ -1,7 +1,7 @@
 ;;; context.skb  --  Documentation of the ConTeXt engine.
 ;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2008  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2008, 2012  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This file is part of Skribilo.
@@ -23,8 +23,7 @@
 ;*---------------------------------------------------------------------*/
 ;*    Document                                                         */
 ;*---------------------------------------------------------------------*/
-(section :title "ConTeXt Engine" :file #t
-   (mark "context-engine")
+(section :title "ConTeXt Engine" :file #t :ident "context-engine"
    (index "ConTeXt" :note "Engine")
    
    (p [The ,(tt [context]) engine produces documents for the ,(ref :text

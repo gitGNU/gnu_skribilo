@@ -1,7 +1,7 @@
 ;;; info.skb  --  Documentation of the Info engine.
 ;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2009  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2009, 2012  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This file is part of Skribilo.
@@ -19,8 +19,7 @@
 ;;; You should have received a copy of the GNU General Public License
 ;;; along with Skribilo.  If not, see <http://www.gnu.org/licenses/>.
 
-(section :title "Info Engine" :file #t
-   (mark "info-engine")
+(section :title "Info Engine" :file #t :ident "info-engine"
    (index "Info" :note "Engine")
 
    (p [The ,(tt [info]) engine produces GNU,(~)Info files for on-line

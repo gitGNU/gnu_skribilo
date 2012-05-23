@@ -1,7 +1,7 @@
 ;;; compiler.skb  --  The Skribilo compiler.
 ;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2008  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2008, 2012  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2001, 2002, 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -106,7 +106,7 @@ compatible implementation is provided.])
 search path (see ,(numref :text [Section] :ident "sui") for details).])
 
 	`(#\b "base" ,[Strip ,(tt [base]) (an arbitrary string,
-typically an URL) from all hyperlinks when producing ,(ref :mark
+typically an URL) from all hyperlinks when producing ,(ref :ident
 "html-engine" :text [HTML files]).])
 	`(#\e "expr" ,[Prepend ,(tt [expr]) to the list of expressions
 to be evaluated before the input document is processed.  ,(tt [expr]) is

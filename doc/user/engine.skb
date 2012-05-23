@@ -35,7 +35,7 @@ specifies the ,(emph [engine]) or ``back-end'' to be used, which is
 roughly a set of procedures that translate the input document into the
 output format.  For instance, passing ,(tt [--target=html]) to the
 compiler instructs it to produce an HTML document using the ,(ref :text
-(code "html") :mark "html-engine") engine.])
+(code "html") :ident "html-engine") engine.])
 
    (p [This chapter describes procedures allowing the manipulation of
 engines in Skribilo documents or modules (creation, customization,

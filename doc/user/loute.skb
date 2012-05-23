@@ -20,9 +20,7 @@
 ;;; along with Skribilo.  If not, see <http://www.gnu.org/licenses/>.
 
 
-(section :title "Lout Engine" :file #t
-         
-   (mark "lout-engine")
+(section :title "Lout Engine" :file #t :ident "lout-engine"
    (index "Lout" :note "Engine")
 
    (p [The Lout engine produces documents for the ,(ref :text [Lout
@@ -35,7 +33,7 @@ compared to typical LaTeX installations, consuming less than 10,(~)MiB
 of disk space.])
    
    (p [Skribilo's Lout engine provides lots of customization
-opportunities (currently more than the ,(ref :mark "latex-engine" :text
+opportunities (currently more than the ,(ref :ident "latex-engine" :text
 [LaTeX engine])), which are shown below.  It also enhances Lout by
 adding new features: PDF bookmarks, high-level interface to the use of
 dropped capitals, improved paragraph indentation, etc.])

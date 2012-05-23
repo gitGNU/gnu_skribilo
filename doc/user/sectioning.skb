@@ -1,7 +1,7 @@
 ;;; sectioning.skb  --  Sectioning markups
 ;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2007, 2008, 2009  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2007, 2008, 2009, 2012  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -44,7 +44,7 @@
 	    `((:title [The title of the chapter.])
 	      (:html-title [The title of window of the HTML browser.])
 	      (:info-node ,[The title of the Info node (see ,(ref
-:text [Section about the Info engine] :mark "info-engine")).])
+:text [Section about the Info engine] :ident "info-engine")).])
 	      (:number [This argument controls the chapter number.
 A value of ,(tt "#t") means that Skribilo computes the chapter
 number. A value of ,(tt "#f") means that the chapter has no number.  A
@@ -80,7 +80,7 @@ used as the name of the file for this chapter.])
 (doc-markup 'section 
 	    `((:title [The title of the chapter.])
 	      (:info-node ,[The title of the Info node (see ,(ref
-:text [Section about the Info engine] :mark "info-engine")).])
+:text [Section about the Info engine] :ident "info-engine")).])
 	      (:number [This argument controls the chapter number.
 A value of ,(tt "#t") means that Skribilo computes the chapter
 number. A value of ,(tt "#f") means that the chapter has no number.  A
