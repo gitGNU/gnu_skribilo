@@ -1173,7 +1173,8 @@
       ;; Make sure the output is suitably encoded.
       (and=> (engine-custom e 'charset)
              (lambda (charset)
-               (set-port-encoding! (current-output-port) charset))))
+               (set-port-encoding! (current-output-port) charset)
+               (set-port-conversion-strategy! (current-output-port) 'error))))
      (else #t)))
 
    (let* ((id (markup-ident n))
