@@ -93,9 +93,28 @@
   (let ((defs (engine-custom le 'inline-definitions-proc)))
     (engine-custom-set! le 'inline-definitions-proc
                         (lambda (e)
-                          (string-append (defs e) "\n"
-                                         "def @DocHeading right x\n{\n"
-                                         "{ Helvetica Base } @Font x\n}\n"))))
+                          (string-append
+                           (defs e) "\n"
+                           "def @DocHeading right x\n{\n"
+                           "{ Helvetica Base } @Font x\n}\n"
+
+                           "
+# The `example' markup.
+def @SkribiloExample named @Title {} right x {
+  @B { @Title }
+  @Floater
+    @OnePage { No }
+    @Location { Display }
+    @Format {
+      @Diag { @CurveBox
+                outlinestyle { noline }
+                paint { rgb 0.95 0.95 0.87 }
+                font { 0.9f }
+		break { 0.9fx }
+              @HExpand @Body } }
+  { x }
+}\n\n"
+                           ))))
 
   (markup-writer 'doc-markup
     :action (lambda (n e)

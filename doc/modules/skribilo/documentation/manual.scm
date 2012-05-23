@@ -1,7 +1,7 @@
 ;;; manual.scm  --  Skribilo manuals and documentation style.
 ;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2007, 2008, 2009  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2007, 2008, 2009, 2012  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -83,12 +83,8 @@
                       (number (markup-option n :number))
                       (legend (markup-option n :legend)))
                   (evaluate-document (mark ident) e)
-                  (display "\n@LP\n5c @Wide @FullWidthRule\n@LP\n")
-                  (output (list (! "{ Schoolbook Bold 1.0f } @Font { $1 }"
-                                   (list (format #f "Example ~a. " number)
-                                         legend))
-                                (! "\n@LP\n")
-                                (markup-body n))
+                  (output (! "\n@LP\n@SkribiloExample @Title { Example $1.  $2 } { $3 }\n"
+                             number legend (markup-body n))
                           e)))))
 
 
@@ -162,6 +158,8 @@
    (engine-custom-set! le 'document-type 'book)
    (engine-custom-set! le 'document-include
                        "@Include { \"book-style.lout\" }")
+   (engine-custom-set! le 'includes
+                       "@SysInclude { tbl }\n@SysInclude { diag }\n")
    (engine-custom-set! le 'initial-language "English")
    (engine-custom-set! le 'initial-font "Palatino Base 10p")
    (engine-custom-set! le 'on-title-page (! "@Include { \"front-page.lout\" }")))

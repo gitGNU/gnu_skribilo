@@ -1712,6 +1712,9 @@
    ;; @Box won't span over several pages so this may cause
    ;; problems if large frames are used.  The workaround here consists
    ;; in using an @Tbl with one single cell.
+   ;; FIXME: The workaround seems broken since the manual states that "[p]age
+   ;; breaks cannot occur within rows" (Section 6.11, "Multi-page tables").
+   ;; Use @Floater instead, as for @SkribiloExample.
    :options '(:width :border :margin :bg)
    :before (lambda (n e)
 	     (let ((width (markup-option n :width))
