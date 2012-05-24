@@ -92,10 +92,10 @@
 	       "HTML" "LaTeX" "Lout" "PostScript" "PDF")
    :env '((example-counter 0) (example-env ()))
    :author (list (author :name "Érick Gallesio"
-		    :affiliation "Université de Nice - Sophia Antipolis"
+		    :affiliation "Université de Nice - Sophia-Antipolis"
 		    :email (mailto "eg@essi.fr"))
 		 (author :name "Manuel Serrano"
-		    :affiliation "Inria Sophia-Antipolis"
+		    :affiliation "Inria"
 		    :email (mailto *serrano-mail*))
 		 (author :name "Ludovic Courtès"
 		    :email (mailto *courtes-mail*)))
