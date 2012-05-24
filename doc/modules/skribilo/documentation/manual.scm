@@ -252,7 +252,8 @@
 	       ((keyword? arg)
 		(with-output-to-string
 		  (lambda ()
-		    (write arg))))
+                    (display ":")
+		    (display (keyword->symbol arg)))))
 	       ((symbol? arg)
 		(string-append ":" (symbol->string arg)))
 	       (else
