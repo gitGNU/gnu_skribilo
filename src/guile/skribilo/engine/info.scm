@@ -436,7 +436,7 @@
 ;*    info ::%reference ...                                            */
 ;*---------------------------------------------------------------------*/
 (markup-writer 'ref info-engine
-  :options '(:text :page text kind
+  :options '(:text :page :text :kind
              :chapter :section :subsection :subsubsection
              :figure :mark :handle :ident)
 
@@ -444,12 +444,12 @@
             (let ((target (handle-ast (markup-body n))))
               (case (markup-markup target)
                 ((chapter section subsection subsubsection)
-                 (info-block-ref target e))
+                 (info-block-ref n target e))
                 ((mark)
                  ;; We can't refer directly to marks, so refer to the
                  ;; enclosing section as an approximation.
                  (let ((parent (find1-up %block? target)))
-                   (info-block-ref parent e)))
+                   (info-block-ref n parent e)))
                 (else
                  (skribe-warning/ast 1 target
                                      "ref: don't know how to refer to target")
@@ -473,10 +473,53 @@
 ;*---------------------------------------------------------------------*/
 ;*    info-block-ref ...                                               */
 ;*---------------------------------------------------------------------*/
-(define (info-block-ref obj e)
-   (output-justified "*Note ")
-   (output (block-title obj e) e)
-   (output-justified ":: "))
+(define (info-block-ref ref obj e)
+  ;; Emit a cross-reference from REF to chapter/section OBJ.
+
+  (define (next n)
+    ;; Return the markup or string that immediately follows N, or #f it there
+    ;; is none or it cannot be determined.
+    (let ((p (ast-parent n)))
+      (let loop ((body (markup-body p)))
+        (match body
+          (((sub-list ...) rest ...)
+           (or (loop sub-list) (loop rest)))
+          ((_ ...)
+           (match (memq n body)
+             ((_ next _ ...)
+              next)
+             (_ #f)))
+          (_ #f)))))
+
+  (define (next-char n)
+    ;; Return the character immediately following N or #f.
+    (let loop ((x (next n)))
+      (match x
+        ((? string? s)
+         (let ((s (string-trim s)))
+           (and (not (string-null? s))
+                (string-ref s 0))))
+        ((x _ ...)
+         (loop x))
+        (_ #f))))
+
+  (let ((text (markup-option ref :text)))
+    (output-justified "*Note ")
+    (if text
+        (begin
+          (output text e)
+          (output-justified ": ")))
+    (output (block-title obj e) e)
+
+    ;; Check whether REF is followed by a punctuation mark.  If it is, we're
+    ;; fine; otherwise, we need to add either a space or a punctuation mark.
+    (let ((c (next-char ref)))
+      (if text
+          (or (memq c '(#\. #\,))
+              (output-justified ","))
+          (if (and c (char-set-contains? char-set:punctuation c))
+              (output-justified "::")
+              (output-justified ":: "))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    info ::%biblio-ref ...                                           */
