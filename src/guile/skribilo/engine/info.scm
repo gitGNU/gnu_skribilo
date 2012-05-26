@@ -760,5 +760,32 @@
               (output label e)
               (output ")" e))))
 
+;*---------------------------------------------------------------------*/
+;*    info ::%prog ...                                                 */
+;*---------------------------------------------------------------------*/
+(markup-writer 'prog info-engine
+  :options '(:line :mark)
+  :action (lambda (n e)
+            ;; Skip a line and indent the program.
+            (newline)
+            (set! *margin* (+ 2 *margin*))
+            (with-justification
+             (make-justifier *text-column-width* 'verbatim)
+             (lambda ()
+               (output (markup-body n) e)))
+            (set! *margin* (- *margin* 2))))
+
+(markup-writer '&prog-line info-engine
+  :action (lambda (n e)
+            ;; Output the program line on a line of its own.
+            (let ((num (markup-option n :number)))
+              (and (number? num)
+                   (output-justified (format #f "~3d: " num))))
+            (output (markup-body n) e)
+            (output-flush *margin*)))
+
+;;; Local Variables:
+;;; eval: (put 'markup-writer 'scheme-indent-function 2)
+;;; End:
 
 ;;; info.scm ends here
