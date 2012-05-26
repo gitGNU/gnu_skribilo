@@ -9,8 +9,8 @@
 
 ;!start
 (frame :width 100.
-       (prog :line 21 :mark #f
-	     (source :language skribe :file "prgm.skb" :start 20 :stop 27)))
+       (prog :line 23 :mark #f
+	     (source :language skribe :file "prgm.skb" :start 22 :stop 29)))
 ;!stop
 
 (p [Here is the source of the frame above:])
