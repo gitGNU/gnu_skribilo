@@ -267,7 +267,11 @@
       ((keyword? arg)
        (keyword arg))
       ((symbol? arg)
-       (code (symbol->string arg)))
+       (resolve (lambda (n e env)
+                  (let ((arg (symbol->string arg)))
+                    (if (engine-format? "info" e)
+                        (string-upcase arg)
+                        (code arg))))))
       (else
        arg)))
 

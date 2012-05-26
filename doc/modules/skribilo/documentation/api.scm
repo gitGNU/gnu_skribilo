@@ -29,6 +29,7 @@
   :use-module (skribilo lib) ;; `define-markup'
   :use-module (skribilo utils compat)
   :use-module (skribilo utils syntax)
+  :use-module (skribilo utils justify)            ; for `info'
 
   :use-module (skribilo package base)
   :use-module (skribilo documentation manual)
@@ -192,13 +193,19 @@ def @SkribiloExample named @Title {} right x {
               (let ((protos (markup-option n 'prototypes))
                     (opts   (markup-option n 'options))
                     (params (markup-option n 'parameters))
-                    (see    (markup-option n 'see-also)))
+                    (see    (markup-option n 'see-also))
+                    (margin *margin*))
                 (output (linebreak) e)
-                (for-each (lambda (p)
-                            (output (list (linebreak) p) e))
-                          protos)
 
-                (output (linebreak) e)
+                (with-justification
+                 (make-justifier (- (justification-width) 2) 'left)
+                 (lambda ()
+                   (for-each (lambda (p)
+                               (output "-- Markup: " e)
+                               (output p e))
+                             protos))
+                 (+ *margin* 1))
+
                 (and (pair? opts)
                      (output
                       (description
@@ -229,7 +236,7 @@ def @SkribiloExample named @Title {} right x {
                      ;; Since Emacs' Info reader automatically precedes each
                      ;; *Note with "see ", just write "Also" instead of "See
                      ;; also".
-                     (output (list "Also, " (punctuate see)) e))
+                     (output (cons "Also, " (punctuate see)) e))
 
                 (output (linebreak) e)))))
 
@@ -489,30 +496,38 @@ def @SkribiloExample named @Title {} right x {
 ;*    doc-markup-proto ...                                             */
 ;*---------------------------------------------------------------------*/
 (define (doc-markup-proto id options formals rest)
+   (define bold*
+     (if (engine-format? "info")
+         list
+         bold))
+   (define code*
+     (if (engine-format? "info")
+         list
+         code))
    (define (option opt)
       (if (pair? opt)
 	  (if (eq? (cadr opt) #f)
 	      (list " [" (keyword (car opt)) "]")
 	      (list " [" (keyword (car opt)) " " 
-		    (code (exp->skribe (cadr opt))) "]"))
+		    (code* (exp->skribe (cadr opt))) "]"))
 	  (list " " (keyword opt))))
    (define (formal f)
       (list " " (param f)))
-   (code (list (bold "(") (bold :class 'api-proto-ident
-				(format #f "~a" id)))
-	 (map option (sort options 
-			   (lambda (s1 s2)
+   (code* (list (bold* "(") (bold* :class 'api-proto-ident
+                                   (format #f "~a" id)))
+          (map option (sort options
+                            (lambda (s1 s2)
 			      (cond
-				 ((and (pair? s1) (not (pair? s2)))
-				  #f)
-				 ((and (pair? s2) (not (pair? s1)))
-				  #t)
-				 (else
-				  #t)))))
-	 (if (pair? formals)
-	     (map formal formals))
-	 (if rest (list " " (param rest)))
-	 (bold ")")))
+                               ((and (pair? s1) (not (pair? s2)))
+                                #f)
+                               ((and (pair? s2) (not (pair? s1)))
+                                #t)
+                               (else
+                                #t)))))
+          (if (pair? formals)
+              (map formal formals))
+          (if rest (list " " (param rest)))
+          (bold* ")")))
 
 ;*---------------------------------------------------------------------*/
 ;*    doc-markup ...                                                   */
