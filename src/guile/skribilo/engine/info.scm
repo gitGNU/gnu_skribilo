@@ -443,19 +443,13 @@
   :action (lambda (n e)
             (let ((target (handle-ast (markup-body n))))
               (case (markup-markup target)
-                ((chapter)
-                 (info-chapter-ref target e))
-                ((section)
-                 (info-section-ref target e))
-                ((subsection)
-                 (info-subsection-ref target e))
-                ((subsubsection)
-                 (info-subsubsection-ref target e))
+                ((chapter section subsection subsubsection)
+                 (info-block-ref target e))
                 ((mark)
                  ;; We can't refer directly to marks, so refer to the
                  ;; enclosing section as an approximation.
                  (let ((parent (find1-up %block? target)))
-                   (info-chapter-ref parent e)))
+                   (info-block-ref parent e)))
                 (else
                  (skribe-warning/ast 1 target
                                      "ref: don't know how to refer to target")
@@ -477,39 +471,12 @@
               (and text (output-justified ")")))))
 
 ;*---------------------------------------------------------------------*/
-;*    info-chapter-ref ...                                             */
+;*    info-block-ref ...                                               */
 ;*---------------------------------------------------------------------*/
-(define (info-chapter-ref obj e)
+(define (info-block-ref obj e)
    (output-justified "*Note ")
    (output (block-title obj e) e)
    (output-justified ":: "))
-
-;*---------------------------------------------------------------------*/
-;*    info-section-ref ...                                             */
-;*---------------------------------------------------------------------*/
-(define (info-section-ref obj e)
-   (let ((title (markup-option obj :title)))
-      (output-justified "*Note ")
-      (output title e)
-      (output-justified ":: ")))
-
-;*---------------------------------------------------------------------*/
-;*    info-subsection-ref ...                                          */
-;*---------------------------------------------------------------------*/
-(define (info-subsection-ref obj e)
-   (let ((title (markup-option obj :title)))
-      (output-justified "*Note ")
-      (output title e)
-      (output-justified ":: ")))
-
-;*---------------------------------------------------------------------*/
-;*    info-subsubsection-ref ...                                       */
-;*---------------------------------------------------------------------*/
-(define (info-subsubsection-ref obj e)
-   (let ((title (markup-option obj :title)))
-      (output-justified "*Note ")
-      (output title e)
-      (output-justified ":: ")))
 
 ;*---------------------------------------------------------------------*/
 ;*    info ::%biblio-ref ...                                           */
