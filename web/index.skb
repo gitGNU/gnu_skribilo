@@ -152,9 +152,9 @@ conventions similar to those used in ,(ref :skribe %user-sui :ident
 :skribe %user-sui :ident "programs" :text [syntax highlighting of
 computer programs]), and others.])
          (item [,(ref :skribe %user-sui :chapter "Bibliographies" :text
-[Bibliography management]), i.e., BibTeX on steroids thanks to the
+[Bibliography management])—i.e., BibTeX on steroids thanks to the
 programmability brought by ,(scheme [Scheme]).])
-         (item [Use of a proper module system (currently that of ,(guile
+         (item [Use of a proper module system (that of ,(guile
 [Guile])) rather than ,(tt [load])-style interactions.])
          (item [And much more!  :-)])))
 
@@ -164,17 +164,19 @@ programmability brought by ,(scheme [Scheme]).])
 :url "http://dl.sv.nongnu.org/releases/skribilo/").])
 
       (p [Skribilo is distributed under the terms of the ,(gpl [GNU
-General Public Licence]), version 2 or later.  In order to use Skribilo,
+General Public Licence]), version 3 or later.  To use Skribilo,
 you need the following pieces of software:
 
 ,(itemize
-    (item [,(guile [GNU Guile]) 1.8.3 or later, or 2.0;])
+    (item [,(guile [GNU Guile]) 2.0.*, or 1.8.3 or later;])
     (item [,(ref :url "http://www.nongnu.org/guile-reader/"
-               :text [Guile-Reader]) 0.3 or later;])
-    (item [either ,(lout [Lout]) (3.31 or later), ,(latex [LaTeX]) or
+               :text [Guile-Reader]) 0.6 or later;])
+    (item [either ,(lout [Lout]) (3.31 or later), ,(latex [LaTeX]), or
 ,(context [ConTeXt]) to produce hard copies (PostScript/PDF);])
     (item [optionally, ,(ploticus [Ploticus]) to produce pie charts
-(alternatively, ,(lout [Lout]) can be used for that purpose).]))]))
+(alternatively, ,(lout [Lout]) can be used for that purpose);])
+    (item [optionally, ,(guile-lib [Guile-Lib]) to be able to use the
+,(ref :skribe %user-sui :ident "rss2-syntax" :text [RSS-2 reader]).]))]))
 
    (chapter :title [Documentation] :number #f :file #f ;; FIXME: Do it!
 
@@ -209,7 +211,7 @@ revision control system.  You can fetch a copy of the source code
 repository using the following incantation:
 
 ,(frame :class "code-excerpt" :border #f :margin #f
-    (code [git-clone git://git.sv.gnu.org/skribilo.git]))
+    (code [git clone git://git.sv.gnu.org/skribilo.git]))
 
 You can then happily hack on your side and eventually promote your
 changes ,(ref :ident "mailing-list" :text [on the mailing-list]).])
@@ -283,12 +285,14 @@ AST, and things like ,(ref :url
 "http://git.savannah.gnu.org/cgit/skribilo.git/tree/src/guile/skribilo/resolve.scm"
 :text (tt [resolve])).])
           (item [Andy Wingo's ,(ref :url
-"http://wingolog.org/software/guile-lib/texinfo/" :text [STexi]) (,(ref
+"http://www.gnu.org/software/guile/manual/html_node/texinfo.html" :text [STexi]) (,(ref
 :text [Texinfo] :url "http://www.gnu.org/software/texinfo/") as
-S-expressions), available in ,(guile-lib [Guile-lib]).  The purely
-functional ,(ref :text (tt [fold-layout]) :url
-"http://home.gna.org/guile-lib/doc/ref/sxml.fold/") operator is also
-very interesting.])
+S-expressions), available in ,(guile [Guile 2.0]).  The
+,(ref :text (tt [fold-layout]) :url
+"http://www.gnu.org/software/guile/manual/html_node/sxml-fold.html")
+operator provides an interesting, purely functional approach to
+documentation transformation (not unlike XSLT, but with a real
+programming language).])
           (item [,(ref :url "http://okmij.org/ftp/Scheme/SXML.html"
 :text [SXML]), XML as S-expressions.  Oleg Kiselyov's discussion of
 ,(ref :text [implementation strategies for a purely functional SXML
