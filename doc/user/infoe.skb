@@ -39,9 +39,10 @@ conflicts, using the ,(param :info-node) option of ,(markup-ref
 "chapter"), etc.]))
 
 Most markups shown in ,(numref :text [Chapter] :ident "std-markups") are
-meaningfully rendered in Info, including tables.  However, since Info is
-a text-only format, markups such as ,(markup-ref "image") do not yield a
-graphical output as with other engines.]))
+meaningfully rendered in Info, including tables.  The ,(markup-ref
+"image") markup is also implemented: the Info reader in Emacs 23 and
+later is able to display them, or to display the alternate text (the
+body of the ,(markup-ref "image") markup) when running in text mode.]))
 
 ;;; Local Variables:
 ;;; ispell-local-dictionary: "american"

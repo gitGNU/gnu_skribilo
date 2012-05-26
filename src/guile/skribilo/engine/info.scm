@@ -784,6 +784,27 @@
             (output (markup-body n) e)
             (output-flush *margin*)))
 
+;*---------------------------------------------------------------------*/
+;*    info ::%image ...                                                */
+;*---------------------------------------------------------------------*/
+(markup-writer 'image info-engine
+  :options '(:file :url :width :height)
+  :validate (lambda (n e)
+              (string? (markup-option n :file)))
+  :action (lambda (n e)
+            (if (markup-option n :url)
+                (skribe-warning/ast 1 n (_ "image URLs not supported"))
+                (let ((f (markup-option n :file))
+                      (h (markup-option n :height))
+                      (w (markup-option n :width)))
+                  ;; The Info mode in Emacs 23+ supports just a few
+                  ;; properties of the `image' tag, such as `alt' and `text';
+                  ;; it doesn't support `height' and `width' (yet?).
+                  (and (string? f)
+                       (format #t "\n\0\b[image alt=\"~a\" ~:[~*~;width=\"~a\" ~]~:[~*~;height=\"~a\" ~]src=\"~a\"\0\b]~%"
+                               (ast->string (markup-body n))
+                               w w h h f))))))
+
 ;;; Local Variables:
 ;;; eval: (put 'markup-writer 'scheme-indent-function 2)
 ;;; End:
