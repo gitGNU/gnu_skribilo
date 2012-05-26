@@ -480,7 +480,7 @@ def @SkribiloExample named @Title {} right x {
 	  (tr (td :align 'left exp))))
       (else 
        (match exp
-	  ((and sym (? symbol?))
+          (('quote (? symbol? sym))
 	   (string-append "'" (symbol->string sym)))
 	  (else
 	   (with-output-to-string (lambda () (write exp))))))))
