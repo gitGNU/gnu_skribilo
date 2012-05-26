@@ -122,8 +122,13 @@ endif
 
 
 # Install/uninstall files not listed in `html_DATA'.
+# Make the images available alongside the Info manual.
 install-data-hook:
 	$(INSTALL_DATA) user-*.html *.png "$(DESTDIR)$(htmldir)"
+	$(MKDIR_P) "$(DESTDIR)$(infodir)"
+	for i in "$(DESTDIR)$(htmldir)/"*.png; do	\
+	  (cd "$(DESTDIR)$(infodir)"; $(LN_S) "$$i");	\
+	done
 
 uninstall-local:
 	-rm -rf "$(DESTDIR)$(htmldir)"/user-*.html \

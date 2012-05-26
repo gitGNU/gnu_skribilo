@@ -23,6 +23,8 @@ AC_ARG_WITH([guilemoduledir],
    esac],
   [guilemoduledir=""])
 
+AC_PROG_LN_S
+AC_PROG_MKDIR_P
 
 # Look for Guile.
 GUILE_PROGS
