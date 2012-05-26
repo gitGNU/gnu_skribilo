@@ -32,6 +32,7 @@
   :autoload   (skribilo utils justify) (output-justified make-justifier
                                         with-justification)
   :autoload   (skribilo utils text-table) (table->ascii)
+  :autoload   (skribilo utils images)  (convert-image)
   :autoload   (srfi srfi-1)            (fold)
   :use-module (srfi srfi-8)
   :use-module (srfi srfi-11)
@@ -804,7 +805,8 @@
   :action (lambda (n e)
             (if (markup-option n :url)
                 (skribe-warning/ast 1 n (_ "image URLs not supported"))
-                (let ((f (markup-option n :file))
+                (let ((f (let ((f (markup-option n :file)))
+                           (convert-image f '("png" "gif" "jpg"))))
                       (h (markup-option n :height))
                       (w (markup-option n :width)))
                   ;; The Info mode in Emacs 23+ supports just a few
