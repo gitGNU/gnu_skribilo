@@ -226,7 +226,10 @@ def @SkribiloExample named @Title {} right x {
                       e))
 
                 (and (pair? see)
-                     (output (list "See also " (punctuate see)) e))
+                     ;; Since Emacs' Info reader automatically precedes each
+                     ;; *Note with "see ", just write "Also" instead of "See
+                     ;; also".
+                     (output (list "Also, " (punctuate see)) e))
 
                 (output (linebreak) e)))))
 
