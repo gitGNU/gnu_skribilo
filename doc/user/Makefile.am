@@ -25,12 +25,14 @@ EXTRA_DIST += src/api1.skb						\
   src/start3.skb src/start4.skb src/start5.skb				\
   src/outline.txt src/scheme.scm
 
+EXTRA_DIST += FONTS
 
 skrinfodir = $(infodir)
 skrinfo_DATA = skribilo.info
 
 html_DATA = user.html user.sui
-dist_html_DATA = skribilo.css
+dist_html_DATA = skribilo.css			\
+  lobster-1.4.otf junction.ttf
 BUILT_SOURCES = lout/front-page.lout
 CLEANFILES = $(BUILT_SOURCES) $(html_DATA) skribilo.info
 

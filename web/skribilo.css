@@ -1,4 +1,20 @@
-pre { font-family: monospace }
+/* http://www.impallari.com/lobster/  */
+@font-face {
+  font-family: 'Lobster';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Lobster'), url('doc/lobster-1.4.otf') format('opentype');
+}
+
+/* http://www.theleagueofmoveabletype.com/junction */
+@font-face {
+  font-family: 'Junction';
+  src: local('Junction'), url('doc/junction.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+pre { font-family: monospace; text-align: left; }
 tt { font-family: monospace }
 code { font-family: monospace }
 body { margin: 1em 1.5em 1.5em 1.5em; background: #ffffff; }
@@ -9,20 +25,34 @@ span.sc { font-variant: small-caps }
 span.sf { font-family: sans-serif }
 li { margin: 1%; text-align: justify; }
 
+body.document {
+  font-family: Lobster, sans-serif;
+  font-weight: bolder;
+}
 
-.skribilo-title {
+body.chapter {       /* chapter title when `:file #t' */
   font-family: sans-serif;
   font-weight: bolder;
-  font-size: large;
+}
+body.section {       /* section title when `:file #t' */
+  font-family: sans-serif;
+  font-weight: bolder;
+}
+
+
+div.skribilo-title {
+  font-size: x-large;
   text-align: right;
   background: #ee7777; /* #dddde0; */
   border-top-color: black;
-  border-top-style: solid;
-  border-top-width: 1px;
+  border-top-style: none;
+  margin: 10px;
+  padding: 10px;
+  border-radius: 10px;
 }
 
 .skribilo-body {
-  font-family: sans-serif;
+  font-family: Junction, sans-serif;
   font-weight: normal;
   text-align: left;
   background: #ffffff;
@@ -76,7 +106,7 @@ a:hover { background: #ee7777; color: #333344; }
 a:visited { color: #443333; }
 
 
-/* Navigation tabs (currently unused) */
+/* Navigation tabs.  */
 
 a.inactive { padding: 0px 10px 0px 10px; }
 
@@ -85,10 +115,9 @@ div.navtabs-title {
   margin: 0 0 0 0;
   border: 0 0 0 0;
   text-align: right;
-  background: #8381de;
 }
 div.navtabs-bar {
-  margin: 0 0 0 0;
+  margin: 0 10px 0 10px;
   border: 0 0 0 0;
   text-align: right;
   border-top-color: black;
@@ -103,8 +132,8 @@ div.navtabs-tabs {
   border-width: 0;
   border-color: black;
   border-style: dotted;
-  padding: 2px 10px 0px 10px;
-  margin: 0 1px 0 0;
+  padding: 0px 10px 0px 10px;
+  margin: 0px 10px 0px 10px;
   text-decoration: none;
   background: white;
   font-family: sans-serif;

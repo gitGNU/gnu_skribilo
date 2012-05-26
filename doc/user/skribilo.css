@@ -2,13 +2,29 @@
 
    CSS style sheet for the Skribilo manual.
 
-   Copyright 2007, 2008 Ludovic Courtès <ludo@gnu.org>
+   Copyright 2007, 2008, 2012 Ludovic Courtès <ludo@gnu.org>
 
    Copying and distribution of this file, with or without modification,
    are permitted in any medium without royalty provided the copyright
    notice and this notice are preserved.  */
 
 /* FIXME: This file is messy and contains loads of useless stuff.  */
+
+/* http://www.impallari.com/lobster/  */
+@font-face {
+  font-family: 'Lobster';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Lobster'), url('lobster-1.4.otf') format('opentype');
+}
+
+/* http://www.theleagueofmoveabletype.com/junction */
+@font-face {
+  font-family: 'Junction';
+  src: local('Junction'), url('junction.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
 
 pre { font-family: monospace; text-align: left; }
 tt { font-family: monospace }
@@ -21,24 +37,50 @@ span.sc { font-variant: small-caps }
 span.sf { font-family: sans-serif }
 
 
-.skribilo-title {
+body.document {
+  font-family: Lobster, sans-serif;
+  font-weight: bolder;
+}
+
+body.chapter {       /* chapter title when `:file #t' */
   font-family: sans-serif;
   font-weight: bolder;
+}
+body.section {       /* section title when `:file #t' */
+  font-family: sans-serif;
+  font-weight: bolder;
+}
+
+
+div.skribilo-title {
   font-size: large;
   text-align: right;
   background: #ee7777; /* #dddde0; */
   border-top-color: black;
-  border-top-style: solid;
-  border-top-width: 1px;
+  border-top-style: none;
+  margin: 10px;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+table.author {
+  font-family: Junction, sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  text-align: right;
 }
 
 .skribilo-body {
-  font-family: sans-serif;
+  font-family: Junction, sans-serif;
   font-weight: normal;
   font-size: normal;
   text-align: left;
   background: #ffffff;
-  padding: 0 5% 0 5%
+  padding: 0 5% 0 5%;
+}
+
+table.toc {
+  border-spacing: 8px;
 }
 
 .small-toc {
@@ -79,10 +121,12 @@ span.sf { font-family: sans-serif }
 .section-title {
   background: #eeeef0;
   font-family: sans-serif;
+  font-weight: bold;
+  font-size: larger;
   text-align: right;
 }
 
-.subsection-title { font-family: sans-serif; }
+.subsection-title { font-family: Junction, sans-serif; }
 
 .code-excerpt {
   background: #eeeef0;
