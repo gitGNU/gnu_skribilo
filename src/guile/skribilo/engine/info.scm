@@ -662,6 +662,8 @@
   :action (lambda (n e)
             (output-newline)
             (output-flush *margin*)
+            (or (first-paragraph? n)
+                (display "   "))
             (output (markup-body n) e)))
 
 ;*---------------------------------------------------------------------*/
