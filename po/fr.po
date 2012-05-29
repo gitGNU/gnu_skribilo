@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: ludo@gnu.org\n"
-"POT-Creation-Date: 2012-05-14 23:41+0200\n"
+"POT-Creation-Date: 2012-05-29 00:09+0200\n"
 "PO-Revision-Date: 2007-02-05 16:02+0100\n"
 "Last-Translator: Ludovic Courtès <ludo@gnu.org>\n"
 "Language-Team: fr <LL@li.org>\n"
@@ -189,16 +189,17 @@ msgstr ""
 msgid "undefined verify error: ~a~%"
 msgstr "erreur skribilo indéfinie : ~S~%"
 
-#: src/guile/skribilo/engine/lout.scm:2422
+#: src/guile/skribilo/engine/lout.scm:2425
+#: src/guile/skribilo/engine/info.scm:807
 msgid "image URLs not supported"
 msgstr ""
 
-#: src/guile/skribilo/engine/info.scm:175
+#: src/guile/skribilo/engine/info.scm:176
 #, scheme-format
 msgid "Info node title `~A' already used"
 msgstr ""
 
-#: src/guile/skribilo/engine/info.scm:178
+#: src/guile/skribilo/engine/info.scm:179
 msgid "previous occurrence was here"
 msgstr ""
 
