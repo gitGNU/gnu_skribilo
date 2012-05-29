@@ -6,7 +6,8 @@ AC_INIT(skribilo, 0.9.2, skribilo-users@nongnu.org)
 AC_CONFIG_AUX_DIR(build-aux)
 AC_CONFIG_MACRO_DIR(m4)
 
-AM_INIT_AUTOMAKE([gnu no-define check-news readme-alpha])
+AM_INIT_AUTOMAKE([1.11 gnu no-define check-news readme-alpha \
+  color-tests parallel-tests])
 
 AC_CONFIG_SRCDIR([src/guile/skribilo/reader.scm])
 
