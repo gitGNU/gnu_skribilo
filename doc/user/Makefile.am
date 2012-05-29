@@ -128,7 +128,8 @@ install-data-hook:
 	$(INSTALL_DATA) user-*.html *.png "$(DESTDIR)$(htmldir)"
 	$(MKDIR_P) "$(DESTDIR)$(infodir)"
 	for i in "$(DESTDIR)$(htmldir)/"*.png; do	\
-	  (cd "$(DESTDIR)$(infodir)"; $(LN_S) "$$i");	\
+	  (cd "$(DESTDIR)$(infodir)";			\
+	   rm -f "`basename $$i`"; $(LN_S) "$$i");	\
 	done
 
 uninstall-local:
