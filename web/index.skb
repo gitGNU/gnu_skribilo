@@ -61,6 +61,10 @@
 (define (lout . body)
   (ref :url "http://savannah.nongnu.org/projects/lout/" :text body))
 
+(define (info . body)
+  (ref :url "http://www.gnu.org/software/texinfo/manual/texinfo/html_node/Info-Files.html"
+       :text body))
+
 (define (ploticus . body)
   (ref :url "http://ploticus.sf.net/" :text body))
 
@@ -88,13 +92,13 @@
   (ref :url "http://www-sop.inria.fr/mimosa/fp/Skribe/" :text body))
 
 (define (scribe . body)
-  (ref :url "http://www-sop.inria.fr/mimosa/fp/Scribe/" :text body))
+  (ref :url "http://www-sop.inria.fr/members/Manuel.Serrano/scribe/" :text body))
 
 (define (bigloo . body)
   (ref :url "http://www-sop.inria.fr/mimosa/fp/Bigloo/" :text body))
 
 (define (stklos . body)
-  (ref :url "http://www.stklos.org/" :text body))
+  (ref :url "http://stklos.net/" :text body))
 
 (define %user-sui
   ;; Location of the User Manual's SUI file.
@@ -116,8 +120,9 @@
 
    (p [Skribilo is a ,(freedom [free]) document production tool that
 takes a structured document representation as its input and renders that
-document in a variety of output formats: HTML for on-line browsing, and
-,(lout [Lout]) and ,(latex [LaTeX]) for high-quality hard copies.])
+document in a variety of output formats: HTML and ,(info [Info]) for
+on-line browsing, and ,(lout [Lout]) and ,(latex [LaTeX]) for
+high-quality hard copies.])
 
    (p [The input document can use Skribilo's ,(wikipedia/markup [markup
 language]) to provide information about the document's structure, which
@@ -143,12 +148,13 @@ so-called ,(ref :url
       (itemize
          (item [Output in a ,(ref :skribe %user-sui :ident "engines"
 :text [variety of formats]): HTML, XML, ,(lout [Lout]), ,(latex
-[LaTeX]), ,(context [ConTeXt]).])
+[LaTeX]), ,(context [ConTeXt]), and ,(info [Info]).])
          (item [Input using ,(skribe* [Skribe])'s ,(ref :skribe
 %user-sui :ident "skribe-syntax" :text [markup]) (see ,(ref :mark "self"
-:text [this example])) or using free form, markup-less text and
+:text [this example])), or using free form, markup-less text and
 conventions similar to those used in ,(ref :skribe %user-sui :ident
-"outline-syntax" :text [Emacs' outline mode]).])
+"outline-syntax" :text [Emacs' outline mode]), or from an ,(ref :skribe
+%user-sui :ident "rss2-syntax" :text [RSS,(~)2 feed]).])
          (item [Packages are available to produce: ,(ref :skribe
 %user-sui :ident "slides" :text [slides]) (overhead transparencies),
 ,(ref :skribe %user-sui :ident "pie-charts" :text [pie charts]), ,(ref
