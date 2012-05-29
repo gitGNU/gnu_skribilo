@@ -3,9 +3,9 @@
 ;;;
 
 (use-modules (skribilo ast)
-	     (skribilo engine)
-	     (skribilo source lisp)
-	     (skribilo package html-navtabs))
+             (skribilo engine)
+             (skribilo source lisp)
+             (skribilo package html-navtabs))
 
 (define (html-tabs n e)
   ;; Create one "navigation tab" for each chapter.
@@ -20,7 +20,7 @@
   (if (engine? html)
       (begin
         ;; Customizing the HTML output...
-	(engine-custom-set! html 'css "skribilo.css")
+        (engine-custom-set! html 'css "skribilo.css")
         (engine-custom-set! html 'html-navtabs-produce-css? #f)
         (engine-custom-set! html 'html-navtabs html-tabs)
         (engine-custom-set! html 'charset "UTF-8"))))
@@ -54,7 +54,7 @@
 
 (define (latex . body)
   (ref :url "http://www.latex-project.org/" :text body))
-  
+
 (define (context . body)
   (ref :url "http://www.pragma-ade.nl/" :text body))
 
@@ -95,7 +95,7 @@
 
 (define (stklos . body)
   (ref :url "http://www.stklos.org/" :text body))
-  
+
 (define %user-sui
   ;; Location of the User Manual's SUI file.
   "doc/user.sui")
@@ -130,8 +130,12 @@ text.])
    (p [Last but not least, Skribilo can be thought of as a complete
 ,(emph [document programming framework]) for the ,(scheme [Scheme
 programming language]) that may be used to automate a variety of
-document generation tasks.  Skribilo uses ,(guile [GNU Guile]) 1.8 or 2.0 as
-the underlying Scheme implementation.])
+document generation tasks.  Technically, the Skribilo language/API is an
+embedded domain-specific language (EDSL), implemented ,(it [via])
+so-called ,(ref :url
+"http://www.haskell.org/haskellwiki/Embedded_domain_specific_language#Degree_of_embedding"
+:text [“deep embedding”]).  Skribilo uses ,(guile [GNU Guile]) 1.8 or
+2.0 as the underlying Scheme implementation.])
 
 
    (chapter :title [Features] :number #f :file #f
@@ -154,6 +158,7 @@ computer programs]), and others.])
          (item [,(ref :skribe %user-sui :chapter "Bibliographies" :text
 [Bibliography management])—i.e., BibTeX on steroids thanks to the
 programmability brought by ,(scheme [Scheme]).])
+         (item [Unicode support (when using Guile 2.0).])
          (item [Use of a proper module system (that of ,(guile
 [Guile])) rather than ,(tt [load])-style interactions.])
          (item [And much more!  :-)])))
@@ -193,8 +198,8 @@ colored using Skribilo's computer program coloring features.])
 
       (mark "self")
       (tt (prog
-	     (source :language skribe
-		:file "index.skb"))))
+             (source :language skribe
+                :file "index.skb"))))
 
    (chapter :title [Mailing List] :number #f :file #f
       :ident "mailing-list"
@@ -215,11 +220,11 @@ repository using the following incantation:
 
 You can then happily hack on your side and eventually promote your
 changes ,(ref :ident "mailing-list" :text [on the mailing-list]).])
-      
+
       (p [The repository can also be ,(ref :url
 "http://git.sv.gnu.org/gitweb/?p=skribilo.git;a=summary" :text
 [browsed on-line]).])
-      
+
       (p [A tentative list of milestones and to-do items is in the ,(ref
 :url "http://git.sv.gnu.org/gitweb/?p=skribilo.git;a=blob;f=TODO" :text
 [,(tt [TODO]) file]).]))
@@ -271,7 +276,7 @@ entitled ,(ref :url
 "http://www-sop.inria.fr/mimosa/Manuel.Serrano/publi/jfp05/article.html"
 :text (it [Skribe: A Functional Authoring Language])) provides further
 insight.])
-	  (item [,(ref :url
+          (item [,(ref :url
 "http://docs.racket-lang.org/scribble/index.html" :text [Scribble]), the
 documentation system of Racket, is similar in spirit to Skribilo/Skribe.
 It has ,(ref :url
@@ -298,12 +303,12 @@ programming language).])
 ,(ref :text [implementation strategies for a purely functional SXML
 tree] :url "http://okmij.org/ftp/Scheme/parent-pointers.txt") is a good
 source of inspiration.])
-	  (item [,(ref :url
-	  "http://www.ccs.neu.edu/home/dorai/mistie/mistie.html" :text
+          (item [,(ref :url
+          "http://www.ccs.neu.edu/home/dorai/mistie/mistie.html" :text
 [Mistie]), a “programmable filter” in Scheme (for MzScheme) that
 allows the definition of filters from one markup language to another
 one.])
-	  (item [,(ref :url "http://www.it.usyd.edu.au/~jeff/nonpareil/"
+          (item [,(ref :url "http://www.it.usyd.edu.au/~jeff/nonpareil/"
 :text [Nonpareil]), Jeff Kingston's much anticipated successor to ,(lout
 [Lout]), both being purely functional document formatting
 systems/languages.  Although Nonpareil is more ambitious than Skribilo,
@@ -317,7 +322,7 @@ equivalent in Skribilo since Skribilo doesn't address text layout by
 itself).  It also includes interesting discussions about text selection
 and document traversal (Nonpareil's ,(it [doc]) objects have no parent
 pointers, unlike Skribilo's ,(tt [<ast>])).])
-	  (item [Good ol' ,(ref :url
+          (item [Good ol' ,(ref :url
 "http://www.gnu.org/software/texinfo/" :text [GNU Texinfo]) abstracts
 the various kinds of back-ends very well (in particular its
 cross-reference-related commands).])
@@ -335,9 +340,9 @@ derivative of ,(ref :url "http://docbook.org/" :text [Docbook]).])
 "http://www.t3x.org/attic/index.html#sd" :text [SD]), ,(ref :url
 "http://triptico.com/software/grutatxt.html" :text [Grutatxt]), and many
 others.])))
-	
+
    (chapter :title [The Name] :number #f :file #f
-      
+
       (p [Skribilo is an ,(wikipedia/esperanto [Esperanto]) noun, which
 literally means ,(ref :url
 "http://www.reta-vortaro.de/revo/art/skrib.html#skrib.0ilo" :text [“a
@@ -353,6 +358,5 @@ Skribilo is based on, is an adverb meaning “writing” in
 ;;; Local Variables:
 ;;; coding: utf-8
 ;;; ispell-local-dictionary: "american"
+;;; indent-tabs-mode: nil
 ;;; End:
-
-;;; arch-tag: fd51e0ce-d99f-4b70-8b92-9afbcfcf8855
