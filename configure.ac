@@ -2,11 +2,13 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT(skribilo, 0.9.2, skribilo-users@nongnu.org)
+AC_INIT([skribilo],
+        m4_esyscmd([build-aux/git-version-gen .tarball-version]),
+        [skribilo-users@nongnu.org])
 AC_CONFIG_AUX_DIR(build-aux)
 AC_CONFIG_MACRO_DIR(m4)
 
-AM_INIT_AUTOMAKE([1.11 gnu no-define check-news readme-alpha \
+AM_INIT_AUTOMAKE([1.11 gnu no-define readme-alpha \
   color-tests parallel-tests])
 
 AC_CONFIG_SRCDIR([src/guile/skribilo/reader.scm])

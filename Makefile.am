@@ -16,6 +16,12 @@ gen-ChangeLog:
 	  mv "$(distdir)/cl-t" "$(distdir)/ChangeLog";			\
 	fi
 
-dist-hook: gen-ChangeLog
+EXTRA_DIST += $(top_srcdir)/.version
+$(top_srcdir)/.version:
+	echo $(VERSION) > "$@-t" && mv "$@-t" "$@"
+gen-tarball-version:
+	echo "$(VERSION)" > "$(distdir)/.tarball-version"
 
-.PHONY: gen-ChangeLog
+dist-hook: gen-ChangeLog gen-tarball-version
+
+.PHONY: gen-ChangeLog gen-tarball-version
