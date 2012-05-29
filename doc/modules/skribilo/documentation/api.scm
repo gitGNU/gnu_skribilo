@@ -100,6 +100,10 @@
                            "{ Helvetica Base } @Font x\n}\n"
 
                            "
+# TeX and LaTeX, from Lout's `init' file.
+def @TeX { @OneCol { T &0.4fo {-0.2f @VShift E} &0.45fo X } }
+def @LaTeX { @OneCol { L &0.3fo { +0.1f @VShift 0.8f @Font A } &0.4fo @TeX } }
+
 # The `example' markup.
 def @SkribiloExample named @Title {} right x {
   @B { @Title }

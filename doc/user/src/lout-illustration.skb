@@ -1,0 +1,60 @@
+(use-modules (skribilo engine lout))
+
+(lout-illustration :ident "document-toolchain"
+                   :alt "a document toolchain" "
+
+# This is Lout code to produce a diagram.
+@Diag
+  aoutline { circle }
+  afont { Courier Base 1f }
+  boutline { circle }
+  bfont { Palatino Slope 2f }
+  bpaint { black }
+  bformat { white @Color @Body }
+  coutline { curvebox }
+  coutlinestyle { dotted }
+  doutline { curvebox }
+{
+  @Tbl
+    strut { yes }
+    indent { ctr }
+    aformat { @Cell A | @Cell marginhorizontal { 2.0fe } B |
+              @Cell C | @Cell D }
+    amargin { 1.0fe }
+  {
+    @Rowa D { W:: @DNode HTML }
+    @Rowa A { A:: @ANode txt } C { P:: @CNode Lout }
+          D { X:: @DNode PostScript }
+    @Rowa A { B:: @ANode skr } B { S:: @BNode Skribilo }
+          C { Q:: @CNode @LaTeX }
+    @Rowa A { C:: @ANode rss } C { R:: @CNode ConTeXt }
+          D { Y:: @DNode PDF }
+    @Rowa D { Z:: @DNode Info }
+  }
+
+  //
+
+  # input arrows
+  @Arrow from { A } to { S }
+  @Arrow from { B } to { S }
+  @Arrow from { C } to { S }
+
+  # arrows to intermediate files
+  @Arrow from { S } to { P }
+  @Arrow from { S } to { Q }
+  @Arrow from { S } to { R }
+
+  # PS/PDF incoming arrows
+  @Arrow from { P } to { X }
+  @Arrow from { P } to { Y }
+  @Arrow from { Q } to { X }
+  @Arrow from { Q } to { Y }
+  @Arrow from { R } to { X }
+  @Arrow from { R } to { Y }
+
+  # HTML and Info
+  @Link from { S } to { W } arrow { yes } path { vhcurve }
+  @Link from { S } to { Z } arrow { yes } path { vhcurve }
+
+}
+")

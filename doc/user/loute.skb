@@ -220,7 +220,17 @@ is ,(tt [#f]).]))
                   :common-args '()
 		  :source #f
                   :def '(define-markup (lout-illustration :rest
-		  illustration :key (file #f) ident alt) ...))))
+		  illustration :key (file #f) ident alt) ...))
+      
+      (p [The following example shows a simple diagram.  When using the
+,(tt [lout]) engine, the diagram is integrated in-line in the document.
+When using other engines, it is integrated using ,(markup-ref
+"image").])
+      
+      (example-produce
+        (example :legend "A Lout illustration"
+          (prgm :file "src/lout-illustration.skb"))
+        (disp (include "src/lout-illustration.skb")))))
 
 ;;; Local Variables:
 ;;; ispell-local-dictionary: "american"

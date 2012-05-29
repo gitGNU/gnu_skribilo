@@ -23,6 +23,7 @@ EXTRA_DIST += src/api1.skb						\
   src/prgm3.skb src/prgm4.skb src/slides.skb				\
   src/start1.skb src/start2.skb						\
   src/start3.skb src/start4.skb src/start5.skb				\
+  src/lout-illustration.skb						\
   src/outline.txt src/scheme.scm
 
 EXTRA_DIST += FONTS
