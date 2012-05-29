@@ -55,6 +55,7 @@ div.skribilo-title {
   font-family: Junction, sans-serif;
   font-weight: normal;
   text-align: left;
+  line-height: 1.6;
   background: #ffffff;
   padding: 0 5% 0 5%
 }

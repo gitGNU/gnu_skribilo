@@ -75,6 +75,7 @@ table.author {
   font-weight: normal;
   font-size: normal;
   text-align: left;
+  line-height: 1.6;
   background: #ffffff;
   padding: 0 5% 0 5%;
 }
