@@ -27,12 +27,14 @@ Previously, footnotes would not get printed in the case of chapters that
 are not output in a separate file.
 
 ** HTML engine: use ". " as the default chapter number-title separator
-** HTML engine: the `charset' custom changes the output encoding
+** HTML engine: the `charset' custom changes the output encoding (on Guile 2.0)
 ** Lout/LaTeX engine: new `encoding' custom
+** Lout engine: `lout-illustration' calls the `inline-definitions-proc' custom
 ** Improved rendering of pie charts with Ploticus
 ** On Guile 2.0, modules are compiled and `.go' files are installed
+** Improve internationalization of informative and error messages
 ** New test suite (run "make check")
-** Various documentation fixes, improvements and additions
+** Various documentation fixes, improvements, and additions
 
 * New in Skribilo 0.9.1
 
