@@ -28,6 +28,7 @@ let
 	pkgs.releaseTools.sourceTarball {
 	  name = "skribilo-tarball";
 	  src = <skribilo>;
+          buildNativeInputs = [ pkgs.git ];       # for `git-version-gen'
 	  buildInputs = [ greader ]
             ++ (with pkgs; [ gettext texinfo guile guile_lib imagemagick ]);
 	};
