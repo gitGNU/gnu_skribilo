@@ -2899,6 +2899,7 @@
     (let ((lout (find-engine 'lout)))
       (string-append "@SysInclude { picture }\n"
 		     (engine-custom lout 'includes)
+                     ((engine-custom lout 'inline-definitions-proc) lout)
 		     "\n\n@Illustration\n"
 		     "  @InitialFont { "
 		     (engine-custom lout 'initial-font)
