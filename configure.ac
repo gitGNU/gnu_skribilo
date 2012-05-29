@@ -2,9 +2,11 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT([skribilo],
+AC_INIT([Skribilo],
         m4_esyscmd([build-aux/git-version-gen .tarball-version]),
-        [skribilo-users@nongnu.org])
+        [skribilo-users@nongnu.org],
+	[skribilo],
+	[http://nongnu.org/skribilo/])
 AC_CONFIG_AUX_DIR(build-aux)
 AC_CONFIG_MACRO_DIR(m4)
 
@@ -85,7 +87,7 @@ AM_CONDITIONAL([HAVE_PLOTICUS], [test "x$PLOTICUS" != "x"])
 AM_PATH_LISPDIR
 
 
-pkgdatadir="$datadir/$PACKAGE_NAME"
+pkgdatadir="$datadir/$PACKAGE_TARNAME"
 if test "x$guilemoduledir" = "x"; then
   guilemoduledir="$pkgdatadir/$PACKAGE_VERSION"
 fi
