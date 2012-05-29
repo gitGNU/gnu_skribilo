@@ -37,7 +37,7 @@ AC_PATH_PROGS([GUILD], [guild guile-tools])
 # GNU Guile 2.0.x and its compiler.
 AM_CONDITIONAL([HAVE_GUILE2],
   [test "x$GUILD" != "x" && \
-   "$GUILD" compile --help 2>&1 >/dev/null])
+   "$GUILD" compile --help >/dev/null 2>&1])
 
 # Need Guile-Reader.
 GUILE_MODULE_REQUIRED([system reader])
