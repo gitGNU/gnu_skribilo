@@ -25,7 +25,7 @@
 @LP
 Érick Gallesio, Manuel Serrano, Ludovic Courtès
 //1.3fx
-"http://www.nongnu.org/skribilo/" @ExternalLink { @I "http://www.nongnu.org/skribilo/" }
+"@PACKAGE_URL@" @ExternalLink { @I "@PACKAGE_URL@" }
 
 }
 
