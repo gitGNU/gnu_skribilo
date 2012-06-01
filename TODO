@@ -1,6 +1,6 @@
 -*- Org -*-
 
-Copyright 2007, 2008, 2009  Ludovic Courtès <ludo@gnu.org>
+Copyright 2007, 2008, 2009, 2012  Ludovic Courtès <ludo@gnu.org>
 
   Copying and distribution of this file, with or without modification,
   are permitted in any medium without royalty provided the copyright
@@ -75,7 +75,7 @@ implemented by `skribe-load' (see, e.g., `web-article').
 *** Add an Org-Mode reader
 Could be based on [[http://wingolog.org/software/guile-present/][Andy's parser in Guile-Present]].
 *** Add a Texinfo reader
-Could be based on the one in [[http://home.gna.org/guile-lib/][Guile-Lib]].
+Could be based on the one in [[http://www.nongnu.org/guile-lib/][Guile-Lib]].
 
 ** Write a nice GUI based on Andy's STexi browser
 ** Add a BibTeX parser

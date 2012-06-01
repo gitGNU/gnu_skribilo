@@ -69,7 +69,7 @@
   (ref :url "http://ploticus.sf.net/" :text body))
 
 (define (guile-lib . body)
-  (ref :url "http://home.gna.org/guile-lib/" :text body))
+  (ref :url "http://www.nongnu.org/guile-lib/" :text body))
 
 (define (freedom . body)
   (ref :url "http://www.gnu.org/philosophy/free-sw.html" :text body))

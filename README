@@ -63,7 +63,7 @@ To convert images in the `fig' format:
 To be able to use the `rss-2' reader, you will need:
 
   * Guile-Lib (specifically, `sxml' and `htmlprag' modules)
-    http://home.gna.org/guile-lib/
+    http://www.nongnu.org/guile-lib/
 
 This is it!
 
