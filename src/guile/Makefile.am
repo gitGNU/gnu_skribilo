@@ -47,8 +47,18 @@ SOURCES =								\
 SOURCES += $(readers) $(packages) $(engines)
 
 readers =							\
-  skribilo/reader/skribe.scm skribilo/reader/outline.scm	\
-  skribilo/reader/rss-2.scm
+  skribilo/reader/skribe.scm skribilo/reader/outline.scm
+
+if BUILD_RSS2_READER
+
+readers += skribilo/reader/rss-2.scm
+
+else !BUILD_RSS2_READER
+
+EXTRA_DIST += skribilo/reader/rss-2.scm
+
+endif !BUILD_RSS2_READER
+
 
 engines =						\
   skribilo/engine/base.scm skribilo/engine/context.scm	\

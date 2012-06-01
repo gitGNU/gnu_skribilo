@@ -63,6 +63,9 @@ if test "x$have_sxml_simple$have_htmlprag" != "xyesyes"; then
   AC_MSG_WARN([Guile-Lib modules needed by the `rss-2' reader are missing.])
 fi
 
+AM_CONDITIONAL([BUILD_RSS2_READER],
+  [test "x$have_sxml_simple$have_htmlprag" == "xyesyes"])
+
 # Look for `convert', from ImageMagick.
 AC_PATH_PROG([CONVERT], [convert])
 if test "x$CONVERT" == "x"; then
