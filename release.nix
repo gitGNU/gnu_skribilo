@@ -50,6 +50,23 @@ let
 	  inherit buildOutOfSourceTree;
 	};
 
+    build_without_lout =
+      { system ? builtins.currentSystem }:
+
+      let
+	pkgs = import <nixpkgs> { inherit system; };
+        greader = (import <guile-reader/release.nix>).build {
+          inherit system;
+        };
+      in
+	pkgs.releaseTools.nixBuild {
+	  name = "skribilo-without-lout";
+	  src = jobs.tarball;
+	  buildInputs = [ greader ]
+            ++ (with pkgs; [ guile guile_lib imagemagick ploticus ]);
+	  inherit buildOutOfSourceTree;
+	};
+
     build_guile18 =
       { system ? builtins.currentSystem }:
 
