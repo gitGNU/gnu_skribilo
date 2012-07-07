@@ -227,10 +227,12 @@ is ,(tt [#f]).]))
 When using other engines, it is integrated using ,(markup-ref
 "image").])
       
-      (example-produce
-        (example :legend "A Lout illustration"
-          (prgm :file "src/lout-illustration.skb"))
-        (disp (include "src/lout-illustration.skb")))))
+      (let ((e (example :legend "A Lout illustration"
+                 (prgm :file "src/lout-illustration.skb"))))
+        (if %have-lout?
+	    (example-produce e
+	      (disp (include "src/lout-illustration.skb")))
+	    e))))
 
 ;;; Local Variables:
 ;;; ispell-local-dictionary: "american"

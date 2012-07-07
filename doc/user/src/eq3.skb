@@ -9,7 +9,7 @@ accordingly.])
 aligned with one another.])
 
    (eq :ident "eq-limit-b-over-l"
-       :renderer 'lout
+       :renderer (and %have-lout? 'lout)
        :align-with '=
        '(= (limit (/ lambda beta) 0
 		  (apply IPL n k))
@@ -26,7 +26,7 @@ aligned with one another.])
    [This equation can be simplified as follows:]
 
    (eq :ident "eq-limit-b-over-l-simplified"
-       :renderer 'lout
+       :renderer (and %have-lout? 'lout)
        :align-with '=
        '(= ;; simplified
 	   (/ (expt (+ alpha beta) k)

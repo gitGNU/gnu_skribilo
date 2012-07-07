@@ -1,7 +1,7 @@
 ;;; eq.skb  --  Equation formatting.
 ;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2006, 2007, 2008, 2009  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2006, 2007, 2008, 2009, 2012  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This file is part of Skribilo.
@@ -32,7 +32,10 @@ may be loaded by adding the following form at the top of your document:]
       [It allows the inclusion of (complex) equations in your documents,
 such as, for example, the following:]
 	
-	(disp (eq :renderer (if (engine-format? "html") 'lout #f)
+	(disp (eq :renderer (if (and %have-lout?
+	                             (engine-format? "html"))
+	                        'lout
+				 #f)
                   :ident "eq-disponibilite"
 		  `(= (apply A D)
 		      (sum :from (= i b) :to (* S b)

@@ -34,7 +34,13 @@ skrinfo_DATA = skribilo.info
 html_DATA = user.html user.sui
 dist_html_DATA = skribilo.css			\
   lobster-1.4.otf junction.ttf
+
+if HAVE_LOUT
 BUILT_SOURCES = lout/front-page.lout
+else !HAVE_LOUT
+BUILT_SOURCES =
+endif !HAVE_LOUT
+
 CLEANFILES = $(BUILT_SOURCES) $(html_DATA) skribilo.info
 
 # `user.sui' is produced by the HTML engine.
@@ -55,6 +61,11 @@ skrflags += -e "(define %have-ploticus? (= 0 1))"	\
 	    -e "(define %ploticus-path (= 0 1))"
 endif
 
+if HAVE_LOUT
+skrflags += -e "(define %have-lout? (= 1 1))"
+else
+skrflags += -e "(define %have-lout? (= 0 1))"
+endif
 
 load_path = $(top_srcdir)/doc/modules
 load_compiled_path = $(top_builddir)/doc/modules
