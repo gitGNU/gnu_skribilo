@@ -1,7 +1,7 @@
 ;;; bib.skb  --  The Skribilo bibliography.
 ;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2007, 2008  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2007, 2008, 2012  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2001, 2002, 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -24,6 +24,7 @@
 ;*    Index                                                            */
 ;*---------------------------------------------------------------------*/
 (chapter :title "Bibliographies"
+         :ident "biblio"
 
    (p [Skribilo provides support for bibliographies.  To setup a
 bibliography database and to be able to refer to its entries from a
@@ -259,8 +260,10 @@ are options of there parent.])
 (index "the-bibliography" :note "sorting")
 
 (p [The ,(param :sort) option of the ,(markup-ref "the-bibliography")
-markup is used for sorting the bibliography entries. There are three
-pre-existing functions for sorting entries:])
+markup is used for sorting the bibliography entries.  There are three
+pre-existing functions for sorting entries, defines in the ,(code
+[(skribilo biblio)]) module (see ,(numref :text [Section] :ident
+"modules")).])
 
 (doc-markup 'bib-sort/authors
 	    '((l [The list of entries.]))
