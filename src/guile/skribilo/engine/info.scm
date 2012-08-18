@@ -83,6 +83,7 @@
 ;*    info-node ...                                                    */
 ;*---------------------------------------------------------------------*/
 (define (info-node node next prev up)
+   ;; info "(info) Expert Info"
    (print "\n")
    (format #t "File: ~a,  Node: ~a,  ~:[~*~;Next: ~a,  ~]~:[~*~;Prev: ~a,  ~]Up: ~a~%"
            (info-dest) node next next prev prev up))
@@ -222,6 +223,7 @@
                                  footnotes)
                        ))))
               ;; FIXME: Handle `:ending'.
+              ;; TODO: Emit a tag table (info "(info) Tags").
               )))
 
 ;*---------------------------------------------------------------------*/
