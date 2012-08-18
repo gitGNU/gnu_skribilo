@@ -1,7 +1,7 @@
 ;;; start.skb  --  Getting started with Skribilo
 ;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2007, 2008, 2009  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2007, 2008, 2009, 2012  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -34,7 +34,7 @@ processed.])
 
 ;*--- Hello world -----------------------------------------------------*/
 (section :title "Hello World!"
-   
+
    (p [In this section we show how to produce very simple electronic documents
 with Skribilo. Suppose that we want to produce the following Web document:
 
@@ -63,7 +63,7 @@ In Skribilo, the very same document must be written:
 
 ;*--- Adding colors and fonts -----------------------------------------*/
 (section :title "Adding Colors and Fonts"
-   
+
    (p [Let us suppose that we want now to colorize and change the face of some
 words such as:
 
@@ -95,9 +95,9 @@ As one may notice the Skribilo version is much more compact than the HTML one.])
 
 ;*--- Structured documents --------------------------------------------*/
 (section :title "Structured Documents" [
-,(p [For large documents there is an obvious need of structure. Skribilo 
-documents may contain ,(bold "chapters"), ,(bold "sections"), 
-,(bold "subsections"), ,(bold "itemize"), ... For instance, if we want to 
+,(p [For large documents there is an obvious need of structure. Skribilo
+documents may contain ,(bold "chapters"), ,(bold "sections"),
+,(bold "subsections"), ,(bold "itemize"), ... For instance, if we want to
 extend our previous example to:])
 
 ,(disp :verb #t [,(bold (font :size 2. "Hello World!"))
@@ -117,22 +117,48 @@ The Skribilo source for that text is:
 
 ;*--- Hyperlinks ------------------------------------------------------*/
 (section :title "Hyperlinks"
-   
+
    (p [A Skribilo document may contain links to chapters, to sections, to other
 Skribilo documents or web pages. The following Skribilo source
 code illustrates these various kinds of links:
 
 ,(prgm :language skribe (source :file "src/start4.skb"))]))
 
+;*--- Modules ---------------------------------------------------------*/
+(section :title "Using Modules" :info-node "Modules" :ident "modules"
+
+   (index :index *function-index* "use-modules")
+   (p [Skribilo comes with extra features bundled in ,(emph [modules]).
+In fact, anyone can write new modules that extend Skribilo.  For example, extra ,(ref :ident
+"biblio" :text [bibliography features]) are bundled in a module called
+,(code [(skribilo biblio)]).  To use them in a document, that document
+the following line must be added at the very beginning of the document,
+before the ,(markup-ref "document") markup:
+
+,(prgm :language skribe (source [(use-modules (skribilo biblio))]))
+
+Suppose you also want to use the ,(ref :ident "equations" :text
+[mathematical formula layout package]), which is bundled in the ,(code
+[(skribilo package eq)]) module.  To do that, you can either add another
+,(code [use-modules]) form at the top of the document, or combine both:
+
+,(prgm :language skribe (source [
+(use-modules (skribilo biblio)
+	     (skribilo package eq))]))])
+
+  (p [The module system described above is actually that of ,(ref :text
+[GNU Guile] :url "http://www.gnu.org/software/guile/").  More
+information is available in Guile's manual.]))
+
 ;*--- Dynamic documents -----------------------------------------------*/
 (section :title "Dynamic Documents"
-   
+
    (p [Since Skribilo is a programming language, rather than just a markup language,
 it is easy to use it to generate some parts of a document. This section
 presents here the kind of documents that can be created with Skribilo.])
 
    (subsection :title "Simple Computations"
-      
+
       (p [In this section we present how to introduce a simple
 computation into a document. For instance, the following sentence
 
@@ -161,11 +187,11 @@ The value of ,(symbol "pi") is ,(* 4 (atan 1)).])
 ]))
 
    (subsection :title "Text Generation"
-      
+
       (p [When building a document, one
 often need to generate some repetitive text. Skribilo programming skills
 can be used to ease the construction of such documents as illustrated below.
-,(disp 
+,(disp
 (itemize
  (map (lambda (x)
 	(item [The square of ,(bold x) is ,(bold (* x x))]))
@@ -174,12 +200,12 @@ This text has been generated with the following piece of code
 ,(prgm :language skribe [
 (itemize
  (map (lambda (x)
-        (item \[The square of \,(bold x) is \,(bold (* x x))\]))
+	(item \[The square of \,(bold x) is \,(bold (* x x))\]))
       '(1 2 3 4 5 6 7 8 9)))
 ])]))
 
    (subsection :title "Introspection"
-      
+
       (p [In Skribilo, a document is represented by a tree which is
 available to the user. So, it is easy to perform introspective tasks on
 the current document. For instance the following code displays as an
@@ -200,7 +226,7 @@ are put in italics in an itemize.])
 
 ;*--- Compiling documents --------------------------------------*/
 (section :title "Compiling Skribilo Documents"
-   
+
    (p [There are several ways to render a Skribilo document.  It can be
 statically compiled by the ,(tt "skribilo") compiler to various formats
 such as HTML, LaTeX, Lout and so on.  In this section we only present
@@ -213,7 +239,7 @@ In order to compile to various formats one must type in:]
 $ skribilo --target=html file.skb -o file.html ,(char 35) ,(it "This produces an HTML file.")
 $ skribilo -t latex file.skb -o file.tex  ,(char 35) ,(it "This produces a TeX file.")
 $ skribilo -t lout file.skb -o file.lout ,(char 35) ,(it "This produces a Lout file.")])
-  
+
      [The reference of the ,(tt [skribilo]) compiler is given in
 ,(numref :text [Chapter] :ident "compiler").])))
 
