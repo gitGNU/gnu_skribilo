@@ -39,6 +39,7 @@
   :autoload   (skribilo sui)           (document-sui)
   :autoload   (ice-9 rdelim)           (read-line)
   :autoload   (ice-9 regex)            (regexp-substitute/global)
+  :use-module (ice-9 match)
 
   :use-module (srfi srfi-1)
   :use-module (srfi srfi-13)
@@ -1205,20 +1206,24 @@
 		     (body
                       ;; Collect the footnotes of all the sub-containers that
                       ;; are to be output in the same file.
-                      (let ((subsections
-                             (find-down (lambda (s)
+                      (match (find-down (lambda (s)
                                           (section-in-current-file? s e))
-                                        n)))
-                        (reverse
-                         (let loop ((subsections (cons n subsections))
-                                    (footnotes   '()))
-                           (cond ((pair? subsections)
-                                  (fold loop footnotes subsections))
-                                 ((null? subsections)
-                                  footnotes)
-                                 (else
-                                  (container-env-get subsections
-                                                     'footnote-env)))))))))
+                                        n)
+                        ((containers ...)
+                         (reverse
+                          (let loop ((subsections (cons n containers))
+                                     (footnotes   '()))
+                            (match subsections
+                              ((subsections ...)
+                               (fold loop footnotes subsections))
+                              (()
+                               footnotes)
+                              (container
+                               (append footnotes
+                                       (or (container-env-get container
+                                                              'footnote-env)
+                                           '())))))))
+                        (_ #f)))))
 	  (page (new markup
 		   (markup '&html-page)
 		   (ident (string-append id "-page"))
