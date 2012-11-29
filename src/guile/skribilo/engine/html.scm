@@ -954,7 +954,7 @@
 			      (output (markup-body fn) e)
 			      (display "\n<br>\n")
 			      (loop (cdr fns)))))
-		    (display "<div>")))))
+		    (display "</div>")))))
 
 ;*---------------------------------------------------------------------*/
 ;*    html-title-authors ...                                           */
