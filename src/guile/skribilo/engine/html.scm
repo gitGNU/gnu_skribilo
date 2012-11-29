@@ -1211,7 +1211,7 @@
                                         n)
                         ((containers ...)
                          (reverse
-                          (let loop ((subsections (cons n containers))
+                          (let loop ((subsections containers)
                                      (footnotes   '()))
                             (match subsections
                               ((subsections ...)
