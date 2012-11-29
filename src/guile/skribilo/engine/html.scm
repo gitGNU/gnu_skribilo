@@ -1216,8 +1216,6 @@
                             (match subsections
                               ((subsections ...)
                                (fold loop footnotes subsections))
-                              (()
-                               footnotes)
                               (container
                                (append footnotes
                                        (or (container-env-get container
