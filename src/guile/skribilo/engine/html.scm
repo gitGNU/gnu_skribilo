@@ -943,6 +943,8 @@
 		    (let loop ((fns footnotes))
 		       (if (pair? fns)
 			   (let ((fn (car fns)))
+                              (display "\n<div class=\"footnote\">")
+
                               ;; Note: the <a> tags must not be nested.
 			      (format #t "<a name=\"footnote-~a\"></a>"
 				      (string-canonicalize
@@ -953,7 +955,8 @@
                               (format #t "<sup><small>~a</small></sup></a>"
                                       (markup-option fn :label))
 			      (output (markup-body fn) e)
-			      (display "\n<br>\n")
+
+			      (display "\n</div>\n")
 			      (loop (cdr fns)))))
 		    (display "</div>")))))
 
