@@ -6,6 +6,23 @@ Copyright (C) 2005, 2006, 2007, 2008, 2009, 2012  Ludovic Courtès <ludo@gnu.org
 
 
 
+* New in Skribilo 0.9.3
+
+** HTML engine: all the footnotes are emitted for single-file documents
+
+Previously, only the footnotes of the last chapter or section would be
+output.
+
+** HTML engine: each footnote is enclosed in <div class="footnote">
+
+Previously, each footnote was surrounded by <br> and </br>.  The above
+change should make CSS customization easier.
+
+** HTML engine: footnote HTML is now valid
+
+It used to be that footnote HTML code contained an extraneous </div>,
+and nested <a> tags, which is invalid.
+
 * New in Skribilo 0.9.2
 
 ** Skribilo is now distributed under GPLv3 or later
