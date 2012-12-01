@@ -1147,22 +1147,11 @@
 
 			  (display "</tbody>\n</table>\n")))))))
 
-(define (section-in-separate-file? n e)
-  ;; Return true if N, a node (chapter, section, etc.), is to be put in a
-  ;; separate file, according to the customs of engine E.
-  (and (container? n)
-       (not (document? n))
-       (or (markup-option n :file)
-           (let ((kind (markup-markup n)))
-             (engine-custom e (string->symbol
-                               (string-append (symbol->string kind)
-                                              "-file")))))))
-
-(define (section-in-current-file? n e)
-  ;; Return true if N is to be output in the current file, or in the main
-  ;; file.
-  (and (container? n)
-       (not (section-in-separate-file? n e))))
+(define (sections-in-same-file? n1 n2 e)
+  ;; Return #t when N1 and N2 are to be output in the same file according to
+  ;; E's settings.
+  (and (container? n1) (container? n2)
+       (equal? (html-file n1 e) (html-file n2 e))))
 
 ;*---------------------------------------------------------------------*/
 ;*    &html-generic-document ...                                       */
@@ -1207,7 +1196,7 @@
                       ;; Collect the footnotes of all the sub-containers that
                       ;; are to be output in the same file.
                       (match (find-down (lambda (s)
-                                          (section-in-current-file? s e))
+                                          (sections-in-same-file? s n e))
                                         n)
                         ((containers ...)
                          (reverse
