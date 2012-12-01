@@ -943,14 +943,15 @@
 		    (let loop ((fns footnotes))
 		       (if (pair? fns)
 			   (let ((fn (car fns)))
-			      (format #t "<a name=\"footnote-~a\">"
+                              ;; Note: the <a> tags must not be nested.
+			      (format #t "<a name=\"footnote-~a\"></a>"
 				      (string-canonicalize
 				       (container-ident fn)))
                               (format #t "<a href=\"#footnote-site-~a\">"
                                       (string-canonicalize
                                        (container-ident fn)))
-			      (format #t "<sup><small>~a</small></sup></a></a> "
-				      (markup-option fn :label))
+                              (format #t "<sup><small>~a</small></sup></a>"
+                                      (markup-option fn :label))
 			      (output (markup-body fn) e)
 			      (display "\n<br>\n")
 			      (loop (cdr fns)))))
