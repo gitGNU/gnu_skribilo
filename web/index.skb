@@ -304,6 +304,11 @@ S-expressions), available in ,(guile [Guile 2.0]).  The
 operator provides an interesting, purely functional approach to
 documentation transformation (not unlike XSLT, but with a real
 programming language).])
+          (item [The ,(ref :url "http://www.jstatsoft.org/v46/i03/paper"
+:text [Org-Mode paper about reproducible research]) introduces ideas
+that can be usefully implemented in Skribilo: a Skribilo document can
+embed executable code, and run it to include its results at compilation
+time.])
           (item [,(ref :url "http://okmij.org/ftp/Scheme/SXML.html"
 :text [SXML]), XML as S-expressions.  Oleg Kiselyov's discussion of
 ,(ref :text [implementation strategies for a purely functional SXML
