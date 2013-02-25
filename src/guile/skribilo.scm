@@ -1,6 +1,6 @@
 ;;; skribilo.scm  --  The Skribilo document processor.
 ;;;
-;;; Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2013  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
 ;;;
 ;;;
@@ -309,6 +309,15 @@ options."
 ;;;
 
 (define (skribilo . args)
+  ;; Install the user-specified locale.
+  (catch 'system-error
+    (lambda _
+      (setlocale LC_ALL ""))
+    (lambda args
+      (format (current-error-port)
+              (_ "warning: failed to install locale: ~a~%")
+              (strerror (system-error-errno args)))))
+
   (let* ((options           (parse-args args))
 
 	 (reader-name       (string->symbol (assoc-ref options :reader)))
@@ -339,9 +348,6 @@ options."
     (define user-module
       ;; The environment in which the document is evaluated.
       (make-user-module (string->symbol compat)))
-
-    ;; Install the user-specified locale.
-    (setlocale LC_ALL "")
 
     (if (> (*debug*) 4)
 	(set! %load-hook
