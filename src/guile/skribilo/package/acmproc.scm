@@ -2,7 +2,7 @@
 ;;; -*- coding: iso-8859-1 -*-
 ;;;
 ;;; Copyright 2003, 2004  Manuel Serrano
-;;; Copyright 2007  Ludovic Courtès <ludo@chbouib.org>
+;;; Copyright 2007, 2013  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This file is part of Skribilo.
@@ -25,8 +25,7 @@
   :use-module (skribilo engine)
   :use-module (skribilo writer)
   :autoload   (skribilo output)         (output)
-  :autoload   (skribilo package base)   (chapter font flush
-                                         toc the-bibliography)
+  :use-module (skribilo package base)
   :autoload   (skribilo utils keywords) (the-options the-body)
   :autoload   (skribilo evaluator)      (evaluate-document)
 
