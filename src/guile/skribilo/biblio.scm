@@ -1,7 +1,7 @@
 ;;; biblio.scm  --  Bibliography functions.
 ;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2005, 2006, 2007, 2009  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2006, 2007, 2009, 2013  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2001, 2002, 2003, 2004  Manuel Serrano
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@essi.fr>
 ;;;
@@ -109,7 +109,7 @@
            (if (and file col line)
                (format (current-error-port)
                        (_ "~a:~a:~a: invalid bibliography entry: ~a~%")
-                       file line col)
+                       file line col entry)
                (format (current-error-port)
                        (_ "invalid bibliography entry: ~a~%")
                        entry))))
