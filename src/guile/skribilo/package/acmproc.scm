@@ -52,12 +52,12 @@
    (markup-writer '&latex-author le
       :before (lambda (n e)
 		 (let ((body (markup-body n)))
-		    (format #f "\\numberofauthors{~a}\n\\author{\n"
+		    (format #t "\\numberofauthors{~a}\n\\author{\n"
 			    (if (pair? body) (length body) 1))))
       :action (lambda (n e)
 		 (let ((body (markup-body n)))
 		    (for-each (lambda (a)
-				 (display "\\alignauthor\n")
+                                 (display "\\alignauthor\n")
 				 (output a e))
 			      (if (pair? body) body (list body)))))
       :after "}\n")
