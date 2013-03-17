@@ -1,6 +1,6 @@
 ;;; lib.scm -- Utilities.                 -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2005, 2007, 2009, 2012  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2007, 2009, 2012, 2013  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
 ;;;
 ;;;
@@ -23,7 +23,9 @@
   :use-module (skribilo utils syntax)
   :export (skribe-ast-error skribe-error
            skribe-type-error
-           skribe-warning skribe-warning/ast
+           warning/loc
+           skribe-warning
+           skribe-warning/ast
            skribe-message
 
 	   type-name
@@ -258,13 +260,17 @@
       (%skribe-warn level #f #f #f obj)))
 
 
-(define (skribe-warning/ast level ast . obj)
+(define (warning/loc level loc . obj)
   (if (>= (*warning*) level)
-      (let ((l (ast-loc ast)))
-	(if (location? l)
-	    (%skribe-warn level (location-file l) (location-line l)
-                          (location-column l) obj)
-	    (%skribe-warn level #f #f #f obj)))))
+      (if (location? loc)
+          (%skribe-warn level (location-file loc) (location-line loc)
+                        (location-column loc) obj)
+          (%skribe-warn level #f #f #f obj))))
+
+(define (skribe-warning/ast level ast . obj)
+  (apply warning/loc level
+         (and (ast? ast) (ast-location ast))
+         obj))
 
 ;;;
 ;;; SKRIBE-MESSAGE

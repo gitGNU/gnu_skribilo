@@ -1,7 +1,7 @@
 ;;; base.scm -- The base markup package of Skribe/Skribilo.
 ;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2005, 2006, 2007, 2008, 2009  Ludovic Courtès  <ludo@gnu.org>
+;;; Copyright 2005, 2006, 2007, 2008, 2009, 2013  Ludovic Courtès  <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -27,6 +27,7 @@
 
   :use-module (skribilo ast)
   :use-module (skribilo resolve)
+  :use-module (skribilo location)
   :use-module (skribilo utils keywords)
   :autoload   (srfi srfi-1)        (every any filter)
   :autoload   (skribilo evaluator) (include-document)
@@ -1065,36 +1066,24 @@
 		    (skribe #f)
 		    (page #f)
                     (sort-bib-refs bib-sort-refs/number))
-   (define (unref ast text kind)
+   (define (unref text kind)
       (let ((msg (format #f "can't find `~a': " kind)))
-	 (if (ast? ast)
-	     (begin
-		(skribe-warning/ast 1 ast 'ref msg text)
-		(new markup
-		   (markup 'unref)
-		   (ident (symbol->string (gensym "unref")))
-		   (class class)
-                   (loc   &invocation-location)
-		   (required-options '(:text))
-		   (options `((kind ,kind) ,@(the-options opts :ident :class)))
-		   (body (list text ": " (ast->file-location ast)))))
-	     (begin
-		(skribe-warning 1 'ref msg text)
-		(new markup
-		   (markup 'unref)
-		   (ident (symbol->string (gensym "unref")))
-		   (class class)
-                   (loc   &invocation-location)
-		   (required-options '(:text))
-		   (options `((kind ,kind) ,@(the-options opts :ident :class)))
-		   (body text))))))
+        (warning/loc 1 &invocation-location 'ref msg text)
+        (new markup
+             (markup 'unref)
+             (ident (symbol->string (gensym "unref")))
+             (class class)
+             (loc   &invocation-location)
+             (required-options '(:text))
+             (options `((kind ,kind) ,@(the-options opts :ident :class)))
+             (body (list text ": " (location->string &invocation-location))))))
    (define (skribe-ref skribe)
      (let* ((sui (load-sui skribe))
             (os  (the-options opts :skribe :class :text))
             (u   (sui-ref->url (dirname (search-path (*sui-path*) skribe))
                                sui ident os)))
        (if (not u)
-           (unref #f os 'sui-ref)
+           (unref os 'sui-ref)
            (ref :url u :text text :class class))))
    (define (handle-ref text)
       (new markup
@@ -1130,7 +1119,7 @@
 					   ,@(the-options opts :ident :class)))
 				(body (new handle
 					 (ast s))))
-			     (unref n title (or kind 'title)))))))))
+			     (unref title (or kind 'title)))))))))
    (define (do-ident-ref text kind)
       (if (not (string? text))
 	  (skribe-type-error 'ref "Illegal reference" text "string")
@@ -1150,7 +1139,7 @@
 					   ,@(the-options opts :ident :class)))
 				(body (new handle
 					 (ast s))))
-			     (unref n text (or kind 'ident)))))))))
+			     (unref text (or kind 'ident)))))))))
    (define (mark-ref mark)
      (do-ident-ref mark 'mark))
    (define (make-bib-ref v)
@@ -1169,8 +1158,7 @@
 		    (o (markup-option s 'used)))
 		(markup-option-add! s 'used (if (pair? o) (cons h o) (list h)))
 		n)
-	     (unref #f v 'bib)))) ; FIXME: This prevents source location info
-				  ; from being provided in the warning msg
+	     (unref v 'bib))))
    (define (bib-ref text)
       (if (pair? text)
 	  (new markup
@@ -1205,7 +1193,7 @@
 					,@(the-options opts :ident :class)))
 			     (body (new handle
 				      (ast l))))
-			  (unref n line 'line)))))))
+			  (unref line 'line)))))))
    (let ((b (the-body opts)))
       (if (not (null? b))
 	  (skribe-warning 1 'ref "Arguments ignored " b))
