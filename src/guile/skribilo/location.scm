@@ -1,7 +1,7 @@
 ;;; location.scm -- Skribilo source location.
 ;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2005, 2007, 2009, 2010, 2012  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2007, 2009, 2010, 2012, 2013  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
 ;;;
 ;;;
@@ -27,7 +27,8 @@
   :export (<location> location? ast-location
 	   location-file location-line location-column
            invocation-location
-           source-properties->location))
+           source-properties->location
+           location->string))
 
 ;;; Author:  Ludovic Courtès
 ;;;
@@ -112,5 +113,12 @@ etc."
                 :file file
                 :line (and line (+ line 1))
                 :column (and col (+ col 1))))))
+
+(define (location->string loc)
+  "Return a user-friendly representation of LOC."
+  (if (location? loc)
+      (format #f "~a:~a:~a:" (location-file loc) (location-line loc)
+              (location-column loc))
+      "<unknown-location>:"))
 
 ;;; location.scm ends here.

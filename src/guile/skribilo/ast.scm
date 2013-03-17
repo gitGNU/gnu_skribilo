@@ -2,7 +2,7 @@
 ;;;
 ;;; Copyright 2003, 2004, 2009  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
 ;;; Copyright 2003, 2004  Manuel Serrano
-;;; Copyright 2005, 2006, 2007, 2012  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2006, 2007, 2012, 2013  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This file is part of Skribilo.
@@ -198,10 +198,7 @@
 
 
 (define (ast->file-location ast)
-   (let ((l (ast-loc ast)))
-     (if (location? l)
-	 (format #f "~a:~a:" (location-file l) (location-line l))
-	 "")))
+  (location->string (ast-loc ast)))
 
 (define-generic ast->string)
 
