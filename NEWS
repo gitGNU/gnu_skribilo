@@ -24,6 +24,7 @@ It used to be that footnote HTML code contained an extraneous </div>,
 and nested <a> tags, which is invalid.
 
 ** acmproc: Fix typos in the LaTeX engine customs
+** `ref' warnings now always print the location of erroneous `:bib' references
 
 * New in Skribilo 0.9.2
 
