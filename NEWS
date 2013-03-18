@@ -25,6 +25,7 @@ and nested <a> tags, which is invalid.
 
 ** acmproc: Fix typos in the LaTeX engine customs
 ** `ref' warnings now always print the location of erroneous `:bib' references
+** `numref' inserts an unbreakable space (was a breakable space) after its `:text'
 
 * New in Skribilo 0.9.2
 

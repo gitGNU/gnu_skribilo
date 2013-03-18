@@ -1245,16 +1245,15 @@
                    ;; Loop until `number' is resolved.
                    n)
                   (else
-                   (let ((xref
-                          (ref :text
-                               (list (if text text "") " "
-                                     (if (number? number)
-                                         (markup-number-string target
-                                                               separator)
-                                         ""))
-                               :page page
-                               :handle (handle target))))
-                     (resolve! xref e env)))))))))
+                   (ref :text
+                        (list (if text text "")
+                              (if text (~) "")
+                              (if (number? number)
+                                  (markup-number-string target
+                                                        separator)
+                                  ""))
+                        :page page
+                        :handle (handle target)))))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    resolve ...                                                      */
