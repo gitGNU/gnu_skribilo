@@ -24,6 +24,7 @@ It used to be that footnote HTML code contained an extraneous </div>,
 and nested <a> tags, which is invalid.
 
 ** acmproc: Fix typos in the LaTeX engine customs
+** acmproc: `references' uses a chapter, the default font, and sorts entries
 ** `ref' warnings now always print the location of erroneous `:bib' references
 ** `numref' inserts an unbreakable space (was a breakable space) after its `:text'
 

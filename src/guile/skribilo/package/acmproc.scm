@@ -28,6 +28,7 @@
   :use-module (skribilo package base)
   :autoload   (skribilo utils keywords) (the-options the-body)
   :autoload   (skribilo evaluator)      (evaluate-document)
+  :autoload   (skribilo biblio author)  (bib-sort/first-author-last-name)
 
   :use-module (skribilo lib)
   :use-module (skribilo utils syntax)
@@ -180,13 +181,13 @@
       (if (string? old)
 	  (engine-custom-set! le 'predocument (string-append cop old))
 	  (engine-custom-set! le 'predocument cop))))
-   
+
 ;*---------------------------------------------------------------------*/
 ;*    references ...                                                   */
 ;*---------------------------------------------------------------------*/
 (define (references)
    (list "\n\n"
-	 (if (engine-format? "latex")
-	     (font :size -1 (flush :side 'left (the-bibliography)))
-	     (section :title "References"
-                      (font :size -1 (the-bibliography))))))
+	 (chapter :title "References"
+                  (flush :side 'left
+                         (the-bibliography
+                          :sort bib-sort/first-author-last-name)))))
