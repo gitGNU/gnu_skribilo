@@ -21,7 +21,8 @@ AM_GNU_GETTEXT_VERSION([0.16.1])
 
 # Specifying the Guile module directory.
 AC_ARG_WITH([guilemoduledir],
-  [use the specified installation path for Guile modules],
+  [AS_HELP_STRING([--with-guilemoduledir=DIR],
+    [install Guile modules under DIR])],
   [case "x$withval" in
      xyes|xno) guilemoduledir="";;
      *)        guilemoduledir="$withval";;
