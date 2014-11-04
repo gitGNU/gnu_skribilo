@@ -314,10 +314,10 @@ Set this to nil if you don't want a modeline indicator."
 		 (t (setq new (cons f new))))))
 	    (let* ((rest (mapcar 'skribe-manuals-menu-entry
 				 (sort new
-				       '(lambda (s u)
-					  (string<
-					   (file-name-nondirectory s)
-					   (file-name-nondirectory u))))))
+				       #'(lambda (s u)
+					   (string<
+					    (file-name-nondirectory s)
+					    (file-name-nondirectory u))))))
 		   (smenu (cond
 			   ((and user dir)
 			    (append (list (skribe-manuals-menu-entry user)
