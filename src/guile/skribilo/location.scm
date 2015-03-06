@@ -1,7 +1,7 @@
 ;;; location.scm -- Skribilo source location.
 ;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2005, 2007, 2009, 2010, 2012, 2013  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2007, 2009, 2010, 2012, 2013, 2015  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
 ;;;
 ;;;
@@ -63,7 +63,7 @@
 	       (lenf  (string-length fname))
 	       (file  (if (and (string-prefix? pwd fname len)
 			       (> lenf len))
-			  (substring fname len (+ 1 (string-length fname)))
+			  (substring fname len (string-length fname))
 			  fname)))
 	  (format #f "~a, line ~a" file line))
 	"no source location")))
