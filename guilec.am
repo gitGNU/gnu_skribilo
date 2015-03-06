@@ -14,8 +14,12 @@ guile_warnings =							\
   unused-variable unused-toplevel unbound-variable arity-mismatch	\
   format
 
+AM_V_GUILEC = $(AM_V_GUILEC_$(V))
+AM_V_GUILEC_ = $(AM_V_GUILEC_$(AM_DEFAULT_VERBOSITY))
+AM_V_GUILEC_0 = @echo "  GUILEC" $@;
+
 .scm.go:
-	$(MKDIR_P) `dirname $@`
+	$(AM_V_GUILEC)$(MKDIR_P) `dirname $@` ;			\
 	GUILE_AUTO_COMPILE=0					\
 	GUILE_LOAD_COMPILED_PATH="$(builddir):$(top_builddir)/src/guile:$$GUILE_LOAD_COMPILED_PATH" \
 	$(GUILE) -L "$(srcdir)" -L "$(top_srcdir)/src/guile"	\
