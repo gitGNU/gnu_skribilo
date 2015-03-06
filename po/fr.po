@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: ludo@gnu.org\n"
-"POT-Creation-Date: 2012-05-29 00:09+0200\n"
+"POT-Creation-Date: 2015-03-06 11:35+0100\n"
 "PO-Revision-Date: 2007-02-05 16:02+0100\n"
 "Last-Translator: Ludovic Courtès <ludo@gnu.org>\n"
 "Language-Team: fr <LL@li.org>\n"
@@ -190,16 +190,16 @@ msgid "undefined verify error: ~a~%"
 msgstr "erreur skribilo indéfinie : ~S~%"
 
 #: src/guile/skribilo/engine/lout.scm:2425
-#: src/guile/skribilo/engine/info.scm:807
+#: src/guile/skribilo/engine/info.scm:809
 msgid "image URLs not supported"
 msgstr ""
 
-#: src/guile/skribilo/engine/info.scm:176
+#: src/guile/skribilo/engine/info.scm:177
 #, scheme-format
 msgid "Info node title `~A' already used"
 msgstr ""
 
-#: src/guile/skribilo/engine/info.scm:179
+#: src/guile/skribilo/engine/info.scm:180
 msgid "previous occurrence was here"
 msgstr ""
 
@@ -368,4 +368,9 @@ msgstr ""
 #: src/guile/skribilo.scm:213
 #, scheme-format
 msgid "~a: invalid custom value"
+msgstr ""
+
+#: src/guile/skribilo.scm:318
+#, scheme-format
+msgid "warning: failed to install locale: ~a~%"
 msgstr ""
