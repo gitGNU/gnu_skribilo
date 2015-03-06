@@ -13,6 +13,9 @@ AC_CONFIG_MACRO_DIR(m4)
 AM_INIT_AUTOMAKE([1.11 gnu no-define readme-alpha \
   color-tests parallel-tests])
 
+# Enable silent rules by default.
+AM_SILENT_RULES([yes])
+
 AC_CONFIG_SRCDIR([src/guile/skribilo/reader.scm])
 
 # GNU Gettext.
