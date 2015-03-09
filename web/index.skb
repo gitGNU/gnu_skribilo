@@ -144,6 +144,7 @@ so-called ,(ref :url
 
 
    (chapter :title [Features] :number #f :file #f
+      :ident "features"
 
       (itemize
          (item [Output in a ,(ref :skribe %user-sui :ident "engines"
@@ -170,6 +171,7 @@ programmability brought by ,(scheme [Scheme]).])
          (item [And much more!  :-)])))
 
    (chapter :title [Availability] :number #f :file #f
+      :ident "download"
 
       (p [Releases are available from the ,(ref :text [download area]
 :url "http://dl.sv.nongnu.org/releases/skribilo/").])
@@ -190,6 +192,7 @@ you need the following pieces of software:
 ,(ref :skribe %user-sui :ident "rss2-syntax" :text [RSS-2 reader]).]))]))
 
    (chapter :title [Documentation] :number #f :file #f ;; FIXME: Do it!
+      :ident "documentation"
 
       (p [The user manual is available in the following formats:
 
@@ -198,6 +201,7 @@ you need the following pieces of software:
     (item (ref :text [PDF] :url "doc/user.pdf")))]))
 
    (chapter :title [Example] :number #f :file #f
+      :ident "example"
 
       (p [Here is a live example: the source code of this web page,
 colored using Skribilo's computer program coloring features.])
@@ -216,6 +220,7 @@ subscribe to the ,(skribilo-ml [,(tt [skribilo-users]) mailing list])!
 If you want to suggest improvements, that's also where they should go!]))
 
    (chapter :title [Development] :number #f :file #f
+      :ident "development"
 
       (p [Development is done using the ,(git [Git]) distributed
 revision control system.  You can fetch a copy of the source code
@@ -236,6 +241,7 @@ changes ,(ref :ident "mailing-list" :text [on the mailing-list]).])
 [,(tt [TODO]) file]).]))
 
    (chapter :title [History] :number #f :file #f
+      :ident "history"
 
       (p [Skribilo is a direct descendant of ,(skribe* [Skribe]), a
 document production tool written by Manuel Serrano for ,(bigloo
@@ -271,6 +277,7 @@ taken to use mostly portable APIs (,(ref :url "http://srfi.schemers.org/"
 programmers.]))]))
 
     (chapter :title [Related Links] :number #f :file #f
+       :ident "related"
 
        (itemize
           (item [,(skribe* [Skribe]), the father of Skribilo.  Its
@@ -353,6 +360,7 @@ derivative of ,(ref :url "http://docbook.org/" :text [Docbook]).])
 others.])))
 
    (chapter :title [The Name] :number #f :file #f
+      :ident "name"
 
       (p [Skribilo is an ,(wikipedia/esperanto [Esperanto]) noun, which
 literally means ,(ref :url
