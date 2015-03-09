@@ -210,7 +210,7 @@ colored using Skribilo's computer program coloring features.])
    (chapter :title [Mailing List] :number #f :file #f
       :ident "mailing-list"
 
-      (p [If you want to complain or tell how bright and shinning your
+      (p [If you want to complain or tell how bright and shining your
 life has become since you discovered Skribilo, then go ahead and
 subscribe to the ,(skribilo-ml [,(tt [skribilo-users]) mailing list])!
 If you want to suggest improvements, that's also where they should go!]))
