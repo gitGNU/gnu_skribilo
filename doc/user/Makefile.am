@@ -70,20 +70,38 @@ endif
 load_path = $(top_srcdir)/doc/modules
 load_compiled_path = $(top_builddir)/doc/modules
 
+# Silent rules.
+
+AM_V_SKRINFO = $(AM_V_SKRINFO_$(V))
+AM_V_SKRINFO_ = $(AM_V_SKRINFO_$(AM_DEFAULT_VERBOSITY))
+AM_V_SKRINFO_0 = @echo "  SKRINFO" $@;
+
+AM_V_SKRHTML = $(AM_V_SKRHTML_$(V))
+AM_V_SKRHTML_ = $(AM_V_SKRHTML_$(AM_DEFAULT_VERBOSITY))
+AM_V_SKRHTML_0 = @echo "  SKRHTML" $@;
+
 
 skribilo.info: user.skb
-	GUILE_LOAD_PATH=$(load_path):$$GUILE_LOAD_PATH	\
+	$(AM_V_SKRINFO)GUILE_LOAD_PATH=$(load_path):$$GUILE_LOAD_PATH	\
 	GUILE_LOAD_COMPILED_PATH=$(load_compiled_path):$$GUILE_LOAD_COMPILED_PATH \
 	GUILE_AUTO_COMPILE=0				\
 	$(skribilo) $(skrflags) --target=info -o $@ $<
 
 .skb.html:
-	GUILE_LOAD_PATH=$(load_path):$$GUILE_LOAD_PATH	\
+	$(AM_V_SKRHTML)GUILE_LOAD_PATH=$(load_path):$$GUILE_LOAD_PATH	\
 	GUILE_LOAD_COMPILED_PATH=$(load_compiled_path):$$GUILE_LOAD_COMPILED_PATH \
 	GUILE_AUTO_COMPILE=0				\
 	$(skribilo) $(skrflags) --target=html -o $@ $<
 
 if HAVE_LOUT
+
+AM_V_SKRLOUT = $(AM_V_SKRLOUT_$(V))
+AM_V_SKRLOUT_ = $(AM_V_SKRLOUT_$(AM_DEFAULT_VERBOSITY))
+AM_V_SKRLOUT_0 = @echo "  SKRLOUT" $@;
+
+AM_V_LOUT = $(AM_V_LOUT_$(V))
+AM_V_LOUT_ = $(AM_V_LOUT_$(AM_DEFAULT_VERBOSITY))
+AM_V_LOUT_0 = @echo "  LOUT" $@;
 
 CLEANFILES += user.lout user.lout.ld user.li user.lix
 
@@ -96,7 +114,7 @@ CLEANFILES += $(ps_DATA)
 endif !HAVE_PS2PDF
 
 .lout.ps:
-	$(LOUT) -r4 -I$(srcdir)/lout -I$(builddir)/lout \
+	$(AM_V_LOUT)$(LOUT) -r4 -I$(srcdir)/lout -I$(builddir)/lout \
 	  -c $(@:%.ps=%) -o $@ $<
 
 # Variable substitution.
@@ -115,7 +133,7 @@ if HAVE_PS2PDF
 endif
 
 .skb.lout:
-	GUILE_LOAD_PATH=$(load_path):$$GUILE_LOAD_PATH	\
+	$(AM_V_SKRLOUT)GUILE_LOAD_PATH=$(load_path):$$GUILE_LOAD_PATH	\
 	GUILE_LOAD_COMPILED_PATH=$(load_compiled_path):$$GUILE_LOAD_COMPILED_PATH \
 	GUILE_AUTO_COMPILE=0				\
 	$(skribilo) $(skrflags) --target=lout -o $@ $<
