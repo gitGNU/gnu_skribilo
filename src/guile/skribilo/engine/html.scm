@@ -728,7 +728,7 @@
 	  (id (markup-ident n)))
       (unless (string? id)
 	 (skribe-error '&html-generic-header
-		       (format #f "Illegal identifier '~a'" id)
+		       (format #f "Invalid identifier '~a'" id)
 		       n))
       ;; title
       (output (new markup
@@ -1094,7 +1094,7 @@
 			(f (html-file c e)))
 		    (unless (string? id)
 		       (skribe-error 'toc
-				     (format #f "illegal identifier '~a'" id)
+				     (format #f "invalid identifier '~a'" id)
 				     c))
 		    (display " <tr>")
 		    ;; blank columns
@@ -1127,7 +1127,7 @@
 			     b)))
 		 (if (not (container? bb))
 		     (error 'toc
-			    "Illegal body (container expected)"
+			    "Invalid body (container expected)"
 			    (if (markup? bb)
 				(markup-markup bb)
 				"???"))
@@ -1570,7 +1570,7 @@
 		  (display "width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td align=\"right\">"))
 		 (else
 		  (skribe-error 'flush
-				"Illegal side"
+				"Invalid side"
 				(markup-option n :side)))))
    :after (lambda (n e)
 	     (case (markup-option n :side)
@@ -1830,7 +1830,7 @@
 						     efmt
 						     '("gif" "jpg" "png"))))))
 		 (if (not (string? img))
-		     (skribe-error 'html "Illegal image" file)
+		     (skribe-error 'html "Invalid image" file)
 		     (begin
 			(format #t "<img src=\"~a\" border=\"0\"" img)
 			(html-class n)

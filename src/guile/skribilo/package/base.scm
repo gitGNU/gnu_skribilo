@@ -64,7 +64,7 @@
 ;*---------------------------------------------------------------------*/
 (define-public (include file)
    (if (not (string? file))
-       (skribe-error 'include "Illegal file (string expected)" file)
+       (skribe-error 'include "Invalid file (string expected)" file)
        (include-document file)))
 
 ;*---------------------------------------------------------------------*/
@@ -123,7 +123,7 @@
 		       (photo #f)
 		       (align 'center))
    (if (not (memq align '(center left right)))
-       (skribe-error 'author "Illegal align value" align)
+       (skribe-error 'author "Invalid align value" align)
        (new container
 	  (markup 'author)
 	  (ident (or ident (symbol->string (gensym "author"))))
@@ -143,7 +143,7 @@
    (let ((body (the-body opts)))
       (cond
 	 (section
-	  (error 'handle "Illegal handle 'section' option" section)
+	  (error 'handle "Invalid handle 'section' option" section)
 	  (new unresolved
              (loc  &invocation-location)
 	     (proc (lambda (n e env)
@@ -158,7 +158,7 @@
              (loc &invocation-location)
 	     (ast (car body))))
 	 (else
-	  (skribe-error 'handle "Illegal handle" opts)))))
+	  (skribe-error 'handle "Invalid handle" opts)))))
 
 ;*---------------------------------------------------------------------*/
 ;*    toc ...                                                          */
@@ -192,12 +192,12 @@
 		   (if (handle? (car body))
 		       (car body)
 		       (skribe-error 'toc
-				     "Illegal argument (handle expected)"
+				     "Invalid argument (handle expected)"
 				     (if (markup? (car body))
 					 (markup-markup (car body))
 					 "???"))))
 		  (else
-		   (skribe-error 'toc "Illegal argument" body)))))))
+		   (skribe-error 'toc "Invalid argument" body)))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    section-number ...                                               */
@@ -382,9 +382,9 @@
 	 ((null? num)
 	  ln)
 	 ((not (null? (cdr num)))
-	  (skribe-error 'linebreak "Illegal arguments" num))
+	  (skribe-error 'linebreak "Invalid arguments" num))
 	 ((not (and (integer? (car num)) (positive? (car num))))
-	  (skribe-error 'linebreak "Illegal argument" (car num)))
+	  (skribe-error 'linebreak "Invalid argument" (car num)))
 	 (else
 	  (vector->list (make-vector (car num) ln))))))
 
@@ -484,7 +484,7 @@
 	  (options (the-options opts :ident :class))
 	  (body (the-body opts))))
       (else
-       (skribe-error 'flush "Illegal side" side))))
+       (skribe-error 'flush "Invalid side" side))))
 
 ;*---------------------------------------------------------------------*/
 ;*    center ...                                                       */
@@ -510,7 +510,7 @@
 		     (ident #f) (class "prog")
 		     (line 1) (linedigit #f) (mark ";!"))
    (if (not (or (string? mark) (eq? mark #f)))
-       (skribe-error 'prog "Illegal mark" mark)
+       (skribe-error 'prog "Invalid mark" mark)
        (new container
 	  (markup 'prog)
 	  (ident (or ident (symbol->string (gensym "prog"))))
@@ -553,19 +553,19 @@
 			"definition requires a language specification"
 			definition))
 	 ((and file (not (string? file)))
-	  (skribe-error 'source "Illegal file" file))
+	  (skribe-error 'source "Invalid file" file))
 	 ((and start (not (or (integer? start) (string? start))))
-	  (skribe-error 'source "Illegal start" start))
+	  (skribe-error 'source "Invalid start" start))
 	 ((and stop (not (or (integer? stop) (string? stop))))
-	  (skribe-error 'source "Illegal start" stop))
+	  (skribe-error 'source "Invalid start" stop))
 	 ((and (integer? start) (integer? stop) (> start stop))
 	  (skribe-error 'source
 			"start line > stop line"
 			(format #f "~a/~a" start stop)))
 	 ((and language (not (language? language)))
-	  (skribe-error 'source "illegal language" language))
+	  (skribe-error 'source "invalid language" language))
 	 ((and tab (not (integer? tab)))
-	  (skribe-error 'source "illegal tab" tab))
+	  (skribe-error 'source "invalid tab" tab))
 	 (file
 	  (let ((s (if (not definition)
 		       (source-read-lines file start stop tab)
@@ -586,7 +586,7 @@
 ;*---------------------------------------------------------------------*/
 (define-markup (language :key name (fontifier #f) (extractor #f))
    (if (not (string? name))
-       (skribe-type-error 'language "illegal name" name "string")
+       (skribe-type-error 'language "invalid name" name "string")
        (new language
 	  (name name)
 	  (fontifier fontifier)
@@ -652,7 +652,7 @@
 		 (if (not (is-markup? r markup))
 		     (skribe-warning 2
 				     for
-				     (format #f "illegal '~a' element, '~a' expected"
+				     (format #f "invalid '~a' element, '~a' expected"
 					     (if (markup? r)
 						 (markup-markup r)
 						 (type-name r))
@@ -706,7 +706,7 @@
 			 (number? key)
 			 (markup? key)
 			 (pair? key))))
-       (skribe-type-error 'item "Illegal key:" key "node")
+       (skribe-type-error 'item "Invalid key:" key "node")
        (new container
 	  (markup 'item)
 	  (ident (or ident (symbol->string (gensym "item"))))
@@ -807,9 +807,9 @@
 		     valign)))
       (cond
 	 ((not (integer? colspan))
-	  (skribe-type-error 'tc "Illegal colspan, " colspan "integer"))
+	  (skribe-type-error 'tc "Invalid colspan, " colspan "integer"))
 	 ((not (symbol? align))
-	  (skribe-type-error 'tc "Illegal align, " align "align"))
+	  (skribe-type-error 'tc "Invalid align, " align "align"))
 	 ((not (memq align '(#f center left right)))
 	  (skribe-error
 	   'tc
@@ -924,7 +924,7 @@
       ((and (string? char) (= (string-length char) 1))
        char)
       (else
-       (skribe-error 'char "Illegal char" char))))
+       (skribe-error 'char "Invalid char" char))))
 
 ;*---------------------------------------------------------------------*/
 ;*    symbol ...                                                       */
@@ -937,7 +937,7 @@
 	     symbol)
 	    (else
 	     (skribe-error 'symbol
-			   "Illegal argument (symbol expected)"
+			   "Invalid argument (symbol expected)"
 			   symbol)))))
     (new markup
 	 (markup 'symbol)
@@ -949,7 +949,7 @@
 ;*---------------------------------------------------------------------*/
 (define-markup (! format :rest node)
    (if (not (string? format))
-       (skribe-type-error '! "Illegal format:" format "string")
+       (skribe-type-error '! "Invalid format:" format "string")
        (new command
           (loc &invocation-location)
 	  (fmt format)
@@ -964,7 +964,7 @@
       ((and combinator (not (procedure? combinator)))
        (skribe-error 'processor "Combinator not a procedure" combinator))
       ((and engine (not (engine? engine)))
-       (skribe-error 'processor "Illegal engine" engine))
+       (skribe-error 'processor "Invalid engine" engine))
       ((and procedure
 	    (or (not (procedure? procedure))
 		(not (let ((a (procedure-property procedure 'arity)))
@@ -974,7 +974,7 @@
                                   (rest?      (caddr a)))
                               (or rest?
                                   (>= (+ compulsory optional) 2))))))))
-       (skribe-error 'processor "Illegal procedure" procedure))
+       (skribe-error 'processor "Invalid procedure" procedure))
       (else
        (new processor
           (loc &invocation-location)
@@ -1023,9 +1023,9 @@
 	 ((null? bd)
 	  (skribe-error 'mark "Missing argument" '()))
 	 ((not (string? (car bd)))
-	  (skribe-type-error 'mark "Illegal ident:" (car bd) "string"))
+	  (skribe-type-error 'mark "Invalid ident:" (car bd) "string"))
 	 (ident
-	  (skribe-error 'mark "Illegal 'ident:' option" ident))
+	  (skribe-error 'mark "Invalid 'ident:' option" ident))
 	 (else
 	  (let* ((bs (ast->string bd))
 		 (n (new markup
@@ -1096,7 +1096,7 @@
 	 (body text)))
    (define (do-title-ref title kind)
       (if (not (string? title))
-	  (skribe-type-error 'ref "illegal reference" title "string")
+	  (skribe-type-error 'ref "invalid reference" title "string")
 	  (new unresolved
              (loc  &invocation-location)
 	     (proc (lambda (n e env)
@@ -1122,7 +1122,7 @@
 			     (unref title (or kind 'title)))))))))
    (define (do-ident-ref text kind)
       (if (not (string? text))
-	  (skribe-type-error 'ref "Illegal reference" text "string")
+	  (skribe-type-error 'ref "Invalid reference" text "string")
 	  (new unresolved
              (loc  &invocation-location)
 	     (proc (lambda (n e env)
@@ -1210,7 +1210,7 @@
 	 (bib (bib-ref bib))
 	 (url (url-ref))
 	 (line (line-ref line))
-	 (else (skribe-error 'ref "illegal reference" opts)))))
+	 (else (skribe-error 'ref "invalid reference" opts)))))
 
 
 ;*---------------------------------------------------------------------*/
@@ -1279,7 +1279,7 @@
 		   ((pair? f)
 		    (bib-add! bib-table f))
 		   (else
-		    (skribe-error "bibliography" "Illegal entry" f))))
+		    (skribe-error "bibliography" "Invalid entry" f))))
 	     (the-body files)))
 
 ;*---------------------------------------------------------------------*/
@@ -1360,7 +1360,7 @@
 		    ((not index) (default-index))
 		    ((index? index) index)
 		    (else (skribe-type-error 'index
-					     "Illegal index table, "
+					     "Invalid index table, "
 					     index
 					     "index"))))
 	  (m (mark (symbol->string (gensym "mark"))))
@@ -1406,12 +1406,12 @@
    (let ((bd (the-body opts)))
       (cond
 	 ((not (and (integer? char-offset) (>= char-offset 0)))
-	  (skribe-error 'the-index "Illegal char offset" char-offset))
+	  (skribe-error 'the-index "Invalid char offset" char-offset))
 	 ((not (integer? column))
-	  (skribe-error 'the-index "Illegal column number" column))
+	  (skribe-error 'the-index "Invalid column number" column))
 	 ((not (every index? bd))
 	  (skribe-error 'the-index
-			"Illegal indexes"
+			"Invalid indexes"
 			(filter (lambda (o) (not (index? o))) bd)))
 	 (else
 	  (new unresolved
@@ -1474,7 +1474,7 @@
 			((arabic) the-arabic-number)
 			((alpha) the-alpha-number)
 			(else (skribe-error 'counter
-					    "Illegal numbering"
+					    "Invalid numbering"
 					    numbering)))))
       (let loop ((num 1)
 		 (items items)

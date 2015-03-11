@@ -98,7 +98,7 @@
 			(&latex-author-n body))
 		       (else
 			(skribe-error 'author
-				      "Illegal 'jfp' author"
+				      "Invalid 'jfp' author"
 				      body))))))
    ;; title
    (markup-writer '&latex-title le
@@ -185,7 +185,7 @@
 								   "")))
 					 (output s2 e)))))))
 			(skribe-error 'bib-ref
-				      "Illegal bib-ref"
+				      "Invalid bib-ref"
 				      (markup-ident be)))))
       :after ")")
       ;; bib-ref/text

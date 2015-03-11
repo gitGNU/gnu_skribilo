@@ -55,7 +55,7 @@
     ((prosper)
      (%slide-prosper-setup!))
     (else
-     (skribe-error 'slide "Illegal latex mode" %slide-latex-mode))))
+     (skribe-error 'slide "Invalid latex mode" %slide-latex-mode))))
 
 (define string->integer string->number)
 

@@ -398,7 +398,7 @@
 		    (cond
 		       ((not (or bb (is-markup? b 'url-ref)))
 			(skribe-error 'the-index
-				      "Illegal entry"
+				      "Invalid entry"
 				      b))
 		       (note
 			(let ((r (if bb

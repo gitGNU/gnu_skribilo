@@ -146,7 +146,7 @@
 			       (else
 				(skribe-error 'font
 					      (format #f
-						      "illegal font size ~s" sz)
+						      "invalid font size ~s" sz)
 					      n))))))
 		 (display "<span ")
 		 (html-class n)

@@ -39,10 +39,10 @@
      ((null? opt*)
       (reverse! res))
      ((not (pair? opt*))
-      (error "illegal body" opt*))
+      (error "invalid body" opt*))
      ((keyword? (car opt*))
       (if (null? (cdr opt*))
-          (error "illegal option" (car opt*))
+          (error "invalid option" (car opt*))
           (loop (cddr opt*) res)))
      (else
       (loop (cdr opt*) (cons (car opt*) res))))))
@@ -58,11 +58,11 @@
      ((null? opt*)
       (reverse! res))
      ((not (pair? opt*))
-      (error "illegal options" opt*))
+      (error "invalid options" opt*))
      ((keyword? (car opt*))
       (cond
        ((null? (cdr opt*))
-        (error "illegal option" (car opt*)))
+        (error "invalid option" (car opt*)))
        ((memq (car opt*) out)
         (loop (cdr opt*) res))
        (else

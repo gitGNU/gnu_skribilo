@@ -146,7 +146,7 @@
 						   (+ 1 j)))))))))
 		       (else
 			(skribe-error 'author
-				      "Illegal 'lncs' author"
+				      "Invalid 'lncs' author"
 				      body))))))
    ;; author
    (let ((old-author (markup-writer-get 'author le)))

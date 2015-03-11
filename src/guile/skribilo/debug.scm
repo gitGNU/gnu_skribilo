@@ -76,7 +76,7 @@
 ;        (set! *debug-port* o)
 ;        o)
 ;       (else
-;        (error 'debug-port "Illegal debug port" (car o)))))
+;        (error 'debug-port "Invalid debug port" (car o)))))
 ;
 
 ;;;

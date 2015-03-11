@@ -434,7 +434,7 @@
 ;;   (let ((e (or engine (use-engine))))
 ;;     (cond
 ;;       ((not (is-a? e <engine>))
-;;           (skribe-error 'markup-writer "illegal engine" e))
+;;           (skribe-error 'markup-writer "invalid engine" e))
 ;;       ((and (not before)
 ;;	    (not action)
 ;;	    (not after))

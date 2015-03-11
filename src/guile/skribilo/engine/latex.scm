@@ -906,7 +906,7 @@
 				(if (not (number? nb))
 				    (skribe-error 
 				     'font
-				     (format #f "Illegal font size ~s" size)
+				     (format #f "Invalid font size ~s" size)
 				     nb)
 				    (+ cs nb))))))
 		     (ne (make-engine (gensym "latex")
@@ -1138,7 +1138,7 @@
 	    (luup (cdr cells)
 		  (+ nbcols (markup-option (car cells) :colspan))))
 	   (else
-	    (skribe-type-error 'tr "Illegal tr body, " row "pair")))))
+	    (skribe-type-error 'tr "Invalid tr body, " row "pair")))))
    (let loop ((rows (markup-body t))
 	      (nbcols 0))
       (if (null? rows)
@@ -1171,7 +1171,7 @@
 		 (let ((cols (cond
 				((= nbcols 0)
 				 (skribe-error 'table
-					       "Illegal empty table"
+					       "Invalid empty table"
 					       n))
 				((or (not width) (= nbcols 1))
 				 (make-string nbcols #\c))
@@ -1268,7 +1268,7 @@
    :options '()
    :action (lambda (n e)
               (if (not (is-markup? (ast-parent n) 'table))
-                  (skribe-type-error 'tr "Illegal parent, " (ast-parent n)
+                  (skribe-type-error 'tr "Invalid parent, " (ast-parent n)
                                      "#<table>"))
 
 	      (let* ((parent (ast-parent n))
@@ -1416,7 +1416,7 @@
 						     efmt
 						     '("eps"))))))
 		 (if (not (string? img))
-		     (skribe-error 'latex "Illegal image" file)
+		     (skribe-error 'latex "Invalid image" file)
 		     (begin
 			(format #t "\\epsfig{file=~a" (strip-ref-base img))
 			(if width (format #t ", width=~a" (latex-width width)))

@@ -379,7 +379,7 @@ def @SkribiloExample named @Title {} right x {
        '())
       (else
        (skribe-error 'define-markup-formals
-		     "Illegal 'define-markup' form"
+		     "Invalid 'define-markup' form"
 		     def))))
 
 ;*---------------------------------------------------------------------*/
@@ -402,7 +402,7 @@ def @SkribiloExample named @Title {} right x {
        '((ident #f) (class #f)))
       (else
        (skribe-error 'define-markup-options
-		     "Illegal 'define-markup' form"
+		     "Invalid 'define-markup' form"
 		     def))))
 
 ;*---------------------------------------------------------------------*/
@@ -423,7 +423,7 @@ def @SkribiloExample named @Title {} right x {
 			 (if (or (not (pair? (cdr rest)))
 				 (not (symbol? (cadr rest))))
 			     (skribe-error 'define-markup-rest
-					   "Illegal 'define-markup' form"
+					   "Invalid 'define-markup' form"
 					   def)
 			     (cadr rest))
 			 #f))))))
@@ -433,7 +433,7 @@ def @SkribiloExample named @Title {} right x {
        'node)
       (else
        (skribe-error 'define-markup-rest
-		     "Illegal 'define-markup' form"
+		     "Invalid 'define-markup' form"
 		     def))))
 
 ;*---------------------------------------------------------------------*/

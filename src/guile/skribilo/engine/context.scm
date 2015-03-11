@@ -675,7 +675,7 @@
 			       (if (not (number? nb))
 				   (skribe-error
 				    'font
-				    (format #f "Illegal font size ~s" size)
+				    (format #f "Invalid font size ~s" size)
 				    nb)
 				   (+ cs nb))))))
 		     (ne (make-engine (gensym "context")
@@ -949,7 +949,7 @@
 						       efmt
 						       '("jpg"))))))
 	       (if (not (string? img))
-		   (skribe-error 'context "Illegal image" file)
+		   (skribe-error 'context "Invalid image" file)
 		   (begin
 		     (format #t "\\externalfigure[~A][frame=off" (strip-ref-base img))
 		     (if zoom   (format #t ",factor=~a"   (inexact->exact zoom)))

@@ -170,7 +170,7 @@
 					    (if (not align)
 						'left
 						(error "table-cell-format"
-						       "Illegal horizontal alignment"
+						       "Invalid horizontal alignment"
 						       align)))))
 			(lambda () (scribe->ascii body)))))
 	       (if (null? fmt)

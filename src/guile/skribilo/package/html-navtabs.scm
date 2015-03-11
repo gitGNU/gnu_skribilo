@@ -243,7 +243,7 @@
 				  (parent (ast-parent n))
 				  (body t))
 			       e)
-		       (skribe-type-error 'tr "Illegal tabs, " t "handle")))
+		       (skribe-type-error 'tr "Invalid tabs, " t "handle")))
 		tabs))
    (display "</div>\n")
    (output (new markup

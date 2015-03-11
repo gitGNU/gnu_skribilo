@@ -413,7 +413,7 @@
 		   ((width)
 		    width)
 		   (else
-		    (error "justifier" "Illegal command" cmd))))))))
+		    (error "justifier" "Invalid command" cmd))))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    *justifiers* ...                                                 */
