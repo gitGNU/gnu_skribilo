@@ -212,7 +212,7 @@
 	     (abort exit-val))
 
             ((message-condition? c)
-             (format (current-error-port) (condition-message c))
+             (format (current-error-port) "~a~%" (condition-message c))
              (abort exit-val))
 
             (else

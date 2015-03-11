@@ -743,19 +743,13 @@
 	 (cells-vals '(collapse separate)))
       (cond
 	 ((and frame (not (memq frame frame-vals)))
-	  (skribe-error 'table
-			(format #f "frame should be one of \"~a\"" frame-vals)
-			frame))
+          (invalid-argument-error 'table frame 'frame))
 	 ((and rules (not (memq rules rules-vals)))
-	  (skribe-error 'table
-			(format #f "rules should be one of \"~a\"" rules-vals)
-			rules))
+          (invalid-argument-error 'table rules 'rules))
 	 ((not (or (memq cellstyle cells-vals)
 		   (string? cellstyle)
 		   (number? cellstyle)))
-	  (skribe-error 'table
-			(format #f "cellstyle should be one of \"~a\", or a number, or a string" cells-vals)
-			cellstyle))
+          (invalid-argument-error 'table cellstyle 'cellstyle))
 	 (else
 	  (new container
 	     (markup 'table)
