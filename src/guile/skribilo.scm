@@ -111,9 +111,9 @@ specified reader syntax, and produce its output using the specified engine.
       --no-color         disable colored debugging output\n"))
   (newline)
   (display (_ "\
-  -h, --help             give this help list\n"))
+  -h, --help             display this help text and exit\n"))
   (display (_ "\
-  -V, --version          print program version\n"))
+  -V, --version          display version information and exit\n"))
   (newline)
   (format #t (_ "\
 Report bugs to <~a>.~%")
