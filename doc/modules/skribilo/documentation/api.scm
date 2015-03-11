@@ -1,7 +1,8 @@
 ;;; api.scm  --  The style for documenting Scheme APIs.
 ;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2005, 2006, 2007, 2008, 2009, 2012  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2006, 2007, 2008, 2009, 2012,
+;;;   2015 Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -412,7 +413,7 @@ def @SkribiloExample named @Title {} right x {
 ;*---------------------------------------------------------------------*/
 (define (define-markup-rest def)
    (match def
-      ((_ (args ___) _)
+      ((_ (args ___) _ ...)
        (if (not (pair? args))
 	   args
 	   (let ((l (last-pair args)))
