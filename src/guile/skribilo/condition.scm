@@ -1,7 +1,7 @@
 ;;; condition.scm  --  Skribilo SRFI-35 error condition hierarchy.
 ;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2006, 2007, 2008  Ludovic Courtès  <ludo@gnu.org>
+;;; Copyright 2006, 2007, 2008, 2015 Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This file is part of Skribilo.
@@ -21,12 +21,15 @@
 
 (define-module (skribilo condition)
   :autoload   (srfi srfi-1)  (find)
-  :autoload   (srfi srfi-34) (with-exception-handler)
+  :use-module (srfi srfi-34)
   :use-module (srfi srfi-35)
   :use-module (srfi srfi-39)
+  :use-module (ice-9 optargs)
   :autoload   (skribilo parameters)   (*destination-file*)
   :autoload   (skribilo utils syntax) (_ N_)
   :export     (&skribilo-error skribilo-error?
+
+               invalid-argument-error
 	       &invalid-argument-error invalid-argument-error?
 	       &too-few-arguments-error too-few-arguments-error?
 
@@ -66,13 +69,21 @@
 (define-condition-type &invalid-argument-error &skribilo-error
   invalid-argument-error?
   (proc-name invalid-argument-error:proc-name)
-  (argument  invalid-argument-error:argument))
+  (argument  invalid-argument-error:argument)
+  (name      invalid-argument-error:name))     ;#f | symbol, for kw arguments
 
 (define-condition-type &too-few-arguments-error &skribilo-error
   too-few-arguments-error?
   (proc-name too-few-arguments-error:proc-name)
   (arguments too-few-arguments-error:arguments))
 
+(define* (invalid-argument-error proc argument #:optional name)
+  "Raise an '&invalid-argument-error'."
+  (raise (condition
+          (&invalid-argument-error
+           (proc-name 'proc)
+           (argument argument)
+           (name name)))))
 
 ;;;
 ;;; File errors.
@@ -146,10 +157,17 @@
   (with-exception-handler
    (lambda (c)
      (cond  ((invalid-argument-error? c)
-	     (format (current-error-port)
-                     (_ "in '~a': invalid argument: ~S~%")
-		     (invalid-argument-error:proc-name c)
-		     (invalid-argument-error:argument c))
+             (let ((name (invalid-argument-error:name c)))
+               (if name
+                   (format (current-error-port)
+                           (_ "in '~a': invalid argument '~a': ~S~%")
+                           (invalid-argument-error:proc-name c)
+                           name
+                           (invalid-argument-error:argument c))
+                   (format (current-error-port)
+                           (_ "in '~a': invalid argument: ~S~%")
+                           (invalid-argument-error:proc-name c)
+                           (invalid-argument-error:argument c))))
 	     (abort exit-val))
 
 	    ((too-few-arguments-error? c)
