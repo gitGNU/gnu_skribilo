@@ -115,12 +115,12 @@
                        entry))))
 	((biblio-template-error? c)
 	 (format (current-error-port)
-                 (_ "invalid bibliography entry template: `~a', in `~a'~%")
+                 (_ "invalid bibliography entry template: '~a', in '~a'~%")
                  (biblio-template-error:expression c)
                  (biblio-template-error:template c)))
         ((biblio-parse-error? c)
          (format (current-error-port)
-                 (_ "invalid bibliography entry s-exp: `~a'~%")
+                 (_ "invalid bibliography entry s-exp: '~a'~%")
                  (biblio-parse-error:sexp c)))
 	(else
 	 (format (current-error-port)
@@ -183,10 +183,10 @@
 		    'bib
 		    (format #f "duplicated bibliographic entry ~a'.\n" ident)
 		    (if ofrom
-			(format #f " using version of `~a'.\n" ofrom)
+			(format #f " using version of '~a'.\n" ofrom)
 			"")
 		    (if from
-			(format #f " ignoring version of `~a'." from)
+			(format #f " ignoring version of '~a'." from)
 			" ignoring redefinition."))))
 
 

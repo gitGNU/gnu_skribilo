@@ -129,7 +129,7 @@
           (display-backtrace stack (current-error-port)))
         (begin
           (format (current-error-port) (_ "Call stack trace not available.~%"))
-          (format (current-error-port) (_ "Use `GUILE=\"guile --debug\" skribilo ...' for a detailed stack trace.~%"))))))
+          (format (current-error-port) (_ "Use 'GUILE=\"guile --debug\" skribilo ...' for a detailed stack trace.~%"))))))
 
 (define (abort exit-val)
   ;; Abort the `skribilo' command-line program, returning EXIT-VAL.
@@ -147,21 +147,21 @@
    (lambda (c)
      (cond  ((invalid-argument-error? c)
 	     (format (current-error-port)
-                     (_ "in `~a': invalid argument: ~S~%")
+                     (_ "in '~a': invalid argument: ~S~%")
 		     (invalid-argument-error:proc-name c)
 		     (invalid-argument-error:argument c))
 	     (abort exit-val))
 
 	    ((too-few-arguments-error? c)
 	     (format (current-error-port)
-                     (_ "in `~a': too few arguments: ~S~%")
+                     (_ "in '~a': too few arguments: ~S~%")
 		     (too-few-arguments-error:proc-name c)
 		     (too-few-arguments-error:arguments c))
              (abort exit-val))
 
 	    ((file-search-error? c)
 	     (format (current-error-port)
-                     (_ "~a: not found in path `~S'~%")
+                     (_ "~a: not found in path '~S'~%")
 		     (file-error:file-name c)
 		     (file-search-error:path c))
 	     (abort exit-val))

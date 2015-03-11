@@ -98,7 +98,7 @@
 			(&latex-author-n body))
 		       (else
 			(skribe-error 'author
-				      "Illegal `jfp' author"
+				      "Illegal 'jfp' author"
 				      body))))))
    ;; title
    (markup-writer '&latex-title le
@@ -171,7 +171,7 @@
 					 (output y e)))))
 			      ((is-markup? y '&bib-entry-year)
 			       (skribe-error 'bib-ref
-					     "Missing `name' entry"
+					     "Missing 'name' entry"
 					     (markup-ident be)))
 			      (else
 			       (let ((ba (markup-body a)))

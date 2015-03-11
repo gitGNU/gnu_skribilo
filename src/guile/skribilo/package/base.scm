@@ -143,7 +143,7 @@
    (let ((body (the-body opts)))
       (cond
 	 (section
-	  (error 'handle "Illegal handle `section' option" section)
+	  (error 'handle "Illegal handle 'section' option" section)
 	  (new unresolved
              (loc  &invocation-location)
 	     (proc (lambda (n e env)
@@ -652,7 +652,7 @@
 		 (if (not (is-markup? r markup))
 		     (skribe-warning 2
 				     for
-				     (format #f "illegal `~a' element, `~a' expected"
+				     (format #f "illegal '~a' element, '~a' expected"
 					     (if (markup? r)
 						 (markup-markup r)
 						 (type-name r))
@@ -813,12 +813,12 @@
 	 ((not (memq align '(#f center left right)))
 	  (skribe-error
 	   'tc
-	   "align should be one of 'left', `center', or `right'"
+	   "align should be one of 'left', 'center', or 'right'"
 	   align))
 	 ((not (memq valign '(#f top middle center bottom)))
 	  (skribe-error
 	   'tc
-	   "valign should be one of 'top', `middle', `center', or `bottom'"
+	   "valign should be one of 'top', 'middle', 'center', or 'bottom'"
 	   valign))
 	 (else
 	  (new container
@@ -1025,7 +1025,7 @@
 	 ((not (string? (car bd)))
 	  (skribe-type-error 'mark "Illegal ident:" (car bd) "string"))
 	 (ident
-	  (skribe-error 'mark "Illegal `ident:' option" ident))
+	  (skribe-error 'mark "Illegal 'ident:' option" ident))
 	 (else
 	  (let* ((bs (ast->string bd))
 		 (n (new markup
@@ -1067,7 +1067,7 @@
 		    (page #f)
                     (sort-bib-refs bib-sort-refs/number))
    (define (unref text kind)
-      (let ((msg (format #f "can't find `~a': " kind)))
+      (let ((msg (format #f "can't find '~a': " kind)))
         (warning/loc 1 &invocation-location 'ref msg text)
         (new markup
              (markup 'unref)
@@ -1230,7 +1230,7 @@
                  (cond
                   ((not target)
                    (skribe-warning/ast 1 n 'numref
-                                       "can't find `ident': "
+                                       "can't find 'ident': "
                                        ident)
                    (new markup
                         (markup 'unref)
@@ -1299,7 +1299,7 @@
                                  (labels 'number))
    (if (not (memq count '(partial full)))
        (skribe-error 'the-bibliography
-		     "count must be either `partial' or `full'"
+		     "count must be either 'partial' or 'full'"
 		     count)
        (let ((label-proc (case labels
                            ((number)    assign-entries-numbers!)

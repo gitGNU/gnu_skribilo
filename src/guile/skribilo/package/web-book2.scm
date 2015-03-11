@@ -105,7 +105,7 @@
   ;; Override the `chapter' markup from the `base' package to allow the
   ;; production of a small TOC at the beginning of each chapter.
   (lambda args
-    ;;(format (current-error-port) "in new `~a'~%" markup)
+    ;;(format (current-error-port) "in new '~a'~%" markup)
     (if (engine-format? "html")
         (apply markup
                (append (concatenate (the-options args))

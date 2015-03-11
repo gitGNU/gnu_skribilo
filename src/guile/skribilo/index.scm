@@ -94,7 +94,7 @@
                                     (location-column loc))
                             ""))
                    (msg (format
-                         #f (_ "the-index: char-offset `~A' out of bounds~%")
+                         #f (_ "the-index: char-offset '~A' out of bounds~%")
                          char-offset)))
                (raise (condition (&message
                                   (condition-message (string-append loc msg))))))

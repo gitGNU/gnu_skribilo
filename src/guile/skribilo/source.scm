@@ -67,12 +67,12 @@
   ;; Issue a user-friendly error message for error condition C.
   (cond ((no-extractor-error? c)
          (format (current-error-port)
-                 (_ "source language `~a' does not have an extractor~%")
+                 (_ "source language '~a' does not have an extractor~%")
                  (language-name (no-extractor-error:language c))))
 
         ((definition-not-found-error? c)
          (format (current-error-port)
-                 (_ "source definition of `~a' in language `~a' not found~%")
+                 (_ "source definition of '~a' in language '~a' not found~%")
                  (definition-not-found-error:definition c)
                  (language-name (definition-not-found-error:language c))))
 

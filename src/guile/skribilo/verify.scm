@@ -72,7 +72,7 @@
                (option (unsupported-markup-option-error:option c)))
            (show-location node)
 	   (format (current-error-port)
-                   (_ "option `~a' of markup `~a' not supported by engine `~a'~%")
+                   (_ "option '~a' of markup '~a' not supported by engine '~a'~%")
 		   option (and (markup? node)
                                (markup-markup node))
                    (engine-ident engine))))
@@ -127,7 +127,7 @@
 		       3
 		       markup
 		       'verify
-		       (format #f "engine ~a does not support markup ~a option `~a' -- ~a"
+		       (format #f "engine ~a does not support markup ~a option '~a' -- ~a"
 			       (engine-ident engine)
 			       (markup-markup markup)
 			       o
@@ -192,7 +192,7 @@
 	       (skribe-warning/ast
 		     1
 		     node
-		     (format #f "node `~a' forbidden here by ~a engine"
+		     (format #f "node '~a' forbidden here by ~a engine"
 			     (markup-markup node)
 			     (engine-ident e))))))))
      node))

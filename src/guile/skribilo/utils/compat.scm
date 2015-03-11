@@ -164,7 +164,7 @@
 		   (begin
 		     (if (> (*verbose*) 1)
 			 (format (current-error-port)
-				 "  skribe-load: `~a' -> `~a'~%"
+				 "  skribe-load: '~a' -> '~a'~%"
 				 file mod-name))
 		     (let ((mod (false-if-exception
 				 (resolve-interface mod-name))))
@@ -211,7 +211,7 @@
 		 (*document-being-output*))))
     (if (document? doc)
 	(document-bind-node! doc node)
-	(error "Sorry, unable to achieve `bind-markup!'.  Use `document-bind-node!' instead."
+	(error "Sorry, unable to achieve 'bind-markup!'.  Use 'document-bind-node!' instead."
 	       node))))
 
 (define-public (find-markups ident)
@@ -222,7 +222,7 @@
 	  (if result
 	      (list result)
 	      #f))
-	(error "Sorry, unable to achieve `find-markups'.  Use `document-lookup-node' instead."
+	(error "Sorry, unable to achieve 'find-markups'.  Use 'document-lookup-node' instead."
 	       ident))))
 
 (define-public (find-markup-ident ident)

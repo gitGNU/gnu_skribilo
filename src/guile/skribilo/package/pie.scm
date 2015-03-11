@@ -99,7 +99,7 @@
 	  (weight (and the-slice (markup-option the-slice :weight))))
       (if (not the-slice)
 	  (skribe-error 'lout
-			"`sliceweight' node not within a `slice' body"
+			"'sliceweight' node not within a 'slice' body"
 			sw-node)
 	  (if pct?
 	      (let* ((the-pie (ast-parent the-slice))
@@ -108,7 +108,7 @@
 						'&total-weight))))
 		 (if (not the-pie)
 		     (skribe-error 'lout
-				   "`slice' not within a `pie' body"
+				   "'slice' not within a 'pie' body"
 				   the-slice)
 		     (* 100.0 (/ weight total)))) ;; flonum (FIXME: precision)
 

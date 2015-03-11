@@ -418,12 +418,12 @@
 	     "    @PageMark @Tag\n"
 	     "}\n\n"
 
-	     "# @SkribiloLeaders is used in `toc'\n"
+	     "# @SkribiloLeaders is used in 'toc'\n"
 	     "# (this is mostly copied from the expert's guide)\n"
 	     "def @SkribiloLeaders { "
 	     ,leader " |" ,leader-space " @SkribiloLeaders }\n\n"
 
-             "# Embedding an application in PDF (``Launch'' actions)\n"
+             "# Embedding an application in PDF ('Launch' actions)\n"
              "# (tested with XPdf 3.1 and Evince 0.4.0)\n"
              "def @SkribiloEmbed\n"
              "  left command\n"
@@ -1033,7 +1033,7 @@
 	 (which (assoc orientation alist)))
     (if (not which)
 	(skribe-error 'lout
-		      "`page-orientation' should be either `portrait' or `landscape'"
+		      "'page-orientation' should be either 'portrait' or 'landscape'"
 		      orientation)
 	(cdr which))))
 
@@ -1130,7 +1130,7 @@
 		     ((slides)  (display "@SysInclude { slides }\n"))
 		     (else     (skribe-error
 				'lout
-				"`document-type' should be one of `book', `report', `doc' or `slides'"
+				"'document-type' should be one of 'book', 'report', 'doc' or 'slides'"
 				doc-type)))
 		   (format #t "# Custom document includes\n~a\n" doc-include))
 
@@ -1395,7 +1395,7 @@
       ((slides)  (assoc-ref lout-slides-markup-alist skribe-markup))
       (else
        (skribe-error 'lout
-		     "`document-type' should be one of `book', `report', `doc' or `slides'"
+		     "'document-type' should be one of 'book', 'report', 'doc' or 'slides'"
 		     doc-type)))))
 
 

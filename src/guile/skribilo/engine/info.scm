@@ -174,7 +174,7 @@
                   (begin
                     (skribe-warning/ast 1 section
                                         (format #f
-                                                (_ "Info node title `~A' already used")
+                                                (_ "Info node title '~A' already used")
                                                 title))
                     (skribe-warning/ast 1 (cdr same-named)
                                         (_ "previous occurrence was here"))

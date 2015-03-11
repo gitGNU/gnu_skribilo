@@ -1,6 +1,7 @@
 ;;; skribilo.scm  --  The Skribilo document processor.
 ;;;
-;;; Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2013  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2013,
+;;;   2015  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
 ;;;
 ;;;
@@ -67,16 +68,16 @@ Process Skribilo document from file INPUT (or the standard input) using the
 specified reader syntax, and produce its output using the specified engine.
 "))
   (display (_ "
-  -R, --reader=READER    Use READER to parse the input file, e.g., `skribe'
-                         (default) or `outline'."))
+  -R, --reader=READER    Use READER to parse the input file, e.g., 'skribe'
+                         (default) or 'outline'."))
   (display (_ "
-  -t, --target=ENGINE    Use ENGINE as the output engine, e.g., `html'."))
+  -t, --target=ENGINE    Use ENGINE as the output engine, e.g., 'html'."))
   (display (_ "
   -c, --custom=C=VAL     Use VAL as the value of ENGINE's custom C."))
   (display (_ "
   -o, --output=FILE      Write output to FILE."))
   (display (_ "
-      --compat=COMPAT    Use COMPAT as the compatibility layer, e.g., `skribe'."))
+      --compat=COMPAT    Use COMPAT as the compatibility layer, e.g., 'skribe'."))
   (newline)
   (display (_ "
   -I, --doc-path=DIR     Prepend DIR to the document include path."))
@@ -90,7 +91,7 @@ specified reader syntax, and produce its output using the specified engine.
   -U, --sui-path=DIR     Prepend DIR to the Skribe URL Index (SUI) search path."))
   (newline)
   (display (_ "
-  -b, --base=BASE        Strip BASE from all hyperlinks (`html' engine)."))
+  -b, --base=BASE        Strip BASE from all hyperlinks ('html' engine)."))
   (display (_ "
   -e, --eval=EXPR        Prepend EXPR to the list of expressions to be
                          evaluted before the input file is processed."))

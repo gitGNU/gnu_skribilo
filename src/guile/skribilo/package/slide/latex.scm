@@ -192,7 +192,7 @@
 ;*    %slide-advi-setup! ...                                           */
 ;*---------------------------------------------------------------------*/
 (define (%slide-advi-setup!)
-   (skribe-message "Generating `Advi Seminar' slides...\n")
+   (skribe-message "Generating 'Advi Seminar' slides...\n")
    (let ((le (find-engine 'latex)))
       (define (advi-geometry geo)
 	 (let ((r (string-match "([0-9]+)x([0-9]+)" geo)))
@@ -337,7 +337,7 @@
 ;*    %slide-prosper-setup! ...                                        */
 ;*---------------------------------------------------------------------*/
 (define (%slide-prosper-setup!)
-   (skribe-message "Generating `Prosper' slides...\n")
+   (skribe-message "Generating 'Prosper' slides...\n")
    (let ((le (find-engine 'latex))
 	 (overlay-count 0))
       ;; transitions

@@ -239,14 +239,14 @@
        `(list ,@(loop (html->shtml body))))
 
       (((? symbol? unsupported-tag) rest ...)
-       (warn* (_ "tag `~s' ignored") tag)
+       (warn* (_ "tag '~s' ignored") tag)
        #f)
 
       ((lst ...)
        (map loop lst))
 
       (_
-       (warn* (_ "skipping tag `~a'~%") tag)
+       (warn* (_ "skipping tag '~a'~%") tag)
        #f))))
 
 (define (english-date->date str)

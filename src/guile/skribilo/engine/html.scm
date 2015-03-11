@@ -728,7 +728,7 @@
 	  (id (markup-ident n)))
       (unless (string? id)
 	 (skribe-error '&html-generic-header
-		       (format #f "Illegal identifier `~a'" id)
+		       (format #f "Illegal identifier '~a'" id)
 		       n))
       ;; title
       (output (new markup
@@ -1094,7 +1094,7 @@
 			(f (html-file c e)))
 		    (unless (string? id)
 		       (skribe-error 'toc
-				     (format #f "illegal identifier `~a'" id)
+				     (format #f "illegal identifier '~a'" id)
 				     c))
 		    (display " <tr>")
 		    ;; blank columns

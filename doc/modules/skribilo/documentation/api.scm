@@ -271,7 +271,7 @@ def @SkribiloExample named @Title {} right x {
 		    %skribilo-module-reader)))
       (if (not (string? f))
 	  (skribe-error 'api-search-definition
-			(format #f "can't find source file `~a' in path"
+			(format #f "can't find source file '~a' in path"
 				file)
 			path)
 	  (with-input-from-file f
@@ -281,7 +281,7 @@ def @SkribiloExample named @Title {} right x {
 		   (if (eof-object? exp)
 		       (skribe-error 'api-search-definition
 				     (format #f
-					     "can't find `~a' definition" id)
+					     "can't find '~a' definition" id)
 				     file)
 		       (or (pred id exp) (loop (read))))))))))
 
@@ -379,7 +379,7 @@ def @SkribiloExample named @Title {} right x {
        '())
       (else
        (skribe-error 'define-markup-formals
-		     "Illegal `define-markup' form"
+		     "Illegal 'define-markup' form"
 		     def))))
 
 ;*---------------------------------------------------------------------*/
@@ -402,7 +402,7 @@ def @SkribiloExample named @Title {} right x {
        '((ident #f) (class #f)))
       (else
        (skribe-error 'define-markup-options
-		     "Illegal `define-markup' form"
+		     "Illegal 'define-markup' form"
 		     def))))
 
 ;*---------------------------------------------------------------------*/
@@ -423,7 +423,7 @@ def @SkribiloExample named @Title {} right x {
 			 (if (or (not (pair? (cdr rest)))
 				 (not (symbol? (cadr rest))))
 			     (skribe-error 'define-markup-rest
-					   "Illegal `define-markup' form"
+					   "Illegal 'define-markup' form"
 					   def)
 			     (cadr rest))
 			 #f))))))
@@ -433,7 +433,7 @@ def @SkribiloExample named @Title {} right x {
        'node)
       (else
        (skribe-error 'define-markup-rest
-		     "Illegal `define-markup' form"
+		     "Illegal 'define-markup' form"
 		     def))))
 
 ;*---------------------------------------------------------------------*/
@@ -826,7 +826,7 @@ def @SkribiloExample named @Title {} right x {
           (resolve (lambda (n e env)
                      (cond
                       ((engine-format? "latex" e)
-                       (skribe-warning 3 "`doc-engine' not rendered in LaTeX")
+                       (skribe-warning 3 "'doc-engine' not rendered in LaTeX")
                        #f)
                       ((engine-format? "lout" e)
                        (list (map (lambda (c)

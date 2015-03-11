@@ -151,7 +151,7 @@
 	       (option (markup-unknown-option-error:option c)))
            (show-location markup)
 	   (format (current-error-port)
-		   (_ "~a: unknown markup option for `~a'~%")
+		   (_ "~a: unknown markup option for '~a'~%")
 		   option markup)))
 
 	((markup-already-bound-error? c)
@@ -159,7 +159,7 @@
 	       (ident  (markup-already-bound-error:ident  c)))
            (show-location markup)
 	   (format (current-error-port)
-		   (_ "`~a' (~a): markup identifier already bound~%")
+		   (_ "'~a' (~a): markup identifier already bound~%")
 		   ident
 		   (if (markup? markup)
 		       (markup-markup markup)
@@ -493,7 +493,7 @@
   (let ((ident (if (null? ident) (markup-ident node) (car ident))))
     (if ident
 	(let ((handle (hash-get-handle (document-node-table doc) ident)))
-	  ;;(format (current-error-port) "binding `~a' in `~a'~%" ident node)
+	  ;;(format (current-error-port) "binding '~a' in '~a'~%" ident node)
 	  (if (and (pair? handle) (not (eq? (cdr handle) node)))
 	      (raise (condition (&markup-already-bound-error
 				 (ident  ident)
