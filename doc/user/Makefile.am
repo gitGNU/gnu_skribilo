@@ -114,7 +114,7 @@ CLEANFILES += $(ps_DATA)
 endif !HAVE_PS2PDF
 
 .lout.ps:
-	$(AM_V_LOUT)$(LOUT) -r4 -I$(srcdir)/lout -I$(builddir)/lout \
+	$(AM_V_LOUT)$(LOUT) -a -r4 -I$(srcdir)/lout -I$(builddir)/lout \
 	  -c $(@:%.ps=%) -o $@ $<
 
 # Variable substitution.
