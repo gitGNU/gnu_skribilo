@@ -535,19 +535,21 @@
       (cond
 	 ((and (not (null? body)) (or file start stop definition))
 	  (skribe-error 'source
-			"file, start/stop, and definition are exclusive with body"
+			(_ "file, start/stop, and definition\
+ are exclusive with body")
 			body))
 	 ((and start stop definition)
 	  (skribe-error 'source
-			"start/stop are exclusive with a definition"
+			(_ "start/stop are exclusive with a definition")
 			body))
 	 ((and (or start stop definition) (not file))
 	  (skribe-error 'source
-			"start/stop and definition require a file specification"
+			(_ "start/stop and definition require a\
+ file specification")
 			file))
 	 ((and definition (not language))
 	  (skribe-error 'source
-			"definition requires a language specification"
+			(_ "definition requires a language specification")
 			definition))
 	 ((and file (not (string? file)))
           (invalid-argument-error 'source file 'file))
@@ -557,7 +559,7 @@
           (invalid-argument-error 'source stop 'stop))
 	 ((and (integer? start) (integer? stop) (> start stop))
 	  (skribe-error 'source
-			"start line > stop line"
+			(_ "start line is greater than stop line")
 			(format #f "~a/~a" start stop)))
 	 ((and language (not (language? language)))
           (invalid-argument-error 'source language 'language))
