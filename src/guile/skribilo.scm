@@ -67,54 +67,55 @@
 Process Skribilo document from file INPUT (or the standard input) using the
 specified reader syntax, and produce its output using the specified engine.
 "))
-  (display (_ "
-  -R, --reader=READER    Use READER to parse the input file, e.g., 'skribe'
-                         (default) or 'outline'."))
-  (display (_ "
-  -t, --target=ENGINE    Use ENGINE as the output engine, e.g., 'html'."))
-  (display (_ "
-  -c, --custom=C=VAL     Use VAL as the value of ENGINE's custom C."))
-  (display (_ "
-  -o, --output=FILE      Write output to FILE."))
-  (display (_ "
-      --compat=COMPAT    Use COMPAT as the compatibility layer, e.g., 'skribe'."))
   (newline)
-  (display (_ "
-  -I, --doc-path=DIR     Prepend DIR to the document include path."))
-  (display (_ "
-  -B, --bib-path=DIR     Prepend DIR to the bibliography include path."))
-  (display (_ "
-  -S, --source-path=DIR  Prepend DIR to the source include path."))
-  (display (_ "
-  -P, --image-path=DIR   Prepend DIR to the image include path."))
-  (display (_ "
-  -U, --sui-path=DIR     Prepend DIR to the Skribe URL Index (SUI) search path."))
+  (display (_ "\
+  -R, --reader=READER    use READER to parse the input file--e.g., 'skribe'
+                         (default) or 'outline'\n"))
+  (display (_ "\
+  -t, --target=ENGINE    use ENGINE as the output engine--e.g., 'html'\n"))
+  (display (_ "\
+  -c, --custom=C=VAL     use VAL as the value of ENGINE's custom C\n"))
+  (display (_ "\
+  -o, --output=FILE      write output to FILE\n"))
+  (display (_ "\
+      --compat=COMPAT    use COMPAT as the compatibility layer--e.g., 'skribe'\n"))
   (newline)
-  (display (_ "
-  -b, --base=BASE        Strip BASE from all hyperlinks ('html' engine)."))
-  (display (_ "
-  -e, --eval=EXPR        Prepend EXPR to the list of expressions to be
-                         evaluted before the input file is processed."))
-  (display (_ "
-  -p, --preload=FILE     Preload FILE before processing the input file."))
+  (display (_ "\
+  -I, --doc-path=DIR     prepend DIR to the document include path\n"))
+  (display (_ "\
+  -B, --bib-path=DIR     prepend DIR to the bibliography include path\n"))
+  (display (_ "\
+  -S, --source-path=DIR  prepend DIR to the source include path\n"))
+  (display (_ "\
+  -P, --image-path=DIR   prepend DIR to the image include path\n"))
+  (display (_ "\
+  -U, --sui-path=DIR     prepend DIR to the Skribe URL Index (SUI) search path\n"))
   (newline)
-  (display (_ "
-  -v, --verbose[=LEVEL]  Be verbose, unless LEVEL is 0."))
-  (display (_ "
-  -w, --warning[=LEVEL]  Issue warnings, unless LEVEL is 0."))
-  (display (_ "
-  -g, --debug[=ARG]      Issue debugging output, unless ARG is 0.  If ARG is
+  (display (_ "\
+  -b, --base=BASE        strip BASE from all hyperlinks ('html' engine)\n"))
+  (display (_ "\
+  -e, --eval=EXPR        prepend EXPR to the list of expressions to be
+                         evaluted before the input file is processed\n"))
+  (display (_ "\
+  -p, --preload=FILE     preload FILE before processing the input file\n"))
+  (newline)
+  (display (_ "\
+  -v, --verbose[=LEVEL]  be verbose, unless LEVEL is 0\n"))
+  (display (_ "\
+  -w, --warning[=LEVEL]  issue warnings, unless LEVEL is 0\n"))
+  (display (_ "\
+  -g, --debug[=ARG]      issue debugging output, unless ARG is 0; if ARG is
                          not a number, it is interpreted as a symbol to be
-                         watched."))
-  (display (_ "
-      --no-color         Disable colored debugging output."))
+                         watched\n"))
+  (display (_ "\
+      --no-color         disable colored debugging output\n"))
   (newline)
-  (display (_ "
-  -h, --help             Give this help list"))
-  (display (_ "
-  -V, --version          Print program version"))
+  (display (_ "\
+  -h, --help             give this help list\n"))
+  (display (_ "\
+  -V, --version          print program version\n"))
   (newline)
-  (format #t (_ "
+  (format #t (_ "\
 Report bugs to <~a>.~%")
           (skribilo-bug-report-address)))
 
@@ -353,7 +354,7 @@ options."
     (if (> (*debug*) 4)
 	(set! %load-hook
 	      (lambda (file)
-		(format #t "~~ loading `~a'...~%" file))))
+		(format #t "~~ loading '~a'...~%" file))))
 
 
     (parameterize ((*document-reader*   (make-reader reader-name))
