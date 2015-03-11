@@ -1,5 +1,9 @@
 # Automake/Autoconf substitutions.
 
+AM_V_SUBSTITUTE = $(AM_V_SUBSTITUTE_$(V))
+AM_V_SUBSTITUTE_ = $(AM_V_SUBSTITUTE_$(AM_DEFAULT_VERBOSITY))
+AM_V_SUBSTITUTE_0 = @echo "  SUBSTITUTE" $@;
+
 substitute = sed -e 's,[@]guilemoduledir[@],$(guilemoduledir),g'	\
 		 -e 's,[@]abs_top_srcdir[@],$(abs_top_srcdir),g'	\
 		 -e 's,[@]abs_top_builddir[@],$(abs_top_builddir),g'	\

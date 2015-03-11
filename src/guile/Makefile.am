@@ -1,4 +1,5 @@
-# Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012 Ludovic Courtès <ludo@gnu.org>
+# Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2012,
+#   2015 Ludovic Courtès <ludo@gnu.org>
 #
 # This file is part of Skribilo.
 #
@@ -108,8 +109,8 @@ BUILT_SOURCES =					\
   skribilo/utils/images.scm
 
 .in.scm:
-	$(MKDIR_P) "`dirname $@`"
-	$(substitute) "$^" > "$@.tmp" &&	\
+	$(AM_V_SUBSTITUTE)$(MKDIR_P) "`dirname $@`" ;	\
+	$(substitute) "$^" > "$@.tmp" &&		\
 	mv "$@.tmp" "$@"
 
 #all-local:

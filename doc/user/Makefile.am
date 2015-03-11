@@ -122,7 +122,7 @@ include $(top_srcdir)/substitute.am
 
 lout/front-page.lout: lout/front-page.lout.in
 	test -d "lout" || mkdir "lout"
-	$(substitute) "$^" > "$@.tmp" &&	\
+	$(AM_V_SUBSTITUTE)$(substitute) "$^" > "$@.tmp" &&	\
 	mv "$@.tmp" "$@"
 
 endif HAVE_LOUT

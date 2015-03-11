@@ -7,5 +7,5 @@ CLEANFILES = $(man1_MANS)
 include $(top_srcdir)/substitute.am
 
 .in:
-	$(substitute) "$^" > "$@.tmp" &&	\
+	$(AM_V_SUBSTITUTE)$(substitute) "$^" > "$@.tmp" &&	\
 	mv "$@.tmp" "$@"

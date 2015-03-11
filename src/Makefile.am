@@ -10,6 +10,6 @@ CLEANFILES  = $(bin_SCRIPTS) $(noinst_SCRIPTS)
 include $(top_srcdir)/substitute.am
 
 .in:
-	$(substitute) "$^" > "$@.tmp" &&	\
+	$(AM_V_SUBSTITUTE)$(substitute) "$^" > "$@.tmp" &&	\
 	chmod +x "$@.tmp" &&			\
 	mv "$@.tmp" "$@"
