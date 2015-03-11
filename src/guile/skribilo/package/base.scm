@@ -1,7 +1,7 @@
 ;;; base.scm -- The base markup package of Skribe/Skribilo.
 ;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2005, 2006, 2007, 2008, 2009, 2013  Ludovic Courtès  <ludo@gnu.org>
+;;; Copyright 2005, 2006, 2007, 2008, 2009, 2013, 2015 Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -28,6 +28,7 @@
   :use-module (skribilo ast)
   :use-module (skribilo resolve)
   :use-module (skribilo location)
+  :use-module (skribilo condition)
   :use-module (skribilo utils keywords)
   :autoload   (srfi srfi-1)        (every any filter)
   :autoload   (skribilo evaluator) (include-document)
@@ -63,9 +64,9 @@
 ;*    include ...                                                      */
 ;*---------------------------------------------------------------------*/
 (define-public (include file)
-   (if (not (string? file))
-       (skribe-error 'include "Invalid file (string expected)" file)
-       (include-document file)))
+  (unless (string? file)
+    (invalid-argument-error 'include file 'file))
+  (include-document file))
 
 ;*---------------------------------------------------------------------*/
 ;*    document ...                                                     */
@@ -122,18 +123,18 @@
 		       (phone #f)
 		       (photo #f)
 		       (align 'center))
-   (if (not (memq align '(center left right)))
-       (skribe-error 'author "Invalid align value" align)
-       (new container
-	  (markup 'author)
-	  (ident (or ident (symbol->string (gensym "author"))))
-	  (class class)
-          (loc   &invocation-location)
-	  (required-options '(:name :title :affiliation :email :url :address :phone :photo :align))
-	  (options `((:name ,name)
-		     (:align ,align)
-		     ,@(the-options opts :ident :class)))
-	  (body #f))))
+   (unless (memq align '(center left right))
+     (invalid-argument-error 'author align 'align))
+   (new container
+        (markup 'author)
+        (ident (or ident (symbol->string (gensym "author"))))
+        (class class)
+        (loc   &invocation-location)
+        (required-options '(:name :title :affiliation :email :url :address :phone :photo :align))
+        (options `((:name ,name)
+                   (:align ,align)
+                   ,@(the-options opts :ident :class)))
+        (body #f)))
 
 ;*---------------------------------------------------------------------*/
 ;*    handle ...                                                       */
@@ -158,7 +159,7 @@
              (loc &invocation-location)
 	     (ast (car body))))
 	 (else
-	  (skribe-error 'handle "Invalid handle" opts)))))
+          (invalid-argument-error 'handle opts)))))
 
 ;*---------------------------------------------------------------------*/
 ;*    toc ...                                                          */
@@ -191,13 +192,9 @@
 		  ((null? (cdr body))
 		   (if (handle? (car body))
 		       (car body)
-		       (skribe-error 'toc
-				     "Invalid argument (handle expected)"
-				     (if (markup? (car body))
-					 (markup-markup (car body))
-					 "???"))))
+                       (invalid-argument-error 'toc (car body))))
 		  (else
-		   (skribe-error 'toc "Invalid argument" body)))))))
+                   (invalid-argument-error 'toc body)))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    section-number ...                                               */
@@ -382,9 +379,9 @@
 	 ((null? num)
 	  ln)
 	 ((not (null? (cdr num)))
-	  (skribe-error 'linebreak "Invalid arguments" num))
+          (invalid-argument-error 'linebreak num))
 	 ((not (and (integer? (car num)) (positive? (car num))))
-	  (skribe-error 'linebreak "Invalid argument" (car num)))
+          (invalid-argument-error 'linebreak (car num)))
 	 (else
 	  (vector->list (make-vector (car num) ln))))))
 
@@ -484,7 +481,7 @@
 	  (options (the-options opts :ident :class))
 	  (body (the-body opts))))
       (else
-       (skribe-error 'flush "Invalid side" side))))
+       (invalid-argument-error 'flush side 'side))))
 
 ;*---------------------------------------------------------------------*/
 ;*    center ...                                                       */
@@ -509,16 +506,16 @@
 		     :key
 		     (ident #f) (class "prog")
 		     (line 1) (linedigit #f) (mark ";!"))
-   (if (not (or (string? mark) (eq? mark #f)))
-       (skribe-error 'prog "Invalid mark" mark)
-       (new container
-	  (markup 'prog)
-	  (ident (or ident (symbol->string (gensym "prog"))))
-	  (class class)
-          (loc   &invocation-location)
-	  (required-options '(:line :mark))
-	  (options (the-options opts :ident :class :linedigit))
-	  (body (make-prog-body (the-body opts) line linedigit mark)))))
+   (unless (or (string? mark) (eq? mark #f))
+     (invalid-argument-error 'prog mark 'mark))
+   (new container
+        (markup 'prog)
+        (ident (or ident (symbol->string (gensym "prog"))))
+        (class class)
+        (loc   &invocation-location)
+        (required-options '(:line :mark))
+        (options (the-options opts :ident :class :linedigit))
+        (body (make-prog-body (the-body opts) line linedigit mark))))
 
 ;*---------------------------------------------------------------------*/
 ;*    source ...                                                       */
@@ -553,19 +550,19 @@
 			"definition requires a language specification"
 			definition))
 	 ((and file (not (string? file)))
-	  (skribe-error 'source "Invalid file" file))
+          (invalid-argument-error 'source file 'file))
 	 ((and start (not (or (integer? start) (string? start))))
-	  (skribe-error 'source "Invalid start" start))
+          (invalid-argument-error 'source start 'start))
 	 ((and stop (not (or (integer? stop) (string? stop))))
-	  (skribe-error 'source "Invalid start" stop))
+          (invalid-argument-error 'source stop 'stop))
 	 ((and (integer? start) (integer? stop) (> start stop))
 	  (skribe-error 'source
 			"start line > stop line"
 			(format #f "~a/~a" start stop)))
 	 ((and language (not (language? language)))
-	  (skribe-error 'source "invalid language" language))
+          (invalid-argument-error 'source language 'language))
 	 ((and tab (not (integer? tab)))
-	  (skribe-error 'source "invalid tab" tab))
+          (invalid-argument-error 'source tab 'tab))
 	 (file
 	  (let ((s (if (not definition)
 		       (source-read-lines file start stop tab)
@@ -702,19 +699,19 @@
 ;*    item ...                                                         */
 ;*---------------------------------------------------------------------*/
 (define-markup (item :rest opts :key (ident #f) (class #f) key)
-   (if (and key (not (or (string? key)
-			 (number? key)
-			 (markup? key)
-			 (pair? key))))
-       (skribe-type-error 'item "Invalid key:" key "node")
-       (new container
-	  (markup 'item)
-	  (ident (or ident (symbol->string (gensym "item"))))
-	  (class class)
-          (loc   &invocation-location)
-	  (required-options '(:key))
-	  (options `((:key ,key) ,@(the-options opts :ident :class :key)))
-	  (body (the-body opts)))))
+   (when (and key (not (or (string? key)
+                           (number? key)
+                           (markup? key)
+                           (pair? key))))
+     (invalid-argument-error 'item key 'key))
+   (new container
+        (markup 'item)
+        (ident (or ident (symbol->string (gensym "item"))))
+        (class class)
+        (loc   &invocation-location)
+        (required-options '(:key))
+        (options `((:key ,key) ,@(the-options opts :ident :class :key)))
+        (body (the-body opts))))
 
 ;*---------------------------------------------------------------------*/
 ;*    table                                                            */
@@ -807,19 +804,13 @@
 		     valign)))
       (cond
 	 ((not (integer? colspan))
-	  (skribe-type-error 'tc "Invalid colspan, " colspan "integer"))
+          (invalid-argument-error 'tc colspan 'colspan))
 	 ((not (symbol? align))
-	  (skribe-type-error 'tc "Invalid align, " align "align"))
+          (invalid-argument-error 'tc align 'align))
 	 ((not (memq align '(#f center left right)))
-	  (skribe-error
-	   'tc
-	   "align should be one of 'left', 'center', or 'right'"
-	   align))
+          (invalid-argument-error 'tc align 'align))
 	 ((not (memq valign '(#f top middle center bottom)))
-	  (skribe-error
-	   'tc
-	   "valign should be one of 'top', 'middle', 'center', or 'bottom'"
-	   valign))
+          (invalid-argument-error 'tc valign 'valign))
 	 (else
 	  (new container
 	     (markup 'tc)
@@ -924,7 +915,7 @@
       ((and (string? char) (= (string-length char) 1))
        char)
       (else
-       (skribe-error 'char "Invalid char" char))))
+       (invalid-argument-error 'char char))))
 
 ;*---------------------------------------------------------------------*/
 ;*    symbol ...                                                       */
@@ -936,9 +927,7 @@
 	    ((string? symbol)
 	     symbol)
 	    (else
-	     (skribe-error 'symbol
-			   "Invalid argument (symbol expected)"
-			   symbol)))))
+             (invalid-argument-error 'symbol symbol)))))
     (new markup
 	 (markup 'symbol)
          (loc    &invocation-location)
@@ -948,12 +937,12 @@
 ;*    ! ...                                                            */
 ;*---------------------------------------------------------------------*/
 (define-markup (! format :rest node)
-   (if (not (string? format))
-       (skribe-type-error '! "Invalid format:" format "string")
-       (new command
-          (loc &invocation-location)
-	  (fmt format)
-	  (body node))))
+   (unless (string? format)
+     (invalid-argument-error '! format))
+   (new command
+        (loc &invocation-location)
+        (fmt format)
+        (body node)))
 
 ;*---------------------------------------------------------------------*/
 ;*    processor ...                                                    */
@@ -962,9 +951,9 @@
 			  :key (combinator #f) (engine #f) (procedure #f))
    (cond
       ((and combinator (not (procedure? combinator)))
-       (skribe-error 'processor "Combinator not a procedure" combinator))
+       (invalid-argument-error 'processor combinator 'combinator))
       ((and engine (not (engine? engine)))
-       (skribe-error 'processor "Invalid engine" engine))
+       (invalid-argument-error 'processor engine 'engine))
       ((and procedure
 	    (or (not (procedure? procedure))
 		(not (let ((a (procedure-property procedure 'arity)))
@@ -974,7 +963,7 @@
                                   (rest?      (caddr a)))
                               (or rest?
                                   (>= (+ compulsory optional) 2))))))))
-       (skribe-error 'processor "Invalid procedure" procedure))
+       (invalid-argument-error 'processor procedure 'procedure))
       (else
        (new processor
           (loc &invocation-location)
@@ -1023,9 +1012,9 @@
 	 ((null? bd)
 	  (skribe-error 'mark "Missing argument" '()))
 	 ((not (string? (car bd)))
-	  (skribe-type-error 'mark "Invalid ident:" (car bd) "string"))
+          (invalid-argument-error 'mark (car bd)))
 	 (ident
-	  (skribe-error 'mark "Invalid 'ident:' option" ident))
+          (invalid-argument-error 'mark ident 'ident))
 	 (else
 	  (let* ((bs (ast->string bd))
 		 (n (new markup
@@ -1121,25 +1110,25 @@
 					 (ast s))))
 			     (unref title (or kind 'title)))))))))
    (define (do-ident-ref text kind)
-      (if (not (string? text))
-	  (skribe-type-error 'ref "Invalid reference" text "string")
-	  (new unresolved
-             (loc  &invocation-location)
-	     (proc (lambda (n e env)
-		      (let ((s (resolve-ident text kind n env)))
-			 (if s
-			     (new markup
-				(markup 'ref)
-				(ident (symbol->string (gensym "ident-ref")))
-				(class class)
-                                (loc   &invocation-location)
-				(required-options '(:text))
-				(options `((kind ,kind)
-					   (mark ,text)
-					   ,@(the-options opts :ident :class)))
-				(body (new handle
+      (unless (string? text)
+        (invalid-argument-error 'ref text))
+      (new unresolved
+           (loc  &invocation-location)
+           (proc (lambda (n e env)
+                   (let ((s (resolve-ident text kind n env)))
+                     (if s
+                         (new markup
+                              (markup 'ref)
+                              (ident (symbol->string (gensym "ident-ref")))
+                              (class class)
+                              (loc   &invocation-location)
+                              (required-options '(:text))
+                              (options `((kind ,kind)
+                                         (mark ,text)
+                                         ,@(the-options opts :ident :class)))
+                              (body (new handle
 					 (ast s))))
-			     (unref text (or kind 'ident)))))))))
+                         (unref text (or kind 'ident))))))))
    (define (mark-ref mark)
      (do-ident-ref mark 'mark))
    (define (make-bib-ref v)
@@ -1210,7 +1199,7 @@
 	 (bib (bib-ref bib))
 	 (url (url-ref))
 	 (line (line-ref line))
-	 (else (skribe-error 'ref "invalid reference" opts)))))
+	 (else (invalid-argument-error 'ref opts)))))
 
 
 ;*---------------------------------------------------------------------*/
@@ -1279,7 +1268,7 @@
 		   ((pair? f)
 		    (bib-add! bib-table f))
 		   (else
-		    (skribe-error "bibliography" "Invalid entry" f))))
+                    (invalid-argument-error 'bibliography f))))
 	     (the-body files)))
 
 ;*---------------------------------------------------------------------*/
@@ -1297,27 +1286,25 @@
 				 (sort bib-sort/authors)
 				 (count 'partial)
                                  (labels 'number))
-   (if (not (memq count '(partial full)))
-       (skribe-error 'the-bibliography
-		     "count must be either 'partial' or 'full'"
-		     count)
-       (let ((label-proc (case labels
-                           ((number)    assign-entries-numbers!)
-                           ((name+year) assign-entries-name+years!)
-                           (else
-                            (skribe-error
-                             'the-bibliography
-                             "invalid label type" labels)))))
-         (new unresolved
-            (loc  &invocation-location)
-            (proc (lambda (n e env)
-                     (resolve-the-bib bib-table
-                                      (new handle (ast n))
-                                      sort
-                                      pred
-                                      count
-                                      (the-options opts)
-                                      label-proc)))))))
+   (unless (memq count '(partial full))
+     (invalid-argument-error 'the-bibliography count 'count))
+
+   (let ((label-proc (case labels
+                       ((number)    assign-entries-numbers!)
+                       ((name+year) assign-entries-name+years!)
+                       (else
+                        (invalid-argument-error 'the-bibliography
+                                                labels 'labels)))))
+     (new unresolved
+          (loc  &invocation-location)
+          (proc (lambda (n e env)
+                  (resolve-the-bib bib-table
+                                   (new handle (ast n))
+                                   sort
+                                   pred
+                                   count
+                                   (the-options opts)
+                                   label-proc))))))
 
 ;*---------------------------------------------------------------------*/
 ;*    noabbrev ...                                                     */
@@ -1352,17 +1339,12 @@
 		    ((and (pair? entry-name) (every string? entry-name))
 		     (string-concatenate entry-name))
 		    (else
-		     (skribe-error
-		      'index
-		      "entry-name must be either a string or a list of strings"
-		      entry-name))))
+                     (invalid-argument-error 'index entry-name))))
 	  (table (cond
 		    ((not index) (default-index))
 		    ((index? index) index)
-		    (else (skribe-type-error 'index
-					     "Invalid index table, "
-					     index
-					     "index"))))
+		    (else
+                     (invalid-argument-error 'index index 'index))))
 	  (m (mark (symbol->string (gensym "mark"))))
 	  (h (new handle (ast m)))
 	  (new (new markup
@@ -1406,13 +1388,12 @@
    (let ((bd (the-body opts)))
       (cond
 	 ((not (and (integer? char-offset) (>= char-offset 0)))
-	  (skribe-error 'the-index "Invalid char offset" char-offset))
+          (invalid-argument-error 'the-index char-offset 'char-offset))
 	 ((not (integer? column))
-	  (skribe-error 'the-index "Invalid column number" column))
+          (invalid-argument-error 'the-index column 'column))
 	 ((not (every index? bd))
-	  (skribe-error 'the-index
-			"Invalid indexes"
-			(filter (lambda (o) (not (index? o))) bd)))
+          (invalid-argument-error 'the-index
+                                  (filter (lambda (o) (not (index? o))) bd)))
 	 (else
 	  (new unresolved
              (loc  &invocation-location)
@@ -1473,9 +1454,9 @@
 			((roman) the-roman-number)
 			((arabic) the-arabic-number)
 			((alpha) the-alpha-number)
-			(else (skribe-error 'counter
-					    "Invalid numbering"
-					    numbering)))))
+			(else
+                         (invalid-argument-error 'counter
+                                                 numbering 'numbering)))))
       (let loop ((num 1)
 		 (items items)
 		 (res '()))
