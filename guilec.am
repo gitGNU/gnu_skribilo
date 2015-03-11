@@ -18,10 +18,14 @@ AM_V_GUILEC = $(AM_V_GUILEC_$(V))
 AM_V_GUILEC_ = $(AM_V_GUILEC_$(AM_DEFAULT_VERBOSITY))
 AM_V_GUILEC_0 = @echo "  GUILEC" $@;
 
+# Override $GUILE_LOAD_COMPILED_PATH altogether so we don't end up
+# loading .go files from $(moduledir) coming from a previous
+# installation (they could be more recent than the local .scm files if
+# the user run 'make install' recently.)
 .scm.go:
 	$(AM_V_GUILEC)$(MKDIR_P) `dirname $@` ;			\
 	GUILE_AUTO_COMPILE=0					\
-	GUILE_LOAD_COMPILED_PATH="$(builddir):$(top_builddir)/src/guile:$$GUILE_LOAD_COMPILED_PATH" \
+	GUILE_LOAD_COMPILED_PATH="$(builddir):$(top_builddir)/src/guile" \
 	$(GUILE) -L "$(srcdir)" -L "$(top_srcdir)/src/guile"	\
 	  -L "$(top_builddir)/src/guile"			\
 	  -c "(use-modules (system base compile)		\
