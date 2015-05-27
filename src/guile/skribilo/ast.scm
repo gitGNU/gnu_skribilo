@@ -2,7 +2,7 @@
 ;;;
 ;;; Copyright 2003, 2004, 2009  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
 ;;; Copyright 2003, 2004  Manuel Serrano
-;;; Copyright 2005, 2006, 2007, 2012, 2013  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2006, 2007, 2012, 2013, 2015  Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This file is part of Skribilo.
@@ -29,8 +29,7 @@
   :use-module (srfi srfi-35)
   :use-module (skribilo condition)
   :use-module (skribilo utils syntax)
-
-  :autoload (skribilo location) (location?)
+  :use-module (skribilo location)
 
   :use-module (ice-9 match)
   :use-module (ice-9 optargs)
