@@ -1,7 +1,7 @@
 ;;; latex.scm  --  LaTeX engine.
 ;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2007, 2009, 2012  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2007, 2009, 2012, 2015  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -753,8 +753,7 @@
    :before (lambda (n e)
 	      (when (and (>= (*debug*) 2) (location? (ast-loc n)))
 		 (format #t "\n\\makebox[\\linewidth][l]{\\hspace{-1.5cm}\\footnotesize{$\\triangleright$\\textit{~a}}}\n" 
-			 (ast-location n)))
-	      (display "\\noindent "))
+			 (ast-location n))))
    :after "\\par\n")
 
 ;*---------------------------------------------------------------------*/
