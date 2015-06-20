@@ -64,8 +64,9 @@
 (define (skribilo-show-help)
   (display (_ "Usage: skribilo [OPTIONS] [INPUT]"))
   (display (_ "
-Process Skribilo document from file INPUT (or the standard input) using the
-specified reader syntax, and produce its output using the specified engine.
+Process Skribilo document from file INPUT (or standard input) using the
+specified reader syntax or the 'skribe' syntax, and produce its output using
+the specified engine or the 'html' engine.
 "))
   (newline)
   (display (_ "\
