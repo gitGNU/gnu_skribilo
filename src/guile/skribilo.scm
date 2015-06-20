@@ -69,10 +69,10 @@ specified reader syntax, and produce its output using the specified engine.
 "))
   (newline)
   (display (_ "\
-  -R, --reader=READER    use READER to parse the input file--e.g., 'skribe'
-                         (default) or 'outline'\n"))
+  -R, --reader=READER    use READER to parse the input file;
+                           e.g., 'skribe' (default) or 'outline'\n"))
   (display (_ "\
-  -t, --target=ENGINE    use ENGINE as the output engine--e.g., 'html'\n"))
+  -t, --target=ENGINE    use ENGINE as the output engine; e.g., 'html'\n"))
   (display (_ "\
   -c, --custom=C=VAL     use VAL as the value of ENGINE's custom C\n"))
   (display (_ "\
