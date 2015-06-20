@@ -1,7 +1,7 @@
 ;;; template.scm  --  Template system for bibliography entries.
 ;;;
 ;;; Copyright 2003, 2004  Manuel Serrano
-;;; Copyright 2006, 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2006, 2007, 2015 Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This file is part of Skribilo.
@@ -144,6 +144,8 @@
 
 (define (make-bib-entry-template/default kind)
   ;; The default bibliography entry template.
+
+  ;; TRANSLATORS: The next few msgids are fragments of bibliography items.
   (case kind
     ((techreport)
      `(author ". " (or title url documenturl) ". "
