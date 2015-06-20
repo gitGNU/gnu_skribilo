@@ -145,10 +145,11 @@
 (define (make-bib-entry-template/default kind)
   ;; The default bibliography entry template.
 
-  ;; TRANSLATORS: The next few msgids are fragments of bibliography items.
   (case kind
     ((techreport)
      `(author ". " (or title url documenturl) ". "
+              ;; TRANSLATORS: The next few msgids are fragments of
+              ;; bibliography items.
               ,(_ "Technical Report") " " number
               (", " institution)
               (", " address)
