@@ -157,13 +157,13 @@
               (", pp. " pages) "."))
     ((article)
      '(author ". " (or title url documenturl) ". "
-              "In " journal ", " volume
+              ,(_ "In ") journal ", " volume
               ("(" number ") ")", "
               (address ", ") month " " year ", "
               ("pp. " pages) "."))
     ((inproceedings)
      '(author ". " (or title url documenturl) ". "
-              "In " booktitle ", "
+              ,(_ "In ") booktitle ", "
               (series ", ")
               ("(" number ")")
               ("pp. " pages ", ")
@@ -179,7 +179,7 @@
               (", pp. " pages) "."))
     ((inbook)
      `(author ". " (or title url documenturl) ". "
-              "In " booktitle ", " publisher
+              ,(_ "In ") booktitle ", " publisher
               (", " editor " (" ,(_ "editor") ")")
               (", " ,(_ "Chapter ") chapter)
               (", pp. " pages) ", "
