@@ -1,7 +1,8 @@
 ;;; sui.scm -- Skribe URL Indices
 ;;;
-;;; Copyright 2005, 2006, 2007, 2008, 2009, 2012  Ludovic Courtès <ludo@gnu.org>
-;;; Copyright 2003, 2004  Manuel Serrano
+;;; Copyright (C) 2005, 2006, 2007, 2008, 2009, 2012,
+;;;    2015  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright (C) 2003, 2004  Manuel Serrano
 ;;;
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -83,7 +84,7 @@
 
 	(else
 	 (format (current-error-port)
-                 (_ "undefined sui error: ~A~%")
+                 (_ "undefined SUI error: ~A~%")
 		 c))))
 
 (register-error-condition-handler! sui-error? handle-sui-error)

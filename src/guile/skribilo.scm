@@ -71,7 +71,7 @@ the specified engine or the 'html' engine.
   (newline)
   (display (_ "\
   -R, --reader=READER    use READER to parse the input file;
-                           e.g., 'skribe' (default) or 'outline'\n"))
+                         e.g., 'skribe' (default) or 'outline'\n"))
   (display (_ "\
   -t, --target=ENGINE    use ENGINE as the output engine; e.g., 'html'\n"))
   (display (_ "\
@@ -79,7 +79,7 @@ the specified engine or the 'html' engine.
   (display (_ "\
   -o, --output=FILE      write output to FILE\n"))
   (display (_ "\
-      --compat=COMPAT    use COMPAT as the compatibility layer--e.g., 'skribe'\n"))
+      --compat=COMPAT    use COMPAT as the compatibility layer; e.g., 'skribe'\n"))
   (newline)
   (display (_ "\
   -I, --doc-path=DIR     prepend DIR to the document include path\n"))

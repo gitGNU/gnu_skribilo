@@ -536,7 +536,7 @@
 	 ((and (not (null? body)) (or file start stop definition))
 	  (skribe-error 'source
 			(_ "file, start/stop, and definition\
- are exclusive with body")
+ cannot be combined with body")
 			body))
 	 ((and start stop definition)
 	  (skribe-error 'source

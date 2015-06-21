@@ -1,7 +1,7 @@
 ;;; info.scm  --  GNU Info engine.
 ;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2008, 2009, 2012  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2008, 2009, 2012, 2015  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2001, 2002  Manuel Serrano
 ;;;
 ;;;
@@ -806,7 +806,7 @@
               (string? (markup-option n :file)))
   :action (lambda (n e)
             (if (markup-option n :url)
-                (skribe-warning/ast 1 n (_ "image URLs not supported"))
+                (skribe-warning/ast 1 n (_ "image URLs are not supported"))
                 (let ((f (let ((f (markup-option n :file)))
                            (convert-image f '("png" "gif" "jpg"))))
                       (h (markup-option n :height))

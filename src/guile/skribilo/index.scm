@@ -1,6 +1,6 @@
 ;;; index.scm -- Document indices.        -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2005, 2006, 2008, 2009  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2006, 2008, 2009, 2015  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -94,7 +94,7 @@
                                     (location-column loc))
                             ""))
                    (msg (format
-                         #f (_ "the-index: char-offset '~A' out of bounds~%")
+                         #f (_ "the-index: char offset '~A' out of bounds~%")
                          char-offset)))
                (raise (condition (&message
                                   (condition-message (string-append loc msg))))))
