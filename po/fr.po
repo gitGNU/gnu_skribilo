@@ -1,376 +1,380 @@
-# French translation.
-# Copyright (C) 2007, 2008 Ludovic Courtès
-# This file is distributed under the same license as the PACKAGE package.
-# Ludovic Courtès <ludo@gnu.org>, 2007.
+# Messages français pour skribilo
+# Copyright (C) 2015 Ludovic Courtès (msgids)
+# This file is distributed under the same license as the skribilo package.
+# Frédéric Marchal <fmarchal@perso.be>, 2015
 #
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: skribilo 0.9.2.64\n"
 "Report-Msgid-Bugs-To: ludo@gnu.org\n"
-"POT-Creation-Date: 2015-03-06 11:35+0100\n"
-"PO-Revision-Date: 2007-02-05 16:02+0100\n"
-"Last-Translator: Ludovic Courtès <ludo@gnu.org>\n"
-"Language-Team: fr <LL@li.org>\n"
-"Language: \n"
+"POT-Creation-Date: 2015-06-21 22:21+0200\n"
+"PO-Revision-Date: 2015-07-17 16:34+0200\n"
+"Last-Translator: Frédéric Marchal <fmarchal@perso.be>\n"
+"Language-Team: French <traduc@traduc.org>\n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms:  nplurals=2; plural=(n > 1);\n"
 
 #: src/guile/skribilo/utils/syntax.scm:55
 msgid "unexpected character in Skribilo module"
 msgstr "caractère inattendu dans le module Skribilo"
 
-#: src/guile/skribilo/biblio/template.scm:150
-#: src/guile/skribilo/biblio/template.scm:210
+#. TRANSLATORS: The next few msgids are fragments of
+#. bibliography items.
+#: src/guile/skribilo/biblio/template.scm:153
+#: src/guile/skribilo/biblio/template.scm:213
 msgid "Technical Report"
 msgstr "Rapport Technique"
 
-#: src/guile/skribilo/biblio/template.scm:180
+#: src/guile/skribilo/biblio/template.scm:160
+#: src/guile/skribilo/biblio/template.scm:166
+#: src/guile/skribilo/biblio/template.scm:182
+msgid "In "
+msgstr "Dans "
+
+#: src/guile/skribilo/biblio/template.scm:183
 msgid "editor"
-msgstr ""
+msgstr "éditeur"
 
-#: src/guile/skribilo/biblio/template.scm:181
+#: src/guile/skribilo/biblio/template.scm:184
 msgid "Chapter "
-msgstr ""
+msgstr "Chapitre "
 
-#: src/guile/skribilo/biblio/template.scm:186
+#: src/guile/skribilo/biblio/template.scm:189
 msgid "PhD Thesis"
 msgstr "Thèse de doctorat"
 
-#: src/guile/skribilo/ast.scm:140
+#: src/guile/skribilo/ast.scm:139
 #, scheme-format
 msgid "orphan node: ~a~%"
-msgstr ""
+msgstr "nœud orphelin: ~a~%"
 
-#: src/guile/skribilo/ast.scm:147
+#: src/guile/skribilo/ast.scm:146
 #, scheme-format
 msgid "cycle found in AST: ~a~%"
-msgstr ""
+msgstr "boucle trouvée dans AST: ~a~%"
 
-#: src/guile/skribilo/ast.scm:154
+#: src/guile/skribilo/ast.scm:153
 #, scheme-format
-msgid "~a: unknown markup option for `~a'~%"
-msgstr ""
+msgid "~a: unknown markup option for '~a'~%"
+msgstr "~a: option de marquage inconnue pour « ~a »~%"
 
-#: src/guile/skribilo/ast.scm:162
+#: src/guile/skribilo/ast.scm:161
 #, scheme-format
-msgid "`~a' (~a): markup identifier already bound~%"
-msgstr ""
+msgid "'~a' (~a): markup identifier already bound~%"
+msgstr "« ~a » (~a): identificateur de marquage déjà lié~%"
 
-#: src/guile/skribilo/ast.scm:170
-#, fuzzy, scheme-format
+#: src/guile/skribilo/ast.scm:169
+#, scheme-format
 msgid "undefined AST error: ~a~%"
-msgstr "erreur skribilo indéfinie : ~S~%"
+msgstr "erreur AST non définie: ~a~%"
 
 #: src/guile/skribilo/biblio.scm:111
 #, scheme-format
 msgid "~a:~a:~a: invalid bibliography entry: ~a~%"
-msgstr "~a:~a:~a: entrée de bibliographie incorrecte : ~a~%"
+msgstr "~a:~a:~a: entrée bibliographique invalide: ~a~%"
 
 #: src/guile/skribilo/biblio.scm:114
 #, scheme-format
 msgid "invalid bibliography entry: ~a~%"
-msgstr "entrée de bibliographie incorrecte : ~a~%"
+msgstr "entrée bibliographique invalide: ~a~%"
 
 #: src/guile/skribilo/biblio.scm:118
 #, scheme-format
-msgid "invalid bibliography entry template: `~a', in `~a'~%"
-msgstr "patron de bibliographie incorrect : `~a', dans `~a'~%"
+msgid "invalid bibliography entry template: '~a', in '~a'~%"
+msgstr "modèle d'entrée bibliographique invalide: « ~a » dans « ~a »~%"
 
 #: src/guile/skribilo/biblio.scm:123
-#, fuzzy, scheme-format
-msgid "invalid bibliography entry s-exp: `~a'~%"
-msgstr "entrée de bibliographie incorrecte : ~a~%"
+#, scheme-format
+msgid "invalid bibliography entry s-exp: '~a'~%"
+msgstr "s-exp de l'entrée bibliographique invalide: « ~a »~%"
 
 #: src/guile/skribilo/biblio.scm:127
 #, scheme-format
 msgid "undefined bibliography error: ~a~%"
-msgstr "erreur de bibliographie indéfinie : ~a~%"
+msgstr "erreur bibliographique non définie: ~a~%"
 
-#: src/guile/skribilo/condition.scm:131
+#: src/guile/skribilo/condition.scm:142
 #, scheme-format
 msgid "Call stack trace not available.~%"
-msgstr ""
+msgstr "Trace de la pile d'appel non disponible.~%"
 
-#: src/guile/skribilo/condition.scm:132
+#: src/guile/skribilo/condition.scm:143
 #, scheme-format
-msgid ""
-"Use `GUILE=\"guile --debug\" skribilo ...' for a detailed stack trace.~%"
-msgstr ""
+msgid "Use 'GUILE=\"guile --debug\" skribilo ...' for a detailed stack trace.~%"
+msgstr "Utilisez « GUILE=\"guile --debug\" skribilo ... » pour une trace de pile détaillée.~%"
 
-#: src/guile/skribilo/condition.scm:150
+#: src/guile/skribilo/condition.scm:163
 #, scheme-format
-msgid "in `~a': invalid argument: ~S~%"
-msgstr "dans `~a': argument incorrect: ~S~%"
+msgid "in '~a': invalid argument '~a': ~S~%"
+msgstr "dans « ~a »: argument « ~a » invalide: ~S~%"
 
-#: src/guile/skribilo/condition.scm:157
+#: src/guile/skribilo/condition.scm:168
 #, scheme-format
-msgid "in `~a': too few arguments: ~S~%"
-msgstr "dans `~a': trop peu d'arguments: ~S~%"
+msgid "in '~a': invalid argument: ~S~%"
+msgstr "dans « ~a »: argument invalide: ~S~%"
 
-#: src/guile/skribilo/condition.scm:164
+#: src/guile/skribilo/condition.scm:175
 #, scheme-format
-msgid "~a: not found in path `~S'~%"
-msgstr "~a: non trouvé dans le chemin `~S'~%"
+msgid "in '~a': too few arguments: ~S~%"
+msgstr "dans « ~a »: trop peu d'arguments: ~S~%"
 
-#: src/guile/skribilo/condition.scm:171
+#: src/guile/skribilo/condition.scm:182
+#, scheme-format
+msgid "~a: not found in path '~S'~%"
+msgstr "~a: pas trouvé dans le chemin « ~S »~%"
+
+#: src/guile/skribilo/condition.scm:189
 #, scheme-format
 msgid "~a: cannot open file~%"
-msgstr "~a: échec d'ouverture du fichier~%"
+msgstr "~a: impossible d'ouvrir le fichier~%"
 
-#: src/guile/skribilo/condition.scm:177
+#: src/guile/skribilo/condition.scm:195
 #, scheme-format
 msgid "~a: cannot write to file~%"
-msgstr "~a: échec en écriture sur le fichier~%"
+msgstr "~a: impossible d'écrire dans le fichier~%"
 
-#: src/guile/skribilo/condition.scm:183
+#: src/guile/skribilo/condition.scm:201
 #, scheme-format
 msgid "file error: ~a~%"
-msgstr "erreur de fichier : ~a~%"
+msgstr "erreur de fichier: ~a~%"
 
-#: src/guile/skribilo/condition.scm:192
+#: src/guile/skribilo/condition.scm:210
 #, scheme-format
 msgid "undefined skribilo error: ~S~%"
-msgstr "erreur skribilo indéfinie : ~S~%"
+msgstr "erreur skribilo non définie: ~S~%"
 
-#: src/guile/skribilo/condition.scm:202
-#, fuzzy, scheme-format
+#: src/guile/skribilo/condition.scm:220
+#, scheme-format
 msgid "unexpected error condition: ~A~%"
-msgstr "erreur skribilo indéfinie : ~S~%"
+msgstr "condition d'erreur inattendue: ~A~%"
 
 #: src/guile/skribilo/engine.scm:74
 #, scheme-format
 msgid "unknown engine `~a'~%"
-msgstr ""
+msgstr "moteur « ~a » inconnu~%"
 
 #: src/guile/skribilo/engine.scm:79
-#, fuzzy, scheme-format
+#, scheme-format
 msgid "undefined engine error: ~A~%"
-msgstr "erreur skribilo indéfinie : ~S~%"
+msgstr "erreur de moteur non définie: ~A~%"
 
 #: src/guile/skribilo/index.scm:97
 #, scheme-format
-msgid "the-index: char-offset `~A' out of bounds~%"
-msgstr ""
+msgid "the-index: char offset '~A' out of bounds~%"
+msgstr "the-index: offset de caractère « ~A » hors limites~%"
 
 #: src/guile/skribilo/source.scm:70
 #, scheme-format
-msgid "source language `~a' does not have an extractor~%"
-msgstr ""
+msgid "source language '~a' does not have an extractor~%"
+msgstr "le langage source « ~a » n'a pas d'extracteur~%"
 
 #: src/guile/skribilo/source.scm:75
 #, scheme-format
-msgid "source definition of `~a' in language `~a' not found~%"
-msgstr ""
+msgid "source definition of '~a' in language '~a' not found~%"
+msgstr "la définition source de « ~a » dans le langage « ~a » n'a pas été trouvée~%"
 
 #: src/guile/skribilo/source.scm:81
-#, fuzzy, scheme-format
+#, scheme-format
 msgid "undefined source error: ~A~%"
-msgstr "erreur skribilo indéfinie : ~S~%"
+msgstr "erreur source non définie: ~A~%"
 
-#: src/guile/skribilo/sui.scm:81
+#: src/guile/skribilo/sui.scm:82
 #, scheme-format
 msgid "invalid SUI form: ~A~%"
-msgstr ""
+msgstr "formulaire SUI invalide: ~A~%"
 
-#: src/guile/skribilo/sui.scm:86
-#, fuzzy, scheme-format
-msgid "undefined sui error: ~A~%"
-msgstr "erreur skribilo indéfinie : ~S~%"
+#: src/guile/skribilo/sui.scm:87
+#, scheme-format
+msgid "undefined SUI error: ~A~%"
+msgstr "erreur SUI non définie: ~A~%"
 
 #: src/guile/skribilo/verify.scm:75
 #, scheme-format
-msgid "option `~a' of markup `~a' not supported by engine `~a'~%"
-msgstr ""
+msgid "option '~a' of markup '~a' not supported by engine '~a'~%"
+msgstr "l'option « ~a » du marquage « ~a » n'est pas supportée par le moteur « ~a »~%"
 
 #: src/guile/skribilo/verify.scm:82
-#, fuzzy, scheme-format
+#, scheme-format
 msgid "undefined verify error: ~a~%"
-msgstr "erreur skribilo indéfinie : ~S~%"
+msgstr "erreur de vérification non définie: ~a~%"
 
 #: src/guile/skribilo/engine/lout.scm:2425
 #: src/guile/skribilo/engine/info.scm:809
-msgid "image URLs not supported"
-msgstr ""
+msgid "image URLs are not supported"
+msgstr "les URL vers les images ne sont pas supportés"
 
 #: src/guile/skribilo/engine/info.scm:177
 #, scheme-format
-msgid "Info node title `~A' already used"
-msgstr ""
+msgid "Info node title '~A' already used"
+msgstr "Le titre du nœud d'information « ~A » est déjà utilisé"
 
 #: src/guile/skribilo/engine/info.scm:180
 msgid "previous occurrence was here"
-msgstr ""
+msgstr "l'occurrence précédente était ici"
+
+#: src/guile/skribilo/package/base.scm:538
+msgid "file, start/stop, and definition cannot be combined with body"
+msgstr "« file », « start/stop » et « definition » ne peuvent pas être combinés dans le corps"
+
+#: src/guile/skribilo/package/base.scm:543
+msgid "start/stop are exclusive with a definition"
+msgstr "« start/stop » excluent une définition"
+
+#: src/guile/skribilo/package/base.scm:547
+msgid "start/stop and definition require a file specification"
+msgstr "« start/stop » et « definition » exigent une spécification de fichier"
+
+#: src/guile/skribilo/package/base.scm:552
+msgid "definition requires a language specification"
+msgstr "« definition » exige une spécification de langage"
+
+#: src/guile/skribilo/package/base.scm:562
+msgid "start line is greater than stop line"
+msgstr "la ligne de départ est plus grande que la ligne de fin"
 
 #: src/guile/skribilo/reader/rss-2.scm:70
 msgid "input is not a valid RSS 2.0 feed"
-msgstr ""
+msgstr "l'entrée n'est pas un flux RSS 2.0 valable"
 
 #: src/guile/skribilo/reader/rss-2.scm:242
 #, scheme-format
-msgid "tag `~s' ignored"
-msgstr ""
+msgid "tag '~s' ignored"
+msgstr "balise « ~s » ignorée"
 
 #: src/guile/skribilo/reader/rss-2.scm:249
 #, scheme-format
-msgid "skipping tag `~a'~%"
-msgstr ""
+msgid "skipping tag '~a'~%"
+msgstr "passe outre la balise « ~a »~%"
 
 #: src/guile/skribilo/reader/rss-2.scm:300
 msgid "no RSS 2.0 channels found in feed"
-msgstr ""
-
-#: src/guile/skribilo.scm:64
-msgid "Usage: skribilo [OPTIONS] [INPUT]"
-msgstr ""
+msgstr "pas de canaux RSS 2.0 trouvés dans le flux"
 
 #: src/guile/skribilo.scm:65
-msgid ""
-"\n"
-"Process Skribilo document from file INPUT (or the standard input) using the\n"
-"specified reader syntax, and produce its output using the specified engine.\n"
-msgstr ""
+msgid "Usage: skribilo [OPTIONS] [INPUT]"
+msgstr "Utilisation: skribilo [OPTIONS] [ENTRÉE]"
 
-#: src/guile/skribilo.scm:69
+#: src/guile/skribilo.scm:66
 msgid ""
 "\n"
-"  -R, --reader=READER    Use READER to parse the input file, e.g., `skribe'\n"
-"                         (default) or `outline'."
+"Process Skribilo document from file INPUT (or standard input) using the\n"
+"specified reader syntax or the 'skribe' syntax, and produce its output using\n"
+"the specified engine or the 'html' engine.\n"
 msgstr ""
+"\n"
+"Traite le document Skribilo du fichier ENTRÉE (ou l'entrée standard)\n"
+"en utilisant la syntaxe de lecture spécifiée ou la syntaxe « skribe » et\n"
+"produit sa sortie en utilisant le moteur spécifié ou le moteur « html ».\n"
 
 #: src/guile/skribilo.scm:72
 msgid ""
-"\n"
-"  -t, --target=ENGINE    Use ENGINE as the output engine, e.g., `html'."
+"  -R, --reader=READER    use READER to parse the input file;\n"
+"                         e.g., 'skribe' (default) or 'outline'\n"
 msgstr ""
+"  -R, --reader=LECTEUR   utilise le LECTEUR pour analyser le fichier d'entrée;\n"
+"                         par ex.: « skribe » (par défaut) ou « outline »\n"
 
-#: src/guile/skribilo.scm:74
-msgid ""
-"\n"
-"  -c, --custom=C=VAL     Use VAL as the value of ENGINE's custom C."
-msgstr ""
+#: src/guile/skribilo.scm:75
+msgid "  -t, --target=ENGINE    use ENGINE as the output engine; e.g., 'html'\n"
+msgstr "  -t, --target=MOTEUR    utilise le MOTEUR comme moteur de sortie; par ex.: « html »\n"
 
-#: src/guile/skribilo.scm:76
-msgid ""
-"\n"
-"  -o, --output=FILE      Write output to FILE."
-msgstr ""
+#: src/guile/skribilo.scm:77
+msgid "  -c, --custom=C=VAL     use VAL as the value of ENGINE's custom C\n"
+msgstr "  -c, --custom=C=VAL     utilise VAL comme valeur du paramètre spécifique C du MOTEUR\n"
 
-#: src/guile/skribilo.scm:78
-msgid ""
-"\n"
-"      --compat=COMPAT    Use COMPAT as the compatibility layer, e.g., "
-"`skribe'."
-msgstr ""
+#: src/guile/skribilo.scm:79
+msgid "  -o, --output=FILE      write output to FILE\n"
+msgstr "  -o, --output=FICHIER   écrit la sortie dans le FICHIER\n"
 
 #: src/guile/skribilo.scm:81
-msgid ""
-"\n"
-"  -I, --doc-path=DIR     Prepend DIR to the document include path."
-msgstr ""
+msgid "      --compat=COMPAT    use COMPAT as the compatibility layer; e.g., 'skribe'\n"
+msgstr "      --compat=COMPAT    utilise COMPAT comme couche de compatibilité; par ex.: « skribe »\n"
 
-#: src/guile/skribilo.scm:83
-msgid ""
-"\n"
-"  -B, --bib-path=DIR     Prepend DIR to the bibliography include path."
-msgstr ""
+#: src/guile/skribilo.scm:84
+msgid "  -I, --doc-path=DIR     prepend DIR to the document include path\n"
+msgstr "  -I, --doc-path=RÉP     préfixe RÉP au chemin d'inclusion du document\n"
 
-#: src/guile/skribilo.scm:85
-msgid ""
-"\n"
-"  -S, --source-path=DIR  Prepend DIR to the source include path."
-msgstr ""
+#: src/guile/skribilo.scm:86
+msgid "  -B, --bib-path=DIR     prepend DIR to the bibliography include path\n"
+msgstr "  -B, --bib-path=RÉP     préfixe RÉP au chemin d'inclusion de la bibliographie\n"
 
-#: src/guile/skribilo.scm:87
-msgid ""
-"\n"
-"  -P, --image-path=DIR   Prepend DIR to the image include path."
-msgstr ""
+#: src/guile/skribilo.scm:88
+msgid "  -S, --source-path=DIR  prepend DIR to the source include path\n"
+msgstr "  -S, --source-path=RÉP  préfixe RÉP au chemin d'inclusion des sources\n"
 
-#: src/guile/skribilo.scm:89
-msgid ""
-"\n"
-"  -U, --sui-path=DIR     Prepend DIR to the Skribe URL Index (SUI) search "
-"path."
-msgstr ""
+#: src/guile/skribilo.scm:90
+msgid "  -P, --image-path=DIR   prepend DIR to the image include path\n"
+msgstr "  -P, --image-path=RÉP   préfixe RÉP au chemin d'inclusion des images\n"
 
 #: src/guile/skribilo.scm:92
-msgid ""
-"\n"
-"  -b, --base=BASE        Strip BASE from all hyperlinks (`html' engine)."
-msgstr ""
+msgid "  -U, --sui-path=DIR     prepend DIR to the Skribe URL Index (SUI) search path\n"
+msgstr "  -U, --sui-path=RÉP     préfixe RÉP au chemin de recherche de l'index d'URL de Skribe (SUI)\n"
 
-#: src/guile/skribilo.scm:94
-msgid ""
-"\n"
-"  -e, --eval=EXPR        Prepend EXPR to the list of expressions to be\n"
-"                         evaluted before the input file is processed."
-msgstr ""
+#: src/guile/skribilo.scm:95
+msgid "  -b, --base=BASE        strip BASE from all hyperlinks ('html' engine)\n"
+msgstr "  -b, --base=BASE        retire BASE de tous les liens hypertextes (moteur « html »)\n"
 
 #: src/guile/skribilo.scm:97
 msgid ""
-"\n"
-"  -p, --preload=FILE     Preload FILE before processing the input file."
+"  -e, --eval=EXPR        prepend EXPR to the list of expressions to be\n"
+"                         evaluted before the input file is processed\n"
 msgstr ""
+"  -e, --eval=EXPR        préfixe EXPR à la liste des expressions à évaluer\n"
+"                         avant que le fichier d'entrée soit traité\n"
 
 #: src/guile/skribilo.scm:100
-msgid ""
-"\n"
-"  -v, --verbose[=LEVEL]  Be verbose, unless LEVEL is 0."
-msgstr ""
+msgid "  -p, --preload=FILE     preload FILE before processing the input file\n"
+msgstr "  -p, --preload=FICHIER  précharge le FICHIER avant le traitement du fichier d'entrée\n"
 
-#: src/guile/skribilo.scm:102
-msgid ""
-"\n"
-"  -w, --warning[=LEVEL]  Issue warnings, unless LEVEL is 0."
-msgstr ""
+#: src/guile/skribilo.scm:103
+msgid "  -v, --verbose[=LEVEL]  be verbose, unless LEVEL is 0\n"
+msgstr "  -v, --verbose[=NIVEAU] soit verbeux à moins que le NIVEAU soit 0\n"
 
-#: src/guile/skribilo.scm:104
+#: src/guile/skribilo.scm:105
+msgid "  -w, --warning[=LEVEL]  issue warnings, unless LEVEL is 0\n"
+msgstr "  -w, --warning[=NIVEAU] émet les avertissements à moins que le NIVEAU soit 0\n"
+
+#: src/guile/skribilo.scm:107
 msgid ""
-"\n"
-"  -g, --debug[=ARG]      Issue debugging output, unless ARG is 0.  If ARG "
-"is\n"
+"  -g, --debug[=ARG]      issue debugging output, unless ARG is 0; if ARG is\n"
 "                         not a number, it is interpreted as a symbol to be\n"
-"                         watched."
+"                         watched\n"
 msgstr ""
-
-#: src/guile/skribilo.scm:108
-msgid ""
-"\n"
-"      --no-color         Disable colored debugging output."
-msgstr ""
+"  -g, --debug[=ARG]      émet la sortie de débogage à moins que ARG soit 0. Si\n"
+"                         ARG n'est pas un nombre, il est interprété comme un\n"
+"                         symbole à surveiller\n"
 
 #: src/guile/skribilo.scm:111
-msgid ""
-"\n"
-"  -h, --help             Give this help list"
-msgstr ""
+msgid "      --no-color         disable colored debugging output\n"
+msgstr "      --no-color         désactive la sortie colorée de débogage\n"
 
-#: src/guile/skribilo.scm:113
-msgid ""
-"\n"
-"  -V, --version          Print program version"
-msgstr ""
+#: src/guile/skribilo.scm:114
+msgid "  -h, --help             display this help text and exit\n"
+msgstr "  -h, --help             affiche ce texte d'aide et termine\n"
 
 #: src/guile/skribilo.scm:116
-#, scheme-format
-msgid ""
-"\n"
-"Report bugs to <~a>.~%"
-msgstr ""
+msgid "  -V, --version          display version information and exit\n"
+msgstr "  -V, --version          affiche les informations de version et termine\n"
 
-#: src/guile/skribilo.scm:196
+#: src/guile/skribilo.scm:119
+#, scheme-format
+msgid "Report bugs to <~a>.~%"
+msgstr "Signalez les bogues à <~a>.~%"
+
+#: src/guile/skribilo.scm:199
 #, scheme-format
 msgid "~a: missing value for custom"
-msgstr ""
+msgstr "~a: valeur manquante pour un paramètre spécifique"
 
-#: src/guile/skribilo.scm:213
+#: src/guile/skribilo.scm:216
 #, scheme-format
 msgid "~a: invalid custom value"
-msgstr ""
+msgstr "~a: valeur spécifique invalide"
 
-#: src/guile/skribilo.scm:318
+#: src/guile/skribilo.scm:321
 #, scheme-format
 msgid "warning: failed to install locale: ~a~%"
-msgstr ""
+msgstr "attention: échec à l'installation des paramètres linguistiques: ~a~%"
