@@ -1,0 +1,386 @@
+# Hungarian translation of skribilo.
+# Copyright (C) 2015 Ludovic Courtès (msgids)
+# This file is distributed under the same license as the skribilo package.
+#
+# Balázs Úr <urbalazs@gmail.com>, 2015.
+msgid ""
+msgstr ""
+"Project-Id-Version: skribilo-0.9.2.64\n"
+"Report-Msgid-Bugs-To: ludo@gnu.org\n"
+"POT-Creation-Date: 2015-06-21 22:21+0200\n"
+"PO-Revision-Date: 2015-06-30 14:55+0200\n"
+"Last-Translator: Balázs Úr <urbalazs@gmail.com>\n"
+"Language-Team: Hungarian <translation-team-hu@lists.sourceforge.net>\n"
+"Language: hu\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Lokalize 1.5\n"
+
+#: src/guile/skribilo/utils/syntax.scm:55
+msgid "unexpected character in Skribilo module"
+msgstr "nem várt karakter a Skribilo modulban"
+
+#. TRANSLATORS: The next few msgids are fragments of
+#. bibliography items.
+#: src/guile/skribilo/biblio/template.scm:153
+#: src/guile/skribilo/biblio/template.scm:213
+msgid "Technical Report"
+msgstr "Technikai jelentés"
+
+#: src/guile/skribilo/biblio/template.scm:160
+#: src/guile/skribilo/biblio/template.scm:166
+#: src/guile/skribilo/biblio/template.scm:182
+msgid "In "
+msgstr "ebben: "
+
+#: src/guile/skribilo/biblio/template.scm:183
+msgid "editor"
+msgstr "szerkesztő"
+
+#: src/guile/skribilo/biblio/template.scm:184
+msgid "Chapter "
+msgstr "Fejezet "
+
+#: src/guile/skribilo/biblio/template.scm:189
+msgid "PhD Thesis"
+msgstr "PhD tézis"
+
+#: src/guile/skribilo/ast.scm:139
+#, scheme-format
+msgid "orphan node: ~a~%"
+msgstr "árva csomópont: ~a~%"
+
+#: src/guile/skribilo/ast.scm:146
+#, scheme-format
+msgid "cycle found in AST: ~a~%"
+msgstr "ciklus található az AST-ben: ~a~%"
+
+#: src/guile/skribilo/ast.scm:153
+#, scheme-format
+msgid "~a: unknown markup option for '~a'~%"
+msgstr "~a: ismeretlen jelölőkapcsoló ennél: „~a”~%"
+
+#: src/guile/skribilo/ast.scm:161
+#, scheme-format
+msgid "'~a' (~a): markup identifier already bound~%"
+msgstr "„~a” (~a): a jelölő-azonosító már hozzá van kötve~%"
+
+#: src/guile/skribilo/ast.scm:169
+#, scheme-format
+msgid "undefined AST error: ~a~%"
+msgstr "meghatározatlan AST-hiba: ~a~%"
+
+#: src/guile/skribilo/biblio.scm:111
+#, scheme-format
+msgid "~a:~a:~a: invalid bibliography entry: ~a~%"
+msgstr "~a:~a:~a: érvénytelen irodalomjegyzék-bejegyzés: ~a~%"
+
+#: src/guile/skribilo/biblio.scm:114
+#, scheme-format
+msgid "invalid bibliography entry: ~a~%"
+msgstr "érvénytelen irodalomjegyzék-bejegyzés: ~a~%"
+
+#: src/guile/skribilo/biblio.scm:118
+#, scheme-format
+msgid "invalid bibliography entry template: '~a', in '~a'~%"
+msgstr "érvénytelen irodalomjegyzék-bejegyzés sablon: „~a”, ebben: „~a”~%"
+
+#: src/guile/skribilo/biblio.scm:123
+#, scheme-format
+msgid "invalid bibliography entry s-exp: '~a'~%"
+msgstr "érvénytelen irodalomjegyzék-bejegyzés s-kifejezés: „~a”~%"
+
+#: src/guile/skribilo/biblio.scm:127
+#, scheme-format
+msgid "undefined bibliography error: ~a~%"
+msgstr "meghatározatlan irodalomjegyzék-hiba: ~a~%"
+
+#: src/guile/skribilo/condition.scm:142
+#, scheme-format
+msgid "Call stack trace not available.~%"
+msgstr "A hívási veremkiíratás nem érhető el.~%"
+
+#: src/guile/skribilo/condition.scm:143
+#, scheme-format
+msgid "Use 'GUILE=\"guile --debug\" skribilo ...' for a detailed stack trace.~%"
+msgstr "A részletes veremkiíratáshoz használja a következő parancsot: „GUILE=\"guile --debug\" skribilo ...”.~%"
+
+#: src/guile/skribilo/condition.scm:163
+#, scheme-format
+msgid "in '~a': invalid argument '~a': ~S~%"
+msgstr "ebben: „~a”: érvénytelen argumentum: „~a”: ~S~%"
+
+#: src/guile/skribilo/condition.scm:168
+#, scheme-format
+msgid "in '~a': invalid argument: ~S~%"
+msgstr "ebben: „~a”: érvénytelen argumentum: ~S~%"
+
+#: src/guile/skribilo/condition.scm:175
+#, scheme-format
+msgid "in '~a': too few arguments: ~S~%"
+msgstr "ebben: „~a”: túl kevés argumentum: ~S~%"
+
+#: src/guile/skribilo/condition.scm:182
+#, scheme-format
+msgid "~a: not found in path '~S'~%"
+msgstr "~a: nem található a következő útvonalon: „~S”~%"
+
+#: src/guile/skribilo/condition.scm:189
+#, scheme-format
+msgid "~a: cannot open file~%"
+msgstr "~a: nem sikerült megnyitni a fájlt~%"
+
+#: src/guile/skribilo/condition.scm:195
+#, scheme-format
+msgid "~a: cannot write to file~%"
+msgstr "~a: nem sikerült fájlba írni~%"
+
+#: src/guile/skribilo/condition.scm:201
+#, scheme-format
+msgid "file error: ~a~%"
+msgstr "fájlhiba: ~a~%"
+
+#: src/guile/skribilo/condition.scm:210
+#, scheme-format
+msgid "undefined skribilo error: ~S~%"
+msgstr "meghatározatlan skribilo hiba: ~S~%"
+
+#: src/guile/skribilo/condition.scm:220
+#, scheme-format
+msgid "unexpected error condition: ~A~%"
+msgstr "váratlan hibafeltétel: ~A~%"
+
+#: src/guile/skribilo/engine.scm:74
+#, scheme-format
+msgid "unknown engine `~a'~%"
+msgstr "ismeretlen motor: „~a”~%"
+
+#: src/guile/skribilo/engine.scm:79
+#, scheme-format
+msgid "undefined engine error: ~A~%"
+msgstr "meghatározatlan motorhiba: ~A~%"
+
+#: src/guile/skribilo/index.scm:97
+#, scheme-format
+msgid "the-index: char offset '~A' out of bounds~%"
+msgstr "the-index: a(z) „~A” karaktereltolás tartományon kívüli~%"
+
+#: src/guile/skribilo/source.scm:70
+#, scheme-format
+msgid "source language '~a' does not have an extractor~%"
+msgstr "a(z) „~a” forrásnyelvnek nincs kibontója~%"
+
+#: src/guile/skribilo/source.scm:75
+#, scheme-format
+msgid "source definition of '~a' in language '~a' not found~%"
+msgstr "a(z) „~a” forrásmeghatározása a(z) „~a” nyelvben nem található~%"
+
+#: src/guile/skribilo/source.scm:81
+#, scheme-format
+msgid "undefined source error: ~A~%"
+msgstr "meghatározatlan forráshiba: ~A~%"
+
+#: src/guile/skribilo/sui.scm:82
+#, scheme-format
+msgid "invalid SUI form: ~A~%"
+msgstr "érvénytelen SUI-alak: ~A~%"
+
+#: src/guile/skribilo/sui.scm:87
+#, scheme-format
+msgid "undefined SUI error: ~A~%"
+msgstr "meghatározatlan SUI-hiba: ~a~%"
+
+#: src/guile/skribilo/verify.scm:75
+#, scheme-format
+msgid "option '~a' of markup '~a' not supported by engine '~a'~%"
+msgstr "a(z) „~a” kapcsolóját a(z) „~a” jelölőnek nem támogatja a következő motor: „~a”~%"
+
+#: src/guile/skribilo/verify.scm:82
+#, scheme-format
+msgid "undefined verify error: ~a~%"
+msgstr "meghatározatlan ellenőrzési hiba: ~a~%"
+
+#: src/guile/skribilo/engine/lout.scm:2425
+#: src/guile/skribilo/engine/info.scm:809
+msgid "image URLs are not supported"
+msgstr "a kép URL-ek nem támogatottak"
+
+#: src/guile/skribilo/engine/info.scm:177
+#, scheme-format
+msgid "Info node title '~A' already used"
+msgstr "A(z) „~A” információ-csomópont cím már használatban van"
+
+#: src/guile/skribilo/engine/info.scm:180
+msgid "previous occurrence was here"
+msgstr "az előző előfordulás itt volt"
+
+#: src/guile/skribilo/package/base.scm:538
+msgid "file, start/stop, and definition cannot be combined with body"
+msgstr "fájl, indítás/leállítás és meghatározás nem egyesíthető a törzzsel"
+
+#: src/guile/skribilo/package/base.scm:543
+msgid "start/stop are exclusive with a definition"
+msgstr "az indítás/leállítás kizárólagos a meghatározással"
+
+#: src/guile/skribilo/package/base.scm:547
+msgid "start/stop and definition require a file specification"
+msgstr "az indítás/leállítás és a meghatározás egy fájlelőírást igényel"
+
+#: src/guile/skribilo/package/base.scm:552
+msgid "definition requires a language specification"
+msgstr "a meghatározás egy nyelvelőírást igényel"
+
+#: src/guile/skribilo/package/base.scm:562
+msgid "start line is greater than stop line"
+msgstr "a kezdősor nagyobb mint a befejező sor"
+
+#: src/guile/skribilo/reader/rss-2.scm:70
+msgid "input is not a valid RSS 2.0 feed"
+msgstr "a bemenet nem érvényes RSS 2.0 hírforrás"
+
+#: src/guile/skribilo/reader/rss-2.scm:242
+#, scheme-format
+msgid "tag '~s' ignored"
+msgstr "a(z) „~s” címke mellőzve"
+
+#: src/guile/skribilo/reader/rss-2.scm:249
+#, scheme-format
+msgid "skipping tag '~a'~%"
+msgstr "a(z) „~a” címke kihagyása~%"
+
+#: src/guile/skribilo/reader/rss-2.scm:300
+msgid "no RSS 2.0 channels found in feed"
+msgstr "nem találhatók RSS 2.0 csatornák a hírforrásban"
+
+#: src/guile/skribilo.scm:65
+msgid "Usage: skribilo [OPTIONS] [INPUT]"
+msgstr "Használat: skribilo [KAPCSOLÓK] [BEMENET]"
+
+#: src/guile/skribilo.scm:66
+msgid ""
+"\n"
+"Process Skribilo document from file INPUT (or standard input) using the\n"
+"specified reader syntax or the 'skribe' syntax, and produce its output using\n"
+"the specified engine or the 'html' engine.\n"
+msgstr ""
+"\n"
+"Skribilo dokumentumok feldolgozása a BEMENETI fájlból (vagy a szabványos\n"
+"bemenetről) a megadott olvasószintaxis vagy a „skribe” szintaxis\n"
+"használatával, és a kimenetének elkészítése a megadott motor vagy a „html”\n"
+"motor használatával.\n"
+
+#: src/guile/skribilo.scm:72
+msgid ""
+"  -R, --reader=READER    use READER to parse the input file;\n"
+"                         e.g., 'skribe' (default) or 'outline'\n"
+msgstr ""
+"  -R, --reader=OLVASÓ    OLVASÓ használata a bemeneti fájl feldolgozásához;\n"
+"                         például „skribe” (alapértelmezett) vagy „outline”\n"
+
+#: src/guile/skribilo.scm:75
+msgid "  -t, --target=ENGINE    use ENGINE as the output engine; e.g., 'html'\n"
+msgstr "  -t, --target=MOTOR     MOTOR használata kimeneti motorként; például „html”\n"
+
+#: src/guile/skribilo.scm:77
+msgid "  -c, --custom=C=VAL     use VAL as the value of ENGINE's custom C\n"
+msgstr "  -c, --custom=C=VAL     VAL használata a MOTOR egyéni C-jének értékeként\n"
+
+#: src/guile/skribilo.scm:79
+msgid "  -o, --output=FILE      write output to FILE\n"
+msgstr "  -o, --output=FÁJL      kimenet írása FÁJLBA\n"
+
+#: src/guile/skribilo.scm:81
+msgid "      --compat=COMPAT    use COMPAT as the compatibility layer; e.g., 'skribe'\n"
+msgstr ""
+"      --compat=KOMPAT    KOMPAT használata kompatibilitási rétegként;\n"
+"                           például „skribe”\n"
+
+#: src/guile/skribilo.scm:84
+msgid "  -I, --doc-path=DIR     prepend DIR to the document include path\n"
+msgstr "  -I, --doc-path=KVT     KVT beszúrása a dokumentum felvételi útvonalába\n"
+
+#: src/guile/skribilo.scm:86
+msgid "  -B, --bib-path=DIR     prepend DIR to the bibliography include path\n"
+msgstr "  -B, --bib-path=KVT     KVT beszúrása az irodalomjegyzék felvételi útvonalába\n"
+
+#: src/guile/skribilo.scm:88
+msgid "  -S, --source-path=DIR  prepend DIR to the source include path\n"
+msgstr "  -S, --source-path=KVT  KVT beszúrása a forrás felvételi útvonalába\n"
+
+#: src/guile/skribilo.scm:90
+msgid "  -P, --image-path=DIR   prepend DIR to the image include path\n"
+msgstr "  -P, --image-path=KVT   KVT beszúrása a kép felvételi útvonalába\n"
+
+#: src/guile/skribilo.scm:92
+msgid "  -U, --sui-path=DIR     prepend DIR to the Skribe URL Index (SUI) search path\n"
+msgstr ""
+"  -U, --sui-path=KVT     KVT beszúrása a Skribe URL Index (SUI) keresési\n"
+"                           útvonalába\n"
+
+#: src/guile/skribilo.scm:95
+msgid "  -b, --base=BASE        strip BASE from all hyperlinks ('html' engine)\n"
+msgstr "  -b, --base=ALAP        ALAP levágása minden hiperhivatkozásról („html” motor)\n"
+
+#: src/guile/skribilo.scm:97
+msgid ""
+"  -e, --eval=EXPR        prepend EXPR to the list of expressions to be\n"
+"                         evaluted before the input file is processed\n"
+msgstr ""
+"  -e, --eval=KIF         KIF beszúrása a bemeneti fájl feldolgozása előtt\n"
+"                           végrehajtandó kifejezések listájába\n"
+
+#: src/guile/skribilo.scm:100
+msgid "  -p, --preload=FILE     preload FILE before processing the input file\n"
+msgstr "  -p, --preload=FÁJL     FÁJL előtöltése a bemeneti fájl feldolgozása előtt\n"
+
+#: src/guile/skribilo.scm:103
+msgid "  -v, --verbose[=LEVEL]  be verbose, unless LEVEL is 0\n"
+msgstr "  -v, --verbose[=SZINT]  legyen bőbeszédű, kivéve ha a SZINT=0\n"
+
+#: src/guile/skribilo.scm:105
+msgid "  -w, --warning[=LEVEL]  issue warnings, unless LEVEL is 0\n"
+msgstr "  -w, --warning[=SZINT]  hibák figyelmeztetése, kivéve ha a SZINT=0\n"
+
+#: src/guile/skribilo.scm:107
+msgid ""
+"  -g, --debug[=ARG]      issue debugging output, unless ARG is 0; if ARG is\n"
+"                         not a number, it is interpreted as a symbol to be\n"
+"                         watched\n"
+msgstr ""
+"  -g, --debug[=ARG]      hibakeresési kimenet, kivéve ha az ARG=0; ha az ARG\n"
+"                           nem szám, akkor megfigyelendő szimbólumként lesz\n"
+"                           értelmezve\n"
+
+#: src/guile/skribilo.scm:111
+msgid "      --no-color         disable colored debugging output\n"
+msgstr "      --no-color         színes hibakereső kimenet letiltása\n"
+
+#: src/guile/skribilo.scm:114
+msgid "  -h, --help             display this help text and exit\n"
+msgstr "  -h, --help             ezen súgószöveg megjelenítése és kilépés\n"
+
+#: src/guile/skribilo.scm:116
+msgid "  -V, --version          display version information and exit\n"
+msgstr "  -V, --version          verzióinformációk megjelenítése és kilépés\n"
+
+#: src/guile/skribilo.scm:119
+#, scheme-format
+msgid "Report bugs to <~a>.~%"
+msgstr "A hibákat ide jelentse: <~a>.~%"
+
+#: src/guile/skribilo.scm:199
+#, scheme-format
+msgid "~a: missing value for custom"
+msgstr "~a: hiányzó érték az egyénihez"
+
+#: src/guile/skribilo.scm:216
+#, scheme-format
+msgid "~a: invalid custom value"
+msgstr "~a: érvénytelen egyéni érték"
+
+#: src/guile/skribilo.scm:321
+#, scheme-format
+msgid "warning: failed to install locale: ~a~%"
+msgstr "figyelmeztetés: a területi beállítás telepítése nem sikerült: ~a~%"
