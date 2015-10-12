@@ -156,13 +156,13 @@
               (", " month) " " year
               (", pp. " pages) "."))
     ((article)
-     '(author ". " (or title url documenturl) ". "
+     `(author ". " (or title url documenturl) ". "
               ,(_ "In ") journal ", " volume
               ("(" number ") ")", "
               (address ", ") month " " year ", "
               ("pp. " pages) "."))
     ((inproceedings)
-     '(author ". " (or title url documenturl) ". "
+     `(author ". " (or title url documenturl) ". "
               ,(_ "In ") booktitle ", "
               (series ", ")
               ("(" number ")")
