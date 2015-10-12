@@ -2,7 +2,7 @@
 ;;; -*- coding: iso-8859-1 -*-
 ;;;
 ;;; Copyright 2003, 2004  Manuel Serrano
-;;; Copyright 2007  Ludovic Courtès <ludovic.courtes@laas.fr>
+;;; Copyright 2007, 2015  Ludovic Courtès <ludovic.courtes@laas.fr>
 ;;;
 ;;;
 ;;; This file is part of Skribilo.
@@ -207,6 +207,69 @@
                         (font :size -1
                               (the-bibliography :sort sort-proc)))))))
 
+(define (bib-entry-template kind)
+  ;; Return the LNCS bibliography entry template for KIND.
+  (case kind
+    ((techreport)
+     `(author ": " (or title url documenturl) ". "
+              ;; TRANSLATORS: The next few msgids are fragments of
+              ;; bibliography items.
+              ,(_ "Technical Report") " " number
+              (", " institution)
+              (", " address)
+              (", " pages)
+              (" (" year ")")))
+    ((article)
+     `(author ": " (or title url documenturl) ". "
+              ,(_ "In: ") journal ", " volume
+              ("(" number ")") ", "
+              (address ", ")
+              ("pp. " pages) (" (" year ")")))
+    ((inproceedings)
+     '(author ": " (or title url documenturl) ". "
+              ,(_ "In: ") booktitle ", "
+              (series)
+              ("(" number "), ")
+              (publisher ", ")
+              ("pp. " pages)
+              (" (" year ")")))
+    ((book)
+     '((or author editor) ": "
+       (or title url documenturl) ". "
+       publisher
+       (", " address)
+       (", " month)
+       ", " year
+       (", pp. " pages)))
+    ((inbook)
+     `(author ": " (or title url documenturl) ". "
+              ,(_ "In: ") booktitle ", " publisher
+              (", " editor " (" ,(_ "editor") ")")
+              (", " ,(_ "Chapter ") chapter)
+              (", pp. " pages)
+              (" (" year ")")))
+    ((phdthesis)
+     `(author ": " (or title url documenturl)
+              ", " ,(_ "PhD Thesis")
+              (", " (or school institution))
+              (", " address)
+              (", " month)
+              (if month " " ", ") year))
+    ((misc)
+     '(author ": " (or title url documenturl) ". "
+              (institution ", ")
+              (publisher ", ")
+              (address ", ")
+              (month " ") ("(" year ")")
+              (" " url)))
+    (else
+     '(author ": " (or title url documenturl) ". "
+              (publisher ", ")
+              (address ", ")
+              (month " ")
+              (", pp. " pages)
+              (" (" year ")")))))
+
 
 ;;;
 ;;; Writers for LaTeX's `llncs' document class.
@@ -254,7 +317,7 @@
       (markup-writer '&bib-entry-body
          :action (lambda (n e)
                    (let* ((kind (markup-option n 'kind))
-                          (template (make-bib-entry-template/default kind)))
+                          (template (bib-entry-template kind)))
                      (output-bib-entry-template n e template))))
 
       (markup-writer '&bib-entry latex
@@ -263,7 +326,28 @@
                    (output (markup-option n :title) e)
                    (format #t "]{~a}\n" (markup-ident n))
                    (output n e (markup-writer-get '&bib-entry-body e)))
-         :after "\n%\n"))))
+         :after "\n%\n")
 
+      ;; Abbreviate author first names like this: "Stallman, R.".
+      (markup-writer '&bib-entry-author
+         :action (lambda (n e)
+                   (let ((names (markup-body n)))
+                     (evaluate-document
+                      (if (string? names)
+                          (abbreviate-first-names
+                           names
+                           abbreviate-author-first-names/family-first)
+                          names)
+                      e))))
+
+      ;; Journal and book titles must not be italicized.
+      (markup-writer '&bib-entry-booktitle
+         :action (lambda (n e)
+                   (let ((title (markup-body n)))
+                     (evaluate-document title e))))
+
+      (markup-writer '&bib-entry-journal
+         :action (lambda (n e)
+                   (evaluate-document (markup-body n) e))))))
 
 ;;; lncs.scm ends here
