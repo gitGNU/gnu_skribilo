@@ -1,7 +1,7 @@
 ;;; author.scm  --  Handling author names.
 ;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2006, 2007, 2008, 2009  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2006, 2007, 2008, 2009, 2015 Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This file is part of Skribilo.
@@ -24,6 +24,7 @@
   :use-module (srfi srfi-14)
   :autoload   (srfi srfi-34)     (raise)
   :use-module (srfi srfi-35)
+  :use-module (ice-9 match)
   :use-module (skribilo biblio abbrev)
   :autoload   (skribilo ast)     (markup-option markup-body markup-ident)
   :autoload   (skribilo utils strings) (make-string-replace)
@@ -35,6 +36,7 @@
 
 	   extract-first-author-name
 	   abbreviate-author-first-names
+           abbreviate-author-first-names/family-first
 	   abbreviate-first-names
 	   first-author-last-name
            short-author-names
@@ -74,7 +76,8 @@
       (substring names 0 author-name-end)))
 
 (define (abbreviate-author-first-names name)
-   ;; Abbreviate author first names
+   ;; Abbreviate author first names.  If NAME is "Bob Smith", the result is
+   ;; "B. Smith".
    (let* ((components (string-split name #\space))
 	  (component-number (length components)))
       (string-concatenate
@@ -85,9 +88,21 @@
 			      (- component-number 1)))
 	      (list-tail components (- component-number 1))))))
 
-(define (abbreviate-first-names names)
+(define (abbreviate-author-first-names/family-first name)
+  ;; Abbreviate author first names, but leave the family name first.  If
+  ;; NAME is "Bob Smith", the result is "Smith, B.".
+  (match (string-tokenize name)
+    ((first-names ... last-name)
+     (string-append last-name ", "
+                    (string-join (map abbreviate-word first-names)
+                                 " ")))))
+
+(define* (abbreviate-first-names names
+                                 #:optional (abbreviate-author-names
+                                             abbreviate-author-first-names))
    ;; Abbreviate first names in NAMES.  NAMES is supposed to be
-   ;; something like "Ludovic Courtès, Marc-Olivier Killijian".
+   ;; something like "Ludovic Courtès, Marc-Olivier Killijian".  The result
+   ;; is something like "L. Courtès, M-O. Killijian".
    (let loop ((names ((make-string-replace '((#\newline " ")
 					     (#\tab     " ")))
 		      names))
@@ -105,9 +120,8 @@
 	     (loop next
 		   (string-append result
 				  (if (string=? "" result) "" ", ")
-				  (abbreviate-author-first-names
+				  (abbreviate-author-names
 				   first-author-names)))))))
-
 
 (define (first-author-last-name authors)
   ;; Return a string containing exactly the last name of the first author.
