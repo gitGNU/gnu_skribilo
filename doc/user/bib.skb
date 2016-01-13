@@ -1,7 +1,7 @@
 ;;; bib.skb  --  The Skribilo bibliography.
 ;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2007, 2008, 2012  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2007, 2008, 2012, 2016  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2001, 2002, 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -218,6 +218,12 @@ markup.])
 (example-produce 
  (example :legend "Printing a Bibliography" (prgm :file "src/bib2.skb"))
  (disp (include "src/bib2.skb")))
+
+(index "locale" :note "effect of locales on the bibliography")
+(p [Note that the current locale setting affects the language used in
+bibliography entries.  For instance, if the ,(code [LC_ALL]) environment
+variable is set to ,(code [sv_SE.utf8]), then phrases like ``Chapter''
+or ``Technical Report'' will be written in Swedish.])
 
 ;; filtering bibliography
 (subsection :title "Filtering Bibliography Entries"
