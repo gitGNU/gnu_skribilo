@@ -1,4 +1,4 @@
-Copyright (C) 2005, 2006, 2007, 2008, 2009, 2012, 2013  Ludovic Courtès <ludo@gnu.org>
+Copyright (C) 2005, 2006, 2007, 2008, 2009, 2012, 2013, 2016 Ludovic Courtès <ludo@gnu.org>
 
   Copying and distribution of this file, with or without modification,
   are permitted in any medium without royalty provided the copyright
@@ -7,6 +7,13 @@ Copyright (C) 2005, 2006, 2007, 2008, 2009, 2012, 2013  Ludovic Courtès <ludo@g
 
 
 * New in Skribilo 0.9.3
+
+** Skribilo now speaks your native language
+
+Translations are currently available in Danish, French, Hungarian, and
+Swedish.  See <https://translationproject.org/domain/skribilo.html>.
+Note that the locale also affects the language used in bibliography
+entries and similar.
 
 ** HTML engine: all the footnotes are emitted for single-file documents
 
@@ -23,8 +30,10 @@ change should make CSS customization easier.
 It used to be that footnote HTML code contained an extraneous </div>,
 and nested <a> tags, which is invalid.
 
-** acmproc: Fix typos in the LaTeX engine customs
+** LaTeX engine: paragraphs no longer systematically preceded by \noindent
+** acmproc: fix typos in the LaTeX engine customs
 ** acmproc: `references' uses a chapter, the default font, and sorts entries
+** lncs: style of bibliography entries more closely matches LNCS style.
 ** `ref' warnings now always print the location of erroneous `:bib' references
 ** `numref' inserts an unbreakable space (was a breakable space) after its `:text'
 
