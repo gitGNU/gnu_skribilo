@@ -1,7 +1,7 @@
 ;;; skribilo.scm  --  The Skribilo document processor.
 ;;;
 ;;; Copyright 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2013,
-;;;   2015  Ludovic Courtès <ludo@gnu.org>
+;;;   2015, 2016  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
 ;;;
 ;;;
@@ -320,6 +320,10 @@ options."
       (format (current-error-port)
               (_ "warning: failed to install locale: ~a~%")
               (strerror (system-error-errno args)))))
+
+  ;; Tell gettext where to look for message catalogs.
+  (bindtextdomain %skribilo-text-domain (skribilo-locale-directory))
+  (textdomain %skribilo-text-domain)
 
   (let* ((options           (parse-args args))
 

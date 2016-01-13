@@ -1,7 +1,7 @@
 ;;; syntax.scm  --  Syntactic candy for Skribilo modules. -*- coding: utf-8 -*-
 ;;;
 ;;; Copyright 2005, 2006, 2007, 2008, 2009, 2010, 2011,
-;;;   2012  Ludovic Courtès <ludo@gnu.org>
+;;;   2012, 2016 Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This file is part of Skribilo.
@@ -23,11 +23,13 @@
   :use-module (system reader library)
   :use-module (system reader compat) ;; make sure `current-reader' exists
   :use-module (system reader confinement)
-  :export (%skribilo-module-reader skribilo-module-syntax
-                                   set-correct-file-encoding!
-                                   default-to-utf-8
-                                   _ N_
-                                   unwind-protect))
+  :export (%skribilo-module-reader
+           skribilo-module-syntax
+           set-correct-file-encoding!
+           default-to-utf-8
+           %skribilo-text-domain
+           _ N_
+           unwind-protect))
 
 ;;; Author:  Ludovic Courtès
 ;;;

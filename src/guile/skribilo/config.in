@@ -1,7 +1,7 @@
 ;;; config.scm  --  Skribilo configuration.
 ;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2005, 2006, 2007, 2009, 2012  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2006, 2007, 2009, 2012, 2016 Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This file is part of Skribilo.
@@ -22,6 +22,7 @@
 (define-module (skribilo config)
   :export (skribilo-version skribilo-url skribilo-bug-report-address
            skribilo-module-directory skribilo-doc-directory
+           skribilo-locale-directory
            skribilo-scheme))
 
 (define (skribilo-version)             "@PACKAGE_VERSION@")
@@ -30,7 +31,7 @@
 (define (skribilo-module-directory)    "@guilemoduledir@")
 (define (skribilo-scheme)              "@GUILE@")
 (define (skribilo-doc-directory)       "@docdir@")
-
+(define (skribilo-locale-directory)    "@localedir@")
 
 ;;; Local Variables:
 ;;; mode: scheme
