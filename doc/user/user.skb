@@ -149,7 +149,7 @@ used as any text description languages such as ,(ref :text [LaTeX] :url
       (itemize
 	 (item [
 It is easier to type in Skribilo texts than other text description formats.
-The need for ,(emph "meta keyword"), that is, words used to describe
+The need for ,(emph "meta keywords"), that is, words used to describe
 the structure of the text and not the text itself, is very limited.])
 	 (item [
 Skribilo is highly skilled for computing texts. It is very common that
