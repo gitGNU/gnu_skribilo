@@ -1,7 +1,7 @@
 ;;; base.scm -- The base markup package of Skribe/Skribilo.
 ;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2005, 2006, 2007, 2008, 2009, 2013, 2015 Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2006, 2007, 2008, 2009, 2013, 2015, 2016 Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
 ;;;
 ;;;
@@ -535,6 +535,10 @@
       (cond
 	 ((and (not (null? body)) (or file start stop definition))
 	  (skribe-error 'source
+                        ;; TRANSLATORS: 'file', 'start', 'stop', and
+                        ;; 'definition' denote parameter names; they must not
+                        ;; be translated.  Likewise for the 3 subsequent
+                        ;; strings.
 			(_ "file, start/stop, and definition\
  cannot be combined with body")
 			body))
