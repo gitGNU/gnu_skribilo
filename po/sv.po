@@ -8,14 +8,14 @@ msgstr ""
 "Project-Id-Version: skribilo 0.9.2.64\n"
 "Report-Msgid-Bugs-To: ludo@gnu.org\n"
 "POT-Creation-Date: 2015-06-21 22:21+0200\n"
-"PO-Revision-Date: 2015-11-22 18:38+0100\n"
+"PO-Revision-Date: 2016-03-28 18:30+0200\n"
 "Last-Translator: Sebastian Rasmussen <sebras@gmail.com>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.6\n"
+"X-Generator: Poedit 1.8.7.1\n"
 
 #: src/guile/skribilo/utils/syntax.scm:55
 msgid "unexpected character in Skribilo module"
@@ -89,7 +89,7 @@ msgstr "ogiltig mall för bibliografipost: ”~a”, i ”~a”~%"
 #: src/guile/skribilo/biblio.scm:123
 #, scheme-format
 msgid "invalid bibliography entry s-exp: '~a'~%"
-msgstr "ogiltig s-uttryck för bibliografipost: ”~a”~%"
+msgstr "ogiltigt s-uttryck för bibliografipost: ”~a”~%"
 
 #: src/guile/skribilo/biblio.scm:127
 #, scheme-format
@@ -159,7 +159,7 @@ msgstr "okänd motor ”~a”~%"
 #: src/guile/skribilo/engine.scm:79
 #, scheme-format
 msgid "undefined engine error: ~A~%"
-msgstr "odefinierad motorfel: ~A~%"
+msgstr "”odefinierad motor”-fel: ~A~%"
 
 #: src/guile/skribilo/index.scm:97
 #, scheme-format
@@ -204,7 +204,7 @@ msgstr "odefinierat verifikationsfel: ~a~%"
 #: src/guile/skribilo/engine/lout.scm:2425
 #: src/guile/skribilo/engine/info.scm:809
 msgid "image URLs are not supported"
-msgstr "bild-ULR:er stöds inte"
+msgstr "bild-URL:er stöds inte"
 
 #: src/guile/skribilo/engine/info.scm:177
 #, scheme-format
@@ -217,7 +217,7 @@ msgstr "föregående förekomst var här"
 
 #: src/guile/skribilo/package/base.scm:538
 msgid "file, start/stop, and definition cannot be combined with body"
-msgstr "fil, start/stop, och definition kan inte kombineras med kropp"
+msgstr "file, start/stop, och definition kan inte kombineras med kropp"
 
 #: src/guile/skribilo/package/base.scm:543
 msgid "start/stop are exclusive with a definition"
@@ -255,7 +255,7 @@ msgstr "inga RSS 2.0-kanaler hittades i kanalen"
 
 #: src/guile/skribilo.scm:65
 msgid "Usage: skribilo [OPTIONS] [INPUT]"
-msgstr "Användning skribilo [FLAGGOR] [INDATA]"
+msgstr "Användning: skribilo [FLAGGOR] [INDATA]"
 
 #: src/guile/skribilo.scm:66
 msgid ""
@@ -265,7 +265,7 @@ msgid ""
 "the specified engine or the 'html' engine.\n"
 msgstr ""
 "\n"
-"Processa Skribilo-dokument från filen INDATA (eller standardinmatning) med\n"
+"Behandla Skribilo-dokument från filen INDATA (eller standardinmatning) med\n"
 "den definierade läsarsyntaxen eller ”skribe”-syntaxen, och producera dess utdata via\n"
 "den angivna motorn eller ”html”-motorn.\n"
 
@@ -299,7 +299,7 @@ msgstr "  -I, --doc-path=KAT     infoga KAT först bland inklusionssökvägarna 
 
 #: src/guile/skribilo.scm:86
 msgid "  -B, --bib-path=DIR     prepend DIR to the bibliography include path\n"
-msgstr "  -B, --bib-path=KAT     infoga KAT första bland inklusionssökvägarna för bibliografi\n"
+msgstr "  -B, --bib-path=KAT     infoga KAT först bland inklusionssökvägarna för bibliografi\n"
 
 #: src/guile/skribilo.scm:88
 msgid "  -S, --source-path=DIR  prepend DIR to the source include path\n"
@@ -311,7 +311,7 @@ msgstr "  -P, --image-path=KAT   infoga KAT först bland inklusionssökvägarna 
 
 #: src/guile/skribilo.scm:92
 msgid "  -U, --sui-path=DIR     prepend DIR to the Skribe URL Index (SUI) search path\n"
-msgstr "  -U, --sui-path=KAT     infoga KAT först bland inklusionssökvägarna för Skriber URL Index (SUI)\n"
+msgstr "  -U, --sui-path=KAT     infoga KAT först bland inklusionssökvägarna för Skribe URL Index (SUI)\n"
 
 #: src/guile/skribilo.scm:95
 msgid "  -b, --base=BASE        strip BASE from all hyperlinks ('html' engine)\n"
@@ -322,12 +322,12 @@ msgid ""
 "  -e, --eval=EXPR        prepend EXPR to the list of expressions to be\n"
 "                         evaluted before the input file is processed\n"
 msgstr ""
-"  -e, --eval=UTTR        infoga UTTR först bland listan över uttrycker som\n"
-"                         utvärderas innan inmatningsfilen processas\n"
+"  -e, --eval=UTTR        infoga UTTR först bland listan över uttryck som\n"
+"                         utvärderas innan inmatningsfilen behandlas\n"
 
 #: src/guile/skribilo.scm:100
 msgid "  -p, --preload=FILE     preload FILE before processing the input file\n"
-msgstr "  -p, --preload=FIL      förinläs FIL innan inmatningsfilen processas\n"
+msgstr "  -p, --preload=FIL      förinläs FIL innan inmatningsfilen behandlas\n"
 
 #: src/guile/skribilo.scm:103
 msgid "  -v, --verbose[=LEVEL]  be verbose, unless LEVEL is 0\n"
@@ -362,7 +362,7 @@ msgstr "  -V, --version          visa versionsinformation och avsluta\n"
 #: src/guile/skribilo.scm:119
 #, scheme-format
 msgid "Report bugs to <~a>.~%"
-msgstr "Rapportera buggar till <~a>.~%"
+msgstr "Rapportera fel till <~a>.~%"
 
 #: src/guile/skribilo.scm:199
 #, scheme-format
