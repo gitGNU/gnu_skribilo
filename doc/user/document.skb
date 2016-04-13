@@ -3,6 +3,7 @@
 ;;;
 ;;; Copyright 2008  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Manuel Serrano
+;;; Copyright 2008  Christopher Allan Webber <cwebber@dustycloud.org>
 ;;;
 ;;;
 ;;; This file is part of Skribilo.
@@ -80,13 +81,13 @@ document.])
 
 (doc-markup 'author
 	    '((:name "The name of the author.")
-	      (:title "His title.")
-	      (:affiliation "His affiliation.")
-	      (:email "His email.")
-	      (:url "His web page.")
-	      (:address "His address.")
-	      (:phone "His phone number.")
-	      (:photo "His photograph.")
+	      (:title "Their title.")
+	      (:affiliation "Their affiliation.")
+	      (:email "Their email.")
+	      (:url "Their web page.")
+	      (:address "Their address.")
+	      (:phone "Their phone number.")
+	      (:photo "Their photograph.")
 	      (:align "The author item alignment."))
 	    :see-also '(mailto ref))
 
