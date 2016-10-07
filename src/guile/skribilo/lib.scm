@@ -1,6 +1,6 @@
 ;;; lib.scm -- Utilities.                 -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2005, 2007, 2009, 2012, 2013  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2007, 2009, 2012, 2013, 2016  Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright 2003, 2004  Erick Gallesio - I3S-CNRS/ESSI <eg@unice.fr>
 ;;;
 ;;;
@@ -31,7 +31,9 @@
 	   type-name
 
            new define-markup define-simple-markup
-           define-simple-container define-processor-markup)
+           define-simple-container define-processor-markup
+
+           &invocation-location)
 
   ;; Re-exported because used in `define-markup'.
   :re-export  (invocation-location)
@@ -112,6 +114,9 @@
   ;; On Guile 2.0, `define-markup' generates a macro for the markup, such
   ;; that the macro captures its invocation source location using
   ;; `current-source-location'.
+
+  (define-syntax-parameter &invocation-location
+    (identifier-syntax #f))
 
   (define-syntax define-markup
     (lambda (s)
