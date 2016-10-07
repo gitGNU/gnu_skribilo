@@ -1,7 +1,7 @@
 ;;; reader.scm  --  Skribilo's front-end (aka. reader) interface.
 ;;; -*- coding: iso-8859-1 -*-
 ;;;
-;;; Copyright 2005, 2009  Ludovic Courtès <ludo@gnu.org>
+;;; Copyright 2005, 2009, 2016 Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;;
 ;;; This file is part of Skribilo.
@@ -21,13 +21,15 @@
 
 (define-module (skribilo reader)
   :use-module (srfi srfi-9)  ;; records
-  :use-module (srfi srfi-17) ;; generalized `set!'
   :use-module (srfi srfi-39) ;; parameter objects
   :use-module (skribilo condition)
   :autoload   (srfi srfi-34) (raise)
   :use-module (srfi srfi-35)
   :export (%make-reader lookup-reader make-reader
 	   *document-reader*
+           reader:name
+           reader:version
+           reader:make
 
 	   &reader-search-error reader-search-error?
 	   reader-search-error:reader
@@ -52,15 +54,6 @@
   (make      reader:make      reader:set-make!))   ;; a one-argument proc
                                                    ;; that returns a reader
                                                    ;; proc
-
-(define-public reader:name
-  (getter-with-setter reader:name reader:set-name!))
-
-(define-public reader:version
-  (getter-with-setter reader:version reader:set-version!))
-
-(define-public reader:make
-  (getter-with-setter reader:make reader:set-make!))
 
 (define-macro (define-reader name version make-proc)
   `(define reader-specification
